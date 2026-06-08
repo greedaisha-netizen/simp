@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../img/simpHappyMascotLogo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css_files/sideBar.css" />
+    <title>Courses</title>
+    <style>
+      body {
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .container {
+        grid-template-columns: 12rem minmax(0, 1fr);
+        align-items: start;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      aside {
+        position: sticky;
+        top: 0;
+        align-self: start;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 5;
+      }
+
+      main,
+      .workspace-shell,
+      .workspace-header,
+      .workspace-toolbar,
+      .workspace-nav,
+      .workspace-tools,
+      .workspace-embed-card {
+        min-width: 0;
+      }
+
+      main {
+        margin-top: 0;
+        height: 100vh;
+        min-height: 0;
+        overflow: hidden;
+      }
+
+      .workspace-shell {
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+        height: 100%;
+        min-height: 0;
+        padding: 1.4rem 0 1.4rem;
+      }
+
+      .workspace-header-top {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        flex-wrap: nowrap;
+        min-width: 0;
+      }
+
+      .workspace-header {
+        display: grid;
+        gap: 0.9rem;
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        padding: 0 0 0.85rem;
+        background: var(--color-background);
+      }
+
+      .workspace-header-top h1 {
+        margin-bottom: 0;
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .workspace-menu-toggle {
+        display: none;
+        width: 2.8rem;
+        height: 2.8rem;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border-radius: 0.9rem;
+        border: 1px solid rgba(132, 139, 200, 0.24);
+        background: #fff;
+        color: #475569;
+        box-shadow: 0 10px 22px rgba(148, 163, 184, 0.12);
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+      }
+
+      .workspace-menu-toggle .material-icons-sharp {
+        display: block;
+        font-size: 1.45rem;
+        line-height: 1;
+        margin: 0;
+      }
+
+      .workspace-header p {
+        color: var(--color-info-dark);
+        max-width: 48rem;
+      }
+
+      .workspace-tools {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      }
+
+      .workspace-tools[hidden] {
+        display: none !important;
+      }
+
+      .workspace-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .workspace-search {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        background: var(--color-white);
+        border: 1px solid rgba(132, 139, 200, 0.22);
+        border-radius: 999px;
+        padding: 0.75rem 1rem;
+        width: min(100%, 22rem);
+        min-width: 22rem;
+      }
+
+      .workspace-search input {
+        border: 0;
+        outline: 0;
+        background: transparent;
+        width: 100%;
+        min-width: 0;
+        flex: 1 1 auto;
+        font: inherit;
+        color: var(--color-dark);
+      }
+
+      .workspace-select {
+        border: 1px solid rgba(132, 139, 200, 0.22);
+        background: var(--color-white);
+        color: transparent;
+        border-radius: 999px;
+        padding: 0.75rem 1rem;
+        font: inherit;
+        font-weight: 700;
+        min-width: 11rem;
+        width: 100%;
+        cursor: pointer;
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+      }
+
+      .workspace-select option {
+        color: var(--color-dark);
+      }
+
+      .workspace-select-wrap {
+        position: relative;
+        min-width: 11rem;
+      }
+
+      .workspace-select-display {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.55rem;
+        padding: 0 1rem;
+        pointer-events: none;
+        color: var(--color-dark);
+        font: inherit;
+        font-weight: 700;
+      }
+
+      .workspace-select-display-icon {
+        width: 0.42rem;
+        height: 0.42rem;
+        border-right: 1.8px solid var(--color-dark);
+        border-bottom: 1.8px solid var(--color-dark);
+        transform: translateY(-10%) rotate(45deg);
+        flex: 0 0 auto;
+      }
+
+      .workspace-embed-card {
+        background: transparent;
+        border-radius: 0;
+        box-shadow: none;
+        overflow: hidden;
+        border: none;
+        display: flex;
+        flex: 1 1 auto;
+        min-height: 0;
+        margin-bottom: 0;
+      }
+
+      .workspace-embed-card.is-floating {
+        margin-bottom: 0;
+      }
+
+      .workspace-embed-card.is-modal-active {
+        position: relative;
+      }
+
+      .workspace-embed-card.is-modal-active::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.56);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 5;
+        pointer-events: none;
+      }
+
+      .workspace-host-dialog[hidden] {
+        display: none;
+      }
+
+      .workspace-host-dialog {
+        position: fixed;
+        inset: 0;
+        z-index: 2600;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 5.5rem 1rem 1rem;
+        pointer-events: none;
+      }
+
+      .workspace-host-dialog-panel {
+        position: relative;
+        width: min(100%, 520px);
+        background: #ffffff;
+        border-radius: 22px;
+        padding: 1.5rem;
+        box-shadow: 0 28px 70px rgba(15, 23, 42, 0.24);
+        border: 1px solid rgba(132, 139, 200, 0.18);
+        pointer-events: auto;
+      }
+
+      .workspace-host-dialog-close {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 38px;
+        height: 38px;
+        border: none;
+        border-radius: 999px;
+        background: rgba(241, 245, 249, 0.88);
+        color: #334155;
+        font-size: 1.6rem;
+        line-height: 1;
+        cursor: pointer;
+      }
+
+      .workspace-host-dialog-body {
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+      }
+
+      .workspace-host-dialog-chip {
+        align-self: center;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.4rem 0.7rem;
+        border-radius: 999px;
+        background: #dff4e6;
+        color: #237543;
+        font-size: 0.82rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+
+      .workspace-host-dialog-title {
+        margin: 0;
+        color: #1e293b;
+        font-size: 1.2rem;
+        line-height: 1.35;
+      }
+
+      .workspace-host-dialog-message {
+        color: #64748b;
+        font-size: 1rem;
+        line-height: 1.55;
+      }
+
+      .workspace-host-dialog-message p {
+        margin: 0;
+      }
+
+      .workspace-host-dialog-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 0.4rem;
+      }
+
+      .workspace-host-dialog-button {
+        border: 1px solid rgba(132, 139, 200, 0.28);
+        background: #ffffff;
+        color: #334155;
+        border-radius: 14px;
+        padding: 0.9rem 1.2rem;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .workspace-host-dialog-button.primary {
+        border-color: transparent;
+        background: #349756;
+        color: #ffffff;
+      }
+
+      .workspace-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 0.2rem;
+      }
+
+      .workspace-nav-btn {
+        border: 1px solid rgba(132, 139, 200, 0.22);
+        background: var(--color-white);
+        color: var(--color-info-dark);
+        border-radius: 999px;
+        padding: 0.8rem 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font: inherit;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s ease;
+      }
+
+      .workspace-nav-btn:hover {
+        color: var(--color-primary);
+        border-color: rgba(108, 155, 207, 0.38);
+        transform: translateY(-1px);
+      }
+
+      .workspace-nav-btn.is-active {
+        background: rgba(108, 155, 207, 0.14);
+        color: var(--color-primary);
+        border-color: rgba(108, 155, 207, 0.38);
+      }
+
+      .workspace-embed-frame {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+        border: 0;
+        display: block;
+        background: transparent;
+        flex: 1 1 auto;
+        border-radius: 0;
+      }
+
+      .workspace-sidebar-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.42);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 29;
+      }
+
+      @media (max-width: 1516px) {
+        .workspace-nav-btn {
+          padding: 0.8rem;
+        }
+
+        .workspace-nav-btn span:last-child {
+          display: none;
+        }
+
+        .workspace-nav-btn .material-icons-sharp {
+          margin: 0;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .container {
+          width: 100%;
+          grid-template-columns: 1fr;
+          gap: 0;
+          padding: 0 1rem;
+        }
+
+        main {
+          width: 100%;
+          grid-column: auto;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        aside {
+          display: none !important;
+        }
+
+        body.workspace-sidebar-open {
+          overflow: hidden;
+        }
+
+        body.workspace-sidebar-open aside {
+          display: block !important;
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: min(18rem, calc(100vw - 2rem));
+          height: 100vh;
+          z-index: 30;
+          background: var(--color-background);
+          padding: 0 1rem 1rem;
+          overflow-y: auto;
+          animation: none;
+        }
+
+        body.workspace-sidebar-open aside .toggle {
+          display: none !important;
+        }
+
+        body.workspace-sidebar-open aside .sidebar {
+          top: 0;
+          height: auto;
+          min-height: calc(100vh - 1rem);
+          animation: none;
+        }
+
+        body.workspace-sidebar-open aside .sidebar h3 {
+          display: block;
+        }
+
+        body.workspace-sidebar-open aside .sidebar a {
+          width: auto;
+        }
+
+        body.workspace-sidebar-open aside .sidebar a:last-child {
+          position: absolute;
+          margin-top: 0;
+        }
+
+        body.workspace-sidebar-open .workspace-sidebar-backdrop {
+          opacity: 1;
+          pointer-events: auto;
+        }
+
+        .workspace-menu-toggle {
+          display: inline-flex;
+          flex: 0 0 auto;
+        }
+      }
+
+      @media (max-width: 1025px) {
+        .container {
+          padding: 0 var(--padding-1);
+        }
+
+        .workspace-header {
+          position: static;
+          grid-template-columns: minmax(0, 1fr);
+          align-items: start;
+          row-gap: 0.75rem;
+          padding-left: 0;
+        }
+
+        .workspace-header-top {
+          grid-column: 1;
+          grid-row: 1;
+          align-self: center;
+          flex-wrap: nowrap;
+        }
+
+        .workspace-header-top h1 {
+          font-size: 1.65rem;
+          line-height: 1.05;
+          white-space: nowrap;
+        }
+
+        .workspace-toolbar {
+          grid-column: 1;
+          grid-row: 2 / span 2;
+          display: contents;
+          width: 100%;
+        }
+
+        .workspace-nav {
+          grid-column: 1;
+          grid-row: 2;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: flex-start;
+          align-items: center;
+          gap: 0.45rem;
+          overflow: visible;
+          padding: 0;
+          margin-top: 0;
+        }
+
+        .workspace-nav-btn {
+          flex: 0 0 auto;
+          min-width: 2.75rem;
+          min-height: 2.75rem;
+          justify-content: center;
+          padding: 0.7rem 0.85rem;
+          border-radius: 0.95rem;
+          background: transparent;
+          box-shadow: none;
+        }
+
+        .workspace-tools {
+          grid-column: 1 / -1;
+          grid-row: 3;
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) minmax(12rem, 14rem);
+          width: 100%;
+          justify-content: stretch;
+          align-items: center;
+        }
+
+        .workspace-search {
+          width: 100%;
+          min-width: 0;
+        }
+
+        .workspace-select-wrap {
+          min-width: 0;
+        }
+
+        .workspace-select {
+          min-width: 100%;
+        }
+
+        .workspace-search input::placeholder {
+          color: var(--color-info-dark);
+        }
+      }
+
+      @media (max-width: 900px) {
+        .workspace-shell {
+          gap: 0.75rem;
+          padding: 0.9rem 0 0.9rem;
+        }
+
+        .workspace-header {
+          grid-template-columns: minmax(0, 1fr);
+          row-gap: 0.75rem;
+          padding-bottom: 0.35rem;
+        }
+
+        .workspace-header-top {
+          grid-column: 1;
+          grid-row: 1;
+          flex-wrap: nowrap;
+          align-items: center;
+        }
+
+        .workspace-header-top h1 {
+          font-size: 1.65rem;
+          line-height: 1.05;
+          white-space: nowrap;
+        }
+
+        .workspace-nav {
+          grid-column: 1;
+          grid-row: 2;
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          padding-bottom: 0.2rem;
+          scrollbar-width: thin;
+          -webkit-overflow-scrolling: touch;
+        }
+
+        .workspace-nav-btn {
+          width: 3.15rem;
+          min-width: 3.15rem;
+          min-height: 3.15rem;
+          padding: 0.75rem;
+          gap: 0;
+          flex: 0 0 auto;
+        }
+
+        .workspace-nav-btn span:last-child {
+          display: none;
+        }
+
+        .workspace-nav-btn .material-icons-sharp {
+          margin: 0;
+        }
+
+        .workspace-tools {
+          grid-column: 1;
+          grid-row: 3;
+          grid-template-columns: minmax(0, 1fr) minmax(11rem, 13rem);
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .container {
+          grid-template-columns: 1fr;
+        }
+
+        .workspace-shell {
+          gap: 0.55rem;
+          padding: 0.7rem 0 0.7rem;
+        }
+
+        .workspace-header {
+          grid-template-columns: 1fr;
+          row-gap: 0.55rem;
+          padding-bottom: 0.2rem;
+          padding-left: 0;
+        }
+
+        .workspace-header-top {
+          align-items: center;
+          flex-wrap: nowrap;
+        }
+
+        .workspace-header-top h1 {
+          font-size: 1.55rem;
+          line-height: 1.05;
+          white-space: nowrap;
+        }
+
+        .workspace-toolbar {
+          display: contents;
+        }
+
+        .workspace-nav {
+          display: flex;
+          flex-wrap: nowrap;
+          gap: 0.5rem;
+          justify-content: flex-start;
+          align-items: center;
+          overflow-x: auto;
+          padding-bottom: 0.2rem;
+          scrollbar-width: thin;
+        }
+
+        .workspace-nav-btn {
+          width: 3.15rem;
+          min-width: 3.15rem;
+          min-height: 3.15rem;
+          padding: 0.75rem;
+          gap: 0;
+        }
+
+        .workspace-tools {
+          grid-column: 1;
+          grid-row: 3;
+          grid-template-columns: minmax(0, 1fr) minmax(10.5rem, 12.5rem);
+          align-items: center;
+        }
+
+        .workspace-search,
+        .workspace-select-wrap {
+          width: 100%;
+          min-width: 0;
+        }
+
+        .workspace-select-display {
+          justify-content: center;
+        }
+
+        .workspace-embed-card {
+          border-radius: 0;
+        }
+
+        .workspace-host-dialog {
+          padding-top: 4.5rem;
+        }
+      }
+
+      @media (max-width: 620px) {
+        .workspace-tools {
+          grid-template-columns: 1fr;
+          align-items: stretch;
+        }
+
+        .workspace-search,
+        .workspace-select-wrap {
+          min-width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <aside>
+        <div class="toggle">
+          <div class="logo">
+            <img src="../../../img/simpHappyMascotLogo.png" alt="logo" />
+            <h2>SIMP<span class="danger">Project</span></h2>
+          </div>
+          <div class="close" id="close-btn">
+            <span class="material-icons-sharp">close</span>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <a href="dashboard.html"
+            ><span class="material-icons-sharp">dashboard</span>
+            <h3>Dashboard</h3>
+          </a>
+          <a href="job.html"
+            ><span class="material-icons-sharp">work</span>
+            <h3>Jobs</h3>
+          </a>
+          <a href="myApplication.html"
+            ><span class="material-icons-sharp">receipt</span>
+            <h3>My Application</h3>
+          </a>
+          <a href="courses.html" class="active"
+            ><span class="material-icons-sharp">school</span>
+            <h3>Courses</h3>
+          </a>
+          <a href="shop.html"
+            ><span class="material-icons-sharp">shopping_cart</span>
+            <h3>Shop</h3>
+          </a>
+          <a href="earnings.html"
+            ><span class="material-icons-sharp">account_balance</span>
+            <h3>Earnings</h3>
+          </a>
+          <a href="documents.html"
+            ><span class="material-icons-sharp">file_copy</span>
+            <h3>Documents</h3>
+          </a>
+          <a href="settings.html"
+            ><span class="material-icons-sharp">settings</span>
+            <h3>Settings</h3>
+          </a>
+          <a href="#" id="logout-btn"
+            ><span class="material-icons-sharp">logout</span>
+            <h3>Logout</h3>
+          </a>
+        </div>
+      </aside>
+
+      <main>
+        <div class="workspace-shell">
+          <div class="workspace-header">
+            <div class="workspace-header-top">
+              <button
+                type="button"
+                class="workspace-menu-toggle"
+                id="workspaceMenuToggle"
+                aria-label="Open navigation"
+              >
+                <span class="material-icons-sharp">menu</span>
+              </button>
+              <h1>Learning Workspace</h1>
+            </div>
+            <div class="workspace-toolbar">
+              <div class="workspace-nav" aria-label="Classroom sections">
+                <button
+                  type="button"
+                  class="workspace-nav-btn"
+                  data-classroom-page="library"
+                >
+                  <span class="material-icons-sharp">menu_book</span>
+                  <span>My Library</span>
+                </button>
+                <button
+                  type="button"
+                  class="workspace-nav-btn is-active"
+                  data-classroom-page="courses"
+                >
+                  <span class="material-icons-sharp">school</span>
+                  <span>Courses</span>
+                </button>
+                <button
+                  type="button"
+                  class="workspace-nav-btn"
+                  data-classroom-page="assignments"
+                >
+                  <span class="material-icons-sharp">task</span>
+                  <span>Assessment</span>
+                </button>
+                <button
+                  type="button"
+                  class="workspace-nav-btn"
+                  data-classroom-page="progress"
+                >
+                  <span class="material-icons-sharp">insights</span>
+                  <span>Progress</span>
+                </button>
+                <button
+                  type="button"
+                  class="workspace-nav-btn"
+                  data-classroom-page="schedule"
+                >
+                  <span class="material-icons-sharp">calendar_month</span>
+                  <span>Schedule</span>
+                </button>
+                <button
+                  type="button"
+                  class="workspace-nav-btn"
+                  data-classroom-page="discussions"
+                >
+                  <span class="material-icons-sharp">forum</span>
+                  <span>Discussions</span>
+                </button>
+              </div>
+              <div class="workspace-tools">
+                <label class="workspace-search" aria-label="Search courses">
+                  <span class="material-icons-sharp">search</span>
+                  <input
+                    id="workspaceCourseSearch"
+                    type="search"
+                    placeholder="Search"
+                  />
+                </label>
+                <div class="workspace-select-wrap">
+                  <select id="workspaceCourseType" class="workspace-select">
+                    <option value="all">All course types</option>
+                    <option value="skill">Skill</option>
+                    <option value="technical">Technical</option>
+                    <option value="networking">Networking</option>
+                    <option value="security">Security</option>
+                    <option value="cloud">Cloud</option>
+                  </select>
+                  <span class="workspace-select-display" aria-hidden="true">
+                    <span id="workspaceCourseTypeDisplay">All course types</span>
+                    <span class="workspace-select-display-icon"></span>
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="workspace-embed-card">
+            <iframe
+              id="classroomEmbed"
+              class="workspace-embed-frame"
+              src="../../../enroll/classroom.html?embedded=1&page=courses"
+              title="SIMP Classroom"
+              loading="lazy"
+              scrolling="no"
+            ></iframe>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <div
+      class="workspace-sidebar-backdrop"
+      id="workspaceSidebarBackdrop"
+      aria-hidden="true"
+    ></div>
+
+    <div class="workspace-host-dialog" id="workspaceHostDialog" hidden>
+      <div
+        class="workspace-host-dialog-panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="workspaceHostDialogTitle"
+      >
+        <button
+          class="workspace-host-dialog-close"
+          id="workspaceHostDialogClose"
+          type="button"
+          aria-label="Close dialog"
+        >
+          ×
+        </button>
+        <div class="workspace-host-dialog-body">
+          <span class="workspace-host-dialog-chip" id="workspaceHostDialogChip"
+            >Notice</span
+          >
+          <h3
+            class="workspace-host-dialog-title"
+            id="workspaceHostDialogTitle"
+          ></h3>
+          <div
+            class="workspace-host-dialog-message"
+            id="workspaceHostDialogMessage"
+          ></div>
+        </div>
+        <div
+          class="workspace-host-dialog-actions"
+          id="workspaceHostDialogActions"
+        ></div>
+      </div>
+    </div>
+
+    <script type="module" src="../../general_files/session.js"></script>
+    <script>
+      const classroomEmbed = document.getElementById("classroomEmbed");
+      const workspaceCourseSearch = document.getElementById(
+        "workspaceCourseSearch"
+      );
+      const workspaceCourseType = document.getElementById("workspaceCourseType");
+      const workspaceCourseTypeDisplay = document.getElementById(
+        "workspaceCourseTypeDisplay"
+      );
+      const workspaceMenuToggle = document.getElementById("workspaceMenuToggle");
+      const workspaceSidebarBackdrop = document.getElementById(
+        "workspaceSidebarBackdrop"
+      );
+      const workspaceSidebar = document.querySelector("aside");
+      const workspaceNav = document.querySelector(".workspace-nav");
+      const workspaceTools = document.querySelector(".workspace-tools");
+      const workspaceEmbedCard = document.querySelector(".workspace-embed-card");
+      const workspaceHostDialog = document.getElementById("workspaceHostDialog");
+      const workspaceHostDialogChip = document.getElementById(
+        "workspaceHostDialogChip"
+      );
+      const workspaceHostDialogTitle = document.getElementById(
+        "workspaceHostDialogTitle"
+      );
+      const workspaceHostDialogMessage = document.getElementById(
+        "workspaceHostDialogMessage"
+      );
+      const workspaceHostDialogActions = document.getElementById(
+        "workspaceHostDialogActions"
+      );
+      const workspaceHostDialogClose = document.getElementById(
+        "workspaceHostDialogClose"
+      );
+      const classroomPageStateKey = "simpInstallerWorkspacePage";
+      const classroomNavButtons = Array.from(
+        document.querySelectorAll("[data-classroom-page]")
+      );
+      let courseFilterDebounce = null;
+      let classroomHeightSyncFrame = 0;
+      let classroomHeightSyncTimers = [];
+      let workspaceHostDialogDismissible = true;
+      let activeShellClassroomPage = "";
+
+      function shouldUseWorkspaceSidebarDrawer() {
+        return window.innerWidth <= 1024;
+      }
+
+      function openWorkspaceSidebar() {
+        if (!shouldUseWorkspaceSidebarDrawer()) return;
+        document.body.classList.add("workspace-sidebar-open");
+      }
+
+      function closeWorkspaceSidebar() {
+        document.body.classList.remove("workspace-sidebar-open");
+      }
+
+      function syncWorkspaceSidebarDrawer() {
+        if (!shouldUseWorkspaceSidebarDrawer()) {
+          closeWorkspaceSidebar();
+        }
+      }
+
+      function clearScheduledClassroomHeightSync() {
+        if (classroomHeightSyncFrame) {
+          cancelAnimationFrame(classroomHeightSyncFrame);
+          classroomHeightSyncFrame = 0;
+        }
+
+        classroomHeightSyncTimers.forEach((timerId) => clearTimeout(timerId));
+        classroomHeightSyncTimers = [];
+      }
+
+      function getClassroomShellMetrics() {
+        const embedTop = classroomEmbed?.getBoundingClientRect().top ?? 0;
+        const sidebarBottom =
+          document.querySelector("aside")?.getBoundingClientRect().bottom ||
+          window.innerHeight;
+        const workspaceNavTop =
+          workspaceNav?.getBoundingClientRect().top ?? embedTop;
+        const sidebarMatchedMinHeight = Math.max(sidebarBottom - embedTop, 0);
+        const headerNavOffset = Math.max(embedTop - workspaceNavTop, 0);
+        const sidebarMatchedHeightWithHeaderNav = Math.max(
+          sidebarMatchedMinHeight - headerNavOffset,
+          0
+        );
+
+        return {
+          embedTop,
+          sidebarMatchedMinHeight,
+          sidebarMatchedHeightWithHeaderNav,
+        };
+      }
+
+      function primeClassroomHeightMeasurement() {
+        if (!classroomEmbed) return;
+
+        const { sidebarMatchedMinHeight } = getClassroomShellMetrics();
+        classroomEmbed.style.height = `${Math.max(sidebarMatchedMinHeight, 420)}px`;
+      }
+
+      function getValidClassroomPage(pageName) {
+        const hasMatchingButton = classroomNavButtons.some(
+          (button) => button.getAttribute("data-classroom-page") === pageName
+        );
+        return hasMatchingButton ? pageName : "";
+      }
+
+      function getRequestedClassroomPage() {
+        try {
+          const params = new URLSearchParams(window.location.search);
+          const requestedPage = getValidClassroomPage(
+            params.get("classroomPage")
+          );
+          if (requestedPage) return requestedPage;
+
+          const storedPage = getValidClassroomPage(
+            sessionStorage.getItem(classroomPageStateKey)
+          );
+          return storedPage || "courses";
+        } catch (error) {
+          return "courses";
+        }
+      }
+
+      function persistClassroomPage(pageName) {
+        const validPageName = getValidClassroomPage(pageName);
+        if (!validPageName) return;
+
+        try {
+          sessionStorage.setItem(classroomPageStateKey, validPageName);
+        } catch (error) {
+          // Ignore sessionStorage failures.
+        }
+
+        try {
+          const nextUrl = new URL(window.location.href);
+          nextUrl.searchParams.set("classroomPage", validPageName);
+          window.history.replaceState({}, "", nextUrl);
+        } catch (error) {
+          // Ignore history/update failures.
+        }
+      }
+
+      function buildClassroomEmbedUrl(pageName) {
+        const nextUrl = new URL(
+          "../../../enroll/classroom.html",
+          window.location.href
+        );
+        nextUrl.searchParams.set("embedded", "1");
+        nextUrl.searchParams.set("page", pageName);
+
+        if (pageName === "assignments") {
+          try {
+            const pageUrl = new URL(window.location.href);
+            ["courseId", "levelId", "lessonId", "assessmentId", "autoStart"].forEach(
+              (key) => {
+                const value = pageUrl.searchParams.get(key);
+                if (value) {
+                  nextUrl.searchParams.set(key, value);
+                }
+              }
+            );
+          } catch (error) {
+            // Ignore URL parsing issues.
+          }
+        }
+
+        return nextUrl.href;
+      }
+
+      function syncWorkspaceCourseTypeDisplay() {
+        if (!workspaceCourseType || !workspaceCourseTypeDisplay) return;
+        const selectedOption =
+          workspaceCourseType.options[workspaceCourseType.selectedIndex];
+        workspaceCourseTypeDisplay.textContent =
+          selectedOption?.textContent || "All course types";
+      }
+
+      function setActiveClassroomPage(pageName) {
+        activeShellClassroomPage = pageName;
+        classroomNavButtons.forEach((button) => {
+          button.classList.toggle(
+            "is-active",
+            button.getAttribute("data-classroom-page") === pageName
+          );
+        });
+        if (workspaceTools) {
+          workspaceTools.hidden = pageName !== "courses";
+        }
+        if (workspaceEmbedCard) {
+          workspaceEmbedCard.classList.toggle(
+            "is-floating",
+            pageName === "discussions"
+          );
+        }
+      }
+
+      function setWorkspaceModalState(active) {
+        if (!workspaceEmbedCard) return;
+        workspaceEmbedCard.classList.toggle("is-modal-active", Boolean(active));
+      }
+
+      function requestEmbeddedClassroomPage(pageName) {
+        const validPageName = getValidClassroomPage(pageName);
+        const api = classroomEmbed?.contentWindow?.SIMPEmbeddedClassroom;
+        if (!validPageName || !api || typeof api.navigateToPage !== "function") {
+          return false;
+        }
+
+        api.navigateToPage(validPageName);
+        return true;
+      }
+
+      function sendHostDialogCommand(command, actionId = "") {
+        classroomEmbed?.contentWindow?.postMessage(
+          {
+            type: "simp-classroom-host-dialog-command",
+            command,
+            actionId,
+          },
+          "*"
+        );
+      }
+
+      function closeWorkspaceHostDialog({ notifyEmbed = true } = {}) {
+        workspaceHostDialog.hidden = true;
+        workspaceHostDialogActions.innerHTML = "";
+        workspaceHostDialogMessage.innerHTML = "";
+        workspaceHostDialogTitle.textContent = "";
+        workspaceHostDialogTitle.hidden = true;
+        setWorkspaceModalState(false);
+
+        if (notifyEmbed) {
+          sendHostDialogCommand("close");
+        }
+      }
+
+      function openWorkspaceHostDialog(dialog) {
+        workspaceHostDialogChip.textContent = dialog.chip || "Notice";
+        workspaceHostDialogTitle.textContent = dialog.title || "";
+        workspaceHostDialogTitle.hidden = !dialog.title;
+        if (dialog.messageHtml) {
+          workspaceHostDialogMessage.innerHTML = dialog.messageHtml;
+        } else {
+          workspaceHostDialogMessage.textContent = dialog.messageText || "";
+        }
+
+        workspaceHostDialogActions.innerHTML = "";
+        workspaceHostDialogDismissible = dialog.dismissible !== false;
+
+        (dialog.actions || []).forEach((action) => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `workspace-host-dialog-button${
+            action.variant === "primary" ? " primary" : ""
+          }`;
+          button.textContent = action.label;
+          button.addEventListener("click", () => {
+            sendHostDialogCommand("action", action.id);
+          });
+          workspaceHostDialogActions.appendChild(button);
+        });
+
+        setWorkspaceModalState(true);
+        workspaceHostDialog.hidden = false;
+      }
+
+      function setClassroomPage(pageName) {
+        if (!classroomEmbed || !pageName) return;
+        closeWorkspaceHostDialog({ notifyEmbed: false });
+        persistClassroomPage(pageName);
+        setActiveClassroomPage(pageName);
+        if (requestEmbeddedClassroomPage(pageName)) {
+          scheduleClassroomHeightSync({ resetViewport: true });
+          return;
+        }
+
+        primeClassroomHeightMeasurement();
+        classroomEmbed.src = buildClassroomEmbedUrl(pageName);
+      }
+
+      function getCurrentEmbeddedPage() {
+        if (!classroomEmbed?.src) return "";
+
+        try {
+          return new URL(classroomEmbed.src, window.location.href).searchParams.get(
+            "page"
+          ) || "";
+        } catch (error) {
+          return "";
+        }
+      }
+
+      function syncEmbeddedClassroomPage(pageName) {
+        if (!pageName) return;
+        persistClassroomPage(pageName);
+        setActiveClassroomPage(pageName);
+        scheduleClassroomHeightSync({ resetViewport: true });
+      }
+
+      function pushCourseFiltersToEmbed() {
+        const api = classroomEmbed?.contentWindow?.SIMPEmbeddedClassroom;
+        if (!api || typeof api.setCourseFilters !== "function") return;
+
+        api.setCourseFilters({
+          search: workspaceCourseSearch?.value || "",
+          type: workspaceCourseType?.value || "all",
+        });
+      }
+
+      function syncClassroomHeight() {
+        if (!classroomEmbed) return;
+        const { sidebarMatchedMinHeight } = getClassroomShellMetrics();
+        const nextHeight = Math.max(sidebarMatchedMinHeight, 420);
+        classroomEmbed.style.height = `${nextHeight}px`;
+      }
+
+      function scheduleClassroomHeightSync({ resetViewport = false } = {}) {
+        if (!classroomEmbed) return;
+
+        clearScheduledClassroomHeightSync();
+
+        if (resetViewport) {
+          primeClassroomHeightMeasurement();
+        } else {
+          syncClassroomHeight();
+        }
+
+        const runSync = () => {
+          syncClassroomHeight();
+        };
+
+        classroomHeightSyncFrame = requestAnimationFrame(() => {
+          runSync();
+          classroomHeightSyncFrame = requestAnimationFrame(runSync);
+        });
+
+        [120, 320, 700].forEach((delay) => {
+          classroomHeightSyncTimers.push(setTimeout(runSync, delay));
+        });
+      }
+
+      function bindClassroomAutoHeight() {
+        if (!classroomEmbed) return;
+
+        classroomEmbed.addEventListener("load", () => {
+          scheduleClassroomHeightSync({ resetViewport: true });
+          pushCourseFiltersToEmbed();
+
+          const win = classroomEmbed.contentWindow;
+          const doc = win?.document;
+          if (!win || !doc) return;
+
+          win.addEventListener("resize", () => {
+            scheduleClassroomHeightSync({ resetViewport: true });
+          });
+
+          if (typeof win.ResizeObserver === "function" && doc.body) {
+            const observer = new win.ResizeObserver(() => {
+              scheduleClassroomHeightSync();
+            });
+            observer.observe(doc.body);
+            if (doc.documentElement) observer.observe(doc.documentElement);
+          }
+        });
+      }
+
+      classroomNavButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          setClassroomPage(button.getAttribute("data-classroom-page"));
+        });
+      });
+
+      workspaceCourseSearch?.addEventListener("input", () => {
+        clearTimeout(courseFilterDebounce);
+        courseFilterDebounce = setTimeout(pushCourseFiltersToEmbed, 180);
+      });
+
+      workspaceCourseType?.addEventListener("change", () => {
+        syncWorkspaceCourseTypeDisplay();
+        pushCourseFiltersToEmbed();
+      });
+
+      workspaceMenuToggle?.addEventListener("click", () => {
+        if (document.body.classList.contains("workspace-sidebar-open")) {
+          closeWorkspaceSidebar();
+          return;
+        }
+        openWorkspaceSidebar();
+      });
+
+      workspaceSidebarBackdrop?.addEventListener("click", () => {
+        closeWorkspaceSidebar();
+      });
+
+      workspaceSidebar
+        ?.querySelector(".sidebar")
+        ?.addEventListener("click", (event) => {
+          if (event.target.closest("a")) {
+            closeWorkspaceSidebar();
+          }
+        });
+
+      window.addEventListener("message", (event) => {
+        if (event.source !== classroomEmbed?.contentWindow) return;
+
+        const data = event.data;
+        if (!data) return;
+
+        if (data.type === "simp-classroom-host-dialog") {
+          if (data.state === "open") {
+            openWorkspaceHostDialog(data.dialog || {});
+            return;
+          }
+
+          if (data.state === "close") {
+            closeWorkspaceHostDialog({ notifyEmbed: false });
+            return;
+          }
+        }
+
+        if (data.type === "simp-classroom-overlay") {
+          scheduleClassroomHeightSync();
+          return;
+        }
+
+        if (data.type === "simp-classroom-layout-change") {
+          scheduleClassroomHeightSync({ resetViewport: true });
+          return;
+        }
+
+        if (data.type !== "simp-classroom-page-change") return;
+
+        syncEmbeddedClassroomPage(data.page);
+      });
+
+      syncWorkspaceCourseTypeDisplay();
+      bindClassroomAutoHeight();
+      setClassroomPage(getRequestedClassroomPage());
+
+      workspaceHostDialogClose?.addEventListener("click", () => {
+        if (!workspaceHostDialogDismissible) return;
+        closeWorkspaceHostDialog();
+      });
+
+      window.addEventListener("keydown", (event) => {
+        if (
+          event.key === "Escape" &&
+          document.body.classList.contains("workspace-sidebar-open")
+        ) {
+          closeWorkspaceSidebar();
+          return;
+        }
+
+        if (event.key === "Escape" && !workspaceHostDialog.hidden) {
+          if (!workspaceHostDialogDismissible) return;
+          closeWorkspaceHostDialog();
+        }
+      });
+
+      window.addEventListener("resize", () => {
+        syncWorkspaceSidebarDrawer();
+        scheduleClassroomHeightSync({ resetViewport: true });
+      });
+      syncWorkspaceSidebarDrawer();
+    </script>
+  </body>
+</html>
