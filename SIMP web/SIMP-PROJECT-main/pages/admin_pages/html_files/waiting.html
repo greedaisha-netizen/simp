@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Pending Approval – SIMP Project</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../img/simpHappyMascotLogo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --brand: #20a44c;
+        --muted: #6b7280;
+        --bg: #f8fafc;
+        --card: #ffffff;
+        --ok: #10b981;
+        --err: #ef4444;
+        --warn: #f59e0b;
+
+        /* Skeleton palette */
+        --skel-base: #eef2f7;
+        --skel-spot: #f6f7fb;
+        --skel-edge: #e5e9f0;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        background: radial-gradient(
+          1200px 800px at 20% 10%,
+          #eef2ff 0%,
+          #ffffff 45%,
+          #ffffff 100%
+        );
+        color: #111827;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      /* ====== Layout wrappers so skeleton & card share same footprint ====== */
+      .frame {
+        width: 100%;
+        max-width: 560px;
+      }
+
+      /* Show/hide based on data-loading on <html> */
+      html[data-loading="true"] .card {
+        display: none;
+      }
+
+      html[data-loading="false"] .skeleton {
+        display: none;
+      }
+
+      /* ====== Your existing card ====== */
+      .card {
+        width: 100%;
+        background: var(--card);
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        padding: 28px;
+        text-align: center;
+      }
+
+      .hero {
+        display: grid;
+        place-items: center;
+        margin-bottom: 20px;
+      }
+
+      /* Animated shield + pulse (admin review) */
+      .icon-wrap {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        display: grid;
+        place-items: center;
+      }
+
+      .pulse {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: rgba(79, 70, 229, 0.12);
+        animation: pulse 2.4s ease-out infinite;
+      }
+
+      .pulse:nth-child(1) {
+        animation-delay: 0s;
+      }
+
+      .pulse:nth-child(2) {
+        animation-delay: 0.6s;
+      }
+
+      .pulse:nth-child(3) {
+        animation-delay: 1.2s;
+      }
+
+      @keyframes pulse {
+        0% {
+          transform: scale(0.6);
+          opacity: 0.9;
+        }
+
+        70% {
+          transform: scale(1);
+          opacity: 0;
+        }
+
+        100% {
+          transform: scale(1);
+          opacity: 0;
+        }
+      }
+
+      .shield {
+        width: 84px;
+        height: 96px;
+        position: relative;
+        background: linear-gradient(180deg, #c7d2fe 0%, #a5b4fc 100%);
+        border: 2px solid #818cf8;
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 16px;
+        clip-path: polygon(50% 0%, 95% 18%, 95% 62%, 50% 100%, 5% 62%, 5% 18%);
+        box-shadow: 0 6px 16px rgba(79, 70, 229, 0.15);
+      }
+
+      .shield:after {
+        content: "";
+        position: absolute;
+        inset: 12px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.45);
+        filter: blur(0.2px);
+        clip-path: polygon(50% 0%, 92% 20%, 92% 60%, 50% 94%, 8% 60%, 8% 20%);
+      }
+
+      .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #c7d2fe;
+        border-top-color: var(--brand);
+        border-radius: 50%;
+        animation: spin 900ms linear infinite;
+        vertical-align: text-bottom;
+        margin-left: 6px;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      h1 {
+        font-size: 22px;
+        margin: 8px 0 10px;
+      }
+
+      p {
+        color: var(--muted);
+        margin: 0 0 12px;
+        line-height: 1.5;
+      }
+
+      .tips {
+        background: #f3f4f6;
+        color: #374151;
+        border-radius: 12px;
+        padding: 12px 14px;
+        text-align: left;
+        font-size: 14px;
+        margin-top: 10px;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+        color: #374151;
+      }
+
+      .status.pending {
+        background: #fef3c7;
+        border-color: #fde68a;
+        color: #92400e;
+      }
+
+      .status.ok {
+        background: #ecfdf5;
+        border-color: #a7f3d0;
+        color: #065f46;
+      }
+
+      .status.err {
+        background: #fee2e2;
+        border-color: #fecaca;
+        color: #991b1b;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 18px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        padding: 10px 16px;
+        border-radius: 10px;
+        border: 0;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .btn-primary {
+        background: var(--brand);
+        color: #fff;
+      }
+
+      .btn-ghost {
+        background: #eef2ff;
+        color: #3730a3;
+      }
+
+      .btn-outline {
+        background: #fff;
+        color: #111827;
+        border: 1px solid #e5e7eb;
+      }
+
+      .small {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 8px;
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* ====== Skeleton UI ====== */
+      .skeleton {
+        width: 100%;
+        background: var(--card);
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        padding: 28px;
+      }
+
+      .skel-hero {
+        display: grid;
+        place-items: center;
+        margin-bottom: 20px;
+      }
+
+      .skel-badge,
+      .skel-line,
+      .skel-pill,
+      .skel-btn {
+        position: relative;
+        border-radius: 10px;
+        overflow: hidden;
+        background: var(--skel-base);
+      }
+
+      .skel-line {
+        height: 14px;
+      }
+
+      .skel-line.lg {
+        height: 20px;
+      }
+
+      .skel-line.sm {
+        height: 10px;
+      }
+
+      .skel-pill {
+        height: 24px;
+        border-radius: 999px;
+      }
+
+      .skel-btn {
+        height: 40px;
+        border-radius: 12px;
+      }
+
+      /* Shield placeholder */
+      .skel-shield {
+        width: 120px;
+        height: 120px;
+        position: relative;
+        background: var(--skel-base);
+        border: 1px solid var(--skel-edge);
+        clip-path: polygon(50% 0%, 95% 18%, 95% 62%, 50% 100%, 5% 62%, 5% 18%);
+        border-bottom-left-radius: 16px;
+        border-bottom-right-radius: 16px;
+      }
+
+      /* Shimmer sweep */
+      .skel-shimmer::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.6) 45%,
+          rgba(255, 255, 255, 0) 90%
+        );
+        animation: shimmer 1.4s infinite;
+      }
+
+      .skel-hero .skel-shield.skel-shimmer::after {
+        border-radius: 16px;
+      }
+
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-100%);
+        }
+
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      /* Skeleton layout */
+      .skel-title {
+        margin: 8px 0 12px;
+      }
+
+      .skel-title .skel-line {
+        width: 70%;
+        margin: 0 auto;
+      }
+
+      .skel-text {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .skel-text .skel-line {
+        width: 86%;
+        margin: 0 auto;
+      }
+
+      .skel-text .skel-line:nth-child(2) {
+        width: 90%;
+      }
+
+      .skel-text .skel-line:nth-child(3) {
+        width: 76%;
+      }
+
+      .skel-badge-row {
+        display: flex;
+        justify-content: center;
+        margin: 10px 0;
+      }
+
+      .skel-badge {
+        width: 150px;
+        height: 28px;
+        border-radius: 999px;
+      }
+
+      .skel-tips {
+        margin-top: 12px;
+        padding: 14px;
+        border-radius: 12px;
+        background: #f3f4f6;
+      }
+
+      .skel-tips .skel-line {
+        width: 60%;
+        margin-bottom: 8px;
+      }
+
+      .skel-tips ul {
+        list-style: none;
+        padding: 0;
+        margin: 10px 0 0;
+        display: grid;
+        gap: 8px;
+      }
+
+      .skel-tips li .skel-line {
+        width: 96%;
+        height: 10px;
+      }
+
+      .skel-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 10px;
+        margin-top: 18px;
+      }
+
+      @media (max-width: 480px) {
+        .skel-actions {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="frame">
+      <!-- ===== Skeleton (visible only while loading) ===== -->
+      <div class="skeleton" aria-hidden="true">
+        <div class="skel-hero">
+          <div class="skel-shield skel-shimmer"></div>
+        </div>
+        <div class="skel-title">
+          <div
+            class="skel-line lg skel-shimmer"
+            style="margin-bottom: 8px"
+          ></div>
+        </div>
+        <div class="skel-text">
+          <div class="skel-line skel-shimmer"></div>
+          <div class="skel-line skel-shimmer"></div>
+          <div class="skel-line sm skel-shimmer" style="width: 55%"></div>
+        </div>
+        <div class="skel-badge-row">
+          <div class="skel-badge skel-shimmer"></div>
+        </div>
+        <div class="skel-tips">
+          <div
+            class="skel-line skel-shimmer"
+            style="width: 40%; height: 14px; margin: 0 0 6px 0"
+          ></div>
+          <ul>
+            <li>
+              <div class="skel-line skel-shimmer"></div>
+            </li>
+            <li>
+              <div class="skel-line skel-shimmer" style="width: 88%"></div>
+            </li>
+            <li>
+              <div class="skel-line skel-shimmer" style="width: 80%"></div>
+            </li>
+          </ul>
+        </div>
+        <div class="skel-actions">
+          <div class="skel-btn skel-shimmer"></div>
+          <div class="skel-btn skel-shimmer"></div>
+          <div class="skel-btn skel-shimmer"></div>
+        </div>
+      </div>
+
+      <!-- ===== Your original card (hidden until first check completes) ===== -->
+      <div class="card" role="status" aria-live="polite">
+        <div class="hero">
+          <div class="icon-wrap" aria-hidden="true">
+            <span class="pulse"></span>
+            <span class="pulse"></span>
+            <span class="pulse"></span>
+            <div class="shield"></div>
+          </div>
+        </div>
+
+        <h1>Admin access is pending approval</h1>
+        <p id="intro">
+          Thanks for signing up. A <strong>superadmin</strong> needs to approve
+          your account before you can access the admin dashboard.
+        </p>
+
+        <div style="margin: 10px 0 6px">
+          <span id="statusBadge" class="status pending">Status: Pending</span>
+        </div>
+
+        <div
+          id="msg"
+          class="small"
+          style="min-height: 18px; margin-top: 6px"
+        ></div>
+
+        <div class="tips">
+          <strong>What’s next?</strong>
+          <ul style="margin: 8px 0 0 18px; padding: 0">
+            <li>Click <em>Refresh status</em> to re-check your approval.</li>
+            <li>We’ll email you once you’re approved.</li>
+            <li>
+              If you believe this is taking too long, contact your superadmin.
+            </li>
+          </ul>
+        </div>
+
+        <div class="actions" style="margin-top: 16px">
+          <button id="refreshBtn" class="btn btn-primary">
+            Refresh status
+          </button>
+          <button id="logoutBtn" class="btn btn-outline">Log out</button>
+        </div>
+
+        <div class="small">
+          Need help? Contact support at
+          <a href="mailto:simpProject@email.com">simpProject@email.com</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Logic to check role and redirect when approved -->
+    <script type="module">
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+      import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../../../supabase.js";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // ===== NEW: control skeleton vs. content =====
+      // Start in loading mode (skeleton visible)
+      document.documentElement.setAttribute("data-loading", "true");
+      let __firstRevealDone = false;
+      function revealContentOnce() {
+        if (__firstRevealDone) return;
+        __firstRevealDone = true;
+        // Flip to show real content after first check finishes
+        document.documentElement.setAttribute("data-loading", "false");
+      }
+      // ===== END NEW =====
+
+      const statusBadge = document.getElementById("statusBadge");
+      const msg = document.getElementById("msg");
+      const refreshBtn = document.getElementById("refreshBtn");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const homeLink = document.getElementById("homeLink");
+
+      function setStatus(kind, note = "") {
+        statusBadge.classList.remove("ok", "err", "pending");
+        if (kind === "ok") {
+          statusBadge.classList.add("ok");
+          statusBadge.textContent = "Status: Approved";
+        } else if (kind === "err") {
+          statusBadge.classList.add("err");
+          statusBadge.textContent = "Status: Error";
+        } else {
+          statusBadge.classList.add("pending");
+          statusBadge.textContent = "Status: Pending";
+        }
+        msg.textContent = note || "";
+      }
+
+      async function getAdminRow(userId) {
+        const { data, error } = await supabase
+          .from("admin")
+          .select("id, role")
+          .eq("id", userId)
+          .maybeSingle();
+        if (error) throw error;
+        return data;
+      }
+
+      async function checkStatus() {
+        try {
+          refreshBtn.disabled = true;
+          refreshBtn.innerHTML = `Refreshing<span class="spinner"></span>`;
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+
+          if (!user) {
+            setStatus(
+              "err",
+              "You are not logged in. Please log in with your admin account."
+            );
+            return;
+          }
+
+          const row = await getAdminRow(user.id);
+          if (!row) {
+            setStatus(
+              "err",
+              "No admin profile found for this account. Please contact a superadmin."
+            );
+            return;
+          }
+
+          if (row.role === "admin" || row.role === "superadmin") {
+            setStatus(
+              "ok",
+              "You're approved! Redirecting to the admin dashboard…"
+            );
+            // Redirect to dashboard
+            window.location.href = "dashboard.html";
+            return;
+          }
+
+          if (row.role === "pending") {
+            setStatus(
+              "pending",
+              "A superadmin still needs to approve your access. Try again later."
+            );
+          } else {
+            setStatus(
+              "err",
+              `Your role is "${row.role}". You don't have admin access.`
+            );
+          }
+        } catch (e) {
+          console.error(e);
+          setStatus("err", e?.message || "Failed to check status.");
+        } finally {
+          // Restore button label/state
+          refreshBtn.disabled = false;
+          refreshBtn.textContent = "Refresh status";
+
+          // ===== NEW: after the very first check completes, reveal real content =====
+          revealContentOnce();
+        }
+      }
+
+      // Soft auto-poll every 30s (stop once approved by leaving page)
+      let poll = setInterval(checkStatus, 30000);
+
+      refreshBtn.addEventListener("click", () => checkStatus());
+      logoutBtn.addEventListener("click", async () => {
+        try {
+          await supabase.auth.signOut();
+          window.location.href = "../../../index.html";
+        } catch (e) {
+          console.error(e);
+        }
+      });
+
+      // Initial check on load
+      checkStatus();
+
+      // Clear poll when unloading
+      window.addEventListener("beforeunload", () => clearInterval(poll));
+
+      // === NEW: sign out on back / home click ===
+
+      // 1) Intercept "Return to Home" to sign out first
+      homeLink?.addEventListener("click", async (e) => {
+        e.preventDefault();
+        try {
+          await supabase.auth.signOut();
+        } catch (err) {
+          console.warn("Sign out on Home failed:", err?.message || err);
+        } finally {
+          window.location.href = homeLink.href;
+        }
+      });
+
+      // 2) Log out if the user presses the browser Back button on this page
+      // Push a state so the next back triggers popstate here
+      try {
+        history.pushState({ pendingAdmin: true }, "", window.location.href);
+      } catch (_) {
+        // ignore pushState errors
+      }
+
+      let handledBackSignOut = false;
+      window.addEventListener("popstate", async () => {
+        if (handledBackSignOut) return;
+        handledBackSignOut = true;
+        try {
+          await supabase.auth.signOut();
+        } catch (err) {
+          console.warn("Sign out on Back failed:", err?.message || err);
+        } finally {
+          // Replace history with Home so another back won't come back here
+          window.location.replace("../../../index.html");
+        }
+      });
+      // === END NEW ===
+    </script>
+  </body>
+</html>

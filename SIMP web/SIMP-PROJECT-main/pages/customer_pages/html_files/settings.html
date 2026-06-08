@@ -1,0 +1,1321 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../img/simpHappyMascotLogo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css_files/sideBar.css" />
+    <title>Settings</title>
+    <style>
+      :root {
+        --muted: #6b7280;
+        --ink: #1c2430;
+        --card: #ffffff;
+        --line: #e5e7eb;
+        --bg: #f8fafc;
+        --success: #20a44c;
+        --warn: #f59e0b;
+        --danger: #ef4444;
+        --chip: #eef2f7;
+        --sk-base: #eef2f7;
+        --sk-highlight: #f7fafc;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      .container {
+        display: grid;
+        width: 96%;
+        margin: 0 auto;
+        gap: 1.8rem;
+        grid-template-columns: 12rem auto 0;
+      }
+
+      main {
+        margin-top: 1.4rem;
+        padding: 1rem;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .header h1 {
+        margin: 0;
+        color: var(--ink);
+      }
+
+      .header .actions {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+      }
+
+      .icon-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: var(--card);
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .icon-btn:hover {
+        background: #fbfbfb;
+      }
+
+      .icon-btn[disabled] {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 1rem;
+      }
+
+      .card h2 {
+        margin: 0.2rem 0 1rem;
+        font-size: 1.05rem;
+        color: var(--ink);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+      }
+
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+
+      .field label {
+        font-size: 0.9rem;
+        color: var(--muted);
+      }
+
+      .value,
+      input,
+      .readonly {
+        width: 100%;
+        padding: 0.7rem 0.8rem;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #fff;
+      }
+
+      .readonly {
+        background: #f9fafb;
+        color: #374151;
+      }
+
+      input[readonly] {
+        background: #f9fafb;
+        color: #374151;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #cbd5e1;
+        box-shadow: 0 0 0 3px rgba(31, 41, 55, 0.06);
+      }
+
+      .row {
+        display: flex;
+        gap: 0.6rem;
+        align-items: center;
+      }
+
+      .hint {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.25rem 0.55rem;
+        border-radius: 999px;
+        background: var(--chip);
+        color: #374151;
+        font-size: 0.8rem;
+      }
+
+      .danger-zone {
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 14px;
+        padding: 1rem;
+      }
+
+      .danger-zone h3 {
+        margin: 0.2rem 0 0.5rem;
+        color: #991b1b;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .danger-zone p {
+        margin: 0 0 0.8rem;
+        color: #6b7280;
+      }
+
+      .btn-danger {
+        background: var(--danger);
+        color: #fff;
+        border: none;
+        padding: 0.7rem 1rem;
+        border-radius: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .btn-danger:hover {
+        filter: brightness(0.96);
+      }
+
+      .footer-actions {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+        margin-top: 0.6rem;
+      }
+
+      .btn {
+        padding: 0.7rem 1rem;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: #fff;
+        cursor: pointer;
+      }
+
+      .btn.primary {
+        background: var(--success);
+        color: #fff;
+        border-color: transparent;
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      /* ===== Skeleton Loader ===== */
+      .loading {
+        border: 1px dashed var(--line);
+        border-radius: 14px;
+        background: var(--card);
+        padding: 1rem;
+      }
+
+      .sk-shimmer {
+        position: relative;
+        overflow: hidden;
+        background: var(--sk-base);
+      }
+
+      .sk-shimmer::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--sk-highlight),
+          transparent
+        );
+        animation: sk 1.2s infinite;
+      }
+
+      @keyframes sk {
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      .sk-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+      }
+
+      .sk-title {
+        width: 180px;
+        height: 24px;
+        border-radius: 8px;
+      }
+
+      .sk-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .sk-chip,
+      .sk-btn {
+        height: 36px;
+        border-radius: 10px;
+      }
+
+      .sk-btn {
+        width: 90px;
+      }
+
+      .sk-chip {
+        width: 120px;
+      }
+
+      .sk-cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .sk-card {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 1rem;
+        background: var(--card);
+      }
+
+      .sk-card-head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 1rem;
+      }
+
+      .sk-icon {
+        width: 20px;
+        height: 20px;
+        border-radius: 6px;
+      }
+
+      .sk-h2 {
+        width: 160px;
+        height: 18px;
+        border-radius: 6px;
+      }
+
+      .sk-grid-2,
+      .sk-grid-3 {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .sk-grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .sk-grid-3 {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .sk-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .sk-label {
+        width: 90px;
+        height: 12px;
+        border-radius: 6px;
+      }
+
+      .sk-input {
+        height: 42px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: #fff;
+      }
+
+      .sk-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 0.6rem;
+      }
+
+      .sk-danger {
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 1rem;
+        background: #fff;
+      }
+
+      .sk-danger-h3 {
+        width: 200px;
+        height: 16px;
+        border-radius: 6px;
+        margin-bottom: 8px;
+      }
+
+      .sk-danger-p {
+        width: 100%;
+        max-width: 560px;
+        height: 12px;
+        border-radius: 6px;
+        margin-bottom: 10px;
+      }
+
+      .sk-danger-btn {
+        width: 160px;
+        height: 40px;
+        border-radius: 10px;
+      }
+
+      /* ===== Toast & Modal (kept for compatibility) ===== */
+      .toast {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        background: #111827;
+        color: #fff;
+        padding: 0.8rem 1rem;
+        border-radius: 12px;
+        display: flex;
+        gap: 0.6rem;
+        align-items: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        transform: translateY(12px);
+        transition: 0.25s ease;
+        z-index: 60;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(17, 24, 39, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        z-index: 50;
+      }
+
+      .modal {
+        width: 100%;
+        max-width: 520px;
+        background: #fff;
+        border-radius: 16px;
+        padding: 1rem;
+        border: 1px solid var(--line);
+      }
+
+      .modal header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .modal h3 {
+        margin: 0.2rem 0;
+      }
+
+      .modal .body {
+        margin: 0.6rem 0 1rem;
+        color: #374151;
+      }
+
+      .modal .actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+      }
+
+      /* ====== Mobile compact layout ====== */
+      @media (max-width: 900px) {
+        .container {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+          width: 100%;
+        }
+
+        main {
+          padding: 0.75rem;
+          margin-top: 0.75rem;
+        }
+
+        .grid-2,
+        .grid-3 {
+          grid-template-columns: 1fr;
+          gap: 0.75rem;
+        }
+
+        .card {
+          padding: 0.75rem;
+          border-radius: 12px;
+        }
+
+        .card h2 {
+          font-size: 1rem;
+          margin-bottom: 0.75rem;
+        }
+
+        .header {
+          position: sticky;
+          top: 0;
+          z-index: 20;
+          background: var(--bg);
+          padding: 0.25rem 0;
+          margin-bottom: 0.5rem;
+        }
+
+        .header h1 {
+          font-size: 1.1rem;
+        }
+
+        .icon-btn {
+          padding: 0.5rem;
+          border-radius: 10px;
+          gap: 0;
+          font-size: 0;
+        }
+
+        .icon-btn .material-icons-sharp {
+          font-size: 20px;
+          line-height: 1;
+        }
+
+        .pill {
+          padding: 0.2rem 0.45rem;
+          font-size: 0.75rem;
+        }
+
+        input,
+        .readonly {
+          padding: 0.6rem 0.7rem;
+          border-radius: 10px;
+        }
+
+        .footer-actions {
+          justify-content: stretch;
+        }
+
+        .footer-actions .btn {
+          flex: 1;
+        }
+
+        .sk-grid-2,
+        .sk-grid-3 {
+          grid-template-columns: 1fr;
+          gap: 0.75rem;
+        }
+
+        .sk-card {
+          padding: 0.75rem;
+        }
+
+        .sk-btn {
+          width: 44px;
+        }
+
+        .sk-chip {
+          width: 72px;
+          height: 28px;
+        }
+
+        .sk-title {
+          width: 120px;
+          height: 20px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .header h1 {
+          font-size: 1rem;
+        }
+
+        .pill {
+          display: none;
+        }
+      }
+
+      /* ===== SweetAlert2 compact styling (added) ===== */
+      .swal2-container {
+        z-index: 10100 !important;
+      }
+      .swal2-compact-popup {
+        padding: 14px 16px !important;
+        border-radius: 14px !important;
+        max-width: min(92vw, 420px) !important;
+      }
+
+      .swal2-compact-title {
+        font-size: 18px !important;
+        margin: 2px 0 6px !important;
+        line-height: 1.2 !important;
+        font-weight: 800 !important;
+        color: #0f172a !important;
+      }
+
+      .swal2-compact-html {
+        font-size: 14px !important;
+        line-height: 1.45 !important;
+        color: #334155 !important;
+      }
+
+      .swal2-compact-confirm,
+      .swal2-compact-cancel {
+        background: #20a44c;
+        color: #fff;
+        border: 0;
+        border-radius: 999px;
+        padding: 9px 16px;
+        font-weight: 800;
+        margin: 6px 4px;
+      }
+
+      .swal2-compact-cancel {
+        background: #e5e7eb;
+        color: #111827;
+      }
+
+      .swal2-icon {
+        margin: 8px auto !important;
+      }
+
+      .swal2-actions {
+        margin-top: 8px !important;
+      }
+
+      .swal2-timer-progress-bar {
+        background: rgba(32, 100, 124, 0.25) !important;
+      }
+
+      /* keep scrollbar space so layout doesn't jump */
+      html {
+        overflow-y: scroll;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- ===== Sidebar (kept as-is) ===== -->
+      <aside>
+        <div class="toggle">
+          <div class="logo">
+            <img src="../../../img/simpHappyMascotLogo.png" alt="logo" />
+            <h2>SIMP<span class="danger">Project</span></h2>
+          </div>
+          <div class="close" id="close-btn">
+            <span class="material-icons-sharp">close</span>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <a href="myJobPosts.html">
+            <span class="material-icons-sharp">cases</span>
+            <h3>My Job Posts</h3>
+          </a>
+          <a href="createPost.html" id="nav-create">
+            <span class="material-icons-sharp">add</span>
+            <h3>Create a post</h3>
+          </a>
+          <a href="settings.html" class="active">
+            <span class="material-icons-sharp">settings</span>
+            <h3>Settings</h3>
+          </a>
+          <a href="#" id="logout-btn">
+            <span class="material-icons-sharp">logout</span>
+            <h3>Logout</h3>
+          </a>
+        </div>
+      </aside>
+      <!-- ===== End Sidebar ===== -->
+
+      <!-- ===== Main ===== -->
+      <main>
+        <div class="header">
+          <h1>Settings</h1>
+          <div class="actions">
+            <button id="editBtn" class="icon-btn" aria-label="Edit">
+              <span class="material-icons-sharp">edit</span> Edit
+            </button>
+          </div>
+        </div>
+
+        <!-- SKELETON: visible while loading -->
+        <div id="loading" class="loading" aria-hidden="true">
+          <!-- header skeleton mirroring real header -->
+          <div class="sk-header">
+            <div class="sk-title sk-shimmer"></div>
+            <div class="sk-actions">
+              <div class="sk-btn sk-shimmer"></div>
+              <div class="sk-chip sk-shimmer"></div>
+            </div>
+          </div>
+
+          <div class="sk-cards">
+            <!-- Profile card skeleton -->
+            <section class="sk-card">
+              <div class="sk-card-head">
+                <div class="sk-icon sk-shimmer"></div>
+                <div class="sk-h2 sk-shimmer"></div>
+              </div>
+              <div class="sk-grid-2">
+                <div class="sk-field">
+                  <div class="sk-label sk-shimmer"></div>
+                  <div class="sk-input sk-shimmer"></div>
+                </div>
+                <div class="sk-field">
+                  <div class="sk-label sk-shimmer"></div>
+                  <div class="sk-input sk-shimmer"></div>
+                </div>
+                <div class="sk-field">
+                  <div class="sk-label sk-shimmer"></div>
+                  <div class="sk-input sk-shimmer"></div>
+                </div>
+                <div class="sk-field">
+                  <div class="sk-label sk-shimmer"></div>
+                  <div class="sk-input sk-shimmer"></div>
+                </div>
+              </div>
+              <div class="sk-footer">
+                <div class="sk-btn sk-shimmer" style="width: 90px"></div>
+                <div class="sk-btn sk-shimmer" style="width: 140px"></div>
+              </div>
+            </section>
+
+            <!-- Personal card skeleton -->
+            <section class="sk-card">
+              <div class="sk-card-head">
+                <div class="sk-icon sk-shimmer"></div>
+                <div class="sk-h2 sk-shimmer"></div>
+              </div>
+              <div class="sk-grid-3">
+                <div class="sk-field">
+                  <div class="sk-label sk-shimmer"></div>
+                  <div class="sk-input sk-shimmer"></div>
+                </div>
+                <div class="sk-field">
+                  <div class="sk-label sk-shimmer"></div>
+                  <div class="sk-input sk-shimmer"></div>
+                </div>
+                <div class="sk-field">
+                  <div class="sk-label sk-shimmer"></div>
+                  <div class="sk-input sk-shimmer"></div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Danger zone skeleton -->
+            <section class="sk-danger">
+              <div class="sk-danger-h3 sk-shimmer"></div>
+              <div class="sk-danger-p sk-shimmer"></div>
+              <div class="sk-danger-btn sk-shimmer"></div>
+            </section>
+          </div>
+        </div>
+
+        <!-- REAL CONTENT: hidden until data is loaded -->
+        <div id="content" class="cards" style="display: none">
+          <!-- Profile -->
+          <section class="card">
+            <h2><span class="material-icons-sharp">person</span> Profile</h2>
+            <div class="grid-2">
+              <div class="field">
+                <label for="name">Full Name</label>
+                <input id="name" type="text" placeholder="Your name" disabled />
+              </div>
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email" type="email" class="readonly" readonly />
+              </div>
+              <div class="field">
+                <label for="phone">Phone</label>
+                <input
+                  id="phone"
+                  type="tel"
+                  placeholder="+63 9xx xxx xxxx"
+                  disabled
+                />
+              </div>
+              <div class="field">
+                <label for="createdAt">Created</label>
+                <input id="createdAt" class="readonly" readonly />
+              </div>
+            </div>
+            <div class="footer-actions">
+              <button id="cancelBtn" class="btn" style="display: none">
+                Cancel
+              </button>
+              <button id="saveBtn" class="btn primary" style="display: none">
+                <span class="material-icons-sharp" style="font-size: 1rem"
+                  >save</span
+                >
+                Save changes
+              </button>
+            </div>
+          </section>
+
+          <!-- Personal -->
+          <section class="card">
+            <h2><span class="material-icons-sharp">badge</span> Personal</h2>
+            <div class="grid-3">
+              <div class="field">
+                <label for="birthdate">Birthdate</label>
+                <input id="birthdate" type="date" disabled />
+              </div>
+              <div class="field">
+                <label for="age">Age (auto)</label>
+                <input id="age" type="number" class="readonly" readonly />
+              </div>
+              <!-- User ID field removed visually; hidden input kept to avoid JS errors -->
+              <input id="uid" type="hidden" />
+            </div>
+          </section>
+
+          <!-- Danger zone -->
+          <section class="danger-zone">
+            <h3>
+              <span class="material-icons-sharp">warning</span> Danger zone
+            </h3>
+            <p>
+              Deleting your account removes your customer record and your Auth
+              user. This action is permanent.
+            </p>
+            <button id="deleteBtn" class="btn-danger">
+              <span class="material-icons-sharp" style="vertical-align: middle"
+                >delete_forever</span
+              >
+              Delete account
+            </button>
+          </section>
+        </div>
+      </main>
+
+      <div></div>
+    </div>
+
+    <!-- Toast (kept for compatibility) -->
+    <div id="toast" class="toast">
+      <span id="toastIcon" class="material-icons-sharp">check_circle</span>
+      <span id="toastMsg">Saved</span>
+    </div>
+
+    <!-- Delete Modal (kept but no longer shown; SweetAlert handles this) -->
+    <div
+      id="deleteModal"
+      class="modal-backdrop"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="delTitle"
+      style="display: none"
+    >
+      <div class="modal">
+        <header>
+          <h3 id="delTitle">Confirm account deletion</h3>
+          <button id="modalClose" class="icon-btn" aria-label="Close">
+            <span class="material-icons-sharp">close</span>
+          </button>
+        </header>
+        <div class="body">
+          <p>
+            This will call the <code>delete-account</code> Edge Function to
+            remove your Auth user and cascade delete related records. Type
+            <strong>DELETE</strong> to proceed.
+          </p>
+          <input id="confirmText" placeholder="Type DELETE to confirm" />
+        </div>
+        <div class="actions">
+          <button id="modalCancel" class="btn">Cancel</button>
+          <button
+            id="modalDelete"
+            class="btn danger"
+            style="background: #ef4444; color: #fff"
+          >
+            <span class="material-icons-sharp" style="font-size: 1rem"
+              >delete</span
+            >
+            Delete permanently
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- App Script -->
+    <script type="module" src="../../general_files/index.js"></script>
+    <script type="module">
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+      import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../../../supabase.js";
+
+      // Initialize client
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // ===== Compact SweetAlert helpers (scroll lock + friendly wrappers) =====
+      let __scrollY = 0;
+      let __bodyPadRight = "";
+      function getScrollbarWidth() {
+        const d = document.createElement("div");
+        d.style.width = "100px";
+        d.style.height = "100px";
+        d.style.overflow = "scroll";
+        d.style.position = "absolute";
+        d.style.top = "-9999px";
+        document.body.appendChild(d);
+        const w = d.offsetWidth - d.clientWidth;
+        document.body.removeChild(d);
+        return w;
+      }
+      function lockBodyScroll() {
+        __scrollY = window.scrollY || window.pageYOffset || 0;
+        const pad = getScrollbarWidth();
+        __bodyPadRight = document.body.style.paddingRight || "";
+        if (pad > 0) document.body.style.paddingRight = pad + "px";
+        document.body.style.position = "fixed";
+        document.body.style.top = `-${__scrollY}px`;
+        document.body.style.left = "0";
+        document.body.style.right = "0";
+        document.body.style.width = "100%";
+      }
+      function unlockBodyScroll() {
+        document.body.style.position = "";
+        document.body.style.top = "";
+        document.body.style.left = "";
+        document.body.style.right = "";
+        document.body.style.width = "";
+        document.body.style.paddingRight = __bodyPadRight;
+        window.scrollTo(0, __scrollY);
+      }
+
+      const swalBase = Swal.mixin({
+        customClass: {
+          popup: "swal2-compact-popup",
+          confirmButton: "swal2-compact-confirm",
+          cancelButton: "swal2-compact-cancel",
+          title: "swal2-compact-title",
+          htmlContainer: "swal2-compact-html",
+        },
+        buttonsStyling: false,
+        allowOutsideClick: false,
+        allowEscapeKey: true,
+        heightAuto: false,
+        returnFocus: false,
+        willOpen: lockBodyScroll,
+        didClose: unlockBodyScroll,
+      });
+
+      const toastSwal = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 2200,
+        timerProgressBar: true,
+        customClass: { popup: "swal2-compact-popup" },
+        returnFocus: false,
+      });
+
+      function prettyError(err) {
+        const raw = (err?.message || String(err || "")).toLowerCase();
+
+        if (raw.includes("not signed") || raw.includes("unauthorized"))
+          return "Please sign in to continue.";
+        if (
+          raw.includes("network") ||
+          raw.includes("fetch") ||
+          raw.includes("timeout")
+        )
+          return "We couldn’t connect. Please check your internet and try again.";
+        if (raw.includes("forbidden") || raw.includes("permission"))
+          return "You don’t have access to do that.";
+        if (raw.includes("invalid") && raw.includes("phone"))
+          return "Please enter a valid phone number.";
+        if (!err?.message) return "Something went wrong. Please try again.";
+        return "Something went wrong. Please try again.";
+      }
+
+      async function showNotice(msg, type = "info", opts = {}) {
+        const common = { html: msg, ...opts };
+        if (type === "success")
+          return swalBase.fire({
+            icon: "success",
+            title: "Success",
+            confirmButtonText: "OK",
+            ...common,
+          });
+        if (type === "error")
+          return swalBase.fire({
+            icon: "error",
+            title: "There was a problem",
+            confirmButtonText: "OK",
+            ...common,
+          });
+        if (type === "warning")
+          return swalBase.fire({
+            icon: "warning",
+            title: "Please check",
+            confirmButtonText: "OK",
+            ...common,
+          });
+        if (type === "info")
+          return swalBase.fire({
+            icon: "info",
+            title: "Heads up",
+            confirmButtonText: "OK",
+            ...common,
+          });
+        // default to toast
+        return toastSwal.fire({ icon: "info", title: msg });
+      }
+
+      // ===== UI refs =====
+      const loading = document.getElementById("loading");
+      const content = document.getElementById("content");
+      const editBtn = document.getElementById("editBtn");
+      const saveBtn = document.getElementById("saveBtn");
+      const cancelBtn = document.getElementById("cancelBtn");
+
+      const nameEl = document.getElementById("name");
+      const emailEl = document.getElementById("email");
+      const phoneEl = document.getElementById("phone");
+      const birthEl = document.getElementById("birthdate");
+      const ageEl = document.getElementById("age");
+      const uidEl = document.getElementById("uid");
+      const createdAtEl = document.getElementById("createdAt");
+
+      // kept toast elements (not used directly anymore)
+      const toast = document.getElementById("toast");
+      const toastMsg = document.getElementById("toastMsg");
+      const toastIcon = document.getElementById("toastIcon");
+
+      const deleteBtn = document.getElementById("deleteBtn");
+      const deleteModal = document.getElementById("deleteModal"); // kept hidden
+      const modalClose = document.getElementById("modalClose");
+      const modalCancel = document.getElementById("modalCancel");
+      const modalDelete = document.getElementById("modalDelete");
+      const confirmText = document.getElementById("confirmText");
+
+      let currentUser = null;
+      let original = {};
+
+      // Re-route old toast to SweetAlert toast (kept function name)
+      function showToast(msg, ok = true) {
+        toastMsg.textContent = msg; // update fallback UI (kept)
+        toastIcon.textContent = ok ? "check_circle" : "error";
+        toast.style.background = ok ? "#111827" : "#7f1d1d";
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 1200);
+        // SweetAlert toast
+        toastSwal.fire({ icon: ok ? "success" : "error", title: msg });
+      }
+
+      function setEditing(on) {
+        [nameEl, phoneEl, birthEl].forEach((el) => (el.disabled = !on));
+        saveBtn.style.display = on ? "" : "none";
+        cancelBtn.style.display = on ? "" : "none";
+        editBtn.disabled = on;
+      }
+
+      function calcAge(dateStr) {
+        if (!dateStr) return null;
+        const d = new Date(dateStr);
+        if (isNaN(d)) return null;
+        const today = new Date();
+        let age = today.getFullYear() - d.getFullYear();
+        const m = today.getMonth() - d.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < d.getDate())) age--;
+        return age >= 0 ? age : null;
+      }
+
+      async function loadData() {
+        const {
+          data: { user },
+          error: uerr,
+        } = await supabase.auth.getUser();
+        if (uerr || !user) {
+          loading.innerHTML = '<div class="hint">Not signed in.</div>';
+          await showNotice("Please sign in to view your settings.", "info");
+          return;
+        }
+        currentUser = user;
+
+        const { data, error } = await supabase
+          .from("customer")
+          .select("*")
+          .eq("id", user.id)
+          .single();
+
+        if (error) {
+          loading.innerHTML =
+            '<span class="material-icons-sharp">error</span><span> Could not load settings.</span>';
+          console.error(error);
+          await showNotice(
+            "We couldn’t load your settings. Please refresh and try again.",
+            "error"
+          );
+          return;
+        }
+
+        original = { ...data };
+        nameEl.value = data.name || "";
+        emailEl.value = data.email || user.email || "";
+        phoneEl.value = data.phone || "";
+        birthEl.value = data.birthdate || "";
+        ageEl.value = data.age ?? calcAge(data.birthdate) ?? "";
+        if (uidEl) uidEl.value = user.id;
+        createdAtEl.value = data.createdAt
+          ? new Date(data.createdAt).toLocaleString()
+          : "";
+
+        loading.style.display = "none";
+        content.style.display = "";
+        setEditing(false);
+      }
+
+      birthEl?.addEventListener("change", () => {
+        ageEl.value = calcAge(birthEl.value) ?? "";
+      });
+      editBtn.addEventListener("click", () => setEditing(true));
+
+      cancelBtn.addEventListener("click", () => {
+        nameEl.value = original.name || "";
+        phoneEl.value = original.phone || "";
+        birthEl.value = original.birthdate || "";
+        ageEl.value = original.age ?? calcAge(original.birthdate) ?? "";
+        setEditing(false);
+        showToast("Changes discarded", true);
+      });
+
+      saveBtn.addEventListener("click", async () => {
+        if (!currentUser) return;
+
+        const updates = {
+          id: currentUser.id,
+          name: nameEl.value.trim(),
+          phone: (phoneEl.value || "").trim() || null,
+          birthdate: birthEl.value || null,
+          age: calcAge(birthEl.value),
+          email: emailEl.value || null, // mirrored (readonly here)
+        };
+
+        // PH phone sanity
+        if (
+          updates.phone &&
+          !/^(\+?63|0)9\d{9}$/.test(updates.phone.replace(/\s|-/g, ""))
+        ) {
+          await showNotice(
+            "Please enter a valid PH mobile number (e.g., 09xx or +639xx).",
+            "warning"
+          );
+          return;
+        }
+
+        saveBtn.disabled = true;
+        const { error } = await supabase
+          .from("customer")
+          .upsert(updates, { onConflict: "id" });
+        saveBtn.disabled = false;
+
+        if (error) {
+          console.error(error);
+          await showNotice(prettyError(error), "error");
+          return;
+        }
+
+        original = { ...original, ...updates };
+        setEditing(false);
+        await showNotice("Your changes have been saved.", "success");
+      });
+
+      // Logout
+      document
+        .getElementById("logout-btn")
+        ?.addEventListener("click", async (e) => {
+          e.preventDefault();
+          await supabase.auth.signOut();
+          window.location.href = "../../../index.html";
+        });
+
+      // ===== NEW: helper to recursively list and delete files in jobs/<uid>/ =====
+      async function listAllFilesInFolder(bucket, folder) {
+        const paths = [];
+        async function walk(prefix) {
+          const { data, error } = await supabase.storage
+            .from(bucket)
+            .list(prefix, {
+              limit: 1000,
+              sortBy: { column: "name", order: "asc" },
+            });
+
+          if (error) {
+            console.error("List error for", `${bucket}:${prefix}`, error);
+            return;
+          }
+
+          for (const item of data) {
+            const isFolder = !item.id && !item.metadata;
+            if (isFolder) {
+              await walk(`${prefix}/${item.name}`);
+            } else {
+              paths.push(`${prefix}/${item.name}`);
+            }
+          }
+        }
+        await walk(folder);
+        return paths;
+      }
+
+      async function deleteCustomerJobsFiles(customerId) {
+        try {
+          const base = customerId;
+          const { data: probe, error: probeErr } = await supabase.storage
+            .from("jobs")
+            .list(base, { limit: 1 });
+          if (probeErr) {
+            console.warn(
+              "Skipping storage cleanup (list error):",
+              probeErr.message
+            );
+            return;
+          }
+          if (!probe || probe.length === 0) {
+            return;
+          }
+
+          const allPaths = await listAllFilesInFolder("jobs", base);
+          if (!allPaths.length) return;
+
+          const chunkSize = 100;
+          for (let i = 0; i < allPaths.length; i += chunkSize) {
+            const chunk = allPaths.slice(i, i + chunkSize);
+            const { error } = await supabase.storage.from("jobs").remove(chunk);
+            if (error) {
+              console.error("Remove error:", error, "on", chunk);
+            }
+          }
+          console.log(`Deleted ${allPaths.length} files from jobs/${base}`);
+        } catch (err) {
+          console.error("Storage cleanup failed:", err);
+        }
+      }
+      // ===== END helpers =====
+
+      // ===== Delete flow now with SweetAlert (kept old modal hidden) =====
+      async function handleDeleteFlow() {
+        const confirmRes = await swalBase.fire({
+          icon: "warning",
+          title: "Delete your account?",
+          html: "This can’t be undone. Type <b>DELETE</b> to confirm.",
+          input: "text",
+          inputPlaceholder: "Type DELETE to confirm",
+          inputAttributes: { autocapitalize: "off", autocorrect: "off" },
+          showCancelButton: true,
+          confirmButtonText: "Delete permanently",
+          cancelButtonText: "Cancel",
+          preConfirm: (val) => {
+            if (String(val).trim().toUpperCase() !== "DELETE") {
+              Swal.showValidationMessage("Please type DELETE to continue.");
+              return false;
+            }
+            return true;
+          },
+        });
+        if (!confirmRes.isConfirmed) return;
+
+        try {
+          const {
+            data: { user },
+            error: uerr,
+          } = await supabase.auth.getUser();
+          if (uerr || !user) {
+            await showNotice("Please sign in and try again.", "error");
+            return;
+          }
+
+          // cleanup storage first
+          await deleteCustomerJobsFiles(user.id);
+
+          // call your Edge Function
+          const { error } = await supabase.functions.invoke("delete-account", {
+            body: { user_id: user.id },
+          });
+          if (error) throw error;
+
+          await showNotice("Your account has been deleted.", "success");
+          await supabase.auth.signOut();
+          window.location.href = "../../../index.html";
+        } catch (err) {
+          console.error("Delete failed:", err);
+          await showNotice(prettyError(err), "error");
+        }
+      }
+
+      function openDelete() {
+        // use SweetAlert instead of legacy modal
+        handleDeleteFlow();
+      }
+      function closeDelete() {
+        // keep for compatibility; legacy modal stays hidden
+        deleteModal.style.display = "none";
+      }
+
+      deleteBtn.addEventListener("click", openDelete);
+      modalClose.addEventListener("click", closeDelete);
+      modalCancel.addEventListener("click", closeDelete);
+      modalDelete.addEventListener("click", handleDeleteFlow); // if legacy modal ever shown
+
+      // Kickoff
+      loadData();
+    </script>
+  </body>
+</html>

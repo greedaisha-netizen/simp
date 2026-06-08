@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steqyy Voice Test</title>
+    <style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    color: #10251a;
+    background: linear-gradient(180deg, #f8fcf8 0%, #edf8f0 100%);
+}
+
+.voice-test-shell {
+    width: min(1080px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 48px 0;
+}
+
+.voice-test-hero {
+    margin-bottom: 24px;
+}
+
+.eyebrow {
+    margin: 0 0 8px;
+    color: #237543;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+h1 {
+    margin: 0 0 12px;
+    font-size: 40px;
+    line-height: 1.1;
+}
+
+.voice-test-hero p:last-child {
+    max-width: 680px;
+    margin: 0;
+    color: #496455;
+    font-size: 17px;
+    line-height: 1.6;
+}
+
+.voice-test-panel {
+    padding: 24px;
+    border: 1px solid rgba(99, 167, 121, 0.24);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: 0 20px 44px rgba(33, 72, 51, 0.1);
+}
+
+.voice-test-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+label {
+    display: grid;
+    gap: 8px;
+    color: #1d3427;
+    font-weight: 700;
+}
+
+select,
+textarea,
+input[type="range"] {
+    width: 100%;
+}
+
+select,
+textarea {
+    border: 1px solid #cfe1d4;
+    border-radius: 8px;
+    padding: 12px;
+    color: #14251b;
+    background: #ffffff;
+    font: inherit;
+}
+
+textarea {
+    resize: vertical;
+    line-height: 1.55;
+}
+
+.script-field {
+    margin-top: 22px;
+}
+
+.voice-test-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+button {
+    border: 0;
+    border-radius: 8px;
+    padding: 12px 18px;
+    color: #ffffff;
+    background: #237543;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1b5d35;
+}
+
+#stopBtn {
+    background: #b91c1c;
+}
+
+#randomBtn {
+    background: #2563eb;
+}
+
+.voice-test-status {
+    min-height: 24px;
+    margin: 18px 0 0;
+    color: #496455;
+    font-weight: 700;
+}
+
+@media (max-width: 720px) {
+    h1 {
+        font-size: 30px;
+    }
+
+    .voice-test-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+</style>
+</head>
+<body>
+    <main class="voice-test-shell">
+        <section class="voice-test-hero">
+            <p class="eyebrow">Steqyy Voice Lab</p>
+            <h1>Tune Google US English for Steqyy.</h1>
+            <p>Use one clear English base voice, then tune Steqyy from young male to grown male.</p>
+        </section>
+
+        <section class="voice-test-panel">
+            <div class="voice-test-grid">
+                <label>
+                    Voice
+                    <select id="voiceSelect"></select>
+                </label>
+
+                <label>
+                    Male Age <span id="kidSoundValue">Young 55%</span>
+                    <input type="range" id="kidSoundInput" min="0" max="100" value="10" step="1">
+                </label>
+
+                <label>
+                    Robot to Human <span id="humanValue">65%</span>
+                    <input type="range" id="humanInput" min="0" max="100" value="30" step="1">
+                </label>
+
+                <label>
+                    Speaking Speed <span id="rateValue">0.92</span>
+                    <input type="range" id="rateInput" min="0.75" max="1.12" value="0.93" step="0.01">
+                </label>
+
+                <label>
+                    Comma Pause <span id="pauseValue">300ms</span>
+                    <input type="range" id="commaPauseInput" min="0" max="900" value="0" step="5">
+                </label>
+
+                <label>
+                    Period Stop <span id="periodPauseValue">700ms</span>
+                    <input type="range" id="periodPauseInput" min="0" max="1400" value="20" step="10">
+                </label>
+
+            </div>
+
+            <label class="script-field">
+                Test Script
+                <textarea id="scriptInput" rows="7">Hi, I am Steqyy. Today, we will learn how networks move data. Packets travel from one device to another, and routers help them find the right path. Let us go step by step, so every idea is clear.</textarea>
+            </label>
+
+            <div class="voice-test-actions">
+                <button type="button" id="playBtn">Play Test</button>
+                <button type="button" id="stopBtn">Stop</button>
+                <button type="button" id="randomBtn">Random Script</button>
+            </div>
+
+            <p class="voice-test-status" id="voiceStatus">Loading voices...</p>
+        </section>
+    </main>
+
+    <script>
+const VOICE_SETTINGS_KEY = 'simpSteqyyVoiceSettings';
+const VOICE_SETTINGS_VERSION = 'screenshot-reference-v1';
+const GOOGLE_US_ENGLISH = 'google us english';
+
+const voiceSelect = document.getElementById('voiceSelect');
+const kidSoundInput = document.getElementById('kidSoundInput');
+const humanInput = document.getElementById('humanInput');
+const rateInput = document.getElementById('rateInput');
+const commaPauseInput = document.getElementById('commaPauseInput');
+const periodPauseInput = document.getElementById('periodPauseInput');
+const kidSoundValue = document.getElementById('kidSoundValue');
+const humanValue = document.getElementById('humanValue');
+const rateValue = document.getElementById('rateValue');
+const pauseValue = document.getElementById('pauseValue');
+const periodPauseValue = document.getElementById('periodPauseValue');
+const scriptInput = document.getElementById('scriptInput');
+const playBtn = document.getElementById('playBtn');
+const stopBtn = document.getElementById('stopBtn');
+const randomBtn = document.getElementById('randomBtn');
+const voiceStatus = document.getElementById('voiceStatus');
+
+const scripts = [
+    'Hello, I am Steqyy. I will guide you through this lesson. First, we look at the idea. Then, we practice it step by step.',
+    'Networks move data using packets. Each packet has a job. The router checks where it should go, and sends it on the correct path.',
+    'Great work. Let us slow down for one important part. A switch talks inside the local network, while a router connects different networks.',
+    'Imagine each device has an address. When data travels, it needs the right address, the right path, and a clean signal.'
+];
+
+let googleUsVoice = null;
+let isPlaying = false;
+
+function loadSavedSettings() {
+    try {
+        const saved = JSON.parse(localStorage.getItem(VOICE_SETTINGS_KEY) || '{}');
+        if (saved.settingsVersion !== VOICE_SETTINGS_VERSION) {
+            return;
+        }
+        if (Number.isFinite(Number(saved.maleAgeAmount))) {
+            kidSoundInput.value = String(clamp(Number(saved.maleAgeAmount), 0, 100));
+        } else if (Number.isFinite(Number(saved.kidAmount))) {
+            kidSoundInput.value = String(100 - clamp(Number(saved.kidAmount), 0, 100));
+        }
+        if (Number.isFinite(Number(saved.humanAmount))) {
+            humanInput.value = String(clamp(Number(saved.humanAmount), 0, 100));
+        }
+        if (Number.isFinite(Number(saved.baseRate || saved.rate))) {
+            rateInput.value = String(clamp(Number(saved.baseRate || saved.rate), 0.75, 1.12));
+        }
+        if (Number.isFinite(Number(saved.commaPauseMs))) {
+            commaPauseInput.value = String(clamp(Number(saved.commaPauseMs), 0, 900));
+        }
+        if (Number.isFinite(Number(saved.periodPauseMs))) {
+            periodPauseInput.value = String(clamp(Number(saved.periodPauseMs), 0, 1400));
+        }
+    } catch (error) {
+        localStorage.removeItem(VOICE_SETTINGS_KEY);
+    }
+}
+
+function loadVoices() {
+    const voices = window.speechSynthesis?.getVoices?.() || [];
+    googleUsVoice = voices.find(isGoogleUsEnglishVoice) || null;
+    voiceSelect.innerHTML = '';
+
+    const option = document.createElement('option');
+    option.value = googleUsVoice?.name || '';
+    option.textContent = googleUsVoice
+        ? `${googleUsVoice.name} (${googleUsVoice.lang})`
+        : 'Google US English not available';
+    voiceSelect.appendChild(option);
+    voiceSelect.disabled = true;
+
+    voiceStatus.textContent = googleUsVoice
+        ? `Using ${googleUsVoice.name} (${googleUsVoice.lang}). Kid Sound changes pitch and pacing.`
+        : 'Google US English is not available in this browser. Try this page in Chrome.';
+}
+
+function isGoogleUsEnglishVoice(voice) {
+    const name = String(voice.name || '').toLowerCase();
+    const lang = String(voice.lang || '').toLowerCase();
+    return name.includes(GOOGLE_US_ENGLISH) && lang === 'en-us';
+}
+
+function getVoiceSettings() {
+    const maleAgeAmount = Number(kidSoundInput.value);
+    const humanAmount = Number(humanInput.value);
+    const grownMaleLevel = maleAgeAmount / 100;
+    const youngMaleLevel = 1 - grownMaleLevel;
+    const robotLevel = 1 - (humanAmount / 100);
+    const baseRate = Number(rateInput.value);
+    const pitchMix = 1
+        + (youngMaleLevel * 0.34)
+        - (grownMaleLevel * 0.16)
+        + (robotLevel * 0.04);
+    const rateMix = baseRate
+        - (youngMaleLevel * 0.035)
+        - (grownMaleLevel * 0.015)
+        - (robotLevel * 0.035);
+
+    return {
+        voiceName: googleUsVoice?.name || '',
+        lang: 'en-US',
+        settingsVersion: VOICE_SETTINGS_VERSION,
+        kidAmount: Math.round(youngMaleLevel * 100),
+        maleAgeAmount,
+        humanAmount,
+        rate: clamp(rateMix, 0.72, 1.16),
+        baseRate,
+        pitch: clamp(pitchMix, 0.68, 1.72),
+        robotLevel,
+        commaPauseMs: Number(commaPauseInput.value) || 0,
+        periodPauseMs: Number(periodPauseInput.value) || 0
+    };
+}
+
+function saveSettings() {
+    localStorage.setItem(VOICE_SETTINGS_KEY, JSON.stringify(getVoiceSettings()));
+}
+
+function updateLabels() {
+    const settings = getVoiceSettings();
+    kidSoundValue.textContent = `Young ${settings.kidAmount}%`;
+    humanValue.textContent = `${settings.humanAmount}%`;
+    rateValue.textContent = `${settings.baseRate.toFixed(2)} effective ${settings.rate.toFixed(2)}`;
+    pauseValue.textContent = `${settings.commaPauseMs}ms`;
+    periodPauseValue.textContent = `${settings.periodPauseMs}ms`;
+    saveSettings();
+}
+
+function splitBySpeechPunctuation(text) {
+    const parts = String(text || '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .match(/[^,.!?;:]+[,.!?;:]?/g) || [];
+
+    return parts
+        .map((part) => {
+            const textPart = part.trim();
+            const punctuation = textPart.match(/[,.!?;:]$/)?.[0] || '';
+            return {
+                text: textPart.replace(/[,.!?;:]$/, '').trim(),
+                punctuation
+            };
+        })
+        .filter((part) => part.text);
+}
+
+function getPauseForPunctuation(punctuation) {
+    const settings = getVoiceSettings();
+    if (punctuation === ',') {
+        return settings.commaPauseMs;
+    }
+    if (punctuation === '.' || punctuation === '!' || punctuation === '?') {
+        return settings.periodPauseMs;
+    }
+    if (punctuation === ';' || punctuation === ':') {
+        return Math.round(settings.commaPauseMs * 1.3);
+    }
+    return 80;
+}
+
+function getPhraseVoiceTransform(index) {
+    const settings = getVoiceSettings();
+    const robotPitchSteps = [0.06, -0.04, 0.045, -0.025];
+    const robotRateSteps = [-0.03, 0.018, -0.02, 0.012];
+
+    return {
+        rate: clamp(settings.rate + (robotRateSteps[index % robotRateSteps.length] * settings.robotLevel), 0.72, 1.16),
+        pitch: clamp(settings.pitch + (robotPitchSteps[index % robotPitchSteps.length] * settings.robotLevel), 0.68, 1.72)
+    };
+}
+
+function speakPart(part, index) {
+    return new Promise((resolve) => {
+        const transform = getPhraseVoiceTransform(index);
+        const utterance = new SpeechSynthesisUtterance(part.text);
+
+        utterance.voice = googleUsVoice;
+        utterance.lang = 'en-US';
+        utterance.rate = transform.rate;
+        utterance.pitch = transform.pitch;
+        utterance.volume = 0.96;
+        utterance.onend = resolve;
+        utterance.onerror = resolve;
+        window.speechSynthesis.speak(utterance);
+    });
+}
+
+function wait(ms) {
+    return new Promise((resolve) => window.setTimeout(resolve, ms));
+}
+
+async function playVoiceTest() {
+    if (!window.speechSynthesis) {
+        voiceStatus.textContent = 'Speech synthesis is not supported in this browser.';
+        return;
+    }
+
+    if (!googleUsVoice) {
+        loadVoices();
+    }
+
+    if (!googleUsVoice) {
+        voiceStatus.textContent = 'Google US English is not available in this browser. Try this page in Chrome.';
+        return;
+    }
+
+    stopVoiceTest(false);
+    isPlaying = true;
+    const parts = splitBySpeechPunctuation(scriptInput.value);
+    voiceStatus.textContent = `Playing ${parts.length} phrases with the saved Kid Sound setting.`;
+
+    for (let index = 0; index < parts.length; index += 1) {
+        if (!isPlaying) {
+            break;
+        }
+        const part = parts[index];
+        await speakPart(part, index);
+        await wait(getPauseForPunctuation(part.punctuation));
+    }
+
+    isPlaying = false;
+    voiceStatus.textContent = 'Done. This setting is saved for the classroom voice.';
+}
+
+function stopVoiceTest(updateStatus = true) {
+    isPlaying = false;
+    window.speechSynthesis?.cancel?.();
+    if (updateStatus) {
+        voiceStatus.textContent = 'Stopped.';
+    }
+}
+
+function randomizeScript() {
+    scriptInput.value = scripts[Math.floor(Math.random() * scripts.length)];
+}
+
+function clamp(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+}
+
+window.speechSynthesis?.addEventListener?.('voiceschanged', loadVoices);
+[kidSoundInput, humanInput, rateInput, commaPauseInput, periodPauseInput].forEach((input) => {
+    input.addEventListener('input', updateLabels);
+});
+playBtn.addEventListener('click', playVoiceTest);
+stopBtn.addEventListener('click', stopVoiceTest);
+randomBtn.addEventListener('click', randomizeScript);
+
+loadSavedSettings();
+updateLabels();
+loadVoices();
+
+</script>
+</body>
+</html>
+

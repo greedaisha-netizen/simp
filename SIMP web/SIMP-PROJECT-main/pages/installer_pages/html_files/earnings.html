@@ -1,0 +1,1964 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../img/simpHappyMascotLogo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css_files/sideBar.css" />
+    <title>Earnings</title>
+
+    <!-- SweetAlert2 (ADDED) -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+    />
+
+    <style>
+      :root {
+        --ink: #1c2430;
+        --muted: #6c7a8a;
+        --line: #e7edf3;
+        --brand: #20a44c;
+        --danger: #e53935;
+        --warn: #f59e0b;
+        --bg: #f8fbfd;
+        --card: #ffffff;
+        --radius: 14px;
+      }
+
+      .titlePageDiv h1 {
+        color: var(--ink);
+        margin: 0 0 0.4rem;
+      }
+
+      .titlePageDiv p {
+        color: var(--muted);
+        margin: 0;
+      }
+
+      /* Summary cards */
+      .summary-grid {
+        margin-top: 1rem;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.9rem;
+      }
+
+      @media (max-width: 1100px) {
+        .summary-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 580px) {
+        .summary-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 1rem;
+        display: grid;
+        gap: 0.3rem;
+      }
+
+      .card .label {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .card .value {
+        color: var(--ink);
+        font-size: 1.4rem;
+        font-weight: 600;
+      }
+
+      .sub {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .bar {
+        height: 8px;
+        border-radius: 8px;
+        background: #eef3f7;
+        overflow: hidden;
+        margin-top: 0.4rem;
+      }
+
+      .bar > span {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--brand), #25c06e);
+        width: 0%;
+        transition: width 0.4s ease;
+      }
+
+      /* Controls */
+      .controls {
+        margin-top: 1rem;
+        display: grid;
+        gap: 0.6rem;
+        grid-template-columns: 1.2fr repeat(2, 0.9fr) auto auto;
+        align-items: end;
+      }
+
+      @media (max-width: 1024px) {
+        .controls {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .field {
+        display: grid;
+        gap: 0.3rem;
+      }
+
+      .field label {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .field input[type="text"],
+      .field input[type="date"],
+      .field select {
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 10px;
+        padding: 0.55rem 0.7rem;
+        outline: none;
+      }
+
+      .btn {
+        display: inline-grid;
+        grid-auto-flow: column;
+        gap: 0.4rem;
+        align-items: center;
+        background: var(--ink);
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 0.6rem 0.9rem;
+        cursor: pointer;
+      }
+
+      .btn.secondary {
+        background: #1f6d86;
+      }
+
+      .btn.ghost {
+        background: transparent;
+        color: var(--ink);
+        border: 1px solid var(--line);
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      /* Tabs */
+      .tabs {
+        margin-top: 1.2rem;
+        display: grid;
+        gap: 0.8rem;
+      }
+
+      .tabbar {
+        display: grid;
+        grid-auto-flow: column;
+        justify-content: start;
+        gap: 0.4rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .tabbar button {
+        background: transparent;
+        border: none;
+        padding: 0.7rem 1rem;
+        cursor: pointer;
+        color: #6c7a8a;
+        border-bottom: 3px solid transparent;
+        font-weight: 600;
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .tabbar button.active {
+        color: #1c2430;
+        border-color: #20a44c;
+      }
+
+      /* NEW: tiny update badges */
+      .badge {
+        display: inline-grid;
+        place-items: center;
+        min-width: 22px;
+        height: 20px;
+        padding: 0 0.4rem;
+        border-radius: 999px;
+        background: #e91e63;
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 700;
+        box-shadow: 0 2px 6px rgba(233, 30, 99, 0.25);
+      }
+
+      .badge[hidden] {
+        display: none !important;
+      }
+
+      /* Tables */
+      .tablewrap {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        overflow: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.95rem;
+      }
+
+      thead th {
+        text-align: left;
+        background: #fbfdff;
+        color: #6c7a8a;
+        font-weight: 600;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        border-bottom: 1px solid var(--line);
+        padding: 0.8rem 0.9rem;
+      }
+
+      tbody td {
+        padding: 0.75rem 0.9rem;
+        border-bottom: 1px solid #f0f4f7;
+        color: var(--ink);
+        vertical-align: middle;
+      }
+
+      tbody tr:hover {
+        background: #fcfdfd;
+      }
+
+      .pill {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        border: 1px solid;
+      }
+
+      .pill.paid {
+        color: #136d3c;
+        border-color: #cfe9db;
+        background: #ecf9f2;
+      }
+
+      .pill.unpaid {
+        color: #8a2c0f;
+        border-color: #f7d8c6;
+        background: #fff4ec;
+      }
+
+      .pill.approved {
+        color: #1f4f86;
+        border-color: #cfe0f3;
+        background: #eef5ff;
+      }
+
+      /* NEW: pending_payout visual */
+      .pill.pending {
+        color: #684a02;
+        border-color: #fde2b3;
+        background: #fff7e6;
+      }
+
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
+          "Liberation Mono", monospace;
+      }
+
+      /* Footer helper box */
+      .helper {
+        margin-top: 1rem;
+        padding: 1rem;
+        background: #fff;
+        border: 1px dashed #d7e3ea;
+        border-radius: 12px;
+        color: var(--muted);
+      }
+
+      .helper strong {
+        color: var(--ink);
+      }
+
+      /* Modal */
+      .modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        place-items: center;
+        background: rgba(28, 36, 48, 0.22);
+        padding: 1rem;
+        z-index: 50;
+      }
+
+      .modal.open {
+        display: grid;
+      }
+
+      .modal-card {
+        width: min(720px, 100%);
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid var(--line);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        /* MODAL SIZE TWEAK (ADDED) */
+        max-height: 520px; /* keep it shorter so viewport doesn't jump */
+        display: grid;
+        grid-template-rows: auto 1fr auto; /* header, body (scroll), footer */
+      }
+
+      .modal-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 1rem 0.8rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .modal-head h3 {
+        margin: 0;
+        color: var(--ink);
+      }
+
+      .modal-body {
+        padding: 1rem;
+        display: grid;
+        gap: 0.6rem;
+        overflow: auto; /* ADDED: scroll internally if content grows */
+      }
+
+      .modal-foot {
+        padding: 1rem;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.6rem;
+        border-top: 1px solid var(--line);
+      }
+
+      /* Tiny legend */
+      .legend {
+        display: grid;
+        grid-auto-flow: column;
+        gap: 1rem;
+        align-items: center;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        display: inline-block;
+      }
+
+      .dot.approved {
+        background: #20a44c;
+      }
+
+      .dot.pending {
+        background: #f59e0b;
+      }
+
+      .dot.payouted {
+        background: #1f6d86;
+      }
+
+      /* class name kept; just label text changes */
+
+      /* Select Mode toolbar */
+      .select-toolbar {
+        display: none;
+        align-items: center;
+        gap: 0.8rem;
+        padding: 0.6rem 0.8rem;
+        border: 1px dashed var(--line);
+        border-radius: 12px;
+        background: #fff;
+        margin: 0.6rem 0;
+      }
+
+      .select-toolbar.show {
+        display: flex;
+      }
+
+      .select-toolbar .count {
+        color: var(--muted);
+      }
+
+      .row-check {
+        margin-right: 0.5rem;
+      }
+
+      .row-check[disabled] {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      /* ====================
+       EXTRA RESPONSIVE UX
+       ==================== */
+
+      /* Make tab bar easy to reach on phones */
+      @media (max-width: 1024px) {
+        .tabbar {
+          position: sticky;
+          top: 0;
+          background: var(--bg);
+          z-index: 4;
+          overflow-x: auto;
+        }
+
+        .tabbar::-webkit-scrollbar {
+          height: 6px;
+        }
+
+        .tabbar::-webkit-scrollbar-thumb {
+          background: #e5e7eb;
+          border-radius: 999px;
+        }
+      }
+
+      /* Hide some table columns on very small screens for readability */
+      @media (max-width: 720px) {
+        /* hide Updated At */
+        #tab-unpaid thead th:nth-child(3),
+        #tab-unpaid tbody td:nth-child(3),
+        #tab-paid thead th:nth-child(3),
+        #tab-paid tbody td:nth-child(3) {
+          display: none;
+        }
+
+        /* hide Actions column only on narrow screens */
+        #tab-unpaid thead th:nth-child(6),
+        #tab-unpaid tbody td:nth-child(6) {
+          display: none;
+        }
+      }
+
+      /* --- Mobile "Filters" minimal UI --- */
+      .filter-fab {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        z-index: 62;
+        display: none;
+        place-items: center;
+        gap: 0.4rem;
+        width: 56px;
+        height: 56px;
+        border-radius: 16px;
+        border: none;
+        cursor: pointer;
+        background: var(--ink);
+        color: #fff;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+      }
+
+      .filter-fab .material-icons-sharp {
+        font-size: 24px;
+      }
+
+      .filters-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 60;
+      }
+
+      .filter-close-btn {
+        position: fixed;
+        right: 14px;
+        bottom: 78px;
+        z-index: 62;
+        display: none;
+        border: none;
+        background: #ffffff;
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 0.4rem 0.6rem;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+      }
+
+      .filter-close-btn .material-icons-sharp {
+        font-size: 20px;
+      }
+
+      @media (max-width: 1024px) {
+        .filter-fab,
+        .filter-close-btn {
+          display: grid;
+        }
+
+        /* Turn .controls into a bottom sheet */
+        .controls {
+          position: fixed;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: 61;
+          max-height: 80vh;
+          overflow: auto;
+          padding: 1rem 1rem calc(env(safe-area-inset-bottom) + 14px);
+          background: var(--card);
+          border-top-left-radius: 16px;
+          border-top-right-radius: 16px;
+          box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.25);
+          transform: translateY(105%);
+          transition: transform 0.25s ease;
+          grid-template-columns: 1fr;
+          gap: 0.75rem;
+        }
+
+        /* Add a small header via CSS */
+        .controls::before {
+          content: "Filters";
+          font-weight: 700;
+          color: var(--ink);
+          position: sticky;
+          top: 0;
+          display: block;
+          padding-bottom: 0.5rem;
+          background: var(--card);
+        }
+
+        /* Full-width buttons for easier tapping */
+        .controls .btn {
+          width: 100%;
+        }
+
+        /* When open */
+        body.filters-open .controls {
+          transform: translateY(0);
+        }
+
+        body.filters-open .filters-backdrop {
+          opacity: 1;
+          pointer-events: auto;
+        }
+      }
+
+      /* ===========================
+       SKELETON LOADER (ADDED)
+       =========================== */
+
+      /* Show skeleton while loading; hide app */
+      body.is-loading main {
+        display: none;
+      }
+
+      body:not(.is-loading) #earnings-skeleton {
+        display: none;
+      }
+
+      #earnings-skeleton {
+        margin: 1.4rem 0 0 0;
+        display: grid;
+        gap: 1rem;
+        animation: fadeIn 0.25s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      .sk-card,
+      .sk-bar,
+      .sk-chip,
+      .sk-td,
+      .sk-input,
+      .sk-btn {
+        position: relative;
+        overflow: hidden;
+        background: #eef3f7;
+        border-radius: 10px;
+      }
+
+      .sk-card {
+        border-radius: var(--radius);
+        border: 1px solid var(--line);
+        background: #fff;
+      }
+
+      .sk-shine::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          110deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.6) 18%,
+          rgba(255, 255, 255, 0) 33%
+        );
+        transform: translateX(-100%);
+        animation: shine 1.2s infinite;
+      }
+
+      @keyframes shine {
+        to {
+          transform: translateX(100%);
+        }
+      }
+
+      /* Title skeleton */
+      .sk-title {
+        height: 28px;
+        width: clamp(180px, 40%, 360px);
+      }
+
+      .sk-sub {
+        height: 16px;
+        width: clamp(140px, 30%, 280px);
+        margin-top: 6px;
+      }
+
+      /* Summary skeleton grid */
+      .sk-summary {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.9rem;
+      }
+
+      @media (max-width: 1100px) {
+        .sk-summary {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 580px) {
+        .sk-summary {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .sk-summary .sk-card {
+        padding: 1rem;
+        display: grid;
+        gap: 0.6rem;
+      }
+
+      .sk-sm-line {
+        height: 14px;
+        width: 60%;
+      }
+
+      .sk-lg-line {
+        height: 24px;
+        width: 50%;
+      }
+
+      .sk-bar {
+        height: 8px;
+        width: 100%;
+      }
+
+      /* Controls skeleton */
+      .sk-controls {
+        display: grid;
+        gap: 0.6rem;
+        grid-template-columns: 1.2fr repeat(2, 0.9fr) auto auto;
+        align-items: end;
+      }
+
+      @media (max-width: 1024px) {
+        .sk-controls {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      .sk-field {
+        display: grid;
+        gap: 0.3rem;
+      }
+
+      .sk-label {
+        height: 12px;
+        width: 40%;
+      }
+
+      .sk-input {
+        height: 40px;
+        border: 1px solid var(--line);
+        background: #fff;
+      }
+
+      .sk-btn {
+        height: 42px;
+        width: 140px;
+        border: 1px solid var(--line);
+        background: #fff;
+      }
+
+      /* Tabs skeleton */
+      .sk-tabbar {
+        display: grid;
+        grid-auto-flow: column;
+        justify-content: start;
+        gap: 0.4rem;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 0.5rem;
+      }
+
+      .sk-chip {
+        height: 36px;
+        width: 130px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-bottom: 3px solid transparent;
+      }
+
+      /* Table skeleton */
+      .sk-table {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+
+      .sk-thead {
+        display: grid;
+        grid-template-columns: 1.4fr 2fr 1.4fr 1fr 1fr 1fr;
+        gap: 0;
+        padding: 0.8rem 0.9rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .sk-th {
+        height: 14px;
+        width: 80%;
+      }
+
+      .sk-rows {
+        display: grid;
+      }
+
+      .sk-row {
+        display: grid;
+        grid-template-columns: 1.4fr 2fr 1.4fr 1fr 1fr 1fr;
+        gap: 0;
+        padding: 0.75rem 0.9rem;
+        border-bottom: 1px solid #f0f4f7;
+        align-items: center;
+      }
+
+      .sk-td {
+        height: 16px;
+      }
+
+      @media (max-width: 720px) {
+        .sk-thead,
+        .sk-row {
+          grid-template-columns: 1.4fr 2fr 1fr 1fr;
+          /* hide Updated At & Actions for narrow mimic */
+        }
+      }
+    </style>
+  </head>
+
+  <body class="is-loading">
+    <div class="container">
+      <!-- Sidebar Section (unchanged) -->
+      <aside>
+        <div class="toggle">
+          <div class="logo">
+            <img src="../../../img/simpHappyMascotLogo.png" alt="logo" />
+            <h2>SIMP<span class="danger">Project</span></h2>
+          </div>
+          <div class="close" id="close-btn">
+            <span class="material-icons-sharp">close</span>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <a href="dashboard.html">
+            <span class="material-icons-sharp">dashboard</span>
+            <h3>Dashboard</h3>
+          </a>
+          <a href="job.html">
+            <span class="material-icons-sharp">work</span>
+            <h3>Jobs</h3>
+          </a>
+          <a href="myApplication.html">
+            <span class="material-icons-sharp">receipt</span>
+            <h3>My Application</h3>
+          </a>
+          <a href="courses.html">
+            <span class="material-icons-sharp">school</span>
+            <h3>Courses</h3>
+          </a>
+          <a href="shop.html">
+            <span class="material-icons-sharp">shopping_cart</span>
+            <h3>Shop</h3>
+          </a>
+          <a href="earnings.html" class="active">
+            <span class="material-icons-sharp">account_balance</span>
+            <h3>Earnings</h3>
+          </a>
+          <a href="documents.html">
+            <span class="material-icons-sharp">file_copy</span>
+            <h3>Documents</h3>
+          </a>
+          <a href="settings.html">
+            <span class="material-icons-sharp">settings</span>
+            <h3>Settings</h3>
+          </a>
+          <a href="#" id="logout-btn">
+            <span class="material-icons-sharp">logout</span>
+            <h3>Logout</h3>
+          </a>
+        </div>
+      </aside>
+      <!-- End of Sidebar Section -->
+
+      <!-- ======= SKELETON (ADDED) ======= -->
+      <main id="earnings-skeleton" aria-hidden="true">
+        <div class="titlePageDiv">
+          <div class="sk-title sk-shine"></div>
+          <div class="sk-sub sk-shine"></div>
+        </div>
+
+        <!-- Summary cards -->
+        <section class="sk-summary">
+          <div class="sk-card">
+            <div class="sk-sm-line sk-shine"></div>
+            <div class="sk-lg-line sk-shine"></div>
+            <div class="sk-sm-line sk-shine" style="width: 70%"></div>
+            <div class="sk-bar sk-shine"></div>
+          </div>
+          <div class="sk-card">
+            <div class="sk-sm-line sk-shine"></div>
+            <div class="sk-lg-line sk-shine"></div>
+            <div class="sk-sm-line sk-shine" style="width: 70%"></div>
+            <div class="sk-bar sk-shine"></div>
+          </div>
+          <div class="sk-card">
+            <div class="sk-sm-line sk-shine"></div>
+            <div class="sk-lg-line sk-shine"></div>
+            <div class="sk-sm-line sk-shine" style="width: 70%"></div>
+            <div class="sk-bar sk-shine"></div>
+          </div>
+          <div class="sk-card">
+            <div class="sk-sm-line sk-shine"></div>
+            <div class="sk-sm-line sk-shine" style="width: 60%"></div>
+            <div class="sk-sm-line sk-shine" style="width: 50%"></div>
+          </div>
+        </section>
+
+        <!-- Controls -->
+        <section class="sk-controls">
+          <div class="sk-field">
+            <div class="sk-label sk-shine"></div>
+            <div class="sk-input sk-shine"></div>
+          </div>
+          <div class="sk-field">
+            <div class="sk-label sk-shine"></div>
+            <div class="sk-input sk-shine"></div>
+          </div>
+          <div class="sk-field">
+            <div class="sk-label sk-shine"></div>
+            <div class="sk-input sk-shine"></div>
+          </div>
+          <div class="sk-btn sk-shine"></div>
+          <div class="sk-btn sk-shine"></div>
+        </section>
+
+        <!-- Tabs -->
+        <section class="tabs">
+          <div class="sk-tabbar">
+            <div class="sk-chip sk-shine"></div>
+            <div class="sk-chip sk-shine"></div>
+          </div>
+
+          <!-- Table mimic -->
+          <div class="sk-table">
+            <div class="sk-thead">
+              <div class="sk-th sk-shine"></div>
+              <div class="sk-th sk-shine"></div>
+              <div class="sk-th sk-shine"></div>
+              <div class="sk-th sk-shine"></div>
+              <div class="sk-th sk-shine"></div>
+              <div class="sk-th sk-shine"></div>
+            </div>
+            <div class="sk-rows">
+              <!-- 6 rows -->
+              <div class="sk-row">
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+              </div>
+              <div class="sk-row">
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+              </div>
+              <div class="sk-row">
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+              </div>
+              <div class="sk-row">
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+              </div>
+              <div class="sk-row">
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+              </div>
+              <div class="sk-row">
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+                <div class="sk-td sk-shine"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+      <!-- ======= END SKELETON ======= -->
+
+      <!-- MAIN CONTENT -->
+      <main>
+        <div class="titlePageDiv">
+          <h1>Your earnings at a glance</h1>
+          <p>Track approved amounts, pending work, and disbursed payouts.</p>
+        </div>
+
+        <!-- ===== Payments Summary ===== -->
+        <section class="summary-grid" id="payments-summary">
+          <div class="card">
+            <div class="label">Ready to disburse</div>
+            <div class="value" id="sum-approved-balance">₱0.00</div>
+            <div class="sub">Approved by admin, not yet disbursed.</div>
+            <div class="bar"><span id="bar-approved"></span></div>
+          </div>
+          <div class="card">
+            <div class="label">Pending work</div>
+            <div class="value" id="sum-pending">₱0.00</div>
+            <div class="sub">Jobs still in progress or awaiting approval.</div>
+            <div class="bar"><span id="bar-pending"></span></div>
+          </div>
+          <div class="card">
+            <div class="label">Disbursed</div>
+            <div class="value" id="sum-payouted">₱0.00</div>
+            <div class="sub">Funds already sent to you.</div>
+            <div class="bar"><span id="bar-payouted"></span></div>
+          </div>
+          <div class="card">
+            <div class="label">Legend</div>
+            <div class="legend">
+              <span
+                ><span class="dot approved"></span> Approved (to disburse)</span
+              >
+              <span><span class="dot pending"></span> Pending</span>
+              <span><span class="dot payouted"></span> Disbursed</span>
+            </div>
+            <div class="sub">Amounts are based on each job’s agreed pay.</div>
+          </div>
+        </section>
+
+        <!-- ===== Controls ===== -->
+        <section class="controls">
+          <div class="field">
+            <label for="search">Search jobs</label>
+            <input
+              type="text"
+              id="search"
+              placeholder="Try: JOB-2025-001 or “CCTV install”"
+            />
+          </div>
+          <div class="field">
+            <label for="dateFrom">From date</label>
+            <input type="date" id="dateFrom" />
+          </div>
+          <div class="field">
+            <label for="dateTo">To date</label>
+            <input type="date" id="dateTo" />
+          </div>
+
+          <button class="btn" id="btnExport">
+            <span class="material-icons-sharp">file_download</span> Export CSV
+          </button>
+          <button class="btn secondary" id="btnRequestPayout">
+            <span class="material-icons-sharp">payments</span> Request Payout
+          </button>
+        </section>
+
+        <!-- Mobile filters helpers (ADDED, non-intrusive) -->
+        <button
+          id="filterFab"
+          class="filter-fab"
+          aria-label="Open filters"
+          title="Filters"
+        >
+          <span class="material-icons-sharp">tune</span>
+        </button>
+        <button
+          id="filterClose"
+          class="filter-close-btn"
+          aria-label="Close filters"
+          title="Close filters"
+        >
+          <span class="material-icons-sharp">close</span>
+        </button>
+        <div
+          id="filtersBackdrop"
+          class="filters-backdrop"
+          aria-hidden="true"
+        ></div>
+
+        <!-- ===== Tabs and Tables ===== -->
+        <section class="tabs">
+          <div class="tabbar">
+            <button class="active" data-tab="unpaid">
+              Not Disbursed
+              <!-- NEW: badge -->
+              <span class="badge" id="badge-unpaid" hidden>0</span>
+            </button>
+            <button data-tab="paid">
+              Disbursed
+              <!-- NEW: badge -->
+              <span class="badge" id="badge-paid" hidden>0</span>
+            </button>
+          </div>
+
+          <!-- Select toolbar -->
+          <div id="selectToolbar" class="select-toolbar" aria-live="polite">
+            <label
+              ><input type="checkbox" id="chkSelectAll" /> Select All</label
+            >
+            <span class="count" id="selCount">0 selected</span>
+            <span class="sub"
+              >Tip: Only <strong>Approved</strong> rows (green) are
+              eligible.</span
+            >
+          </div>
+
+          <!-- Not Disbursed (pending + approved + pending_payout) -->
+          <div class="tablewrap" id="tab-unpaid">
+            <table>
+              <thead>
+                <tr>
+                  <th>Job Code</th>
+                  <th>Title</th>
+                  <th>Updated At</th>
+                  <th class="mono">Amount (₱)</th>
+                  <th>Status</th>
+                  <th style="width: 1%; white-space: nowrap">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-unpaid"></tbody>
+            </table>
+          </div>
+
+          <!-- Disbursed -->
+          <div class="tablewrap" id="tab-paid" style="display: none">
+            <table>
+              <thead>
+                <tr>
+                  <th>Job Code</th>
+                  <th>Title</th>
+                  <th>Updated At</th>
+                  <th class="mono">Amount (₱)</th>
+                  <th>Status</th>
+                  <th>Reference Number</th>
+                </tr>
+              </thead>
+              <tbody id="tbody-paid"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <div class="helper" id="helperBox">
+          <strong>Heads up:</strong> Sign in, or pass
+          <code>?installer=&lt;uuid&gt;</code> in the URL to view a specific
+          installer. Exports respect your current filters.
+        </div>
+      </main>
+    </div>
+
+    <!-- ===== Request Payout Modal ===== -->
+    <div class="modal" id="modalPayout">
+      <div class="modal-card">
+        <div class="modal-head">
+          <h3>Request Payout</h3>
+          <button class="btn ghost" id="closeModal">
+            <span class="material-icons-sharp">close</span> Close
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="sub">
+            You’re requesting a payout for your
+            <strong>selected</strong> Approved jobs.
+          </div>
+
+          <div class="card" style="grid-template-columns: 1fr 1fr; gap: 0.6rem">
+            <div>
+              <div class="label">Selected total</div>
+              <div class="value" id="modal-eligible">₱0.00</div>
+              <div class="sub">Minimum to request: ₱1,000.00</div>
+            </div>
+            <div>
+              <div class="label">Payout method</div>
+              <div class="value" id="modal-method">GCash (** 1123)</div>
+              <div class="sub">Update in Settings → Payouts</div>
+            </div>
+          </div>
+
+          <div class="sub" id="modal-note" style="margin-top: 0.3rem"></div>
+        </div>
+        <div class="modal-foot">
+          <button class="btn ghost" id="cancelPayout">Cancel</button>
+          <button class="btn" id="confirmPayout">
+            <span class="material-icons-sharp">check_circle</span> Confirm
+            Request
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Supabase JS -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <!-- SweetAlert2 (ADDED) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+    <!-- (Optional) your global scripts -->
+    <script type="module" src="../../general_files/index.js"></script>
+    <script type="module" src="../../general_files/session.js"></script>
+
+    <!-- Main Page Logic -->
+    <script type="module">
+      // ========= CONFIG =========
+      import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../../../supabase.js";
+      const supabase = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+
+      // ========= SWEETALERT2 HELPERS (ADDED) =========
+      const swalPrimary = "#20a44c";
+      const toast = (message, icon = "info") =>
+        Swal.mixin({
+          toast: true,
+          position: "top",
+          showConfirmButton: false,
+          timer: 3000,
+          timerProgressBar: true,
+        }).fire({ icon, title: message });
+
+      const showSuccess = (message, title = "Success") =>
+        Swal.fire({
+          icon: "success",
+          title,
+          text: message,
+          confirmButtonColor: swalPrimary,
+        });
+
+      const showError = (error, title = "Something went wrong") => {
+        const text =
+          typeof error === "string"
+            ? error
+            : error?.message || "Please try again.";
+        return Swal.fire({
+          icon: "error",
+          title,
+          text,
+          confirmButtonColor: swalPrimary,
+        });
+      };
+
+      // Upgrade all existing alert() calls to SweetAlert2 (keeps your code unchanged)
+      window.alert = (msg) =>
+        Swal.fire({
+          icon: "info",
+          title: "Notice",
+          text: String(msg),
+          confirmButtonColor: swalPrimary,
+        });
+
+      // ========= STATE =========
+      let JOBS = []; // [{ job_id, job_code, job_title, job_pay, job_date }]
+      let PAYMENTS = []; // [{ id, installer_id, job_id, payment_status, first_created_at, updated_at, payout_batch_no?, reference_number? }]
+      let EARNINGS = []; // UI rows
+
+      // Select Mode
+      let SELECT_MODE = false;
+      const SELECTED = new Set(); // payment ids
+      const ELIGIBLE = new Set(); // ids eligible to select (payment_status === 'paid')
+
+      // NEW: installer for creating payout group
+      let CURRENT_INSTALLER_ID = null;
+
+      // ========= ELEMS =========
+      const CURRENCY = "₱";
+      const PAYOUT_METHOD = "GCash (** 1123)"; // replace from settings
+      const PAYOUT_THRESHOLD = 1000;
+
+      // Summary
+      const sumApprovedBalanceEl = document.getElementById(
+        "sum-approved-balance"
+      );
+      const sumPendingEl = document.getElementById("sum-pending");
+      const sumPayoutedEl = document.getElementById("sum-payouted"); // id kept
+      const barApproved = document.getElementById("bar-approved");
+      const barPending = document.getElementById("bar-pending");
+      const barPayouted = document.getElementById("bar-payouted"); // id kept
+
+      // Tables / controls / modal
+      const tbodyUnpaid = document.getElementById("tbody-unpaid");
+      const tbodyPaid = document.getElementById("tbody-paid");
+      const searchEl = document.getElementById("search");
+      const dateFromEl = document.getElementById("dateFrom");
+      const dateToEl = document.getElementById("dateTo");
+      const btnExport = document.getElementById("btnExport");
+      const tabs = document.querySelectorAll(".tabbar button");
+      const tabUnpaidWrap = document.getElementById("tab-unpaid");
+      const tabPaidWrap = document.getElementById("tab-paid");
+      const helperBox = document.getElementById("helperBox");
+
+      const modal = document.getElementById("modalPayout");
+      const btnRequestPayout = document.getElementById("btnRequestPayout");
+      const closeModal = document.getElementById("closeModal");
+      const cancelPayout = document.getElementById("cancelPayout");
+      const confirmPayout = document.getElementById("confirmPayout");
+      const modalEligible = document.getElementById("modal-eligible");
+      const modalMethod = document.getElementById("modal-method");
+      const modalNote = document.getElementById("modal-note");
+
+      // Select toolbar
+      const selectToolbar = document.getElementById("selectToolbar");
+      const chkSelectAll = document.getElementById("chkSelectAll");
+      const selCount = document.getElementById("selCount");
+
+      // NEW: badge elements & counters
+      const badgeUnpaid = document.getElementById("badge-unpaid");
+      const badgePaid = document.getElementById("badge-paid");
+      const updateCounts = { unpaid: 0, paid: 0 };
+
+      // ====== Mobile filter UI (ADDED) ======
+      const filterFab = document.getElementById("filterFab");
+      const filterClose = document.getElementById("filterClose");
+      const filtersBackdrop = document.getElementById("filtersBackdrop");
+      const isMobile = () => window.matchMedia("(max-width: 1024px)").matches;
+      const openFilters = () => {
+        document.body.classList.add("filters-open");
+        filtersBackdrop.setAttribute("aria-hidden", "false");
+      };
+      const closeFilters = () => {
+        document.body.classList.remove("filters-open");
+        filtersBackdrop.setAttribute("aria-hidden", "true");
+      };
+      filterFab.addEventListener("click", openFilters);
+      filterClose.addEventListener("click", closeFilters);
+      filtersBackdrop.addEventListener("click", closeFilters);
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeFilters();
+      });
+      window.addEventListener("resize", () => {
+        if (!isMobile()) closeFilters();
+      });
+
+      // ========= UTILS =========
+      const fmt = (n) =>
+        CURRENCY +
+        (Number(n) || 0).toLocaleString("en-PH", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      const fmtDateTimeLocal = (v) => {
+        if (!v) return "—";
+        const d = new Date(v);
+        if (isNaN(d.getTime())) return "—";
+        return d.toLocaleString("en-PH", {
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+        });
+      };
+      const inRange = (dt, from, to) => {
+        if (!from && !to) return true;
+        const x = new Date(dt).getTime();
+        if (isNaN(x)) return false;
+        const start = from ? new Date(from).setHours(0, 0, 0, 0) : null;
+        const end = to ? new Date(to).setHours(23, 59, 59, 999) : null;
+        if (start !== null && x < start) return false;
+        if (end !== null && x > end) return false;
+        return true;
+      };
+
+      // Generate a batch number via RPC; fallback to client-side
+      async function getPayoutBatchNo() {
+        try {
+          const { data, error } = await supabase.rpc("next_payout_batch", {
+            prefix: "BATCH",
+          });
+          if (error) throw error;
+          if (data && typeof data === "string" && data.length) return data;
+        } catch (err) {
+          console.warn(
+            "RPC next_payout_batch failed, using client fallback:",
+            err?.message || err
+          );
+        }
+        const d = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+        const rnd = (
+          crypto.randomUUID
+            ? crypto.randomUUID()
+            : Math.random().toString(36).slice(2) +
+              Math.random().toString(36).slice(2)
+        )
+          .slice(0, 8)
+          .toUpperCase();
+        return `BATCH-${d}-${rnd}`;
+      }
+
+      async function getInstallerId() {
+        const param = new URLSearchParams(location.search).get("installer");
+        if (param) return param;
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+        return session?.user?.id ?? null;
+      }
+
+      // ========= DATA LOAD =========
+      async function loadFromSupabase(installerId) {
+        const { data: payments, error: payErr } = await supabase
+          .schema("earnings")
+          .from("payments")
+          .select(
+            "id, installer_id, job_id, payment_status, payout_batch_no, reference_number, first_created_at, updated_at"
+          )
+          .eq("installer_id", installerId);
+
+        if (payErr) throw payErr;
+
+        const jobIds = Array.from(
+          new Set((payments || []).map((p) => p.job_id))
+        );
+        let jobs = [];
+        if (jobIds.length) {
+          const { data: jobRows, error: jobErr } = await supabase
+            .schema("jobs")
+            .from("job")
+            .select("job_id, job_code, job_title, job_pay, job_date")
+            .in("job_id", jobIds);
+          if (jobErr) throw jobErr;
+          jobs = jobRows || [];
+        }
+
+        // Build maps & UI rows
+        const jobById = new Map(jobs.map((j) => [j.job_id, j]));
+
+        EARNINGS = (payments || []).map((p) => {
+          const j = jobById.get(p.job_id) || {};
+          const uiStatus =
+            p.payment_status === "disbursed"
+              ? "paid"
+              : p.payment_status === "paid"
+              ? "approved"
+              : p.payment_status === "pending_payout"
+              ? "approved"
+              : "unpaid";
+
+          return {
+            payment_id: p.id,
+            payment_status: p.payment_status, // keep raw from table
+            job_id: p.job_id,
+            code: j.job_code || "—",
+            title: j.job_title || "—",
+            date: j.job_date || null, // retained but not displayed
+            amount: Number(j.job_pay) || 0,
+            status: uiStatus, // derived (only used for Disbursed pill)
+            updated_at: p.updated_at, // DISPLAY & FILTER by updated_at
+            paid_ref:
+              p.payment_status === "disbursed"
+                ? p.reference_number ||
+                  p.payout_batch_no ||
+                  String(p.id).slice(-8).toUpperCase()
+                : null,
+          };
+        });
+
+        JOBS = jobs;
+        PAYMENTS = payments || [];
+
+        // Eligibility set (only exact 'paid' may be requested)
+        ELIGIBLE.clear();
+        for (const p of PAYMENTS) {
+          if (p.payment_status === "paid") ELIGIBLE.add(p.id);
+        }
+      }
+
+      // ========= SUMMARY =========
+      function computePaymentsSummary() {
+        const jobById = new Map(JOBS.map((j) => [j.job_id, j]));
+        const sums = { unpaid: 0, paid: 0, disbursed: 0 };
+
+        for (const p of PAYMENTS) {
+          const j = jobById.get(p.job_id);
+          if (!j) continue;
+          const amt = Number(j.job_pay) || 0;
+          if (p.payment_status === "unpaid") sums.unpaid += amt;
+          else if (p.payment_status === "paid")
+            sums.paid += amt; // approved, not disbursed
+          else if (p.payment_status === "disbursed") sums.disbursed += amt;
+        }
+
+        const total = sums.unpaid + sums.paid + sums.disbursed || 1;
+
+        sumApprovedBalanceEl.textContent = fmt(sums.paid);
+        sumPendingEl.textContent = fmt(sums.unpaid);
+        sumPayoutedEl.textContent = fmt(sums.disbursed);
+
+        barApproved.style.width = ((sums.paid / total) * 100).toFixed(1) + "%";
+        barPending.style.width = ((sums.unpaid / total) * 100).toFixed(1) + "%";
+        barPayouted.style.width =
+          ((sums.disbursed / total) * 100).toFixed(1) + "%";
+      }
+
+      // ========= TABLES =========
+      function pillForPaymentStatus(payment_status) {
+        // Show EXACT text coming from payments.payment_status
+        if (payment_status === "unpaid")
+          return '<span class="pill unpaid">unpaid</span>';
+        if (payment_status === "paid")
+          return '<span class="pill approved">paid</span>';
+        if (payment_status === "pending_payout")
+          return '<span class="pill pending">pending_payout</span>';
+        if (payment_status === "disbursed")
+          return '<span class="pill paid">disbursed</span>';
+        return `<span class="pill">${String(payment_status || "-")}</span>`;
+      }
+
+      // Not Disbursed rows → show raw payment_status chip
+      function rowHTMLUnpaid(r) {
+        const canSelect = ELIGIBLE.has(r.payment_id);
+        const checkHTML = SELECT_MODE
+          ? `<input type="checkbox" class="row-check" data-payid="${
+              r.payment_id
+            }" ${
+              canSelect
+                ? ""
+                : 'disabled title="Only Approved (paid) rows are eligible"'
+            } ${SELECTED.has(r.payment_id) ? "checked" : ""}/>`
+          : "";
+
+        return `
+        <tr data-payid="${r.payment_id}">
+          <td class="mono">${checkHTML}${r.code}</td>
+          <td>${r.title}</td>
+          <td class="mono">${fmtDateTimeLocal(r.updated_at)}</td>
+          <td class="mono">${fmt(r.amount)}</td>
+          <td>${pillForPaymentStatus(r.payment_status)}</td>
+          <td><button class="btn ghost" data-invoice="${
+            r.code
+          }"><span class="material-icons-sharp">picture_as_pdf</span> Invoice</button></td>
+        </tr>
+      `;
+      }
+
+      // Disbursed rows → keep the nice “Disbursed” pill and show reference number
+      function rowHTMLPaid(r) {
+        return `
+        <tr data-payid="${r.payment_id}">
+          <td class="mono">${r.code}</td>
+          <td>${r.title}</td>
+          <td class="mono">${fmtDateTimeLocal(r.updated_at)}</td>
+          <td class="mono">${fmt(r.amount)}</td>
+          <td><span class="pill paid">Disbursed</span></td>
+          <td class="mono">${r.paid_ref ?? "-"}</td>
+        </tr>
+      `;
+      }
+
+      function applyFilters() {
+        const q = (searchEl.value || "").trim().toLowerCase();
+        const f = dateFromEl.value || null;
+        const t = dateToEl.value || null;
+
+        const filtered = EARNINGS.filter((e) => {
+          const hay = [e.code, e.title].join(" ").toLowerCase();
+          const hit = hay.includes(q);
+          const okDate = e.updated_at ? inRange(e.updated_at, f, t) : true;
+          return hit && okDate;
+        });
+
+        // Not disbursed = all except 'disbursed'
+        const notDisbursed = filtered.filter(
+          (r) => r.payment_status !== "disbursed"
+        );
+        tbodyUnpaid.innerHTML = notDisbursed.length
+          ? notDisbursed.map(rowHTMLUnpaid).join("")
+          : `<tr><td colspan="6" class="sub" style="padding:1rem;">No records match your filters.</td></tr>`;
+
+        // Disbursed
+        const disbursedRows = filtered.filter(
+          (r) => r.payment_status === "disbursed"
+        );
+        tbodyPaid.innerHTML = disbursedRows.length
+          ? disbursedRows.map(rowHTMLPaid).join("")
+          : `<tr><td colspan="6" class="sub" style="padding:1rem;">No disbursed records match your filters.</td></tr>`;
+
+        updatePayoutButton(notDisbursed);
+        updateSelectToolbarCount();
+        wireRowCheckboxes();
+      }
+
+      function updatePayoutButton(rows) {
+        const eligible = rows
+          .filter((r) => r.payment_status === "paid") // only 'paid' (approved) can be requested
+          .reduce((s, r) => s + r.amount, 0);
+
+        document.getElementById("btnRequestPayout").title = SELECT_MODE
+          ? "Review selected items"
+          : eligible < PAYOUT_THRESHOLD
+          ? `Need at least ${fmt(PAYOUT_THRESHOLD)} to request payout`
+          : "Select which jobs to include in this payout";
+      }
+
+      function exportCSV() {
+        const activeTab = document.querySelector(".tabbar button.active")
+          .dataset.tab;
+        const tableBody = activeTab === "unpaid" ? tbodyUnpaid : tbodyPaid;
+
+        const rows = Array.from(tableBody.querySelectorAll("tr")).filter((tr) =>
+          tr.querySelector("td")
+        );
+
+        const headers =
+          activeTab === "unpaid"
+            ? ["Job Code", "Title", "Updated At", "Amount", "Status"]
+            : [
+                "Job Code",
+                "Title",
+                "Updated At",
+                "Amount",
+                "Status",
+                "Reference Number",
+              ];
+
+        const records = rows.map((tr) => {
+          const cells = Array.from(tr.querySelectorAll("td"));
+          const text = cells.map((td) =>
+            td.innerText.replace(/\n/g, " ").trim()
+          );
+          if (activeTab === "unpaid") text.pop(); // drop actions col in unpaid
+          return text;
+        });
+
+        const csv = [headers, ...records]
+          .map((r) =>
+            r
+              .map((v) => {
+                const s = String(v ?? "");
+                return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+              })
+              .join(",")
+          )
+          .join("\n");
+
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `earnings_${activeTab}_${new Date()
+          .toISOString()
+          .slice(0, 10)}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        // Friendly toast (ADDED)
+        toast("Your CSV export has started.", "success");
+      }
+
+      // ========= MODAL & REQUEST FLOW =========
+      function openPayout() {
+        // First click → enter Select Mode
+        if (!SELECT_MODE) {
+          setSelectMode(true);
+          btnRequestPayout.innerHTML =
+            '<span class="material-icons-sharp">playlist_add_check</span> Review Selection';
+          helperBox.innerHTML = `<strong>Select Mode:</strong> Choose the approved jobs to include, then click <em>Review Selection</em>.`;
+          // Gentle guidance (ADDED)
+          toast("Select approved jobs, then tap “Review Selection”.", "info");
+          return;
+        }
+
+        // Second click → review selection in modal
+        const chosen = EARNINGS.filter((r) => SELECTED.has(r.payment_id));
+        const eligibleChosen = chosen.filter(
+          (r) => r.payment_status === "paid"
+        ); // raw status
+        const total = eligibleChosen.reduce(
+          (s, r) => s + (Number(r.amount) || 0),
+          0
+        );
+
+        modalEligible.textContent = fmt(total);
+        modalMethod.textContent = PAYOUT_METHOD;
+
+        if (eligibleChosen.length === 0) {
+          modalNote.textContent = `No eligible (paid) rows selected. Select at least one to proceed.`;
+          confirmPayout.disabled = true;
+        } else if (total < PAYOUT_THRESHOLD) {
+          modalNote.textContent = `You currently don't meet the payout minimum of ${fmt(
+            PAYOUT_THRESHOLD
+          )} for the selected items.`;
+          confirmPayout.disabled = true;
+        } else {
+          modalNote.textContent = `A payout request will be created for ${eligibleChosen.length} job(s). They will be grouped under one batch and move to “pending_payout”.`;
+          confirmPayout.disabled = false;
+        }
+
+        modal.classList.add("open");
+      }
+      function closePayout() {
+        modal.classList.remove("open");
+      }
+
+      async function confirmPayoutRequest() {
+        const ids = Array.from(SELECTED).filter((id) => {
+          const row = EARNINGS.find((e) => e.payment_id === id);
+          return row?.payment_status === "paid";
+        });
+        if (!ids.length) return;
+
+        confirmPayout.disabled = true;
+        confirmPayout.innerHTML =
+          '<span class="material-icons-sharp">hourglass_top</span> Working...';
+
+        try {
+          const batchNo = await getPayoutBatchNo();
+
+          const { error: updErr } = await supabase
+            .schema("earnings")
+            .from("payments")
+            .update({
+              payment_status: "pending_payout",
+              payout_batch_no: batchNo,
+            })
+            .in("id", ids);
+
+          if (updErr) throw updErr;
+
+          for (const p of PAYMENTS) {
+            if (ids.includes(p.id)) {
+              p.payment_status = "pending_payout";
+              p.payout_batch_no = batchNo;
+            }
+          }
+          EARNINGS = EARNINGS.map((r) =>
+            ids.includes(r.payment_id)
+              ? { ...r, payment_status: "pending_payout", status: "approved" }
+              : r
+          );
+
+          ELIGIBLE.clear();
+          for (const p of PAYMENTS) {
+            if (p.payment_status === "paid") ELIGIBLE.add(p.id);
+          }
+
+          setSelectMode(false);
+          btnRequestPayout.innerHTML =
+            '<span class="material-icons-sharp">payments</span> Request Payout';
+          computePaymentsSummary();
+          applyFilters();
+          closePayout();
+
+          // OPTIONAL: bump the unpaid badge in case realtime is not enabled on backend
+          updateCounts.unpaid += 1;
+          renderBadges();
+
+          // Friendlier success (REPLACES alert)
+          showSuccess(
+            `Your payout request for ${ids.length} job(s) has been sent.`,
+            `Payout Requested • ${batchNo}`
+          );
+        } catch (err) {
+          console.error(err);
+          // Friendlier error (REPLACES alert)
+          showError(err, "Failed to submit payout request");
+        } finally {
+          confirmPayout.disabled = false;
+          confirmPayout.innerHTML =
+            '<span class="material-icons-sharp">check_circle</span> Confirm Request';
+        }
+      }
+
+      // ========= SELECT MODE =========
+      function setSelectMode(on) {
+        SELECT_MODE = !!on;
+        if (!SELECT_MODE) {
+          SELECTED.clear();
+          chkSelectAll.checked = false;
+          selectToolbar.classList.remove("show");
+          helperBox.innerHTML = `<strong>Heads up:</strong> Sign in, or pass <code>?installer=&lt;uuid&gt;</code> in the URL to view a specific installer. Exports respect your current filters.`;
+        } else {
+          selectToolbar.classList.add("show");
+        }
+        applyFilters();
+      }
+
+      function updateSelectToolbarCount() {
+        selCount.textContent = `${SELECTED.size} selected`;
+      }
+
+      function wireRowCheckboxes() {
+        if (!SELECT_MODE) return;
+        tbodyUnpaid.querySelectorAll(".row-check").forEach((chk) => {
+          chk.addEventListener("change", () => {
+            const id = chk.getAttribute("data-payid");
+            if (!id || chk.disabled) return;
+            if (chk.checked) SELECTED.add(id);
+            else SELECTED.delete(id);
+            updateSelectToolbarCount();
+          });
+        });
+      }
+
+      chkSelectAll.addEventListener("change", () => {
+        if (!SELECT_MODE) return;
+        SELECTED.clear();
+        tbodyUnpaid.querySelectorAll(".row-check").forEach((chk) => {
+          if (!chk.disabled) {
+            chk.checked = chkSelectAll.checked;
+            if (chk.checked) {
+              const id = chk.getAttribute("data-payid");
+              if (id) SELECTED.add(id);
+            }
+          }
+        });
+        updateSelectToolbarCount();
+      });
+
+      // ========= BADGES (render & realtime) =========
+      function renderBadges() {
+        const cap = (n) => (n > 99 ? "99+" : String(n));
+        // unpaid tab
+        if (updateCounts.unpaid > 0) {
+          badgeUnpaid.hidden = false;
+          badgeUnpaid.textContent = cap(updateCounts.unpaid);
+        } else {
+          badgeUnpaid.hidden = true;
+        }
+        // paid tab
+        if (updateCounts.paid > 0) {
+          badgePaid.hidden = false;
+          badgePaid.textContent = cap(updateCounts.paid);
+        } else {
+          badgePaid.hidden = true;
+        }
+      }
+
+      // ========= INIT + REALTIME =========
+      let realtimeChannel = null;
+
+      (async function init() {
+        // --- SHOW SKELETON (ADDED) ---
+        document.body.classList.add("is-loading");
+        try {
+          const installerId = await getInstallerId();
+          CURRENT_INSTALLER_ID = installerId;
+          if (!installerId) {
+            helperBox.innerHTML = `<strong>Heads up:</strong> We couldn't detect your installer ID. Please sign in, or append <code>?installer=&lt;uuid&gt;</code> to the URL.`;
+            toast(
+              "Sign in to view your earnings, or add ?installer=<uuid> to the URL.",
+              "warning"
+            );
+          } else {
+            helperBox.innerHTML = `<strong>Viewing installer:</strong> <code>${installerId}</code>`;
+            await loadFromSupabase(installerId);
+            // NEW: subscribe to realtime changes for this installer
+            realtimeChannel = supabase
+              .channel("earnings_payments_updates")
+              .on(
+                "postgres_changes",
+                {
+                  event: "*",
+                  schema: "earnings",
+                  table: "payments",
+                  filter: `installer_id=eq.${installerId}`,
+                },
+                async (payload) => {
+                  // Decide which badge to nudge based on the NEW status (fallback to OLD)
+                  const newStatus =
+                    payload.new?.payment_status ??
+                    payload.old?.payment_status ??
+                    "";
+                  if (newStatus === "disbursed") {
+                    updateCounts.paid += 1;
+                  } else {
+                    // anything not disbursed shows on the Not Disbursed tab
+                    updateCounts.unpaid += 1;
+                  }
+                  renderBadges();
+
+                  // Refresh data so the tables reflect the latest changes
+                  try {
+                    await loadFromSupabase(installerId);
+                    computePaymentsSummary();
+                    applyFilters();
+                  } catch (e) {
+                    console.error("Realtime refresh failed:", e);
+                    toast(
+                      "Live update failed to refresh. Try reloading.",
+                      "error"
+                    );
+                  }
+                }
+              )
+              .subscribe((status) => {
+                // console.log('Realtime status:', status);
+              });
+          }
+        } catch (err) {
+          console.error(err);
+          helperBox.innerHTML = `<strong>Error:</strong> ${err.message || err}`;
+          showError(err, "Loading error");
+        } finally {
+          computePaymentsSummary();
+          applyFilters();
+          // --- HIDE SKELETON (ADDED) ---
+          requestAnimationFrame(() =>
+            document.body.classList.remove("is-loading")
+          );
+        }
+      })();
+
+      // Optional cleanup if your environment needs it
+      window.addEventListener("beforeunload", () => {
+        if (realtimeChannel) {
+          supabase.removeChannel(realtimeChannel);
+        }
+      });
+
+      // Invoice button (hook)
+      document.addEventListener("click", (e) => {
+        const btn = e.target.closest("button[data-invoice]");
+        if (!btn) return;
+        const code = btn.getAttribute("data-invoice");
+        // Friendlier info (REPLACES alert)
+        Swal.fire({
+          icon: "info",
+          title: "Invoice",
+          html: `Preparing invoice for <code>${code}</code>.`,
+          confirmButtonColor: swalPrimary,
+        });
+      });
+
+      document.getElementById("btnExport").addEventListener("click", exportCSV);
+      document
+        .getElementById("btnRequestPayout")
+        .addEventListener("click", openPayout);
+      document
+        .getElementById("closeModal")
+        .addEventListener("click", closePayout);
+      document
+        .getElementById("cancelPayout")
+        .addEventListener("click", closePayout);
+      document
+        .getElementById("confirmPayout")
+        .addEventListener("click", confirmPayoutRequest);
+
+      searchEl.addEventListener("input", applyFilters);
+      dateFromEl.addEventListener("change", applyFilters);
+      dateToEl.addEventListener("change", applyFilters);
+
+      tabs.forEach((b) => {
+        b.addEventListener("click", () => {
+          tabs.forEach((x) => x.classList.remove("active"));
+          b.classList.add("active");
+          const tab = b.dataset.tab;
+          if (tab === "unpaid") {
+            tabUnpaidWrap.style.display = "block";
+            tabPaidWrap.style.display = "none";
+            selectToolbar.style.display = SELECT_MODE ? "flex" : "none";
+            // NEW: reset badge for this tab
+            updateCounts.unpaid = 0;
+            renderBadges();
+          } else {
+            tabUnpaidWrap.style.display = "none";
+            tabPaidWrap.style.display = "block";
+            selectToolbar.style.display = "none";
+            // NEW: reset badge for this tab
+            updateCounts.paid = 0;
+            renderBadges();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

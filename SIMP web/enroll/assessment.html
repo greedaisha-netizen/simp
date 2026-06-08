@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Session</title>
+    <script src="../shared/course-store.js"></script>
+    <script type="module" src="../shared/course-store-supabase.js"></script>
+    <script type="module" src="../shared/course-cloud-state.js"></script>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --assessment-bg-top: #eff6ff;
+    --assessment-bg-bottom: #f8fafc;
+    --assessment-border: #dbeafe;
+    --assessment-ink: #0f172a;
+    --assessment-muted: #64748b;
+    --assessment-primary: #2563eb;
+    --assessment-success: #16a34a;
+    --assessment-success-strong: #15803d;
+    --assessment-soft: #dbeafe;
+    --assessment-soft-ink: #1d4ed8;
+    --assessment-warning-soft: #fee2e2;
+    --assessment-warning-ink: #b91c1c;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    min-height: 100vh;
+    color: var(--assessment-ink);
+    background:
+        radial-gradient(circle at top left, rgba(59, 130, 246, 0.16), transparent 30%),
+        linear-gradient(180deg, var(--assessment-bg-top) 0%, var(--assessment-bg-bottom) 100%);
+}
+
+.assessment-page {
+    min-height: 100vh;
+    padding: 2rem;
+}
+
+.assessment-shell {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.assessment-session-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.assessment-session-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+}
+
+.assessment-session-chip,
+.assessment-warning-chip,
+.question-chip,
+.result-chip {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 0.45rem 0.8rem;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.assessment-session-chip,
+.question-chip {
+    background: var(--assessment-soft);
+    color: var(--assessment-soft-ink);
+}
+
+.assessment-warning-chip {
+    background: var(--assessment-warning-soft);
+    color: var(--assessment-warning-ink);
+}
+
+.result-chip.pass {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.result-chip.review {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.assessment-session-copy h1,
+.assessment-warning-card h2,
+.question-title,
+.assessment-result-card h2 {
+    color: var(--assessment-ink);
+}
+
+.assessment-session-copy h1 {
+    font-size: 2rem;
+    line-height: 1.15;
+}
+
+.assessment-session-copy p,
+.assessment-warning-card p,
+.assessment-result-card p,
+.assessment-muted {
+    color: var(--assessment-muted);
+    line-height: 1.6;
+}
+
+.assessment-status-card,
+.progress-card,
+.assessment-warning-card,
+.question-card,
+.assessment-result-card,
+.assessment-empty-card {
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid var(--assessment-border);
+    border-radius: 24px;
+    box-shadow: 0 22px 48px rgba(15, 23, 42, 0.08);
+}
+
+.assessment-status-card {
+    min-width: 190px;
+    padding: 1rem 1.1rem;
+}
+
+.assessment-status-card span {
+    display: block;
+    color: var(--assessment-muted);
+    font-size: 0.76rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.assessment-status-card strong {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 1rem;
+}
+
+.assessment-warning-card,
+.assessment-result-card,
+.assessment-empty-card {
+    padding: 1.75rem;
+}
+
+.assessment-warning-points {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.4rem;
+}
+
+.assessment-warning-point {
+    padding: 1rem 1.1rem;
+    border-radius: 16px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+}
+
+.assessment-warning-point strong {
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
+.assessment-warning-actions,
+.assessment-result-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+}
+
+.assessment-questions-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.progress-card {
+    max-width: 200px;
+    margin-left: auto;
+    padding: 1rem 1.1rem;
+}
+
+.progress-text {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 0.75rem;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #3b82f6;
+    border-radius: 999px;
+    transition: width 0.25s ease;
+}
+
+.question-card {
+    padding: 2rem;
+}
+
+.question-card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.question-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.45;
+}
+
+.question-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.option-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.option-item:hover {
+    border-color: #93c5fd;
+    background: #f8fafc;
+}
+
+.option-item.selected {
+    background: #eff6ff;
+    border-color: #3b82f6;
+    box-shadow: 0 10px 22px rgba(59, 130, 246, 0.12);
+}
+
+.option-radio {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
+    position: relative;
+}
+
+.option-item.selected .option-radio {
+    border-color: #3b82f6;
+}
+
+.option-item.selected .option-radio::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 10px;
+    height: 10px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: #3b82f6;
+}
+
+.option-letter {
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #e2e8f0;
+    color: #334155;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.option-item.selected .option-letter {
+    background: #3b82f6;
+    color: #fff;
+}
+
+.option-copy {
+    flex: 1;
+}
+
+.option-text {
+    display: block;
+    color: #1e293b;
+    line-height: 1.5;
+}
+
+.assessment-essay-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+}
+
+.assessment-essay-input {
+    width: 100%;
+    min-height: 220px;
+    padding: 1rem 1.05rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 16px;
+    resize: vertical;
+    font: inherit;
+    color: #0f172a;
+    background: #fff;
+}
+
+.assessment-essay-input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+}
+
+.assessment-essay-helper {
+    color: var(--assessment-muted);
+    font-size: 0.9rem;
+}
+
+.question-navigation {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.question-numbers {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.question-number-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid #cbd5e1;
+    border-radius: 50%;
+    background: #f1f5f9;
+    color: #64748b;
+    font-size: 0.875rem;
+    cursor: pointer;
+}
+
+.question-number-btn.active {
+    background: #3b82f6;
+    color: #fff;
+    border-color: #3b82f6;
+}
+
+.question-number-btn.answered {
+    background: #dcfce7;
+    color: #16a34a;
+    border-color: #86efac;
+}
+
+.question-number-btn.active.answered {
+    background: #3b82f6;
+    color: #fff;
+    border-color: #3b82f6;
+}
+
+.btn-nav {
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    background: #fff;
+    color: #1e293b;
+    padding: 0.8rem 1.25rem;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.btn-nav:hover:not(:disabled) {
+    background: #f8fafc;
+}
+
+.btn-nav:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background: var(--assessment-success);
+    border-color: var(--assessment-success);
+    color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--assessment-success-strong);
+}
+
+.btn-next {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: #fff;
+}
+
+.btn-next:hover:not(:disabled) {
+    background: #2563eb;
+}
+
+.assessment-result-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-top: 1.4rem;
+}
+
+.assessment-result-stat {
+    padding: 1rem 1.1rem;
+    border-radius: 16px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+}
+
+.assessment-result-label {
+    display: block;
+    color: var(--assessment-muted);
+    font-size: 0.82rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.assessment-result-stat strong {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 1.2rem;
+}
+
+.assessment-empty-card h2 {
+    margin-bottom: 0.75rem;
+}
+
+@media (max-width: 768px) {
+    .assessment-page {
+        padding: 1rem;
+    }
+
+    .assessment-session-header {
+        flex-direction: column;
+    }
+
+    .assessment-status-card,
+    .progress-card {
+        width: 100%;
+        max-width: none;
+        margin-left: 0;
+    }
+
+    .question-navigation,
+    .assessment-warning-actions,
+    .assessment-result-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .question-numbers {
+        justify-content: flex-start;
+    }
+}
+    </style>
+</head>
+<body>
+    <main class="assessment-page">
+        <div class="assessment-shell">
+            <header class="assessment-session-header">
+                <div class="assessment-session-copy">
+                    <span class="assessment-session-chip">Assessment Session</span>
+                    <h1 id="assessmentPageTitle">Lesson Assessment</h1>
+                    <p id="assessmentPageSubtitle">Complete the official assessment for this lesson.</p>
+                </div>
+                <div class="assessment-status-card">
+                    <span>Session</span>
+                    <strong id="assessmentStatusText">Ready to start</strong>
+                </div>
+            </header>
+
+            <section class="assessment-empty-card" id="assessmentEmptyState" hidden>
+                <h2>Assessment unavailable</h2>
+                <p id="assessmentEmptyMessage">We could not load the selected assessment.</p>
+                <div class="assessment-result-actions">
+                    <button class="btn-nav" type="button" id="assessmentEmptyReturnBtn">Back</button>
+                </div>
+            </section>
+
+            <section class="assessment-warning-card" id="assessmentIntroState" hidden>
+                <span class="assessment-warning-chip" id="assessmentIntroChip">Official Assessment</span>
+                <div style="margin-top:0.85rem;">
+                    <h2 id="assessmentIntroTitle">Start assessment</h2>
+                    <p id="assessmentIntroMessage">You must answer every question before submitting. Once submitted, your answers are final and this assessment cannot be retaken.</p>
+                </div>
+                <div class="assessment-warning-points">
+                    <div class="assessment-warning-point">
+                        <strong>Finish in one focused session</strong>
+                        <span>This assessment uses its own page so it is not interrupted by other workspace actions.</span>
+                    </div>
+                    <div class="assessment-warning-point">
+                        <strong>Every answer is official</strong>
+                        <span>Multiple-choice and essay responses are recorded as part of your lesson assessment attempt.</span>
+                    </div>
+                    <div class="assessment-warning-point">
+                        <strong>Submission is final</strong>
+                        <span>After you submit, the assessment is locked unless a new version is released for the lesson.</span>
+                    </div>
+                </div>
+                <div class="assessment-warning-actions">
+                    <button class="btn-nav" type="button" id="assessmentLeaveBtn">Leave</button>
+                    <button class="btn-nav btn-primary" type="button" id="assessmentBeginBtn">Begin Assessment</button>
+                </div>
+            </section>
+
+            <section class="assessment-questions-container" id="assessmentQuestionState" hidden>
+                <div class="progress-card">
+                    <div class="progress-text" id="progressText">Question 1 of 1</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+
+                <div class="question-card" id="assessmentQuestionCard">
+                    <div class="question-card-header">
+                        <div class="question-chip" id="questionTypeChip">Question</div>
+                        <h2 class="question-title" id="questionTitle">Question text</h2>
+                    </div>
+
+                    <div class="question-options" id="questionOptions"></div>
+
+                    <div class="question-navigation">
+                        <button class="btn-nav" type="button" id="prevButton" disabled>Previous</button>
+                        <div class="question-numbers" id="questionNumbers"></div>
+                        <button class="btn-nav btn-next" type="button" id="nextButton">Next</button>
+                        <button class="btn-nav btn-primary" type="button" id="submitButton" hidden>Submit Assessment</button>
+                    </div>
+                </div>
+            </section>
+
+            <section class="assessment-result-card" id="assessmentResultState" hidden></section>
+        </div>
+    </main>
+
+    <script>
+const store = window.SIMPCourseStore;
+const publishedCoursesStorageKey = "simpPublishedCourses";
+const assessmentStorageKey = "myStudyRoomAssessments";
+const assessmentAttemptHistoryStorageKey = "simpAssessmentAttemptHistory";
+const assessmentSubmissionStorageKey = "simpAssessmentSubmissions";
+const activityLogKey = "simpLearningActivityLog";
+const assessmentSessionKey = "simpCurrentAssessmentSession";
+const assessmentReturnUrlKey = "simpCurrentAssessmentReturnUrl";
+const assessmentUrlParams = new URLSearchParams(window.location.search);
+
+const routeAssessment = {
+    courseId: assessmentUrlParams.get("courseId") || "",
+    levelId: assessmentUrlParams.get("levelId") || "",
+    lessonId: assessmentUrlParams.get("lessonId") || "",
+    assessmentId: assessmentUrlParams.get("assessmentId") || "",
+    returnTo: assessmentUrlParams.get("returnTo") || ""
+};
+
+const assessmentPageTitle = document.getElementById("assessmentPageTitle");
+const assessmentPageSubtitle = document.getElementById("assessmentPageSubtitle");
+const assessmentStatusText = document.getElementById("assessmentStatusText");
+const assessmentEmptyState = document.getElementById("assessmentEmptyState");
+const assessmentEmptyMessage = document.getElementById("assessmentEmptyMessage");
+const assessmentIntroState = document.getElementById("assessmentIntroState");
+const assessmentIntroChip = document.getElementById("assessmentIntroChip");
+const assessmentIntroTitle = document.getElementById("assessmentIntroTitle");
+const assessmentIntroMessage = document.getElementById("assessmentIntroMessage");
+const assessmentQuestionState = document.getElementById("assessmentQuestionState");
+const assessmentResultState = document.getElementById("assessmentResultState");
+const progressText = document.getElementById("progressText");
+const progressFill = document.getElementById("progressFill");
+const questionTypeChip = document.getElementById("questionTypeChip");
+const questionTitle = document.getElementById("questionTitle");
+const questionOptions = document.getElementById("questionOptions");
+const questionNumbers = document.getElementById("questionNumbers");
+const prevButton = document.getElementById("prevButton");
+const nextButton = document.getElementById("nextButton");
+const submitButton = document.getElementById("submitButton");
+const assessmentBeginBtn = document.getElementById("assessmentBeginBtn");
+const assessmentLeaveBtn = document.getElementById("assessmentLeaveBtn");
+const assessmentEmptyReturnBtn = document.getElementById("assessmentEmptyReturnBtn");
+
+let currentAssessmentItem = null;
+let currentAssessmentQuestions = [];
+let currentQuestion = 0;
+let selectedAnswers = {};
+let assessmentInProgress = false;
+
+function escapeHtml(value) {
+    return String(value || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+}
+
+function getReturnUrl() {
+    const explicitReturnUrl = normalizeReturnUrl(routeAssessment.returnTo);
+    if (explicitReturnUrl) {
+        return explicitReturnUrl;
+    }
+
+    const storedReturnUrl = normalizeReturnUrl(localStorage.getItem(assessmentReturnUrlKey));
+    if (storedReturnUrl) {
+        return storedReturnUrl;
+    }
+
+    try {
+        return new URL("classroom.html?page=assignments", window.location.href).href;
+    } catch (error) {
+        return "classroom.html?page=assignments";
+    }
+}
+
+function normalizeReturnUrl(rawUrl) {
+    if (!rawUrl) {
+        return "";
+    }
+
+    try {
+        const resolved = new URL(rawUrl, window.location.href);
+        if (resolved.origin !== window.location.origin) {
+            return "";
+        }
+        return resolved.href;
+    } catch (error) {
+        return "";
+    }
+}
+
+function loadAssessmentSession() {
+    try {
+        const rawSession = localStorage.getItem(assessmentSessionKey);
+        const parsed = rawSession ? JSON.parse(rawSession) : null;
+        if (!parsed || !parsed.item) {
+            return null;
+        }
+
+        const matchesRoute = (!routeAssessment.courseId || parsed.item.courseId === routeAssessment.courseId)
+            && (!routeAssessment.levelId || parsed.item.levelId === routeAssessment.levelId)
+            && (!routeAssessment.lessonId || parsed.item.lessonId === routeAssessment.lessonId)
+            && (!routeAssessment.assessmentId || parsed.item.assessment?.id === routeAssessment.assessmentId);
+
+        if (!matchesRoute) {
+            return null;
+        }
+
+        currentQuestion = Number.isFinite(Number(parsed.currentQuestion)) ? Number(parsed.currentQuestion) : 0;
+        selectedAnswers = parsed.selectedAnswers && typeof parsed.selectedAnswers === "object" ? parsed.selectedAnswers : {};
+        assessmentInProgress = Boolean(parsed.assessmentInProgress);
+        return parsed.item;
+    } catch (error) {
+        return null;
+    }
+}
+
+function persistAssessmentSession() {
+    if (!currentAssessmentItem) {
+        return;
+    }
+
+    localStorage.setItem(
+        assessmentSessionKey,
+        JSON.stringify({
+            item: currentAssessmentItem,
+            currentQuestion,
+            selectedAnswers,
+            assessmentInProgress
+        })
+    );
+}
+
+function clearAssessmentSession() {
+    localStorage.removeItem(assessmentSessionKey);
+}
+
+function getAssessmentEntries() {
+    const raw = localStorage.getItem(assessmentStorageKey);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return (Array.isArray(parsed) ? parsed : []).map((item) => ({
+        ...item,
+        completedAssessmentIds: Array.isArray(item.completedAssessmentIds) ? item.completedAssessmentIds : [],
+        assessmentResults: Array.isArray(item.assessmentResults) ? item.assessmentResults : [],
+        assessments: Array.isArray(item.assessments) ? item.assessments : []
+    }));
+}
+
+function saveAssessmentEntries(entries) {
+    localStorage.setItem(assessmentStorageKey, JSON.stringify(entries));
+    window.dispatchEvent(new CustomEvent("simp-assessments-updated"));
+}
+
+function getAssessmentAttemptHistory() {
+    try {
+        const raw = localStorage.getItem(assessmentAttemptHistoryStorageKey);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+        return [];
+    }
+}
+
+function saveAssessmentAttemptHistory(history) {
+    localStorage.setItem(assessmentAttemptHistoryStorageKey, JSON.stringify(history));
+}
+
+function getAssessmentAttemptHistoryKey(source) {
+    return `${source.courseId || ""}::${source.levelId || ""}::${source.lessonId || ""}`;
+}
+
+function getStoredAssessmentAttemptState(source) {
+    const record = getAssessmentAttemptHistory().find(
+        (item) => item.key === getAssessmentAttemptHistoryKey(source)
+    );
+
+    return {
+        completedAssessmentIds: Array.isArray(record?.completedAssessmentIds) ? record.completedAssessmentIds : [],
+        assessmentResults: Array.isArray(record?.assessmentResults) ? record.assessmentResults : [],
+        isCompleted: Boolean(record?.isCompleted),
+        completedAt: record?.completedAt ?? null
+    };
+}
+
+function persistAssessmentAttemptState(source) {
+    const key = getAssessmentAttemptHistoryKey(source);
+    const history = getAssessmentAttemptHistory();
+    const existing = history.find((item) => item.key === key);
+    const nextRecord = {
+        key,
+        courseId: source.courseId || "",
+        levelId: source.levelId || "",
+        lessonId: source.lessonId || "",
+        courseTitle: source.courseTitle || "",
+        levelTitle: source.levelTitle || "",
+        lessonTitle: source.lessonTitle || "",
+        completedAssessmentIds: Array.isArray(source.completedAssessmentIds) ? source.completedAssessmentIds : [],
+        assessmentResults: Array.isArray(source.assessmentResults) ? source.assessmentResults : [],
+        isCompleted: Boolean(source.isCompleted),
+        completedAt: source.completedAt ?? null,
+        updatedAt: Date.now()
+    };
+
+    if (existing) {
+        Object.assign(existing, nextRecord);
+    } else {
+        history.push(nextRecord);
+    }
+
+    saveAssessmentAttemptHistory(history);
+}
+
+function resolveCourse(courseId) {
+    const publishedCourse = store?.getCourseById?.(courseId);
+    if (publishedCourse) {
+        return publishedCourse;
+    }
+
+    try {
+        const raw = localStorage.getItem(publishedCoursesStorageKey);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed.find((item) => item.id === courseId) || null : null;
+    } catch (error) {
+        return null;
+    }
+}
+
+function getLevelNumber(level, fallbackTitle) {
+    const value = String(level?.title || fallbackTitle || "");
+    const match = value.match(/level\s*(\d+)/i);
+    return match ? Number(match[1]) : 1;
+}
+
+function normalizeQuestions(questions, lessonId) {
+    return (Array.isArray(questions) ? questions : [])
+        .map((question, index) => {
+            const type = question?.type === "essay" ? "essay" : "multiple-choice";
+            const options = Array.isArray(question?.choices)
+                ? question.choices
+                : Array.isArray(question?.options)
+                    ? question.options
+                    : [];
+
+            return {
+                id: question?.id || `${lessonId}-question-${index + 1}`,
+                type,
+                question: question?.question || question?.prompt || `Question ${index + 1}`,
+                options: type === "essay" ? [] : options.filter((choice) => String(choice || "").trim()),
+                correctAnswer: Number.isInteger(question?.answerIndex)
+                    ? question.answerIndex
+                    : Number.isInteger(question?.correctAnswer)
+                        ? question.correctAnswer
+                        : 0,
+                rubric: question?.rubric || ""
+            };
+        })
+        .filter((question) => question.type === "essay" || question.options.length >= 2);
+}
+
+function estimateDuration(questions) {
+    const multipleChoiceCount = questions.filter((question) => question.type !== "essay").length;
+    const essayCount = questions.filter((question) => question.type === "essay").length;
+    return Math.max(10, multipleChoiceCount + essayCount * 6);
+}
+
+function normalizeAssessment(assessment, lesson, levelNumber, index, entry) {
+    const questions = normalizeQuestions(assessment?.questions, lesson?.id || entry.lessonId || "lesson");
+    if (!questions.length) {
+        return null;
+    }
+
+    const essayCount = questions.filter((question) => question.type === "essay").length;
+    return {
+        id: assessment?.id || `${lesson?.id || entry.lessonId || "lesson"}-assessment-${index + 1}`,
+        title: assessment?.title || `${entry.lessonTitle || lesson?.title || "Lesson"} Assessment`,
+        description: assessment?.description || (essayCount
+            ? "Includes multiple-choice and essay questions for applied understanding."
+            : "Multiple-choice assessment based on the lesson content."),
+        duration: Number(assessment?.duration) || estimateDuration(questions),
+        totalQuestions: questions.length,
+        passingScore: Number.isFinite(Number(assessment?.passingScore))
+            ? Number(assessment.passingScore)
+            : levelNumber >= 3
+                ? 80
+                : 70,
+        questions
+    };
+}
+
+function buildLegacyAssessmentsForLesson(lesson, levelNumber) {
+    const legacyQuestions = Array.isArray(lesson?.questions) ? lesson.questions : [];
+    if (!legacyQuestions.length) {
+        return [];
+    }
+
+    return [
+        {
+            id: `${lesson.id || "lesson"}-assessment`,
+            title: `${lesson.title || "Lesson"} Assessment`,
+            description: "",
+            duration: 0,
+            totalQuestions: 0,
+            passingScore: levelNumber >= 3 ? 80 : 70,
+            questions: legacyQuestions
+        }
+    ];
+}
+
+function getLessonAssessments(entry, level, lesson) {
+    const levelNumber = getLevelNumber(level, entry.levelTitle);
+    const liveAssessments = Array.isArray(lesson?.assessments) ? lesson.assessments : [];
+    const snapshotAssessments = Array.isArray(entry.assessments) ? entry.assessments : [];
+    const sourceAssessments = liveAssessments.length
+        ? liveAssessments
+        : snapshotAssessments.length
+            ? snapshotAssessments
+            : buildLegacyAssessmentsForLesson(lesson, levelNumber);
+
+    return sourceAssessments
+        .map((assessment, index) => normalizeAssessment(assessment, lesson, levelNumber, index, entry))
+        .filter(Boolean);
+}
+
+function getAssessmentVersion(assessment) {
+    if (!assessment) {
+        return "v1";
+    }
+
+    if (assessment.version) {
+        return String(assessment.version);
+    }
+
+    const versionSource = JSON.stringify({
+        title: assessment.title || "",
+        passingScore: assessment.passingScore || 0,
+        questions: Array.isArray(assessment.questions) ? assessment.questions.map((question) => ({
+            type: question.type || "",
+            question: question.question || "",
+            options: question.options || [],
+            correctAnswer: question.correctAnswer,
+            rubric: question.rubric || ""
+        })) : []
+    });
+
+    let hash = 0;
+    for (let index = 0; index < versionSource.length; index += 1) {
+        hash = (hash << 5) - hash + versionSource.charCodeAt(index);
+        hash |= 0;
+    }
+
+    return `v${Math.abs(hash)}`;
+}
+
+function getLatestAssessmentResult(entry, assessmentId) {
+    if (!assessmentId) {
+        return null;
+    }
+
+    const results = Array.isArray(entry?.assessmentResults) ? entry.assessmentResults : [];
+    return results
+        .filter((result) => result && result.assessmentId === assessmentId)
+        .sort((left, right) => Number(right.gradedAt || right.submittedAt || 0) - Number(left.gradedAt || left.submittedAt || 0))[0] || null;
+}
+
+function formatAssessmentScore(result) {
+    if (!result) {
+        return "Not graded";
+    }
+
+    if (result.status === "pending") {
+        return "Pending review";
+    }
+
+    if (Number.isFinite(Number(result.scoreEarned)) && Number.isFinite(Number(result.scoreTotal))) {
+        return `${Number(result.scoreEarned)}/${Number(result.scoreTotal)}`;
+    }
+
+    return "Graded";
+}
+
+function saveAssessmentSubmissions(entries) {
+    localStorage.setItem(assessmentSubmissionStorageKey, JSON.stringify(entries));
+}
+
+function getAssessmentSubmissions() {
+    try {
+        const raw = localStorage.getItem(assessmentSubmissionStorageKey);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+        return [];
+    }
+}
+
+function createAssessmentResultRecord(assessmentItem, objectiveQuestions, correctAnswers, essayQuestions) {
+    const hasEssay = essayQuestions.length > 0;
+    return {
+        resultId: `assessment-result-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        assessmentId: assessmentItem.assessment.id,
+        assessmentVersion: assessmentItem.assessmentVersion || getAssessmentVersion(assessmentItem.assessment),
+        status: hasEssay ? "pending" : "graded",
+        scoreEarned: hasEssay ? null : correctAnswers,
+        scoreTotal: currentAssessmentQuestions.length,
+        objectiveCorrect: correctAnswers,
+        objectiveTotal: objectiveQuestions.length,
+        pendingEssayCount: essayQuestions.length,
+        passingScore: Number(assessmentItem.assessment.passingScore) || 0,
+        submittedAt: Date.now(),
+        gradedAt: hasEssay ? null : Date.now(),
+        gradedBy: hasEssay ? "" : "System"
+    };
+}
+
+function savePendingAssessmentSubmission(assessmentItem, resultRecord, essayQuestions) {
+    const submissions = getAssessmentSubmissions();
+    submissions.push({
+        id: `assessment-submission-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        resultId: resultRecord.resultId,
+        status: "pending",
+        libraryId: assessmentItem.libraryId || "",
+        courseId: assessmentItem.courseId || "",
+        levelId: assessmentItem.levelId || "",
+        lessonId: assessmentItem.lessonId || "",
+        assessmentId: assessmentItem.assessment.id,
+        assessmentVersion: resultRecord.assessmentVersion || assessmentItem.assessmentVersion || getAssessmentVersion(assessmentItem.assessment),
+        courseTitle: assessmentItem.courseName || "",
+        levelTitle: assessmentItem.levelName || "",
+        lessonTitle: assessmentItem.lessonName || "",
+        authorName: "Learner",
+        objectiveCorrect: Number(resultRecord.objectiveCorrect) || 0,
+        objectiveTotal: Number(resultRecord.objectiveTotal) || 0,
+        scoreTotal: Number(resultRecord.scoreTotal) || 0,
+        passingScore: Number(resultRecord.passingScore) || 0,
+        submittedAt: Number(resultRecord.submittedAt) || Date.now(),
+        gradedAt: null,
+        gradedBy: "",
+        scoreEarned: null,
+        essayResponses: essayQuestions.map((question) => ({
+            questionId: question.id,
+            prompt: question.question || "",
+            rubric: question.rubric || "",
+            answer: String(selectedAnswers[question.id] || "").trim()
+        }))
+    });
+    saveAssessmentSubmissions(submissions);
+}
+
+function recordAssessmentActivity(assessmentItem) {
+    let entries = [];
+    try {
+        const raw = localStorage.getItem(activityLogKey);
+        const parsed = raw ? JSON.parse(raw) : [];
+        entries = Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+        entries = [];
+    }
+
+    entries.push({
+        id: `assessment_completed-${assessmentItem.courseId || "course"}-${assessmentItem.levelId || "level"}-${assessmentItem.lessonId || "lesson"}-${Date.now()}`,
+        type: "assessment_completed",
+        timestamp: Date.now(),
+        courseId: assessmentItem.courseId || "",
+        levelId: assessmentItem.levelId || "",
+        lessonId: assessmentItem.lessonId || "",
+        courseTitle: assessmentItem.courseName || "",
+        levelTitle: assessmentItem.levelName || "",
+        lessonTitle: assessmentItem.lessonName || ""
+    });
+
+    localStorage.setItem(activityLogKey, JSON.stringify(entries.slice(-300)));
+    window.dispatchEvent(new CustomEvent("simp-learning-activity-updated"));
+}
+
+function markAssessmentEntryCompleted(assessmentItem, resultRecord = null) {
+    const entries = getAssessmentEntries();
+    let matchedEntry = entries.find((entry) =>
+        entry.libraryId === assessmentItem.libraryId
+        || (entry.courseId === assessmentItem.courseId
+            && entry.levelId === assessmentItem.levelId
+            && entry.lessonId === assessmentItem.lessonId)
+    );
+
+    if (!matchedEntry) {
+        matchedEntry = {
+            assessmentEntryId: `assessment-${assessmentItem.courseId}-${assessmentItem.levelId}-${assessmentItem.lessonId}`,
+            libraryId: assessmentItem.libraryId || "",
+            courseId: assessmentItem.courseId,
+            levelId: assessmentItem.levelId,
+            lessonId: assessmentItem.lessonId,
+            courseTitle: assessmentItem.courseName,
+            levelTitle: assessmentItem.levelName,
+            lessonTitle: assessmentItem.lessonName,
+            enrolledAt: Date.now(),
+            isArchived: false,
+            isNew: false,
+            isSeen: true,
+            isCompleted: false,
+            completedAt: null,
+            completedAssessmentIds: [],
+            assessmentResults: [],
+            assessments: [assessmentItem.assessment]
+        };
+        entries.push(matchedEntry);
+    }
+
+    const completedIds = new Set(Array.isArray(matchedEntry.completedAssessmentIds) ? matchedEntry.completedAssessmentIds : []);
+    completedIds.add(assessmentItem.assessment.id);
+    matchedEntry.completedAssessmentIds = [...completedIds];
+    matchedEntry.assessmentResults = Array.isArray(matchedEntry.assessmentResults) ? matchedEntry.assessmentResults : [];
+    matchedEntry.assessments = Array.isArray(matchedEntry.assessments) ? matchedEntry.assessments : [];
+
+    const existingAssessmentIndex = matchedEntry.assessments.findIndex((item) => item?.id === assessmentItem.assessment.id);
+    if (existingAssessmentIndex >= 0) {
+        matchedEntry.assessments[existingAssessmentIndex] = assessmentItem.assessment;
+    } else {
+        matchedEntry.assessments.push(assessmentItem.assessment);
+    }
+
+    if (resultRecord) {
+        matchedEntry.assessmentResults = matchedEntry.assessmentResults.filter((item) => !(
+            item.assessmentId === assessmentItem.assessment.id
+            && (item.assessmentVersion || resultRecord.assessmentVersion) === resultRecord.assessmentVersion
+        ));
+        matchedEntry.assessmentResults.push(resultRecord);
+    }
+
+    matchedEntry.isCompleted = true;
+    matchedEntry.isNew = false;
+    matchedEntry.isSeen = true;
+    matchedEntry.completedAt = Date.now();
+    saveAssessmentEntries(entries);
+    persistAssessmentAttemptState(matchedEntry);
+    recordAssessmentActivity(assessmentItem);
+}
+
+function buildAssessmentItemFromRoute() {
+    if (!routeAssessment.courseId || !routeAssessment.levelId || !routeAssessment.lessonId) {
+        return null;
+    }
+
+    const course = resolveCourse(routeAssessment.courseId);
+    const level = course?.levels?.find((item) => item.id === routeAssessment.levelId);
+    const lesson = level?.lessons?.find((item) => item.id === routeAssessment.lessonId);
+
+    if (!course || !level || !lesson) {
+        return null;
+    }
+
+    const entries = getAssessmentEntries();
+    const matchedEntry = entries.find((entry) =>
+        entry.courseId === routeAssessment.courseId
+        && entry.levelId === routeAssessment.levelId
+        && entry.lessonId === routeAssessment.lessonId
+    );
+    const attemptState = getStoredAssessmentAttemptState(routeAssessment);
+    const entry = matchedEntry || {
+        libraryId: "",
+        courseId: routeAssessment.courseId,
+        levelId: routeAssessment.levelId,
+        lessonId: routeAssessment.lessonId,
+        courseTitle: course.title || "",
+        levelTitle: level.title || "",
+        lessonTitle: lesson.title || "",
+        completedAssessmentIds: attemptState.completedAssessmentIds,
+        assessmentResults: attemptState.assessmentResults,
+        assessments: []
+    };
+
+    const items = getLessonAssessments(entry, level, lesson).map((assessment) => {
+        const assessmentResult = getLatestAssessmentResult(entry, assessment.id);
+        const assessmentVersion = getAssessmentVersion(assessment);
+        const completedIds = new Set(Array.isArray(entry.completedAssessmentIds) ? entry.completedAssessmentIds : []);
+        const hasNewVersion = Boolean(
+            assessmentResult
+            && (assessmentResult.assessmentVersion || "") !== assessmentVersion
+        );
+        const isCompleted = Boolean(
+            completedIds.has(assessment.id)
+            && assessmentResult
+            && !hasNewVersion
+        );
+
+        return {
+            catalogId: `${entry.courseId}-${entry.levelId}-${entry.lessonId}-${assessment.id}-${assessmentVersion}`,
+            libraryId: entry.libraryId || "",
+            courseId: entry.courseId,
+            levelId: entry.levelId,
+            lessonId: entry.lessonId,
+            courseName: entry.courseTitle || course.title || "",
+            levelName: entry.levelTitle || level.title || "",
+            lessonName: entry.lessonTitle || lesson.title || "",
+            enrolledAt: Number(entry.enrolledAt || Date.now()),
+            isNew: Boolean(entry.isNew),
+            isCompleted,
+            hasNewVersion,
+            previousAssessmentResult: hasNewVersion ? assessmentResult : null,
+            assessmentResult,
+            assessmentVersion,
+            assessment
+        };
+    });
+
+    return routeAssessment.assessmentId
+        ? items.find((item) => item.assessment.id === routeAssessment.assessmentId) || items[0] || null
+        : items[0] || null;
+}
+
+function setVisibleState(activeState) {
+    assessmentEmptyState.hidden = activeState !== "empty";
+    assessmentIntroState.hidden = activeState !== "intro";
+    assessmentQuestionState.hidden = activeState !== "questions";
+    assessmentResultState.hidden = activeState !== "result";
+}
+
+function updatePageCopy() {
+    if (!currentAssessmentItem) {
+        assessmentPageTitle.textContent = "Assessment Session";
+        assessmentPageSubtitle.textContent = "The selected assessment could not be loaded.";
+        assessmentStatusText.textContent = "Unavailable";
+        return;
+    }
+
+    assessmentPageTitle.textContent = currentAssessmentItem.assessment.title || `${currentAssessmentItem.lessonName} Assessment`;
+    assessmentPageSubtitle.textContent = `${currentAssessmentItem.courseName} | ${currentAssessmentItem.levelName} | ${currentAssessmentItem.lessonName}`;
+    assessmentStatusText.textContent = assessmentInProgress
+        ? "In progress"
+        : currentAssessmentItem.isCompleted && !currentAssessmentItem.hasNewVersion
+            ? "Completed"
+            : "Ready to start";
+}
+
+function renderEmptyState(message) {
+    updatePageCopy();
+    assessmentEmptyMessage.textContent = message;
+    setVisibleState("empty");
+}
+
+function renderIntroState() {
+    if (!currentAssessmentItem) {
+        renderEmptyState("We could not load the selected assessment.");
+        return;
+    }
+
+    updatePageCopy();
+    assessmentIntroChip.textContent = currentAssessmentItem.hasNewVersion
+        ? "New Version Available"
+        : currentAssessmentItem.isCompleted
+            ? "Assessment Result"
+            : "Official Assessment";
+    assessmentIntroTitle.textContent = currentAssessmentItem.assessment.title || `${currentAssessmentItem.lessonName} Assessment`;
+    assessmentIntroMessage.textContent = currentAssessmentItem.hasNewVersion
+        ? "A new version of this assessment is available. Starting it will record a fresh official attempt for this lesson."
+        : "You must answer every question before submitting. Once submitted, your answers are final and this assessment cannot be retaken.";
+    setVisibleState("intro");
+}
+
+function renderLockedResultState() {
+    if (!currentAssessmentItem) {
+        renderEmptyState("We could not load the selected assessment result.");
+        return;
+    }
+
+    const result = currentAssessmentItem.assessmentResult;
+    const objectiveScore = Number.isFinite(Number(result?.objectiveCorrect)) && Number.isFinite(Number(result?.objectiveTotal))
+        ? `${result.objectiveCorrect}/${result.objectiveTotal}`
+        : "Not available";
+
+    assessmentResultState.innerHTML = `
+        <div class="assessment-result-header">
+            <span class="result-chip ${result?.status === "pending" ? "review" : "pass"}">${escapeHtml(result?.status === "pending" ? "Pending Review" : "Completed")}</span>
+            <h2>${escapeHtml(currentAssessmentItem.assessment.title || `${currentAssessmentItem.lessonName} Assessment`)}</h2>
+            <p>${escapeHtml(result?.status === "pending"
+                ? "Your official assessment attempt has already been submitted and is waiting for admin review."
+                : "Your official assessment attempt has already been submitted. This assessment is currently locked.")}</p>
+        </div>
+        <div class="assessment-result-stats">
+            <div class="assessment-result-stat">
+                <span class="assessment-result-label">Score</span>
+                <strong>${escapeHtml(formatAssessmentScore(result))}</strong>
+            </div>
+            <div class="assessment-result-stat">
+                <span class="assessment-result-label">Objective Score</span>
+                <strong>${escapeHtml(objectiveScore)}</strong>
+            </div>
+            <div class="assessment-result-stat">
+                <span class="assessment-result-label">Written Questions</span>
+                <strong>${escapeHtml(String(Number(result?.pendingEssayCount || 0)))}</strong>
+            </div>
+        </div>
+        <div class="assessment-result-actions">
+            <button class="btn-nav" type="button" id="lockedReturnButton">Back to Assessments</button>
+        </div>
+    `;
+    assessmentResultState.querySelector("#lockedReturnButton")?.addEventListener("click", leaveAssessmentSession);
+    setVisibleState("result");
+}
+
+function beginAssessment() {
+    if (!currentAssessmentItem) {
+        return;
+    }
+
+    currentAssessmentQuestions = Array.isArray(currentAssessmentItem.assessment.questions)
+        ? currentAssessmentItem.assessment.questions
+        : [];
+    currentQuestion = Math.min(currentQuestion, Math.max(currentAssessmentQuestions.length - 1, 0));
+    assessmentInProgress = true;
+    updatePageCopy();
+    persistAssessmentSession();
+    renderQuestionState();
+}
+
+function renderQuestionState() {
+    if (!currentAssessmentItem) {
+        renderEmptyState("We could not load the selected assessment.");
+        return;
+    }
+
+    currentAssessmentQuestions = Array.isArray(currentAssessmentItem.assessment.questions)
+        ? currentAssessmentItem.assessment.questions
+        : [];
+    if (!currentAssessmentQuestions.length) {
+        renderEmptyState("This assessment does not contain any questions.");
+        return;
+    }
+
+    assessmentInProgress = true;
+    updatePageCopy();
+    renderQuestion();
+    setVisibleState("questions");
+}
+
+function renderQuestion() {
+    const question = currentAssessmentQuestions[currentQuestion];
+    if (!question) {
+        return;
+    }
+
+    const progress = ((currentQuestion + 1) / currentAssessmentQuestions.length) * 100;
+    progressText.textContent = `Question ${currentQuestion + 1} of ${currentAssessmentQuestions.length}`;
+    progressFill.style.width = `${progress}%`;
+    questionTypeChip.textContent = question.type === "essay" ? "Essay Response" : "Multiple Choice";
+    questionTitle.textContent = question.question;
+    questionOptions.innerHTML = "";
+
+    if (question.type === "essay") {
+        const wrapper = document.createElement("div");
+        wrapper.className = "assessment-essay-field";
+        wrapper.innerHTML = `
+            <textarea id="essayAnswerInput" class="assessment-essay-input" rows="8" placeholder="Write your answer here...">${escapeHtml(selectedAnswers[question.id] || "")}</textarea>
+            <p class="assessment-essay-helper">${escapeHtml(question.rubric || "Answer clearly and support your response with practical reasoning.")}</p>
+        `;
+        questionOptions.appendChild(wrapper);
+        wrapper.querySelector("#essayAnswerInput")?.addEventListener("input", (event) => {
+            selectedAnswers[question.id] = event.target.value;
+            persistAssessmentSession();
+            renderQuestionNumbers();
+        });
+    } else {
+        question.options.forEach((option, index) => {
+            const optionDiv = document.createElement("div");
+            optionDiv.className = "option-item";
+            if (selectedAnswers[question.id] === index) {
+                optionDiv.classList.add("selected");
+            }
+            optionDiv.innerHTML = `
+                <div class="option-radio"></div>
+                <span class="option-letter">${String.fromCharCode(65 + index)}</span>
+                <div class="option-copy">
+                    <span class="option-text">${escapeHtml(option)}</span>
+                </div>
+            `;
+            optionDiv.addEventListener("click", () => {
+                selectedAnswers[question.id] = index;
+                persistAssessmentSession();
+                renderQuestion();
+            });
+            questionOptions.appendChild(optionDiv);
+        });
+    }
+
+    prevButton.disabled = currentQuestion === 0;
+    nextButton.hidden = currentQuestion === currentAssessmentQuestions.length - 1;
+    submitButton.hidden = currentQuestion !== currentAssessmentQuestions.length - 1;
+    renderQuestionNumbers();
+    persistAssessmentSession();
+}
+
+function renderQuestionNumbers() {
+    questionNumbers.innerHTML = "";
+
+    currentAssessmentQuestions.forEach((question, index) => {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "question-number-btn";
+        button.textContent = String(index + 1);
+        if (index === currentQuestion) {
+            button.classList.add("active");
+        }
+        if (isAnswered(question)) {
+            button.classList.add("answered");
+        }
+        button.addEventListener("click", () => {
+            currentQuestion = index;
+            renderQuestion();
+        });
+        questionNumbers.appendChild(button);
+    });
+}
+
+function isAnswered(question) {
+    if (question.type === "essay") {
+        return typeof selectedAnswers[question.id] === "string" && selectedAnswers[question.id].trim().length > 0;
+    }
+
+    return selectedAnswers[question.id] !== undefined;
+}
+
+function nextQuestion() {
+    if (currentQuestion < currentAssessmentQuestions.length - 1) {
+        currentQuestion += 1;
+        renderQuestion();
+    }
+}
+
+function prevQuestion() {
+    if (currentQuestion > 0) {
+        currentQuestion -= 1;
+        renderQuestion();
+    }
+}
+
+function getUnansweredAssessmentQuestions() {
+    return currentAssessmentQuestions
+        .map((question, index) => ({ question, index }))
+        .filter((item) => !isAnswered(item.question));
+}
+
+function submitAssessment() {
+    const unansweredItems = getUnansweredAssessmentQuestions();
+    if (unansweredItems.length) {
+        const firstUnanswered = unansweredItems[0];
+        currentQuestion = firstUnanswered.index;
+        renderQuestion();
+        window.alert(`Please answer question${unansweredItems.length === 1 ? "" : "s"} ${unansweredItems.map((item) => item.index + 1).join(", ")} before submitting your assessment.`);
+        return;
+    }
+
+    const objectiveQuestions = currentAssessmentQuestions.filter((question) => question.type !== "essay");
+    const correctAnswers = objectiveQuestions.filter((question) => selectedAnswers[question.id] === question.correctAnswer).length;
+    const objectiveScore = objectiveQuestions.length ? Math.round((correctAnswers / objectiveQuestions.length) * 100) : null;
+    const essayQuestions = currentAssessmentQuestions.filter((question) => question.type === "essay");
+    const hasEssayReview = essayQuestions.length > 0;
+    const passedObjective = objectiveScore === null || objectiveScore >= currentAssessmentItem.assessment.passingScore;
+    const resultRecord = createAssessmentResultRecord(currentAssessmentItem, objectiveQuestions, correctAnswers, essayQuestions);
+
+    assessmentInProgress = false;
+    markAssessmentEntryCompleted(currentAssessmentItem, resultRecord);
+    if (hasEssayReview) {
+        savePendingAssessmentSubmission(currentAssessmentItem, resultRecord, essayQuestions);
+    }
+
+    currentAssessmentItem = {
+        ...currentAssessmentItem,
+        isCompleted: true,
+        hasNewVersion: false,
+        previousAssessmentResult: null,
+        assessmentResult: resultRecord
+    };
+    persistAssessmentSession();
+
+    assessmentResultState.innerHTML = `
+        <div class="assessment-result-header">
+            <span class="result-chip ${hasEssayReview ? "review" : passedObjective ? "pass" : "review"}">${escapeHtml(hasEssayReview ? "Pending Admin Review" : passedObjective ? "Submitted" : "Needs Review")}</span>
+            <h2>${escapeHtml(hasEssayReview ? "Assessment submitted for review" : "Assessment submitted")}</h2>
+            <p>${escapeHtml(`${currentAssessmentItem.lessonName} assessment has been completed${hasEssayReview ? ", and the final score will be posted after admin checks the written answers." : "."}`)}</p>
+        </div>
+        <div class="assessment-result-stats">
+            <div class="assessment-result-stat">
+                <span class="assessment-result-label">Score</span>
+                <strong>${escapeHtml(hasEssayReview ? "Pending" : `${correctAnswers}/${currentAssessmentQuestions.length}`)}</strong>
+            </div>
+            <div class="assessment-result-stat">
+                <span class="assessment-result-label">Objective Score</span>
+                <strong>${escapeHtml(objectiveScore === null ? "Essay only" : `${objectiveScore}%`)}</strong>
+            </div>
+            <div class="assessment-result-stat">
+                <span class="assessment-result-label">Written Questions</span>
+                <strong>${escapeHtml(String(essayQuestions.length))}</strong>
+            </div>
+        </div>
+        <div class="assessment-result-actions">
+            <button class="btn-nav" type="button" id="reviewAnswersButton">Review Answers</button>
+            <button class="btn-nav btn-primary" type="button" id="backToAssessmentsButton">Back to Assessments</button>
+        </div>
+    `;
+
+    assessmentResultState.querySelector("#reviewAnswersButton")?.addEventListener("click", () => {
+        assessmentInProgress = false;
+        renderQuestionState();
+    });
+    assessmentResultState.querySelector("#backToAssessmentsButton")?.addEventListener("click", leaveAssessmentSession);
+
+    updatePageCopy();
+    setVisibleState("result");
+}
+
+function confirmLeaveAssessmentSession() {
+    if (assessmentInProgress) {
+        return window.confirm("Leave this assessment session? Your current progress on this page will be closed.");
+    }
+
+    return true;
+}
+
+function leaveAssessmentSession() {
+    if (!confirmLeaveAssessmentSession()) {
+        return;
+    }
+
+    clearAssessmentSession();
+    localStorage.removeItem(assessmentReturnUrlKey);
+    window.location.href = getReturnUrl();
+}
+
+function bindEvents() {
+    assessmentBeginBtn.addEventListener("click", beginAssessment);
+    assessmentLeaveBtn.addEventListener("click", leaveAssessmentSession);
+    assessmentEmptyReturnBtn.addEventListener("click", leaveAssessmentSession);
+    prevButton.addEventListener("click", prevQuestion);
+    nextButton.addEventListener("click", nextQuestion);
+    submitButton.addEventListener("click", submitAssessment);
+
+    window.addEventListener("beforeunload", (event) => {
+        if (!assessmentInProgress) {
+            return;
+        }
+
+        event.preventDefault();
+        event.returnValue = "";
+    });
+}
+
+function initializeAssessmentPage() {
+    bindEvents();
+
+    const returnUrl = getReturnUrl();
+    if (returnUrl) {
+        localStorage.setItem(assessmentReturnUrlKey, returnUrl);
+    }
+
+    currentAssessmentItem = loadAssessmentSession() || buildAssessmentItemFromRoute();
+    if (!currentAssessmentItem) {
+        renderEmptyState("We could not find the assessment for this lesson. Return to the assignments page and start it again.");
+        return;
+    }
+
+    persistAssessmentSession();
+    updatePageCopy();
+
+    if (assessmentInProgress) {
+        currentAssessmentQuestions = Array.isArray(currentAssessmentItem.assessment.questions)
+            ? currentAssessmentItem.assessment.questions
+            : [];
+        renderQuestionState();
+        return;
+    }
+
+    if (currentAssessmentItem.isCompleted && !currentAssessmentItem.hasNewVersion) {
+        renderLockedResultState();
+        return;
+    }
+
+    renderIntroState();
+}
+
+(async function bootAssessmentPage() {
+    if (typeof store?.ready === 'function') {
+        await store.ready();
+    }
+
+    if (typeof window.SIMPCourseCloudState?.ready === 'function') {
+        await window.SIMPCourseCloudState.ready();
+    }
+
+    initializeAssessmentPage();
+})();
+    </script>
+</body>
+</html>

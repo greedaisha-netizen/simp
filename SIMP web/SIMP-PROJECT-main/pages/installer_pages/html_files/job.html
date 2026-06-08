@@ -1,0 +1,2369 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../img/simpHappyMascotLogo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../css_files/sideBar.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp"
+      rel="stylesheet"
+    />
+    <!-- Leaflet CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <title>Jobs</title>
+    <style>
+      /* ====== DO NOT CHANGE ANYTHING ====== */
+      /* ===== MAIN CONTENT (kept) ===== */
+      .page-header {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+      }
+
+      .page-header h1 {
+        color: #1c2430;
+      }
+
+      .page-header p {
+        font-size: 0.9rem;
+      }
+
+      .section-title {
+        margin: 1.4rem 0 0.35rem;
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #111827;
+      }
+
+      .section-sub {
+        margin: 0 0 0.6rem;
+        color: #6b7280;
+        font-size: 0.92rem;
+      }
+
+      .searchDiv .material-icons-sharp {
+        font-size: 1.2rem;
+        color: var(--color-info-dark);
+      }
+
+      .dropdown {
+        position: relative;
+      }
+
+      .dropbtn {
+        padding: 0.7rem 1rem;
+        border-radius: 999px;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+        box-shadow: var(--box-shadow);
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .dropdown-content {
+        position: absolute;
+        top: 110%;
+        right: 0;
+        min-width: 220px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        box-shadow: var(--box-shadow);
+        display: none;
+        z-index: 10;
+        padding: 0.4rem;
+      }
+
+      .dropdown.open .dropdown-content {
+        display: block;
+      }
+
+      .dropdown-content a {
+        display: block;
+        padding: 0.6rem 0.8rem;
+        border-radius: 10px;
+        color: #1f2937;
+        text-decoration: none;
+        font-size: 0.92rem;
+      }
+
+      .dropdown-content a:hover {
+        background: #f3f4f6;
+      }
+
+      .price-controls {
+        padding: 0.6rem 0.8rem;
+        display: grid;
+        gap: 0.5rem;
+      }
+
+      .price-controls .row {
+        display: flex;
+        gap: 0.5rem;
+      }
+
+      .price-controls input {
+        width: 100%;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 0.5rem 0.6rem;
+      }
+
+      .price-controls button {
+        width: 100%;
+        border: none;
+        border-radius: 999px;
+        padding: 0.6rem 0.8rem;
+        cursor: pointer;
+        font-weight: 600;
+        background: #3bbf67;
+        color: #fff;
+      }
+
+      .cards {
+        margin-top: 1.4rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+      }
+
+      @media (min-width: 1280px) {
+        .cards {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      @media (max-width: 900px) {
+        .cards {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .job-card {
+        background: var(--color-white);
+        border-radius: 16px;
+        box-shadow: var(--box-shadow);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #e5e7eb;
+      }
+
+      .thumb img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+
+      .job-card .content {
+        padding: 1rem 1.2rem;
+        flex: 1;
+        overflow-y: auto;
+      }
+
+      .job-card .title {
+        font-weight: 700;
+      }
+
+      .meta-row {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin: 0.6rem 0 0.2rem;
+        flex-wrap: wrap;
+      }
+
+      .pill {
+        font-size: 0.72rem;
+        line-height: 1;
+        padding: 0.42rem 0.8rem;
+        border-radius: 999px;
+        background: #eef2f7;
+        color: #6b7280;
+        border: 1px solid #e5e7eb;
+      }
+
+      .info-grid {
+        display: grid;
+        gap: 0.6rem;
+        margin: 0.6rem 0 0.8rem;
+      }
+
+      .info-grid .label {
+        font-weight: 700;
+      }
+
+      .desc {
+        font-size: 0.86rem;
+        margin: 0.4rem 0 1rem;
+        text-align: justify;
+      }
+
+      .apply {
+        margin: 0 1rem 1rem;
+        border-radius: 999px;
+        background: #3bbf67;
+        color: #fff;
+        font-weight: 600;
+        padding: 0.7rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+
+      .apply:hover {
+        filter: brightness(0.95);
+      }
+
+      .scroll-tip {
+        text-align: center;
+        color: var(--color-info-dark);
+        margin: 1rem 0 2rem;
+        font-size: 0.85rem;
+      }
+
+      .contentFirstRow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.6rem;
+      }
+
+      .dropbtn .current {
+        color: #6b7280;
+        font-weight: 500;
+        margin-left: 0.3rem;
+      }
+
+      /* ===== Modal (kept) ===== */
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(17, 24, 39, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+      }
+
+      .modal-backdrop.show {
+        display: flex;
+      }
+
+      .job-modal {
+        width: min(680px, 92vw);
+        max-height: 86vh;
+        overflow: auto;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
+        display: flex;
+        flex-direction: column;
+        padding: 18px;
+        gap: 14px;
+      }
+
+      .job-modal .banner {
+        background: #f0fdf4;
+        color: #065f46;
+        border: 1px solid #dcfce7;
+        padding: 8px 10px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .m-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .m-header img#mImg {
+        width: 64px;
+        height: 64px;
+        object-fit: cover;
+        border-radius: 12px;
+        background: #f3f4f6;
+        border: 1px solid #e5e7eb;
+      }
+
+      .m-headings h3 {
+        margin: 0;
+      }
+
+      .job-modal .tiny {
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
+
+      .m-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .job-modal .pill {
+        background: #f3f4f6;
+        color: #374151;
+        border: 1px solid #e5e7eb;
+        border-radius: 999px;
+        padding: 0.35rem 0.7rem;
+        font-size: 0.78rem;
+      }
+
+      .m-meta {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      @media (max-width: 520px) {
+        .m-meta {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .m-meta > div {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 10px 12px;
+        background: #fafafa;
+        border: 1px solid #eee;
+        border-radius: 12px;
+      }
+
+      .m-meta .label {
+        font-weight: 600;
+        color: #111827;
+      }
+
+      .job-modal .desc {
+        margin-top: 4px;
+        line-height: 1.55;
+        font-size: 0.95rem;
+        color: #1f2937;
+      }
+
+      .job-modal .resume {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.92rem;
+      }
+
+      .job-modal .resume a {
+        color: #15803d;
+        text-decoration: none;
+      }
+
+      .job-modal .cta-row {
+        display: flex;
+        gap: 10px;
+        margin-top: 4px;
+      }
+
+      .job-modal .btn {
+        border: none;
+        border-radius: 12px;
+        padding: 0.85rem 1rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .job-modal .btn-apply {
+        background: #22c55e;
+        color: #fff;
+      }
+
+      .job-modal .btn-apply:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+
+      .job-modal .btn-cancel {
+        background: #e5e7eb;
+        color: #111827;
+      }
+
+      @media (max-width: 400px) {
+        .job-modal {
+          padding: 14px;
+        }
+
+        .m-header img#mImg {
+          width: 56px;
+          height: 56px;
+        }
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #111827;
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 10px;
+        z-index: 10001;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        font-size: 0.9rem;
+        display: none;
+      }
+
+      .toast.show {
+        display: block;
+      }
+
+      /* ====== MAP (kept, with mobile minimap) ====== */
+      .mapWrap {
+        margin-top: 1.2rem;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: var(--box-shadow);
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .mapControls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        align-items: center;
+        padding: 0.8rem;
+        background: linear-gradient(180deg, #f9fafb, #f3f4f6);
+        border-bottom: 1px solid #eef2f7;
+      }
+
+      .mapControls .btn {
+        padding: 0.55rem 0.9rem;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+        cursor: pointer;
+        font-weight: 700;
+        transition: transform 0.05s ease, box-shadow 0.2s ease;
+      }
+
+      .mapControls .btn:hover {
+        filter: brightness(0.98);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+      }
+
+      .mapControls .btn:active {
+        transform: translateY(1px);
+      }
+
+      .mapControls .right {
+        margin-left: auto;
+        display: flex;
+        gap: 0.6rem;
+        align-items: center;
+      }
+
+      #jobsMap {
+        height: 460px;
+        width: 100%;
+        z-index: 1;
+      }
+
+      .mapInfoCard {
+        display: none;
+        padding: 0.9rem 1rem;
+        border-top: 1px solid #eef2f7;
+        background: #fff;
+      }
+
+      .mapInfoCard.show {
+        display: block;
+      }
+
+      .mapInfoCard .title {
+        font-weight: 800;
+      }
+
+      .mapInfoCard .muted {
+        color: #6b7280;
+        font-size: 0.92rem;
+      }
+
+      .mapInfoCard .btn {
+        margin-top: 0.6rem;
+        display: inline-flex;
+        gap: 0.35rem;
+        align-items: center;
+        background: #22c55e;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 0.55rem 0.8rem;
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      .leaflet-container {
+        background: #f8fafc;
+        outline: none;
+        z-index: 1;
+      }
+
+      .leaflet-control-zoom a {
+        border-radius: 12px !important;
+      }
+
+      .leaflet-popup-content {
+        margin: 10px 14px;
+      }
+
+      .leaflet-popup-content .pop-title {
+        font-weight: 800;
+        margin-bottom: 4px;
+      }
+
+      .leaflet-popup-content .pop-line {
+        font-size: 0.9rem;
+        color: #374151;
+      }
+
+      .leaflet-popup-content .map-view {
+        margin-top: 0.5rem;
+        display: inline-block;
+        background: #111827;
+        color: #fff;
+        padding: 0.45rem 0.65rem;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 700;
+      }
+
+      .leaflet-pane,
+      .leaflet-top,
+      .leaflet-bottom {
+        z-index: 1 !important;
+      }
+
+      .pulse {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #2563eb;
+        box-shadow: 0 0 0 rgba(37, 99, 235, 0.4);
+        position: relative;
+      }
+
+      .pulse::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.35);
+        animation: pulse 1.5s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.45);
+        }
+
+        70% {
+          box-shadow: 0 0 0 18px rgba(37, 99, 235, 0);
+        }
+
+        100% {
+          box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
+        }
+      }
+
+      .job-pin {
+        --pin: #111827;
+        --pin-soft: #e5e7eb;
+        display: grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: radial-gradient(
+          ellipse at 30% 30%,
+          var(--pin) 0%,
+          var(--pin) 45%,
+          #000 120%
+        );
+        border: 2px solid #fff;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+        color: #fff;
+        font-weight: 900;
+        font-size: 14px;
+      }
+
+      .job-pin-wrap {
+        position: relative;
+        transform: translate(-50%, -100%);
+      }
+
+      .job-pin-tail {
+        position: absolute;
+        left: 50%;
+        bottom: -10px;
+        transform: translateX(-50%) rotate(45deg);
+        width: 12px;
+        height: 12px;
+        background: var(--pin);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      .job-pin-emo {
+        filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.3));
+      }
+
+      /* ====== MOBILE FILTER ICON + PANEL ====== */
+      .filtersIconBtn {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+        cursor: pointer;
+      }
+
+      /* Backdrop for mobile filter modal (new) */
+      .mfp-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(17, 24, 39, 0.45);
+        display: none;
+        z-index: 10002;
+      }
+
+      .mfp-backdrop.show {
+        display: block;
+      }
+
+      /* Bottom sheet base (kept), will be overridden to modal on small screens */
+      .mobileFilterPanel {
+        display: none;
+        position: fixed;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: #fff;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+        box-shadow: 0 -20px 40px rgba(17, 24, 39, 0.25);
+        z-index: 10003;
+        padding: 14px;
+      }
+
+      .mobileFilterPanel.show {
+        display: block;
+      }
+
+      .mfp-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+
+      .mfp-title {
+        font-weight: 800;
+      }
+
+      .mfp-row {
+        display: grid;
+        gap: 10px;
+      }
+
+      .mfp-row .btn {
+        padding: 0.6rem 0.9rem;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+        font-weight: 700;
+        width: 100%;
+        text-align: left;
+      }
+
+      .mfp-apply {
+        margin-top: 8px;
+        width: 100%;
+        border: none;
+        border-radius: 12px;
+        padding: 0.8rem 1rem;
+        background: #22c55e;
+        color: #fff;
+        font-weight: 800;
+      }
+
+      /* Hide desktop dropdown buttons on mobile; show icon + modal */
+      @media (max-width: 720px) {
+        .searchBarDiv {
+          grid-template-columns: 1fr auto;
+          /* search + icon */
+        }
+
+        .searchBarDiv .dropdown {
+          display: none;
+        }
+
+        .filtersIconBtn {
+          display: inline-flex;
+        }
+
+        /* Minimap */
+        #jobsMap {
+          height: 260px;
+        }
+
+        /* Locate icon-only: hide text inside .mapControls first button */
+        #locateBtn {
+          padding: 8px;
+          width: 40px;
+          height: 40px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        #locateBtn .btn-text {
+          display: none;
+        }
+
+        /* Dense “All Jobs” list */
+        .job-card {
+          border-radius: 12px;
+        }
+
+        .job-card .thumb {
+          display: none;
+        }
+
+        /* hide big image */
+        .job-card .content {
+          padding: 12px;
+        }
+
+        .job-card .contentFirstRow {
+          align-items: flex-start;
+        }
+
+        .job-card .title {
+          font-size: 0.98rem;
+        }
+
+        .meta-row .pill {
+          padding: 0.3rem 0.55rem;
+          font-size: 0.68rem;
+        }
+
+        .info-grid {
+          grid-template-columns: 1fr;
+          gap: 0.35rem;
+          margin: 0.4rem 0 0.6rem;
+        }
+
+        .desc {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          margin-bottom: 0.6rem;
+        }
+
+        .apply {
+          margin: 0 12px 12px;
+          padding: 0.6rem 0.9rem;
+        }
+
+        /* === Turn the filter panel into a centered MODAL (not full screen) === */
+        .mobileFilterPanel {
+          left: 50%;
+          right: auto;
+          bottom: auto;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          width: min(560px, 92vw);
+          max-height: 80vh;
+          padding: 16px;
+          border-radius: 16px;
+          /* full rounded */
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+          overflow: auto;
+          /* content scrolls inside */
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- (Topbar removed) -->
+
+    <div class="container">
+      <!-- Sidebar Section -->
+      <aside>
+        <div class="toggle">
+          <div class="logo">
+            <img src="../../../img/simpHappyMascotLogo.png" alt="logo" />
+            <h2>SIMP<span class="danger">Project</span></h2>
+          </div>
+          <div class="close" id="close-btn">
+            <span class="material-icons-sharp">close</span>
+          </div>
+        </div>
+        <div class="sidebar">
+          <a href="dashboard.html"
+            ><span class="material-icons-sharp">dashboard</span>
+            <h3>Dashboard</h3>
+          </a>
+          <a href="job.html" class="active"
+            ><span class="material-icons-sharp">work</span>
+            <h3>Jobs</h3>
+          </a>
+          <a href="myApplication.html"
+            ><span class="material-icons-sharp">receipt</span>
+            <h3>My Application</h3>
+          </a>
+          <a href="courses.html"
+            ><span class="material-icons-sharp">school</span>
+            <h3>Courses</h3>
+          </a>
+          <a href="shop.html"
+            ><span class="material-icons-sharp">shopping_cart</span>
+            <h3>Shop</h3>
+          </a>
+          <a href="earnings.html"
+            ><span class="material-icons-sharp">account_balance</span>
+            <h3>Earnings</h3>
+          </a>
+          <a href="documents.html"
+            ><span class="material-icons-sharp">file_copy</span>
+            <h3>Documents</h3>
+          </a>
+          <a href="settings.html"
+            ><span class="material-icons-sharp">settings</span>
+            <h3>Settings</h3>
+          </a>
+          <a href="#" id="logout-btn"
+            ><span class="material-icons-sharp">logout</span>
+            <h3>Logout</h3>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main content column (center) -->
+      <main>
+        <div class="page-header">
+          <h1>Current Job Openings</h1>
+          <p>Explore career opportunities near you.</p>
+        </div>
+
+        <!-- SEARCH + FILTERS (desktop keeps dropdowns; mobile shows icon + sheet/modal) -->
+        <div class="searchBarDiv">
+          <div class="searchDiv">
+            <span class="material-icons-sharp">search</span>
+            <input
+              id="searchInput"
+              type="text"
+              placeholder="Search jobs (title, description, location)"
+            />
+          </div>
+
+          <!-- Mobile filters icon -->
+          <button
+            id="filtersIconBtn"
+            class="filtersIconBtn"
+            title="Filters"
+            aria-haspopup="dialog"
+            aria-controls="mobileFilterPanel"
+          >
+            <span class="material-icons-sharp">tune</span>
+          </button>
+
+          <!-- Original dropdowns (desktop) -->
+          <div class="dropdown" data-filter="price">
+            <button class="dropbtn">
+              Price<span class="current" id="priceLabel"></span>
+            </button>
+            <div class="dropdown-content">
+              <div class="price-controls">
+                <div class="row">
+                  <input
+                    id="minPrice"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="Min ₱"
+                  />
+                  <input
+                    id="maxPrice"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="Max ₱"
+                  />
+                </div>
+                <button id="applyPrice">Apply range</button>
+              </div>
+            </div>
+          </div>
+          <div class="dropdown" data-filter="category">
+            <button class="dropbtn">
+              Category<span class="current" id="categoryLabel"></span>
+            </button>
+            <div class="dropdown-content" id="categoryMenu"></div>
+          </div>
+          <div class="dropdown" data-filter="level">
+            <button class="dropbtn">
+              Level<span class="current" id="levelLabel"></span>
+            </button>
+            <div class="dropdown-content" id="levelMenu"></div>
+          </div>
+        </div>
+
+        <!-- Backdrop for the mobile filter modal (new) -->
+        <div id="mfpBackdrop" class="mfp-backdrop" aria-hidden="true"></div>
+
+        <!-- Mobile Filter Panel (now behaves like a centered modal on small screens) -->
+        <div
+          id="mobileFilterPanel"
+          class="mobileFilterPanel"
+          role="dialog"
+          aria-modal="true"
+          aria-hidden="true"
+          aria-labelledby="mfpTitle"
+        >
+          <div class="mfp-header">
+            <div id="mfpTitle" class="mfp-title">Filters</div>
+            <button
+              id="mfpClose"
+              class="filtersIconBtn"
+              aria-label="Close filters"
+            >
+              <span class="material-icons-sharp">close</span>
+            </button>
+          </div>
+          <div class="mfp-row">
+            <div>
+              <div style="font-weight: 700; margin-bottom: 6px">Price</div>
+              <div class="price-controls" style="padding: 0">
+                <div class="row">
+                  <input
+                    id="mMinPrice"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="Min ₱"
+                  />
+                  <input
+                    id="mMaxPrice"
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    placeholder="Max ₱"
+                  />
+                </div>
+              </div>
+            </div>
+            <div>
+              <div style="font-weight: 700; margin: 8px 0 6px">Category</div>
+              <div id="mCategoryMenu"></div>
+            </div>
+            <div>
+              <div style="font-weight: 700; margin: 8px 0 6px">Level</div>
+              <div id="mLevelMenu"></div>
+            </div>
+          </div>
+          <button id="mfpApply" class="mfp-apply">Apply Filters</button>
+        </div>
+
+        <h2 class="section-title">See nearby jobs near you</h2>
+        <p class="section-sub">
+          Tap <strong>Locate me</strong> to find jobs within your chosen radius.
+        </p>
+
+        <!-- MAP -->
+        <section class="mapWrap">
+          <div class="mapControls">
+            <button id="locateBtn" class="btn" title="Locate me">
+              <span class="material-icons-sharp" style="font-size: 1rem"
+                >my_location</span
+              >
+              <span class="btn-text"> Locate me</span>
+            </button>
+            <div class="right">
+              <label for="radiusSelect" style="color: #374151">Radius:</label>
+              <select id="radiusSelect" class="btn" title="Search radius (km)">
+                <option value="5">5 km</option>
+                <option value="10" selected>10 km</option>
+                <option value="25">25 km</option>
+                <option value="50">50 km</option>
+              </select>
+              <span id="nearbyCount" class="muted"></span>
+            </div>
+          </div>
+          <div id="jobsMap"></div>
+          <div id="mapInfoCard" class="mapInfoCard">
+            <div class="title" id="micTitle">—</div>
+            <div class="muted" id="micMeta">—</div>
+            <div class="muted" id="micLoc">—</div>
+            <button id="micViewBtn" class="btn">
+              <span class="material-icons-sharp" style="font-size: 1rem"
+                >visibility</span
+              >
+              View
+            </button>
+          </div>
+        </section>
+
+        <h2 class="section-title">All Jobs</h2>
+
+        <!-- CARDS -->
+        <section class="cards"></section>
+        <div class="scroll-tip">Scroll down for more</div>
+      </main>
+
+      <div></div>
+    </div>
+
+    <!-- Job Application Modal (kept) -->
+    <div id="applyModal" class="modal-backdrop" aria-hidden="true">
+      <div
+        class="job-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="jobModalTitle"
+      >
+        <div class="banner" id="fitBanner" style="display: none">
+          <span class="material-icons-sharp" style="font-size: 18px"
+            >verified</span
+          >
+          <span>You are a strong candidate for this job</span>
+        </div>
+        <div class="m-header">
+          <img id="mImg" src="" alt="Job photo" />
+          <div class="m-headings">
+            <h3 id="jobModalTitle">Job Title</h3>
+            <div class="tiny" id="mPostedBy">Anonymous</div>
+          </div>
+        </div>
+        <div class="m-chips">
+          <span class="pill" id="mCategory">Category</span>
+          <span class="pill" id="mDifficulty">Difficulty</span>
+        </div>
+        <div class="m-meta">
+          <div><span class="label">Pay</span><span id="mPay">₱–</span></div>
+          <div><span class="label">Date/Time</span><span id="mDT">–</span></div>
+          <div><span class="label">Location</span><span id="mLoc">–</span></div>
+        </div>
+        <div class="desc" id="mDesc"></div>
+        <div class="resume" id="mResumeRow">
+          <span class="material-icons-sharp" style="font-size: 18px"
+            >attach_file</span
+          >
+          <a
+            id="mResumeLink"
+            href="javascript:void(0)"
+            title="Resume"
+            target="_blank"
+            rel="noopener"
+            >Loading…</a
+          >
+          <span class="tiny" style="margin-left: auto; color: #6b7280"
+            >(optional)</span
+          >
+        </div>
+        <div class="cta-row">
+          <button id="modalApplyBtn" class="btn btn-apply">
+            Apply for this Job!
+          </button>
+          <button id="modalCancelBtn" class="btn btn-cancel">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Global site scripts -->
+    <script type="module" src="../../general_files/index.js"></script>
+    <script type="module" src="../../general_files/session.js"></script>
+    <!-- Supabase UMD build -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <!-- Leaflet JS -->
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+
+    <!-- (Drawer helper removed — handled in index.js) -->
+
+    <!-- ======= YOUR EXISTING APP SCRIPT (UNCHANGED core) + mobile filter glue ======= -->
+    <script type="module">
+      /* ===== retain all your original code; we append a small section at the end
+       to drive the mobile filter panel using the same FILTERS/applyFilters() ===== */
+
+      // ====== CONFIG ======
+      const DEFAULT_JOB_PICS_BUCKET = "jobs";
+
+      const { createClient } = supabase;
+      import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../../../supabase.js";
+      const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // ---------- helpers ----------
+      const $ = (sel) => document.querySelector(sel);
+      const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+      const esc = (str) =>
+        String(str ?? "").replace(
+          /[&<>"']/g,
+          (s) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            }[s])
+        );
+      const fmtPeso = (n) => {
+        const v = typeof n === "string" ? parseFloat(n) : n;
+        return isNaN(v)
+          ? "-"
+          : v.toLocaleString("en-PH", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+      };
+      const fmtDate = (d) =>
+        d ? new Date(d + "T00:00:00").toLocaleDateString() : "-";
+      const fmtTime = (t) => (t ? String(t).slice(0, 5) : "");
+      function showToast(msg, ms = 2800) {
+        const el = $("#toast");
+        el.textContent = msg;
+        el.classList.add("show");
+        setTimeout(() => el.classList.remove("show"), ms);
+      }
+
+      /* --- SIGNED URL helpers, state, rendering, applyFilters, map, modal, etc. --- */
+      function parsePublicBucketAndPath(publicUrl) {
+        try {
+          const marker = "/storage/v1/object/public/";
+          const i = publicUrl.indexOf(marker);
+          if (i === -1) return null;
+          const rest = publicUrl.substring(i + marker.length);
+          const slash = rest.indexOf("/");
+          if (slash === -1) return null;
+          const bucket = rest.substring(0, slash);
+          let path = rest.substring(slash + 1);
+          try {
+            path = decodeURIComponent(path);
+          } catch {}
+          path = path.replace(/^\/+/, "");
+          return { bucket, path };
+        } catch {
+          return null;
+        }
+      }
+      function parseStorageRef(ref) {
+        if (!ref) return null;
+        const s = String(ref).trim();
+        if (/^https?:\/\//i.test(s)) {
+          const parsed = parsePublicBucketAndPath(s);
+          return parsed || null;
+        }
+        const bi = s.indexOf("::");
+        if (bi > 0) {
+          let path = s.slice(bi + 2);
+          try {
+            path = decodeURIComponent(path);
+          } catch {}
+          path = path.replace(/^\/+/, "");
+          return { bucket: s.slice(0, bi), path };
+        }
+        let path = s;
+        try {
+          path = decodeURIComponent(path);
+        } catch {}
+        path = path.replace(/^\/+/, "");
+        return { bucket: DEFAULT_JOB_PICS_BUCKET, path };
+      }
+      async function createSignedUrl(bucket, path, expires = 3600) {
+        const { data, error } = await sb.storage
+          .from(bucket)
+          .createSignedUrl(path, expires);
+        if (error) throw error;
+        return data.signedUrl;
+      }
+      async function resolveJobPictureSignedUrl(job_picture_url) {
+        if (!job_picture_url) return null;
+        if (
+          /^https?:\/\//i.test(job_picture_url) &&
+          !job_picture_url.includes("/storage/v1/object/")
+        )
+          return job_picture_url;
+        const ref = parseStorageRef(job_picture_url);
+        if (!ref) return null;
+        try {
+          return await createSignedUrl(ref.bucket, ref.path, 3600);
+        } catch (e) {
+          console.warn("Signing path failed:", e.message, ref);
+          if (/^https?:\/\//i.test(job_picture_url)) return job_picture_url;
+          return null;
+        }
+      }
+
+      const FIXED_CATEGORIES = [
+        "",
+        "Electrical",
+        "Safety",
+        "Networking",
+        "CCTV",
+        "Plumbing",
+        "General Services",
+      ];
+      const FIXED_LEVELS = [
+        "",
+        ...Array.from({ length: 11 }, (_, i) => String(i)),
+      ];
+
+      let ALL_JOBS = [];
+      let jobsChannel = null;
+      const FILTERS = {
+        q: "",
+        minPrice: null,
+        maxPrice: null,
+        category: "",
+        level: "",
+      };
+
+      function hasAssignedInstaller(row) {
+        const v = row?.installer_id_assigned;
+        return v !== null && v !== undefined && String(v).trim() !== "";
+      }
+
+      function parseDescriptionPayload(desc) {
+        if (!desc || typeof desc !== "string") return null;
+        const raw = desc.trim();
+        if (!raw.startsWith("{")) return null;
+        try {
+          return JSON.parse(raw);
+        } catch (e) {
+          try {
+            return JSON.parse(raw.replace(/'/g, '"'));
+          } catch (fallbackError) {}
+        }
+        return null;
+      }
+
+      function looksLikeDescriptionMetadata(desc) {
+        if (!desc || typeof desc !== "string") return false;
+        const raw = desc.trim().toLowerCase();
+        return raw.startsWith("{") && (raw.includes("is_posted") || raw.includes("description"));
+      }
+
+      function extractMetadataDescription(desc) {
+        if (!desc || typeof desc !== "string") return "";
+        const match = desc.match(/['"]?description['"]?\s*:\s*(['"])([\s\S]*?)\1/i);
+        return match ? match[2].trim() : "";
+      }
+
+      function parseNegotiation(desc) {
+        const data = parseDescriptionPayload(desc);
+        return data && data.is_negotiation ? data : null;
+      }
+
+      function getJobEffectiveDifficulty(job) {
+        if (!job) return 0;
+        const neg = parseNegotiation(job.job_description);
+        if (neg) {
+          return Number(neg.proposed_difficulty ?? job.job_difficulty ?? 0);
+        }
+        return Number(job.job_difficulty ?? 0);
+      }
+
+      function getJobEffectivePay(job) {
+        if (!job) return 0;
+        const neg = parseNegotiation(job.job_description);
+        if (neg) {
+          return Number(neg.proposed_pay ?? job.job_pay ?? 0);
+        }
+        return Number(job.job_pay ?? 0);
+      }
+
+      function getJobEffectiveDescription(job) {
+        if (!job) return "";
+        const neg = parseNegotiation(job.job_description);
+        if (neg) {
+          return neg.proposed_description ?? job.job_description ?? "";
+        }
+        const data = parseDescriptionPayload(job.job_description);
+        if (data) {
+          return data.description ?? data.original_description ?? "";
+        }
+        if (looksLikeDescriptionMetadata(job.job_description)) {
+          return extractMetadataDescription(job.job_description);
+        }
+        return job.job_description ?? "";
+      }
+
+      function renderJobs(list) {
+        const container = $(".cards");
+        container.innerHTML = "";
+        if (!list || list.length === 0) {
+          container.innerHTML =
+            '<div class="scroll-tip">No jobs match your filters.</div>';
+          return;
+        }
+        for (const job of list) {
+          const imgUrl = job._img || "../images/profile-4.jpg";
+          const card = document.createElement("article");
+          card.className = "job-card";
+          
+          const effDifficulty = getJobEffectiveDifficulty(job);
+          const effPay = getJobEffectivePay(job);
+          const effDesc = getJobEffectiveDescription(job);
+
+          card.innerHTML = `
+            <div class="thumb">
+              <img src="${imgUrl}" alt="Job image"
+                   onerror="this.onerror=null;console.warn('Image not found:', this.src); this.src='../images/profile-4.jpg';" />
+            </div>
+            <div class="content">
+              <div class="contentFirstRow">
+                <div class="title">${esc(job.job_title)}</div>
+                <div class="meta-row">
+                  <span class="pill">${esc(
+                    job.job_category || "Uncategorized"
+                  )}</span>
+                  <span class="pill">L${esc(effDifficulty)}</span>
+                </div>
+              </div>
+              <div class="info-grid">
+                <div><div class="label">Pay: ₱${fmtPeso(
+                  effPay
+                )}</div></div>
+                <div><div class="label">Date/Time: ${fmtDate(
+                  job.job_date
+                )} ${fmtTime(job.job_time)}</div></div>
+                <div><div class="label">Location: ${esc(
+                  job.job_location || "Not specified"
+                )}</div></div>
+              </div>
+              <div class="desc">${esc(
+                effDesc || "No description provided"
+              )}</div>
+            </div>
+            <button class="apply" data-job-id="${job.job_id}">View</button>
+          `;
+          container.appendChild(card);
+        }
+      }
+
+      function populateMenus() {
+        const fillMenu = (el, values) => {
+          el.innerHTML = values
+            .map(
+              (v) =>
+                `<a href="#" data-value="${esc(v)}">${v ? esc(v) : "All"}</a>`
+            )
+            .join("");
+        };
+        $("#categoryMenu") && fillMenu($("#categoryMenu"), FIXED_CATEGORIES);
+        $("#levelMenu") && fillMenu($("#levelMenu"), FIXED_LEVELS);
+
+        // Mobile panel menus
+        const fillButtons = (wrap, values, key) => {
+          wrap.innerHTML = values
+            .map(
+              (v) =>
+                `<button class="btn" data-value="${esc(v)}">${
+                  v ? esc(v) : "All"
+                }</button>`
+            )
+            .join("");
+          wrap.addEventListener(
+            "click",
+            (e) => {
+              const b = e.target.closest("button[data-value]");
+              if (!b) return;
+              const val = b.getAttribute("data-value");
+              if (key === "category") FILTERS.category = val;
+              if (key === "level") FILTERS.level = val;
+              // visual feedback
+              wrap
+                .querySelectorAll("button")
+                .forEach((x) => (x.style.borderColor = "#e5e7eb"));
+              b.style.borderColor = "#22c55e";
+            },
+            { once: false }
+          );
+        };
+        const mc = $("#mCategoryMenu");
+        const ml = $("#mLevelMenu");
+        if (mc) fillButtons(mc, FIXED_CATEGORIES, "category");
+        if (ml) fillButtons(ml, FIXED_LEVELS, "level");
+
+        updateButtonLabels();
+      }
+      function updateButtonLabels() {
+        const priceText =
+          FILTERS.minPrice != null || FILTERS.maxPrice != null
+            ? `${FILTERS.minPrice ?? 0}–${FILTERS.maxPrice ?? "∞"}`
+            : "";
+        $("#priceLabel") && ($("#priceLabel").textContent = priceText);
+        $("#categoryLabel") &&
+          ($("#categoryLabel").textContent = FILTERS.category
+            ? ` (${FILTERS.category})`
+            : "");
+        $("#levelLabel") &&
+          ($("#levelLabel").textContent = FILTERS.level
+            ? ` (${FILTERS.level})`
+            : "");
+      }
+
+      function applyFilters() {
+        let list = [...ALL_JOBS];
+        const q = (FILTERS.q || "").trim().toLowerCase();
+        if (q) {
+          list = list.filter((j) => {
+            const effDesc = getJobEffectiveDescription(j);
+            const hay = [j.job_title, effDesc, j.job_location]
+              .map((x) => String(x ?? "").toLowerCase())
+              .join(" | ");
+            return hay.includes(q);
+          });
+        }
+        if (FILTERS.category)
+          list = list.filter(
+            (j) => String(j.job_category || "") === FILTERS.category
+          );
+        if (FILTERS.level)
+          list = list.filter(
+            (j) => String(getJobEffectiveDifficulty(j)) === FILTERS.level
+          );
+        const toNum = (v) =>
+          v === null || v === "" || Number.isNaN(v) ? null : Number(v);
+        const minP = toNum(FILTERS.minPrice);
+        const maxP = toNum(FILTERS.maxPrice);
+        if (minP !== null)
+          list = list.filter((j) => Number(getJobEffectivePay(j) ?? 0) >= minP);
+        if (maxP !== null)
+          list = list.filter((j) => Number(getJobEffectivePay(j) ?? 0) <= maxP);
+        renderJobs(list);
+        updateButtonLabels();
+        MAP_refreshMarkers();
+      }
+
+      function isJobPosted(job) {
+        if (!job) return false;
+        const data = parseDescriptionPayload(job.job_description);
+        if (data) return !!data.is_posted;
+        const raw = String(job.job_description || "");
+        return /['"]?is_posted['"]?\s*:\s*true/i.test(raw);
+      }
+
+      function isJobVisibleToInstaller(job) {
+        const status = String(job?.job_status || "").toLowerCase();
+        return status === "active";
+      }
+
+      // ---------- initial load ----------
+      async function loadJobs() {
+        const container = $(".cards");
+        if (!container) {
+          console.error("Missing .cards element.");
+          return;
+        }
+        container.innerHTML = '<div class="scroll-tip">Loading jobs…</div>';
+
+        const { data: jobs, error } = await sb
+          .schema("jobs")
+          .from("job")
+          .select(
+            "job_id, posted_by, job_title, job_description, job_difficulty, job_category, job_location, job_date, job_time, job_pay, job_picture_url, created_at, job_status, installer_id_assigned"
+          )
+          .eq("job_status", "active")
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          console.error("Error fetching jobs:", error);
+          container.innerHTML = `<div class="scroll-tip">Could not load jobs: ${esc(
+            error.message || "Check URL/key & RLS"
+          )}</div>`;
+          return;
+        }
+
+        const visible = (jobs || []).filter(
+          (j) => !hasAssignedInstaller(j) && isJobVisibleToInstaller(j)
+        );
+        const signed = await Promise.all(
+          visible.map((j) => resolveJobPictureSignedUrl(j.job_picture_url))
+        );
+        ALL_JOBS = visible.map((j, i) => ({
+          ...j,
+          _img: signed[i] || "../images/profile-4.jpg",
+        }));
+
+        populateMenus();
+        applyFilters();
+
+        MAP_prepareGeocodingForJobs(ALL_JOBS);
+
+        await ensureRealtimeAuth();
+        initRealtimeApprovalListener();
+      }
+
+      // ---------- realtime helpers ----------
+      async function ensureRealtimeAuth() {
+        const {
+          data: { session },
+        } = await sb.auth.getSession();
+        if (session?.access_token) {
+          sb.realtime.setAuth(session.access_token);
+        }
+      }
+      sb.auth.onAuthStateChange(async (_event, session) => {
+        sb.realtime.setAuth(session?.access_token ?? null);
+        if (jobsChannel) {
+          try {
+            sb.removeChannel(jobsChannel);
+          } catch {}
+          jobsChannel = null;
+        }
+        initRealtimeApprovalListener();
+      });
+
+      function upsertApprovedJob(row) {
+        if (!row || !isJobVisibleToInstaller(row)) return;
+        if (hasAssignedInstaller(row)) {
+          removeIfNoLongerApproved(row);
+          return;
+        }
+        const idx = ALL_JOBS.findIndex(
+          (j) => String(j.job_id) === String(row.job_id)
+        );
+        if (idx >= 0) {
+          ALL_JOBS[idx] = { ...ALL_JOBS[idx], ...row };
+        } else {
+          ALL_JOBS.unshift({ ...row, _img: "../images/profile-4.jpg" });
+        }
+        resolveJobPictureSignedUrl(row.job_picture_url).then((u) => {
+          const i = ALL_JOBS.findIndex(
+            (j) => String(j.job_id) === String(row.job_id)
+          );
+          if (i >= 0) {
+            ALL_JOBS[i]._img = u || "../images/profile-4.jpg";
+            applyFilters();
+          }
+        });
+        applyFilters();
+        MAP_prepareGeocodingForJobs([row]);
+        showToast(`New job posted: ${row.job_title || row.job_id}`);
+      }
+      function removeIfNoLongerApproved(rowLike) {
+        if (!rowLike) return;
+        const before = ALL_JOBS.length;
+        ALL_JOBS = ALL_JOBS.filter(
+          (j) => String(j.job_id) !== String(rowLike.job_id)
+        );
+        if (ALL_JOBS.length !== before) {
+          applyFilters();
+          MAP_removeGeocode(rowLike);
+        }
+      }
+      function initRealtimeApprovalListener() {
+        if (jobsChannel) return;
+        jobsChannel = sb
+          .channel("jobs-active-feed")
+          .on(
+            "postgres_changes",
+            { event: "INSERT", schema: "jobs", table: "job" },
+            (payload) => {
+              const n = payload.new;
+              if (isJobVisibleToInstaller(n)) upsertApprovedJob(n);
+            }
+          )
+          .on(
+            "postgres_changes",
+            { event: "UPDATE", schema: "jobs", table: "job" },
+            (payload) => {
+              const n = payload.new;
+              if (isJobVisibleToInstaller(n) && !hasAssignedInstaller(n)) {
+                upsertApprovedJob(n);
+              } else {
+                removeIfNoLongerApproved(n);
+              }
+            }
+          )
+          .on(
+            "postgres_changes",
+            { event: "DELETE", schema: "jobs", table: "job" },
+            (payload) => {
+              const o = payload.old;
+              removeIfNoLongerApproved(o);
+            }
+          )
+          .subscribe();
+      }
+
+      // ---------- dropdown UI wiring (desktop) ----------
+      document.addEventListener("click", (e) => {
+        const dd = e.target.closest(".dropdown");
+        $$(".dropdown").forEach((d) => d.classList.remove("open"));
+        if (dd) dd.classList.add("open");
+      });
+      ["categoryMenu", "levelMenu"].forEach((menuId) => {
+        const menu = document.getElementById(menuId);
+        menu.addEventListener("click", (e) => {
+          const a = e.target.closest("a[data-value]");
+          if (!a) return;
+          e.preventDefault();
+          const value = a.getAttribute("data-value");
+          if (menuId === "categoryMenu") FILTERS.category = value;
+          if (menuId === "levelMenu") FILTERS.level = value;
+          applyFilters();
+          menu.closest(".dropdown").classList.remove("open");
+        });
+      });
+      $("#applyPrice").addEventListener("click", () => {
+        const min = $("#minPrice").value ? Number($("#minPrice").value) : null;
+        const max = $("#maxPrice").value ? Number($("#maxPrice").value) : null;
+        FILTERS.minPrice = Number.isFinite(min) ? min : null;
+        FILTERS.maxPrice = Number.isFinite(max) ? max : null;
+        applyFilters();
+        $("#minPrice").blur();
+        $("#maxPrice").blur();
+        const priceDropdown = document.querySelector(
+          '.dropdown[data-filter="price"]'
+        );
+        if (priceDropdown) priceDropdown.classList.remove("open");
+      });
+      let tId;
+      $("#searchInput").addEventListener("input", (e) => {
+        clearTimeout(tId);
+        tId = setTimeout(() => {
+          FILTERS.q = e.target.value || "";
+          applyFilters();
+        }, 200);
+      });
+
+      document.addEventListener("DOMContentLoaded", loadJobs);
+
+      // ===== Modal + Application Logic (kept) =====
+      const modal = document.getElementById("applyModal");
+      const resumeLinkEl = document.getElementById("mResumeLink");
+      let CURRENT_JOB_ID = null;
+
+      async function resolveInstallerId() {
+        const {
+          data: { user },
+          error: uErr,
+        } = await sb.auth.getUser();
+        if (uErr) console.warn("auth.getUser error", uErr);
+        const email = user?.email;
+        if (!email) return null;
+        const { data: inst, error } = await sb
+          .from("installer")
+          .select("id, email")
+          .eq("email", email)
+          .limit(1)
+          .maybeSingle();
+        if (error) {
+          console.warn("installer lookup error", error);
+          return null;
+        }
+        return inst?.id ?? null;
+      }
+      async function getInstallerLevel(installerId) {
+        if (!installerId) return null;
+        const { data, error } = await sb
+          .from("installer")
+          .select("levelstatus")
+          .eq("id", installerId)
+          .limit(1)
+          .maybeSingle();
+        if (error) {
+          console.warn("installer levelstatus lookup error", error);
+          return null;
+        }
+        return data?.levelstatus ?? null;
+      }
+      function buildStorageKeyForResume(resumeFieldValue, installerId) {
+        if (!resumeFieldValue) return "";
+        if (/^https?:\/\//i.test(resumeFieldValue)) return "";
+        const clean = String(resumeFieldValue).replace(/^\/+/, "");
+        return clean.includes("/") ? clean : `${installerId}/${clean}`;
+      }
+      async function createSignedUrlForResume(key) {
+        const filename = key.split("/").pop() || "resume";
+        const { data, error } = await sb.storage
+          .from("documents_review")
+          .createSignedUrl(key, 60 * 10, { download: filename });
+        if (error) throw error;
+        return data?.signedUrl || "";
+      }
+      let RESUME_CACHE = {
+        loaded: false,
+        url: "",
+        name: "",
+        installerId: null,
+      };
+      async function getInstallerResume() {
+        if (RESUME_CACHE.loaded) return RESUME_CACHE;
+        const installerId = await resolveInstallerId();
+        if (!installerId) {
+          RESUME_CACHE = { loaded: true, url: "", name: "", installerId: null };
+          return RESUME_CACHE;
+        }
+        const { data, error } = await sb
+          .from("installer_documents")
+          .select("resume")
+          .eq("installer_id", installerId)
+          .maybeSingle();
+        if (error) {
+          console.warn("installer_documents lookup error", error);
+          RESUME_CACHE = { loaded: true, url: "", name: "", installerId };
+          return RESUME_CACHE;
+        }
+        let path = data?.resume || "";
+        if (!path) {
+          RESUME_CACHE = { loaded: true, url: "", name: "", installerId };
+          return RESUME_CACHE;
+        }
+        let key = buildStorageKeyForResume(path, installerId);
+        let url = "";
+        const name = (key || path).split("/").pop() || "resume";
+        try {
+          if (key) url = await createSignedUrlForResume(key);
+        } catch (e) {
+          console.warn(
+            "Signed URL for resume failed, fallback to publicUrl:",
+            e?.message || e
+          );
+        }
+        if (!url) {
+          if (path && !path.includes("/")) path = `${installerId}/${path}`;
+          const { data: pub } = sb.storage
+            .from("documents_review")
+            .getPublicUrl(path);
+          url = pub?.publicUrl || "";
+        }
+        RESUME_CACHE = { loaded: true, url, name, installerId };
+        return RESUME_CACHE;
+      }
+      async function setResumeLinkInModal() {
+        resumeLinkEl.textContent = "Loading…";
+        resumeLinkEl.removeAttribute("href");
+        resumeLinkEl.style.pointerEvents = "none";
+        const res = await getInstallerResume();
+        if (res.url) {
+          resumeLinkEl.textContent = res.name;
+          resumeLinkEl.href = res.url;
+          resumeLinkEl.style.pointerEvents = "auto";
+        } else {
+          resumeLinkEl.textContent = "No resume on file";
+          resumeLinkEl.removeAttribute("href");
+          resumeLinkEl.style.pointerEvents = "none";
+        }
+      }
+      async function setApplyEligibilityInModal(job) {
+        const applyBtn = document.getElementById("modalApplyBtn");
+        const fitBanner = document.getElementById("fitBanner");
+        const requiredLevel = Number(getJobEffectiveDifficulty(job) ?? 0);
+
+        applyBtn.disabled = true;
+        applyBtn.textContent = "Checking eligibility...";
+        fitBanner.style.display = "block";
+        fitBanner.textContent = "Checking your installer level...";
+
+        try {
+          const base = await getInstallerResume();
+          const installerId = base.installerId || (await resolveInstallerId());
+          if (!installerId) {
+            fitBanner.textContent =
+              "We could not identify your installer profile. Please sign in again.";
+            applyBtn.textContent = "Apply unavailable";
+            return;
+          }
+
+          const levelstatus = await getInstallerLevel(installerId);
+          const userLevel = Number(levelstatus ?? 0);
+          const hasRequirement = Number.isFinite(requiredLevel);
+          const hasLevel = Number.isFinite(userLevel);
+
+          if (hasRequirement && hasLevel && userLevel < requiredLevel) {
+            fitBanner.textContent = `Level ${requiredLevel} required. Your current installer level is ${userLevel}.`;
+            applyBtn.textContent = `Requires Level ${requiredLevel}`;
+            return;
+          }
+
+          fitBanner.textContent = `Eligible to apply. Your level: ${
+            hasLevel ? userLevel : 0
+          }. Required level: ${hasRequirement ? requiredLevel : 0}.`;
+          applyBtn.disabled = false;
+          applyBtn.textContent = "Apply for this Job!";
+        } catch (error) {
+          console.warn("Eligibility check failed", error);
+          fitBanner.textContent =
+            "We could not verify your level right now. Please try again.";
+          applyBtn.textContent = "Apply unavailable";
+        }
+      }
+      function closeApplyModal() {
+        modal.classList.remove("show");
+        modal.setAttribute("aria-hidden", "true");
+        CURRENT_JOB_ID = null;
+      }
+      async function openApplyModal(job) {
+        CURRENT_JOB_ID = job.job_id;
+        const imgUrl =
+          job._img ||
+          (await resolveJobPictureSignedUrl(job.job_picture_url)) ||
+          "../images/profile-4.jpg";
+        
+        const effDifficulty = getJobEffectiveDifficulty(job);
+        const effPay = getJobEffectivePay(job);
+        const effDesc = getJobEffectiveDescription(job);
+
+        document.getElementById("mImg").src = imgUrl;
+        document.getElementById("mCategory").textContent =
+          job.job_category || "Uncategorized";
+        document.getElementById("mDifficulty").textContent = `Difficulty: ${
+          effDifficulty
+        }`;
+        document.getElementById("mPay").textContent =
+          "₱" + fmtPeso(effPay);
+        document.getElementById("mDT").textContent = `${fmtDate(
+          job.job_date
+        )} ${fmtTime(job.job_time)}`;
+        document.getElementById("mLoc").textContent =
+          job.job_location || "Not specified";
+        document.getElementById("jobModalTitle").textContent =
+          job.job_title || "Job";
+        document.getElementById("mDesc").textContent =
+          effDesc || "No description provided";
+        document.getElementById("fitBanner").style.display = "none";
+        await setResumeLinkInModal();
+        await setApplyEligibilityInModal(job);
+        modal.classList.add("show");
+        modal.setAttribute("aria-hidden", "false");
+      }
+      modal.addEventListener("click", (e) => {
+        if (e.target === modal) closeApplyModal();
+      });
+      document
+        .getElementById("modalCancelBtn")
+        .addEventListener("click", closeApplyModal);
+      document.addEventListener("click", (e) => {
+        const btn = e.target.closest(".apply[data-job-id]");
+        if (!btn) return;
+        const jobId = btn.getAttribute("data-job-id");
+        const job = (ALL_JOBS || []).find(
+          (j) => String(j.job_id) === String(jobId)
+        );
+        if (!job) {
+          showToast("Could not load job details.");
+          return;
+        }
+        openApplyModal(job);
+      });
+      document
+        .getElementById("modalApplyBtn")
+        .addEventListener("click", async () => {
+          if (!CURRENT_JOB_ID) return;
+          const modalBtnApply = document.getElementById("modalApplyBtn");
+          modalBtnApply.disabled = true;
+          modalBtnApply.textContent = "Checking eligibility…";
+          try {
+            const base = await getInstallerResume();
+            const installerId =
+              base.installerId || (await resolveInstallerId());
+            if (!installerId) {
+              showToast(
+                "We could not identify your installer profile. Please sign in again."
+              );
+              modalBtnApply.disabled = false;
+              modalBtnApply.textContent = "Apply for this Job!";
+              return;
+            }
+            const levelstatus = await getInstallerLevel(installerId);
+            const job = (ALL_JOBS || []).find(
+              (j) => String(j.job_id) === String(CURRENT_JOB_ID)
+            );
+            const requiredLevel = Number(getJobEffectiveDifficulty(job));
+            const userLevel = Number(levelstatus ?? 0);
+            if (
+              Number.isFinite(requiredLevel) &&
+              Number.isFinite(userLevel) &&
+              userLevel < requiredLevel
+            ) {
+              showToast(
+                `Application blocked: your current level (${userLevel}) does not meet the required job level (${requiredLevel}).`
+              );
+              modalBtnApply.disabled = false;
+              modalBtnApply.textContent = "Apply for this Job!";
+              return;
+            }
+            modalBtnApply.textContent = "Submitting…";
+            const { data: applyResult, error: applyError } = await sb.rpc(
+              "apply_or_reapply_to_job",
+              {
+                job_id_to_apply: String(CURRENT_JOB_ID),
+              }
+            );
+
+            if (applyError) {
+              const functionMissing =
+                applyError.code === "42883" ||
+                applyError.code === "PGRST202" ||
+                /apply_or_reapply_to_job/i.test(applyError.message || "");
+
+              if (functionMissing) {
+                const payload = {
+                  job_id: CURRENT_JOB_ID,
+                  installer_id: installerId,
+                  status: "pending",
+                };
+                const { error } = await sb
+                  .schema("jobs")
+                  .from("job_application")
+                  .insert(payload);
+                if (error) {
+                  const msg =
+                    error.code === "23505" || /duplicate/i.test(error.message)
+                      ? "You already applied to this job. If you just cancelled it, run the latest Supabase installer application SQL so reapply can reactivate cancelled rows."
+                      : `Could not submit application: ${error.message}`;
+                  showToast(msg, 3600);
+                } else {
+                  showToast("Application submitted. Status: pending.", 2400);
+                  closeApplyModal();
+                }
+              } else {
+                showToast(
+                  `Could not submit application: ${applyError.message}`,
+                  3600
+                );
+              }
+            } else if (applyResult?.status === "already_applied") {
+              showToast("You already applied to this job.", 3000);
+            } else {
+              showToast(
+                applyResult?.status === "reapplied"
+                  ? "Application re-submitted. Status: pending."
+                  : "Application submitted. Status: pending.",
+                2400
+              );
+              closeApplyModal();
+            }
+          } catch (err) {
+            console.error(err);
+            showToast("Unexpected error while applying. Please try again.");
+          } finally {
+            modalBtnApply.disabled = false;
+            modalBtnApply.textContent = "Apply for this Job!";
+          }
+        });
+
+      /* ================================
+       ======= MAP (kept) ==========
+       ================================ */
+
+      function distKm(a, b) {
+        if (!a || !b) return Infinity;
+        const R = 6371;
+        const dLat = ((b.lat - a.lat) * Math.PI) / 180;
+        const dLon = ((b.lng - a.lng) * Math.PI) / 180;
+        const lat1 = (a.lat * Math.PI) / 180;
+        const lat2 = (b.lat * Math.PI) / 180;
+        const s =
+          Math.sin(dLat / 2) ** 2 +
+          Math.sin(dLon / 2) ** 2 * Math.cos(lat1) * Math.cos(lat2);
+        return 2 * R * Math.asin(Math.sqrt(s));
+      }
+
+      let MAP = null;
+      let MAP_MARKERS = null;
+      let MAP_USER = null;
+      let MAP_RADIUS = null;
+      const GEO_CACHE = new Map();
+      const GEO_PROMISES = new Map();
+
+      function lsGetAddr(addr) {
+        try {
+          const raw = localStorage.getItem("geo:" + addr);
+          if (!raw) return null;
+          return JSON.parse(raw);
+        } catch {
+          return null;
+        }
+      }
+      function lsSetAddr(addr, obj) {
+        try {
+          localStorage.setItem("geo:" + addr, JSON.stringify(obj));
+        } catch {}
+      }
+
+      async function geocodeAddress(addr) {
+        const trimmed = String(addr || "").trim();
+        if (!trimmed) return null;
+        for (const [k, v] of GEO_CACHE.entries()) {
+          if (v._addr === trimmed) return { lat: v.lat, lng: v.lng };
+        }
+        const hit = lsGetAddr(trimmed);
+        if (hit && typeof hit.lat === "number" && typeof hit.lng === "number")
+          return { lat: hit.lat, lng: hit.lng };
+        if (GEO_PROMISES.has(trimmed)) return GEO_PROMISES.get(trimmed);
+        const url =
+          "https://nominatim.openstreetmap.org/search?format=json&limit=1&q=" +
+          encodeURIComponent(trimmed);
+        const p = fetch(url, { headers: { Accept: "application/json" } })
+          .then((r) => r.json())
+          .then((arr) => {
+            if (Array.isArray(arr) && arr.length) {
+              const { lat, lon } = arr[0];
+              const res = { lat: parseFloat(lat), lng: parseFloat(lon) };
+              lsSetAddr(trimmed, res);
+              return res;
+            }
+            return null;
+          })
+          .catch(() => null)
+          .finally(() => {
+            GEO_PROMISES.delete(trimmed);
+          });
+        GEO_PROMISES.set(trimmed, p);
+        return p;
+      }
+
+      let _geoQueue = [];
+      let _geoBusy = false;
+      function MAP_prepareGeocodingForJobs(jobs) {
+        (jobs || []).forEach((j) => {
+          const addr = (j.job_location || "").trim();
+          if (!addr) return;
+          if (GEO_CACHE.has(j.job_id)) return;
+          const hit = lsGetAddr(addr);
+          if (hit) {
+            GEO_CACHE.set(j.job_id, { ...hit, _addr: addr, _job: j });
+          } else {
+            _geoQueue.push({ job: j, addr });
+          }
+        });
+        if (!_geoBusy) processGeoQueue();
+      }
+      async function processGeoQueue() {
+        _geoBusy = true;
+        while (_geoQueue.length) {
+          const item = _geoQueue.shift();
+          const res = await geocodeAddress(item.addr);
+          if (res) {
+            GEO_CACHE.set(item.job.job_id, {
+              ...res,
+              _addr: item.addr,
+              _job: item.job,
+            });
+            if (MAP_USER) MAP_refreshMarkers();
+          }
+          await new Promise((r) => setTimeout(r, 600));
+        }
+        _geoBusy = false;
+      }
+      function MAP_removeGeocode(rowLike) {
+        if (!rowLike) return;
+        GEO_CACHE.delete(rowLike.job_id);
+        MAP_refreshMarkers();
+      }
+
+      function categoryStyle(cat) {
+        const c = (cat || "").toLowerCase();
+        if (c.includes("elect")) return { color: "#1d4ed8", emoji: "⚡" };
+        if (c.includes("safety")) return { color: "#ef4444", emoji: "🛡️" };
+        if (c.includes("network")) return { color: "#10b981", emoji: "🌐" };
+        if (c.includes("cctv")) return { color: "#8b5cf6", emoji: "📷" };
+        if (c.includes("plumb")) return { color: "#0ea5e9", emoji: "🔧" };
+        if (c.includes("general")) return { color: "#f59e0b", emoji: "🛠️" };
+        return { color: "#111827", emoji: "📍" };
+      }
+      function jobDivIcon(job) {
+        const { color, emoji } = categoryStyle(job.job_category);
+        const html = `
+          <div class="job-pin-wrap" style="--pin:${color}">
+            <div class="job-pin"><div class="job-pin-emo">${emoji}</div></div>
+            <div class="job-pin-tail"></div>
+          </div>`;
+        return L.divIcon({
+          className: "",
+          html,
+          iconSize: [34, 46],
+          iconAnchor: [17, 40],
+          popupAnchor: [0, -38],
+        });
+      }
+      function userDivIcon() {
+        return L.divIcon({
+          className: "",
+          html: `<div class="job-pin-wrap"><div class="pulse"></div></div>`,
+          iconSize: [16, 16],
+          iconAnchor: [8, 8],
+        });
+      }
+
+      function MAP_init() {
+        if (MAP) return;
+        MAP = L.map("jobsMap", { zoomControl: true });
+        L.tileLayer(
+          "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+          { maxZoom: 20, attribution: "&copy; OpenStreetMap &copy; CARTO" }
+        ).addTo(MAP);
+        MAP_MARKERS = L.layerGroup().addTo(MAP);
+        MAP.setView([12.8797, 121.774], 5);
+        L.control.scale({ imperial: false }).addTo(MAP);
+      }
+      function MAP_setUserLocation(lat, lng) {
+        const pos = [lat, lng];
+        if (!MAP_USER) {
+          MAP_USER = L.marker(pos, {
+            title: "You are here",
+            icon: userDivIcon(),
+          }).addTo(MAP);
+        } else {
+          MAP_USER.setLatLng(pos);
+        }
+        const radiusKm = parseFloat($("#radiusSelect").value || "10");
+        const rMeters = radiusKm * 1000;
+        if (!MAP_RADIUS) {
+          MAP_RADIUS = L.circle(pos, {
+            radius: rMeters,
+            color: "#2563eb",
+            weight: 2,
+            fillColor: "#60a5fa",
+            fillOpacity: 0.14,
+          }).addTo(MAP);
+        } else {
+          MAP_RADIUS.setLatLng(pos);
+          MAP_RADIUS.setRadius(rMeters);
+        }
+        MAP.setView(pos, Math.max(MAP.getZoom(), 13));
+        MAP_refreshMarkers();
+      }
+      function MAP_refreshMarkers() {
+        if (!MAP || !MAP_MARKERS) return;
+        MAP_MARKERS.clearLayers();
+        const user = MAP_USER ? MAP_USER.getLatLng() : null;
+        const radiusKm = parseFloat($("#radiusSelect").value || "10");
+        let count = 0;
+
+        const filtered = (() => {
+          let list = [...ALL_JOBS];
+          const q = (FILTERS.q || "").trim().toLowerCase();
+          if (q) {
+            list = list.filter((j) => {
+              const effDesc = getJobEffectiveDescription(j);
+              const hay = [j.job_title, effDesc, j.job_location]
+                .map((x) => String(x ?? "").toLowerCase())
+                .join(" | ");
+              return hay.includes(q);
+            });
+          }
+          if (FILTERS.category)
+            list = list.filter(
+              (j) => String(j.job_category || "") === FILTERS.category
+            );
+          if (FILTERS.level)
+            list = list.filter(
+              (j) => String(getJobEffectiveDifficulty(j)) === FILTERS.level
+            );
+          const toNum = (v) =>
+            v === null || v === "" || Number.isNaN(v) ? null : Number(v);
+          const minP = toNum(FILTERS.minPrice);
+          const maxP = toNum(FILTERS.maxPrice);
+          if (minP !== null)
+            list = list.filter((j) => Number(getJobEffectivePay(j) ?? 0) >= minP);
+          if (maxP !== null)
+            list = list.filter((j) => Number(getJobEffectivePay(j) ?? 0) <= maxP);
+          return list;
+        })();
+
+        for (const j of filtered) {
+          const geo = GEO_CACHE.get(j.job_id);
+          if (!geo) continue;
+          const latlng = L.latLng(geo.lat, geo.lng);
+          if (user) {
+            const d = distKm(
+              { lat: user.lat, lng: user.lng },
+              { lat: geo.lat, lng: geo.lng }
+            );
+            if (d > radiusKm) continue;
+          }
+          count++;
+          const marker = L.marker(latlng, {
+            title: j.job_title,
+            icon: jobDivIcon(j),
+          });
+          
+          const effDifficulty = getJobEffectiveDifficulty(j);
+          const effPay = getJobEffectivePay(j);
+
+          const html = `
+            <div class="pop">
+              <div class="pop-title">${esc(j.job_title)}</div>
+              <div class="pop-line">₱${fmtPeso(effPay)} • ${esc(
+            j.job_category || "—"
+          )} • L${esc(effDifficulty)}</div>
+              <div class="pop-line">${esc(
+                j.job_location || "No location"
+              )}</div>
+              <a href="javascript:void(0)" class="map-view" data-job-id="${
+                j.job_id
+              }">View</a>
+            </div>`;
+          marker.bindPopup(html);
+          marker.on("click", () => MAP_fillInfoCard(j));
+          MAP_MARKERS.addLayer(marker);
+        }
+        $("#nearbyCount").textContent = user
+          ? `${count} nearby job(s)`
+          : `${count} mapped job(s)`;
+      }
+      function MAP_fillInfoCard(job) {
+        const effDifficulty = getJobEffectiveDifficulty(job);
+        const effPay = getJobEffectivePay(job);
+
+        $("#micTitle").textContent = job.job_title || "—";
+        $("#micMeta").textContent = `₱${fmtPeso(effPay)} • ${
+          job.job_category || "—"
+        } • Level ${effDifficulty}`;
+        $("#micLoc").textContent = job.job_location || "Not specified";
+        $("#micViewBtn").onclick = () => openApplyModal(job);
+        $("#mapInfoCard").classList.add("show");
+      }
+      $("#locateBtn").addEventListener("click", () => {
+        if (!navigator.geolocation) {
+          showToast("Geolocation not supported in this browser.");
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const { latitude, longitude } = pos.coords;
+            MAP_setUserLocation(latitude, longitude);
+            showToast("Location detected.");
+          },
+          (err) => {
+            console.warn(err);
+            showToast(
+              "Could not get your location. Please allow location access."
+            );
+          },
+          { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+        );
+      });
+      $("#radiusSelect").addEventListener("change", () => {
+        if (MAP_USER && MAP_RADIUS) {
+          const km = parseFloat($("#radiusSelect").value || "10");
+          MAP_RADIUS.setRadius(km * 1000);
+        }
+        MAP_refreshMarkers();
+      });
+      document.addEventListener("click", (e) => {
+        const a = e.target.closest(".map-view[data-job-id]");
+        if (!a) return;
+        const id = a.getAttribute("data-job-id");
+        const job = ALL_JOBS.find((j) => String(j.job_id) === String(id));
+        if (job) openApplyModal(job);
+      });
+      document.addEventListener("DOMContentLoaded", () => {
+        MAP_init();
+        if (ALL_JOBS.length) MAP_prepareGeocodingForJobs(ALL_JOBS);
+      });
+
+      /* ===== MOBILE FILTER PANEL GLUE (enhanced with backdrop & ESC) ===== */
+      const mfp = $("#mobileFilterPanel");
+      const mfpOpenBtn = $("#filtersIconBtn");
+      const mfpCloseBtn = $("#mfpClose");
+      const mfpApplyBtn = $("#mfpApply");
+      const mfpBackdrop = $("#mfpBackdrop");
+
+      function openMfp() {
+        mfp.classList.add("show");
+        mfp.setAttribute("aria-hidden", "false");
+        if (mfpBackdrop) {
+          mfpBackdrop.classList.add("show");
+          mfpBackdrop.setAttribute("aria-hidden", "false");
+        }
+      }
+      function closeMfp() {
+        mfp.classList.remove("show");
+        mfp.setAttribute("aria-hidden", "true");
+        if (mfpBackdrop) {
+          mfpBackdrop.classList.remove("show");
+          mfpBackdrop.setAttribute("aria-hidden", "true");
+        }
+      }
+
+      mfpOpenBtn && mfpOpenBtn.addEventListener("click", openMfp);
+      mfpCloseBtn && mfpCloseBtn.addEventListener("click", closeMfp);
+      mfpBackdrop && mfpBackdrop.addEventListener("click", closeMfp); // click outside closes
+
+      mfpApplyBtn &&
+        mfpApplyBtn.addEventListener("click", () => {
+          const min = $("#mMinPrice").value
+            ? Number($("#mMinPrice").value)
+            : null;
+          const max = $("#mMaxPrice").value
+            ? Number($("#mMaxPrice").value)
+            : null;
+          FILTERS.minPrice = Number.isFinite(min) ? min : null;
+          FILTERS.maxPrice = Number.isFinite(max) ? max : null;
+          applyFilters();
+          closeMfp();
+        });
+
+      // Also close by pressing ESC when panel is open
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && mfp.classList.contains("show")) closeMfp();
+      });
+
+      // Keep the old outside-click closer for the bottom-sheet case,
+      // but make sure it doesn’t fight with the centered modal UX.
+      document.addEventListener("click", (e) => {
+        if (!mfp.classList.contains("show")) return;
+        const inPanel = e.target === mfp || mfp.contains(e.target);
+        const isBtn =
+          e.target === mfpOpenBtn ||
+          (mfpOpenBtn && mfpOpenBtn.contains(e.target));
+        const clickedBackdrop = e.target === mfpBackdrop;
+        if (!inPanel && !isBtn && !clickedBackdrop) {
+          closeMfp();
+        }
+      });
+    </script>
+  </body>
+</html>

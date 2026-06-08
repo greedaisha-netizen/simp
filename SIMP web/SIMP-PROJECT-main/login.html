@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="img/simpHappyMascotLogo.png">
+  <title>Login–SIMP Project</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap");
+
+    :root {
+      --azure-blue: #20647c;
+      --green: #20a44c;
+      --card-bg: rgba(255, 255, 255, 0.15);
+      --glass-border: 1px solid rgba(255, 255, 255, 0.3);
+      --shadow: 0 8px 30px rgba(32, 100, 124, 0.2);
+      --brand-grad-a: #20647c;
+      --brand-grad-b: #20a44c;
+      --muted: #6b7280;
+    }
+
+    * {
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+      font-family: "Raleway", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      height: 100vh;
+      background: linear-gradient(135deg, #f8fbfd, #e7edf3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* ===== Shell (two panels + form in the middle) ===== */
+    .auth-shell {
+      position: relative;
+      width: min(980px, 94vw);
+      height: 560px;
+      border-radius: 26px;
+      background: #ffffff;
+      box-shadow: 0 24px 60px rgba(17, 24, 39, 0.15);
+      overflow: hidden;
+    }
+
+    .side {
+      position: absolute;
+      inset: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .side .pane {
+      padding-inline: clamp(28px, 5vw, 56px);
+      padding-block: 56px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .pane h1 {
+      font-size: clamp(28px, 3.2vw, 40px);
+      line-height: 1.15;
+      color: #111827;
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .pane p {
+      color: #4b5563;
+      max-width: 420px;
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 10px auto 24px;
+    }
+
+    .ghost-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 14px 28px;
+      border-radius: 999px;
+      font-weight: 700;
+      border: 2px solid rgba(0, 0, 0, 0.12);
+      background: transparent;
+      cursor: pointer;
+      transition: transform 0.08s ease, box-shadow 0.25s ease,
+        border-color 0.25s ease, background 0.25s ease;
+      user-select: none;
+    }
+
+    .ghost-btn:hover {
+      box-shadow: 0 8px 26px rgba(0, 0, 0, 0.08);
+      border-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .ghost-btn:active {
+      transform: translateY(1px);
+    }
+
+    /* Gradient halves */
+    .left-grad {
+      background: linear-gradient(135deg, #20a44c, #20647c);
+      color: #fff;
+      border-top-left-radius: 26px;
+      border-bottom-left-radius: 26px;
+    }
+
+    .right-grad {
+      background: linear-gradient(135deg, #20a44c, #20647c);
+      color: #fff;
+      border-top-right-radius: 26px;
+      border-bottom-right-radius: 26px;
+    }
+
+    .left-grad h1,
+    .right-grad h1,
+    .left-grad p,
+    .right-grad p {
+      color: #fff;
+    }
+
+    .left-grad .ghost-btn,
+    .right-grad .ghost-btn {
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .left-grad .ghost-btn:hover,
+    .right-grad .ghost-btn:hover {
+      border-color: #fff;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* ===== Your original login card (kept) ===== */
+    .loginDiv {
+      position: absolute;
+      inset: 0;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      width: 100%;
+      max-width: 500px;
+      height: auto;
+      padding: 3rem 2.5rem;
+      background-color: white;
+      z-index: 2;
+      transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+      border-radius: 0px;
+    }
+
+    /* Slider states: move the form toward the chosen side */
+    .mode-installer .loginDiv {
+      transform: translateX(-50%);
+    }
+
+    .mode-customer .loginDiv {
+      transform: translateX(50%);
+    }
+
+    .loginDiv .backBtn {
+      position: relative;
+      max-width: 50px;
+      width: 90%;
+      padding: 1px;
+      border: none;
+      border-radius: 0.1px;
+      background: none;
+      color: black;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      margin-top: 0;
+    }
+
+    .loginDiv .backBtn:hover {
+      background: none;
+    }
+
+    .loginDivHeader {
+      display: grid;
+      place-items: center;
+      gap: 0.5rem;
+      margin-bottom: 4px;
+    }
+
+    .loginDiv img {
+      width: 4rem;
+    }
+
+    .loginDiv h2 {
+      color: black;
+      margin-bottom: 10px;
+      font-weight: 900;
+      font-size: 36px;
+      margin-top: 20px;
+    }
+
+    .role-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #eef2f7;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-weight: 700;
+      color: #111827;
+    }
+
+    /* NEW: compact segmented toggle for small screens (kept hidden on desktop) */
+    .role-toggle {
+      display: none;
+    }
+
+    .role-toggle button {
+      flex: 1;
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      font-weight: 700;
+      background: transparent;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.06s ease;
+    }
+
+    .role-toggle button:active {
+      transform: translateY(1px);
+    }
+
+    .loginDiv .role-toggle button {
+      background: #f5f7fb !important;
+      color: #111827;
+      box-shadow: none;
+      border-radius: 999px;
+    }
+
+    html.mode-installer .role-toggle .btn-installer,
+    html.mode-customer .role-toggle .btn-customer {
+      background: linear-gradient(135deg, #20a44c, #20647c) !important;
+      color: #fff !important;
+      box-shadow: 0 2px 10px rgba(17, 24, 39, 0.06);
+    }
+
+    .loginDiv button {
+      position: relative;
+      width: 98%;
+      padding: 0.8rem;
+      border: none;
+      border-radius: 12px;
+      background: #20a44c;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .loginDiv button:hover {
+      background: #1a7f3a;
+    }
+
+    .loginDiv button:active,
+    .btn-primary:active {
+      top: 2px;
+      left: 1px;
+    }
+
+    input,
+    select {
+      width: 98%;
+      padding: 13px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+    }
+
+    /* hide the role dropdown but keep it in DOM for your JS */
+    #role {
+      display: none;
+      visibility: hidden;
+      height: 0;
+      padding: 0;
+      margin: 0;
+      border: 0;
+    }
+
+    p.footer-note {
+      text-align: center;
+      padding-top: 0.5rem;
+      margin-top: 2rem;
+      font-size: 0.9rem;
+      border-top: 1px solid lightgray;
+    }
+
+    p.footer-note a {
+      text-decoration: none;
+    }
+
+    /* ---------- MOBILE: compact + off-canvas panels ---------- */
+    @media (max-width: 820px) {
+      .loginDiv {
+        position: relative;
+      }
+
+      .auth-shell {
+        width: 100%;
+        max-width: 680px;
+        height: auto;
+        border-radius: 20px;
+      }
+
+      /* Turn side panels into off-canvas sheets that slide OUT of the screen. */
+      .side {
+        position: relative;
+        height: 0;
+        grid-template-columns: 1fr;
+        pointer-events: none;
+      }
+
+      .side .pane {
+        position: absolute;
+        top: 8px;
+        width: calc(100% - 24px);
+        max-width: 540px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 16px;
+        box-shadow: 0 14px 28px rgba(17, 24, 39, 0.12);
+        padding-block: 22px;
+        opacity: 0.96;
+        transition: transform 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
+          opacity 0.3s;
+      }
+
+      html.mode-customer .left-grad {
+        transform: translate(-130%, 0);
+        opacity: 0;
+      }
+
+      html.mode-customer .right-grad {
+        transform: translate(130%, 0);
+        opacity: 0;
+      }
+
+      html.mode-installer .left-grad {
+        transform: translate(-130%, 0);
+        opacity: 0;
+      }
+
+      html.mode-installer .right-grad {
+        transform: translate(130%, 0);
+        opacity: 0;
+      }
+
+      .loginDiv {
+        position: relative;
+        inset: auto;
+        width: 100%;
+        max-width: 680px;
+        transform: translateX(0) !important;
+      }
+
+      .loginDiv .backBtn {
+        margin-top: 50px;
+      }
+
+      .loginDiv h2 {
+        font-size: clamp(22px, 6vw, 28px);
+        margin-top: 10px;
+      }
+
+      input,
+      select,
+      .loginDiv button {
+        width: 100%;
+      }
+
+      .ghost-btn {
+        padding: 12px 18px;
+      }
+
+      .role-toggle {
+        display: flex;
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(100%, 600px);
+        background-color: #f5f7fb;
+        border: 1px solid #e6e8ee;
+        border-radius: 999px;
+        gap: 6px;
+        padding: 6px;
+        box-shadow: 0 8px 20px rgba(17, 24, 39, 0.08);
+      }
+    }
+
+    /* Ultra-small devices (320–375px) */
+    @media (max-width: 430px) {
+      .loginDiv h2 {
+        font-size: clamp(22px, 8vw, 26px);
+      }
+
+      .loginDiv {
+        padding: 18px 14px;
+      }
+
+      .role-pill {
+        font-size: 11px;
+        padding: 5px 10px;
+      }
+
+      .loginDiv .role-toggle {
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(100%, 300px);
+      }
+    }
+
+    /* Respect safe area on iOS */
+    @supports (padding: max(0px)) {
+      @media (max-width: 820px) {
+        body {
+          padding-left: max(16px, env(safe-area-inset-left));
+          padding-right: max(16px, env(safe-area-inset-right));
+          padding-top: max(16px, env(safe-area-inset-top));
+          padding-bottom: max(16px, env(safe-area-inset-bottom));
+        }
+      }
+    }
+
+    /* Reduce motion if user prefers */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    .hint {
+      font-size: 12px;
+      color: var(--muted);
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 20px;
+    }
+
+    /* Compact SweetAlert popup (prevents layout shifts / huge modals) */
+    .swal-compact.swal2-popup {
+      width: 360px !important;
+      /* fixed, compact width */
+      padding: 0.75rem !important;
+      /* smaller padding */
+      font-size: 0.92rem !important;
+      /* slightly smaller text */
+    }
+
+    @media (max-width: 420px) {
+      .swal-compact.swal2-popup {
+        width: 92vw !important;
+        /* stay within viewport on small screens */
+      }
+    }
+  </style>
+
+  <!-- SweetAlert2 (external) -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+    import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./supabase.js";
+
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // If installer_documents is in another schema, e.g. "jobs", use:
+    // const db = supabase.schema("jobs");
+    const db = supabase; // public schema
+
+    // Paths
+    const INSTALLER_UPLOAD =
+      "./pages/installer_pages/html_files/upload.html";
+    const INSTALLER_DASH =
+      "./pages/installer_pages/html_files/dashboard.html";
+    const INSTALLER_REVIEW =
+      "./pages/installer_pages/html_files/review.html";
+    const INSTALLER_APPROVED =
+      "./pages/installer_pages/html_files/approved.html";
+    const INSTALLER_REJECTED =
+      "./pages/installer_pages/html_files/rejected.html";
+    const CUSTOMER_DASH =
+      "./pages/customer_pages/html_files/myJobPosts.html";
+
+    // ---------- Compact popup helpers (no layout shift) ----------
+    const basePopup = {
+      confirmButtonColor: "#20a44c",
+      showCancelButton: false,
+      allowOutsideClick: true,
+      backdrop: true,
+      heightAuto: false,           // prevent SweetAlert from adjusting page height
+      customClass: "swal-compact", // compact size + fonts (see CSS)
+    };
+
+    const notifyModal = (opts = {}) =>
+      Swal.fire({
+        ...basePopup,
+        icon: opts.icon || "info",
+        title: opts.title || "",
+        text: opts.text || "",
+        html: opts.html || undefined,
+        confirmButtonText: opts.confirmText || "OK",
+        width: opts.width || undefined, // compact via class already
+      });
+
+    const notifyToast = (opts = {}) =>
+      Swal.fire({
+        toast: true,
+        icon: opts.icon || "info",
+        title: opts.title || "",
+        position: opts.position || "top-end",
+        showConfirmButton: false,
+        timer: opts.timer ?? 2200,
+        timerProgressBar: true,
+        heightAuto: false,
+      });
+
+    const showLoading = (title = "Signing you in…") =>
+      Swal.fire({
+        ...basePopup,
+        title,
+        allowOutsideClick: false,
+        allowEscapeKey: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+    const closePopup = () => Swal.close();
+
+    // Get the latest installer_documents row for this user
+    async function getLatestInstallerDoc(userId) {
+      const { data, error } = await db
+        .from("installer_documents")
+        .select("installer_id, status, updated_at, uploaded_at")
+        .eq("installer_id", userId)
+        .order("updated_at", { ascending: false, nullsLast: true })
+        .order("uploaded_at", { ascending: false, nullsLast: true })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) throw error;
+      return data; // may be null if no docs yet
+    }
+
+    async function isCustomer(userId) {
+      const { data, error } = await supabase
+        .from("customer")
+        .select("id")
+        .eq("id", userId)
+        .maybeSingle();
+      if (error) throw error;
+      return !!data;
+    }
+
+    // ✅ Check if user exists in public.installer table
+    async function isInstaller(userId) {
+      const { data, error } = await supabase
+        .from("installer")
+        .select("id")
+        .eq("id", userId)
+        .maybeSingle();
+      if (error) throw error;
+      return !!data;
+    }
+
+    async function getInstallerProfile(userId, email = "") {
+      const normalizedEmail = String(email || "").trim().toLowerCase();
+      const installerColumns = "id, status, email, name";
+
+      const { data: byId, error: byIdError } = await supabase
+        .from("installer")
+        .select(installerColumns)
+        .eq("id", userId)
+        .maybeSingle();
+      if (byIdError) throw byIdError;
+      if (byId?.id) return byId;
+
+      if (!normalizedEmail) {
+        return null;
+      }
+
+      const { data: byEmail, error: byEmailError } = await supabase
+        .from("installer")
+        .select(installerColumns)
+        .eq("email", normalizedEmail)
+        .maybeSingle();
+      if (byEmailError) throw byEmailError;
+      if (byEmail?.id) return byEmail;
+
+      // Be tolerant of legacy rows whose email casing was saved differently.
+      const { data: byEmailInsensitive, error: byEmailInsensitiveError } =
+        await supabase
+          .from("installer")
+          .select(installerColumns)
+          .ilike("email", normalizedEmail)
+          .maybeSingle();
+      if (byEmailInsensitiveError) throw byEmailInsensitiveError;
+      if (byEmailInsensitive?.id) return byEmailInsensitive;
+
+      // Last resort: tolerate stray leading/trailing spaces in legacy rows.
+      const escapedEmail = normalizedEmail.replace(/[%_]/g, (match) => `\\${match}`);
+      const { data: looseEmailRows, error: looseEmailError } = await supabase
+        .from("installer")
+        .select(installerColumns)
+        .ilike("email", `%${escapedEmail}%`)
+        .limit(20);
+      if (looseEmailError) throw looseEmailError;
+
+      const bestLooseMatch = (looseEmailRows || []).find(
+        (row) => String(row?.email || "").trim().toLowerCase() === normalizedEmail
+      );
+      return bestLooseMatch || null;
+    }
+
+    // --- Role switching (no dropdown) ---
+    let initialRoleSet = false; // 🔹 track if URL already decided the role
+
+    const roleSelect = document.getElementById("role"); // kept for compatibility
+    const shell = document.documentElement; // we'll toggle a class on <html> for transforms
+    const roleLabel = () => document.getElementById("activeRoleText");
+
+    function setRole(role) {
+      // Update hidden select so your existing login() keeps working
+      roleSelect.value = role;
+
+      // Update UI state class for sliding
+      if (role === "installer") {
+        shell.classList.add("mode-installer");
+        shell.classList.remove("mode-customer");
+      } else {
+        shell.classList.add("mode-customer");
+        shell.classList.remove("mode-installer");
+      }
+
+      // Update header pill text
+      const el = roleLabel();
+      if (el)
+        el.textContent =
+          role === "installer"
+            ? "You are now logging in as Installer"
+            : "You are now logging in as Customer";
+
+      // ❌ No toast/modal here (as you requested before)
+    }
+
+    // Expose for inline buttons
+    window.chooseInstaller = () => setRole("installer");
+    window.chooseCustomer = () => setRole("customer");
+
+    // 🔹 Decide initial role based on URL (?installer)
+    const params = new URLSearchParams(window.location.search);
+    if (params.has("installer")) {
+      setRole("installer");
+      initialRoleSet = true;
+    }
+
+    // Default view (only if URL did NOT specify installer)
+    if (!initialRoleSet) {
+      setRole("customer");
+    }
+
+    // --- Your original login() kept intact, only reads role from hidden select ---
+    window.login = async () => {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const role = document.getElementById("role").value;
+
+      // Basic validation (compact modal)
+      if (!email || !password || !role) {
+        notifyModal({
+          icon: "warning",
+          title: "Almost there",
+          text: "Please enter your email, password.",
+        });
+        return;
+      }
+
+      try {
+        showLoading("Checking your account…");
+
+        // 1) Auth sign-in
+        const { data: signInData, error: signInError } =
+          await supabase.auth.signInWithPassword({ email, password });
+        if (signInError) throw signInError;
+
+        const userId = signInData.user.id;
+        const userEmail = String(signInData.user.email || email || "")
+          .trim()
+          .toLowerCase();
+        const authRole = String(signInData.user.user_metadata?.role || "")
+          .trim()
+          .toLowerCase();
+        const [installerProfile, customerExists] = await Promise.all([
+          getInstallerProfile(userId, userEmail).catch(() => null),
+          isCustomer(userId).catch(() => false),
+        ]);
+        const installerExists = !!installerProfile?.id;
+        let effectiveRole = role;
+
+        // If the user only belongs to one account type, let login recover from
+        // a mismatched UI selection instead of failing outright.
+        if (role === "customer" && installerExists && !customerExists) {
+          effectiveRole = "installer";
+          setRole("installer");
+        } else if (role === "installer" && customerExists && !installerExists) {
+          effectiveRole = "customer";
+          setRole("customer");
+        }
+
+        if (effectiveRole === "installer") {
+          if (!installerExists) {
+            if (authRole === "installer") {
+              closePopup();
+              notifyToast({
+                icon: "info",
+                title: "Installer account detected. Redirecting…",
+              });
+              window.location.href = INSTALLER_DASH;
+              return;
+            }
+
+            closePopup();
+            await notifyModal({
+              icon: "error",
+              title: "Installer profile not found",
+              html:
+                "This account isn’t set up as an installer yet.<br/>" +
+                "<small>Tip: Register an installer profile to continue.</small>",
+              confirmText: "OK",
+            });
+            return;
+          }
+
+          const installerRowId = installerProfile?.id || userId;
+          const doc = await getLatestInstallerDoc(installerRowId);
+
+          if (doc) {
+            const status = String(
+              doc.status || installerProfile?.status || ""
+            ).toLowerCase();
+
+            if (status === "approved") {
+              try {
+                const { data: updated, error: updErr } = await db
+                  .from("installer_documents")
+                  .update({ status: "verified" })
+                  .eq("installer_id", installerRowId)
+                  .select("status")
+                  .single();
+                if (updErr) throw updErr;
+                console.log("Status updated to:", updated.status);
+              } catch (e) {
+                console.warn(
+                  "Auto-upgrade failed (still navigating to Approved page):",
+                  e
+                );
+              }
+              closePopup();
+              notifyToast({ icon: "success", title: "Welcome back! Redirecting…" });
+              window.location.href = INSTALLER_APPROVED;
+              return;
+            }
+
+            if (status === "verified") {
+              closePopup();
+              notifyToast({ icon: "success", title: "Welcome back! Redirecting…" });
+              window.location.href = INSTALLER_DASH;
+              return;
+            }
+
+            if (
+              status === "pending review" ||
+              status === "pending" ||
+              status === "submitted" ||
+              status === "under review"
+            ) {
+              closePopup();
+              notifyToast({
+                icon: "info",
+                title: "Your documents are being reviewed…",
+              });
+              window.location.href = INSTALLER_REVIEW;
+              return;
+            }
+
+            if (status === "rejected") {
+              closePopup();
+              await notifyModal({
+                icon: "error",
+                title: "Application rejected",
+                text:
+                  "Please check the feedback and resubmit your documents.",
+                confirmText: "Go to status",
+              });
+              window.location.href = INSTALLER_REJECTED;
+              return;
+            }
+
+            // Any other/unset status → ask to upload
+            if (status === "pending review" || status === "pending") {
+              closePopup();
+              notifyToast({
+                icon: "info",
+                title: "Your documents are being reviewed…",
+              });
+              window.location.href = INSTALLER_REVIEW;
+              return;
+            }
+
+            closePopup();
+            await notifyModal({
+              icon: "info",
+              title: "Action needed",
+              text:
+                "We couldn’t find a valid document status. Please upload your installer documents.",
+              confirmText: "Upload now",
+            });
+            window.location.href = INSTALLER_UPLOAD;
+            return;
+          } else {
+            closePopup();
+            await notifyModal({
+              icon: "info",
+              title: "No documents yet",
+              text: "Please upload your installer documents to proceed.",
+              confirmText: "Upload now",
+            });
+            window.location.href = INSTALLER_UPLOAD;
+            return;
+          }
+        }
+
+        if (effectiveRole === "customer") {
+          closePopup();
+          if (customerExists) {
+            notifyToast({ icon: "success", title: "Welcome back! Redirecting…" });
+            window.location.href = CUSTOMER_DASH;
+          } else {
+            await notifyModal({
+              icon: "warning",
+              title: "Customer profile not found",
+              text: "Create a customer profile to continue.",
+            });
+          }
+        }
+      } catch (err) {
+        closePopup();
+        // Make auth errors clearer without being long
+        const msg = (() => {
+          const raw = (err?.message || "").toLowerCase();
+          if (raw.includes("invalid login") || raw.includes("invalid credentials")) {
+            return "Your email or password is incorrect.";
+          }
+          if (raw.includes("email not confirmed")) {
+            return "Please confirm your email to sign in.";
+          }
+          if (raw.includes("network")) {
+            return "We couldn’t reach the server. Please check your connection.";
+          }
+          return "Something went wrong while signing in.";
+        })();
+
+        const extra =
+          `<br/><small style="color:#6b7280">Need help? Try resetting your password or checking your email confirmation.</small>`;
+
+        await notifyModal({
+          icon: "error",
+          title: "Login failed",
+          html: `<div style="word-break:break-word">${msg}</div>${extra}`,
+        });
+        console.error(err);
+      }
+    };
+  </script>
+</head>
+
+<body>
+  <div class="auth-shell">
+    <!-- Sliding gradient panels (choose role) -->
+    <div class="side">
+      <div class="pane left-grad">
+        <div>
+          <img src="img/simpHappyMascotLogo.png" style="max-width: 100px; width: 95%" alt="SIMP Mascot" />
+          <h1>Welcome Back, Simpsters!</h1>
+          <p>Click the button below to <strong>log in as installer.</strong></p>
+          <button class="ghost-btn" onclick="chooseInstaller()">
+            LOG IN AS INSTALLER
+          </button>
+        </div>
+      </div>
+      <div class="pane right-grad">
+        <div>
+          <img src="img/simpHappyMascotLogo.png" style="max-width: 100px; width: 95%" alt="SIMP Mascot" />
+          <h1>Welcome Back, Simpsters!</h1>
+          <p>Click the button below to <strong>log in as customer.</strong></p>
+          <button class="ghost-btn" onclick="chooseCustomer()">
+            LOG IN AS CUSTOMER
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Your original login card (kept, lightly enhanced) -->
+    <div class="loginDiv">
+      <button class="backBtn" onclick="window.location.href='index.html'">
+        <span class="material-icons-sharp">arrow_back</span>
+      </button>
+      <div class="loginDivHeader">
+        <h2>Login</h2>
+        <div class="role-pill">
+          <span class="material-icons-sharp" style="font-size: 16px">person</span>
+          <span id="activeRoleText"></span>
+        </div>
+      </div>
+
+      <!-- Compact segmented toggle (only visible on mobile) -->
+      <div class="role-toggle">
+        <button class="btn-customer" type="button" onclick="chooseCustomer()">
+          Customer
+        </button>
+        <button class="btn-installer" type="button" onclick="chooseInstaller()">
+          Installer
+        </button>
+      </div>
+
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+
+      <!-- Role selector kept for JS compatibility but hidden -->
+      <select id="role" required>
+        <option value="" disabled>Select Role</option>
+        <option value="customer">Customer</option>
+        <option value="installer">Installer</option>
+      </select>
+      <div onclick="window.location.href='forgotPassword.html'" class="hint">
+        Forgot your password?
+      </div>
+      <button onclick="login()">Login</button>
+      <p class="footer-note">
+        Don't have an account? <a href="signup.html">Sign Up</a>
+      </p>
+    </div>
+  </div>
+</body>
+
+</html>

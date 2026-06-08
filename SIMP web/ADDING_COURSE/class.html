@@ -1,0 +1,5005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Learning Platform</title>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(47, 152, 85, 0.08), transparent 24%),
+        radial-gradient(circle at top right, rgba(35, 117, 67, 0.07), transparent 22%),
+        linear-gradient(180deg, #f8fcf8 0%, #eef8f0 46%, #fbfefb 100%);
+    height: 100vh;
+    overflow: hidden;
+    color: #214833;
+}
+
+:root {
+    --lesson-theme: #2f9855;
+    --lesson-theme-strong: #237543;
+    --lesson-theme-soft: #dff4e6;
+    --lesson-theme-border: rgba(99, 167, 121, 0.22);
+    --lesson-theme-pale: #f3fbf5;
+    --lesson-theme-ink: #214833;
+    --lesson-shadow: 0 20px 44px rgba(33, 72, 51, 0.1);
+    --lesson-sidebar-collapsed-width: 80px;
+    --lesson-sidebar-expanded-width: 224px;
+    --lesson-sidebar-gutter: 24px;
+}
+
+.container {
+    display: flex;
+    height: 100vh;
+    position: relative;
+    background: transparent;
+}
+
+.lesson-welcome-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.lesson-welcome-overlay[hidden] {
+    display: none;
+}
+
+.lesson-welcome-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(239, 248, 241, 0.82);
+    backdrop-filter: blur(6px);
+}
+
+.lesson-welcome-card {
+    position: relative;
+    width: min(760px, calc(100vw - 48px));
+    min-height: 620px;
+    border-radius: 8px;
+    border: 1px solid rgba(99, 167, 121, 0.22);
+    background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(245,251,246,0.98) 100%);
+    box-shadow: 0 28px 64px rgba(33, 72, 51, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px;
+}
+
+.lesson-complete-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1210;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.lesson-complete-overlay[hidden] {
+    display: none;
+}
+
+.lesson-complete-card {
+    position: relative;
+    width: min(680px, calc(100vw - 48px));
+    min-height: 520px;
+    border-radius: 8px;
+    border: 1px solid rgba(99, 167, 121, 0.22);
+    background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(245,251,246,0.98) 100%);
+    box-shadow: 0 28px 64px rgba(33, 72, 51, 0.16);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 28px;
+}
+
+.lesson-complete-copy {
+    position: relative;
+    z-index: 2;
+    width: min(520px, 100%);
+    margin: 0 auto;
+    padding: 12px 8px 0;
+}
+
+.lesson-welcome-copy {
+    position: relative;
+    z-index: 2;
+    width: min(560px, 100%);
+    margin: 0 auto;
+    padding: 12px 8px 0;
+}
+
+.lesson-welcome-eyebrow {
+    margin: 0 0 8px;
+    color: var(--lesson-theme-strong);
+    font-size: 12px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    text-align: center;
+}
+
+.lesson-welcome-copy h2 {
+    margin: 0;
+    color: var(--lesson-theme-ink);
+    font-size: 30px;
+    line-height: 1.15;
+    text-align: center;
+}
+
+.lesson-welcome-subtitle {
+    margin: 10px 0 0;
+    color: #4b5563;
+    font-size: 15px;
+    line-height: 1.55;
+    text-align: center;
+}
+
+.lesson-welcome-stage-space {
+    height: 260px;
+    margin: 8px auto 22px;
+    position: relative;
+    width: min(290px, 100%);
+    z-index: 1;
+}
+
+.lesson-welcome-modes {
+    display: grid;
+    gap: 10px;
+}
+
+.lesson-mode-btn {
+    border: 1px solid rgba(99, 167, 121, 0.18);
+    border-radius: 8px;
+    background: rgba(248, 252, 248, 0.72);
+    color: #214833;
+    cursor: pointer;
+    font: inherit;
+    padding: 12px 14px;
+    text-align: left;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lesson-mode-btn strong {
+    display: block;
+    font-size: 15px;
+    margin-bottom: 4px;
+}
+
+.lesson-mode-btn span {
+    display: block;
+    color: #5b6b62;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.lesson-mode-btn.active {
+    background: rgba(238, 248, 240, 0.9);
+    border-color: rgba(47, 152, 85, 0.32);
+}
+
+.lesson-welcome-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 18px;
+}
+
+.lesson-welcome-start {
+    border: none;
+    border-radius: 8px;
+    background: var(--lesson-theme);
+    color: #ffffff;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    padding: 12px 18px;
+}
+
+.lesson-completion-actions {
+    display: grid;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.lesson-completion-btn {
+    border: 1px solid rgba(99, 167, 121, 0.22);
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--lesson-theme-ink);
+    cursor: pointer;
+    font: inherit;
+    font-weight: 700;
+    padding: 12px 18px;
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lesson-completion-btn:hover {
+    background: rgba(243, 251, 245, 0.95);
+    border-color: rgba(47, 152, 85, 0.26);
+}
+
+.lesson-completion-btn.primary {
+    background: var(--lesson-theme);
+    border-color: var(--lesson-theme);
+    color: #ffffff;
+}
+
+.lesson-completion-btn.primary:hover {
+    background: var(--lesson-theme-strong);
+    border-color: var(--lesson-theme-strong);
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    display: flex;
+    gap: 24px;
+    padding: 24px;
+    padding-right: 0;
+    min-width: 0;
+}
+
+/* Visual Section */
+.visual-section {
+    flex: 1;
+    background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(245,251,246,0.98) 100%);
+    border-radius: 20px;
+    box-shadow: var(--lesson-shadow);
+    border: 1px solid var(--lesson-theme-border);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.icon-box {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--lesson-theme-strong) 0%, var(--lesson-theme) 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon {
+    width: 20px;
+    height: 20px;
+    color: white;
+}
+
+.section-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--lesson-theme-ink);
+}
+
+.manual-visual-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: -4px 0 14px;
+}
+
+.manual-visual-tabs[hidden] {
+    display: none;
+}
+
+.manual-visual-tab {
+    align-items: center;
+    border: 1px solid rgba(239, 68, 68, 0.38);
+    border-radius: 999px;
+    background: #fff1f2;
+    color: #b91c1c;
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    gap: 8px;
+    padding: 9px 12px;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.manual-visual-tab::after {
+    background: #ef4444;
+    border-radius: 50%;
+    content: "";
+    height: 7px;
+    width: 7px;
+}
+
+.manual-visual-tab:hover {
+    background: #ffe4e6;
+    border-color: rgba(220, 38, 38, 0.5);
+}
+
+.manual-visual-tab.active {
+    background: #fff7ed;
+    border-color: rgba(249, 115, 22, 0.52);
+    color: #9a3412;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.12);
+}
+
+.manual-visual-tab.is-reviewed {
+    background: #f8fcf8;
+    border-color: rgba(99, 167, 121, 0.24);
+    color: #315641;
+}
+
+.manual-visual-tab.is-reviewed::after {
+    background: var(--lesson-theme);
+}
+
+.manual-visual-tab.is-reviewed.active {
+    background: var(--lesson-theme-soft);
+    border-color: rgba(47, 152, 85, 0.44);
+    color: var(--lesson-theme-strong);
+    box-shadow: 0 0 0 3px rgba(47, 152, 85, 0.12);
+}
+
+.manual-visual-tab.is-warning {
+    animation: manualVisualWarningPulse 0.85s ease-in-out 2;
+    border-color: rgba(220, 38, 38, 0.7);
+    box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.16);
+}
+
+@keyframes manualVisualWarningPulse {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-2px);
+    }
+}
+
+.video-container {
+    flex: 1;
+    background:
+        radial-gradient(circle at top left, rgba(47, 152, 85, 0.18), transparent 24%),
+        linear-gradient(180deg, #173221 0%, #111827 100%);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 0;
+}
+
+.preview-live-media {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.preview-live-video {
+    background-color: #020617;
+}
+
+.play-button {
+    width: 80px;
+    height: 80px;
+    background-color: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255,255,255,0.12);
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.play-button:hover {
+    background-color: rgba(255,255,255,0.2);
+}
+
+.play-icon {
+    width: 40px;
+    height: 40px;
+    color: white;
+    margin-left: 4px;
+}
+
+.video-placeholder {
+    position: absolute;
+    bottom: 16px;
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+/* Lesson Content */
+.lesson-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow-y: auto;
+    padding-right: 24px;
+    transition: padding-right 0.3s;
+}
+
+.lesson-content.sidebar-open {
+    padding-right: 24px;
+}
+
+.lesson-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.lesson-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.lesson-content::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+}
+
+.lesson-content::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+.lesson-header {
+    background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(245,251,246,0.98) 100%);
+    border-radius: 20px;
+    box-shadow: var(--lesson-shadow);
+    border: 1px solid var(--lesson-theme-border);
+    padding: 24px;
+}
+
+.lesson-header h1 {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    color: #4b5563;
+    font-size: 16px;
+}
+
+.lesson-text-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.card-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.icon-blue {
+    width: 20px;
+    height: 20px;
+    color: #2563eb;
+    flex-shrink: 0;
+}
+
+.text-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    color: #374151;
+    line-height: 1.6;
+    max-height: 280px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.text-content::-webkit-scrollbar,
+.key-notes-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.text-content::-webkit-scrollbar-track,
+.key-notes-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.text-content::-webkit-scrollbar-thumb,
+.key-notes-content::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 999px;
+}
+
+.text-content::-webkit-scrollbar-thumb:hover,
+.key-notes-content::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af;
+}
+
+body.lesson-no-visual .visual-section {
+    display: none;
+}
+
+body.lesson-no-visual .main-content {
+    gap: 0;
+}
+
+body.lesson-no-visual .lesson-content {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+body.lesson-no-visual:not(.lesson-mode-manual) .lesson-content {
+    --no-visual-tutor-lane: clamp(340px, 25vw, 420px);
+    padding-right: calc(var(--no-visual-tutor-lane) + 28px);
+}
+
+body.lesson-no-visual .lesson-header,
+body.lesson-no-visual .lesson-text-card {
+    border-radius: 24px;
+}
+
+body.lesson-no-visual .lesson-text-card {
+    flex: 1;
+}
+
+body.lesson-no-visual .text-content {
+    flex: 1;
+    font-size: clamp(18px, 1.25vw, 24px);
+    line-height: 1.8;
+    max-height: none;
+}
+
+body.lesson-no-visual.lesson-mode-manual .lesson-content {
+    padding-right: 24px;
+}
+
+body.lesson-no-visual.lesson-mode-manual .text-content {
+    font-size: clamp(19px, 1.45vw, 26px);
+}
+
+/* Key Notes */
+.key-notes {
+    background-color: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.key-notes .card-header {
+    margin-bottom: 12px;
+}
+
+.key-notes h3 {
+    color: #78350f;
+}
+
+.icon-amber {
+    width: 20px;
+    height: 20px;
+    color: #d97706;
+    flex-shrink: 0;
+}
+
+.key-notes ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 220px;
+    overflow-y: auto;
+    padding-right: 8px;
+}
+
+.key-notes li {
+    display: flex;
+    align-items: start;
+    gap: 8px;
+    color: #374151;
+}
+
+.bullet {
+    color: #d97706;
+    margin-top: 2px;
+}
+
+/* Sidebar */
+.sidebar {
+    background: linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(245,251,246,0.98) 100%);
+    box-shadow: -10px 0 24px rgba(33, 72, 51, 0.08);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 0;
+    width: var(--lesson-sidebar-collapsed-width);
+    transition: all 0.3s ease;
+    gap: 12px;
+    border-left: 1px solid var(--lesson-theme-border);
+}
+
+.sidebar.open {
+    width: var(--lesson-sidebar-expanded-width);
+    padding: 24px 16px;
+}
+
+.sidebar-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: #374151;
+    background-color: transparent;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+}
+
+.sidebar-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.lesson-mode-switcher {
+    width: 100%;
+    display: none;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.sidebar.open .lesson-mode-switcher {
+    display: grid;
+}
+
+.lesson-mode-chip {
+    border: 1px solid rgba(99, 167, 121, 0.22);
+    border-radius: 8px;
+    background: #f9fafb;
+    color: #4b5563;
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 10px 8px;
+}
+
+.lesson-mode-chip.active {
+    background: var(--lesson-theme-soft);
+    border-color: rgba(47, 152, 85, 0.34);
+    color: var(--lesson-theme-strong);
+}
+
+.sidebar-section-label {
+    display: none;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--lesson-theme-strong);
+}
+
+.sidebar.open .sidebar-section-label {
+    display: block;
+}
+
+.sidebar.open .sidebar-section + .sidebar-section {
+    border-top: 1px solid var(--lesson-theme-border);
+    padding-top: 14px;
+}
+
+.sidebar.open .sidebar-btn {
+    width: 100%;
+    background-color: #f9fafb;
+    padding: 12px 16px;
+    gap: 12px;
+    justify-content: flex-start;
+}
+
+.sidebar-btn:hover {
+    background-color: #f1f7f2;
+}
+
+.sidebar-btn.is-active,
+.sidebar-btn.is-active:hover {
+    background-color: var(--lesson-theme-soft);
+    color: var(--lesson-theme-strong);
+}
+
+.sidebar-btn.btn-danger,
+.sidebar.open .sidebar-btn.btn-danger {
+    background: #fef2f2;
+    color: #b91c1c;
+}
+
+.sidebar-btn.btn-danger:hover,
+.sidebar.open .sidebar-btn.btn-danger:hover {
+    background: #fee2e2;
+}
+
+.btn-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.btn-label {
+    display: none;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+.sidebar.open .btn-label {
+    display: block;
+}
+
+.admin-preview-btn[hidden],
+.admin-preview-meta[hidden] {
+    display: none;
+}
+
+.admin-preview-meta {
+    width: calc(100% - 24px);
+    margin: 4px 12px 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.sidebar.open .admin-preview-meta {
+    width: 100%;
+    margin: 4px 0 12px;
+    text-align: left;
+}
+
+.spacer {
+    flex: 1;
+}
+
+/* Steqyy virtual tutor */
+.live-tutor {
+    position: fixed;
+    top: 0;
+    right: calc(var(--lesson-sidebar-collapsed-width) + var(--lesson-sidebar-gutter));
+    bottom: 0;
+    z-index: 900;
+    width: min(320px, calc(100vw - 112px));
+    pointer-events: none;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.2s ease, right 0.3s ease, transform 0.2s ease, width 0.2s ease;
+}
+
+body.lesson-welcome-active .live-tutor {
+    bottom: auto;
+    height: 100%;
+    left: 50%;
+    position: absolute;
+    right: auto;
+    top: 0;
+    transform: translateX(-50%);
+    width: min(270px, 100%);
+    z-index: 1250;
+}
+
+body.lesson-welcome-active .live-tutor-stage {
+    height: 100%;
+}
+
+body.lesson-welcome-active .live-tutor-table {
+    width: 100%;
+}
+
+body.lesson-welcome-active .live-tutor-status {
+    bottom: 118px;
+}
+
+body.lesson-sidebar-open .live-tutor {
+    right: calc(var(--lesson-sidebar-expanded-width) + var(--lesson-sidebar-gutter));
+}
+
+.live-tutor.is-hidden {
+    opacity: 0;
+    transform: translateY(18px);
+    visibility: hidden;
+}
+
+.live-tutor-size-small {
+    width: min(250px, calc(100vw - 112px));
+}
+
+.live-tutor-size-normal {
+    width: min(320px, calc(100vw - 112px));
+}
+
+.live-tutor-size-large {
+    width: min(410px, calc(100vw - 112px));
+}
+
+.live-tutor-size-extra-large {
+    width: min(500px, calc(100vw - 112px));
+}
+
+.live-tutor-stage {
+    align-items: flex-end;
+    display: flex;
+    position: relative;
+    height: 100%;
+    transition: height 0.2s ease;
+    z-index: 1;
+}
+
+.live-tutor-size-small .live-tutor-stage {
+    height: 100%;
+}
+
+.live-tutor-size-large .live-tutor-stage {
+    height: 100%;
+}
+
+.live-tutor-size-extra-large .live-tutor-stage {
+    height: 100%;
+}
+
+#liveTutorCanvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.live-tutor-table {
+    --table-width: 410px;
+    --table-top-height: 24px;
+    --table-front-height: 78px;
+    bottom: 0;
+    height: calc(var(--table-top-height) + var(--table-front-height));
+    left: 50%;
+    position: absolute;
+    transform: translateX(-50%);
+    transition: height 0.2s ease, width 0.2s ease;
+    width: 100%;
+    z-index: 2;
+}
+
+.live-tutor-table-top {
+    background: #fb8f52;
+    border: 4px solid #2a130c;
+    border-radius: 2px 2px 0 0;
+    height: var(--table-top-height);
+    position: relative;
+    z-index: 3;
+}
+
+.live-tutor-table-top::before {
+    background: #d66b3d;
+    border-top: 3px solid #2a130c;
+    bottom: -10px;
+    content: "";
+    height: 10px;
+    left: -4px;
+    position: absolute;
+    right: -4px;
+}
+
+.live-tutor-table-front {
+    background: #ff9657;
+    border-color: #2a130c;
+    border-style: solid;
+    border-width: 0 4px 4px;
+    height: var(--table-front-height);
+    position: relative;
+}
+
+.live-tutor-table-panel {
+    border: 4px solid #2a130c;
+    bottom: 18%;
+    left: 12%;
+    position: absolute;
+    right: 12%;
+    top: 26%;
+}
+
+.live-tutor-open-book {
+    bottom: calc(var(--table-front-height) + var(--table-top-height) - 1px);
+    height: clamp(24px, calc(var(--table-top-height) * 1.65), 52px);
+    left: 50%;
+    position: absolute;
+    transform: translateX(-50%);
+    width: clamp(128px, calc(var(--table-width) * 0.38), 240px);
+    z-index: 4;
+}
+
+.open-book-page {
+    background:
+        repeating-linear-gradient(180deg, transparent 0 12px, rgba(96, 73, 36, 0.42) 13px 15px),
+        linear-gradient(180deg, #fff9d8 0%, #ead18a 100%);
+    border: 4px solid #171717;
+    border-bottom-width: 5px;
+    box-sizing: border-box;
+    height: 62%;
+    position: absolute;
+    top: 24%;
+    width: 49%;
+}
+
+.open-book-left {
+    border-radius: 70% 16% 18% 14% / 38% 18% 28% 16%;
+    left: 2%;
+    transform: skewY(-5deg);
+    transform-origin: right bottom;
+}
+
+.open-book-right {
+    border-radius: 16% 70% 14% 18% / 18% 38% 16% 28%;
+    right: 2%;
+    transform: skewY(5deg);
+    transform-origin: left bottom;
+}
+
+.open-book-page::before {
+    background: #8e2032;
+    bottom: -5px;
+    content: "";
+    height: 4px;
+    left: -4px;
+    position: absolute;
+    right: -4px;
+}
+
+.open-book-spine {
+    background: #6f3d22;
+    border: 4px solid #171717;
+    border-radius: 50%;
+    bottom: -3px;
+    height: 30%;
+    left: 50%;
+    position: absolute;
+    transform: translateX(-50%);
+    width: 14%;
+    z-index: 5;
+}
+
+.live-tutor-size-small .live-tutor-table {
+    --table-width: 330px;
+    --table-top-height: 20px;
+    --table-front-height: 62px;
+}
+
+.live-tutor-size-large .live-tutor-table {
+    --table-width: 520px;
+    --table-top-height: 28px;
+    --table-front-height: 100px;
+}
+
+.live-tutor-size-extra-large .live-tutor-table {
+    --table-width: 630px;
+    --table-top-height: 34px;
+    --table-front-height: 122px;
+}
+
+.live-tutor-status {
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 28px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: rgba(17, 24, 39, 0.74);
+    color: white;
+    font-size: 12px;
+    line-height: 1.4;
+    text-align: center;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.live-tutor-status.is-hidden {
+    opacity: 0;
+    transform: translateY(8px);
+    pointer-events: none;
+}
+
+.live-tutor-status.is-error {
+    background: rgba(185, 28, 28, 0.84);
+}
+
+.live-tutor-loading-notice:not(.is-hidden) + .live-tutor-status {
+    display: none !important;
+}
+
+.live-tutor-loading-notice {
+    position: absolute;
+    left: 50%;
+    bottom: 164px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    width: min(220px, calc(100% - 28px));
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+    backdrop-filter: none;
+    box-shadow: none;
+    color: var(--lesson-theme-ink);
+    text-align: center;
+    z-index: 4;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    transform: translateX(-50%);
+}
+
+.live-tutor-loading-title {
+    font-size: 15px;
+    line-height: 1.25;
+}
+
+.live-tutor-loading-notice.is-hidden {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+    pointer-events: none;
+}
+
+.live-tutor-loading-spinner {
+    position: relative;
+    width: 44px;
+    height: 44px;
+}
+
+.live-tutor-loading-ring {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 3px solid transparent;
+    animation: liveTutorLoadingSpin 1s linear infinite;
+}
+
+.live-tutor-loading-ring.ring-one {
+    border-top-color: var(--lesson-theme);
+    border-right-color: rgba(47, 152, 85, 0.45);
+}
+
+.live-tutor-loading-ring.ring-two {
+    inset: 8px;
+    border-left-color: #f4a261;
+    border-bottom-color: rgba(244, 162, 97, 0.5);
+    animation-direction: reverse;
+    animation-duration: 1.25s;
+}
+
+body.lesson-welcome-active .live-tutor-loading-notice {
+    top: 26%;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes liveTutorLoadingSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.raise-hand-panel {
+    position: fixed;
+    right: calc(var(--lesson-sidebar-collapsed-width) + var(--lesson-sidebar-gutter) + min(320px, calc(100vw - 112px)) - 26px);
+    bottom: 230px;
+    z-index: 940;
+    width: min(320px, calc(100vw - 180px));
+}
+
+body.lesson-sidebar-open .raise-hand-panel {
+    right: calc(var(--lesson-sidebar-expanded-width) + var(--lesson-sidebar-gutter) + min(320px, calc(100vw - 112px)) - 26px);
+}
+
+.raise-hand-panel[hidden] {
+    display: none;
+}
+
+.raise-hand-panel-card {
+    border: 1px solid rgba(99, 167, 121, 0.26);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 18px 40px rgba(33, 72, 51, 0.16);
+    padding: 16px;
+}
+
+.raise-hand-panel-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 14px;
+}
+
+.raise-hand-panel-header strong {
+    color: var(--lesson-theme-ink);
+    font-size: 15px;
+}
+
+.raise-hand-panel-header span {
+    color: #5b6b62;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.raise-hand-actions {
+    display: grid;
+    gap: 10px;
+}
+
+.raise-hand-action-btn,
+.raise-hand-mini-btn {
+    border: 1px solid rgba(99, 167, 121, 0.24);
+    border-radius: 8px;
+    background: #f8fcf8;
+    color: #214833;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 600;
+    padding: 11px 12px;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.raise-hand-action-btn:hover,
+.raise-hand-mini-btn:hover {
+    background: #eef8f0;
+    border-color: rgba(47, 152, 85, 0.34);
+}
+
+.raise-hand-action-btn.primary,
+.raise-hand-mini-btn.primary {
+    background: var(--lesson-theme);
+    border-color: var(--lesson-theme);
+    color: #ffffff;
+}
+
+.raise-hand-action-btn.primary:hover,
+.raise-hand-mini-btn.primary:hover {
+    background: var(--lesson-theme-strong);
+    border-color: var(--lesson-theme-strong);
+}
+
+.raise-hand-question-box {
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(99, 167, 121, 0.18);
+}
+
+.raise-hand-question-box label {
+    display: block;
+    color: #214833;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.raise-hand-question-box textarea {
+    width: 100%;
+    resize: vertical;
+    min-height: 96px;
+    border: 1px solid rgba(99, 167, 121, 0.24);
+    border-radius: 8px;
+    padding: 12px;
+    font: inherit;
+    color: #214833;
+    background: #ffffff;
+}
+
+.raise-hand-question-box textarea:focus {
+    outline: 2px solid rgba(47, 152, 85, 0.18);
+    border-color: rgba(47, 152, 85, 0.4);
+}
+
+.raise-hand-question-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.manual-visual-confirm-modal {
+    align-items: center;
+    display: flex;
+    inset: 0;
+    justify-content: center;
+    padding: 24px;
+    position: fixed;
+    z-index: 1320;
+}
+
+.manual-visual-confirm-modal[hidden] {
+    display: none;
+}
+
+.manual-visual-confirm-backdrop {
+    background: rgba(15, 23, 42, 0.46);
+    inset: 0;
+    position: absolute;
+}
+
+.manual-visual-confirm-card {
+    background: #ffffff;
+    border: 1px solid rgba(248, 113, 113, 0.3);
+    border-radius: 18px;
+    box-shadow: 0 28px 70px rgba(15, 23, 42, 0.28);
+    max-width: 440px;
+    padding: 24px;
+    position: relative;
+    width: min(100%, 440px);
+}
+
+.manual-visual-confirm-eyebrow {
+    color: #b91c1c;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    margin: 0 0 8px;
+    text-transform: uppercase;
+}
+
+.manual-visual-confirm-card h3 {
+    color: #214833;
+    font-size: 24px;
+    line-height: 1.2;
+    margin: 0 0 10px;
+    text-align: center;
+}
+
+.manual-visual-confirm-copy {
+    color: #5b6b62;
+    font-size: 14px;
+    line-height: 1.55;
+    margin: 0;
+}
+
+.manual-visual-confirm-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.manual-visual-confirm-list span {
+    background: #fff1f2;
+    border: 1px solid rgba(239, 68, 68, 0.28);
+    border-radius: 999px;
+    color: #b91c1c;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 8px 10px;
+}
+
+.manual-visual-confirm-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 22px;
+}
+
+.manual-visual-confirm-btn {
+    border-radius: 10px;
+    cursor: pointer;
+    font: inherit;
+    font-weight: 800;
+    padding: 11px 14px;
+}
+
+.manual-visual-confirm-btn.secondary {
+    background: #f8fcf8;
+    border: 1px solid rgba(99, 167, 121, 0.24);
+    color: #214833;
+}
+
+.manual-visual-confirm-btn.danger {
+    background: #b91c1c;
+    border: 1px solid #b91c1c;
+    color: #ffffff;
+}
+
+.steqyy-subtitle-banner {
+    position: fixed;
+    left: 50%;
+    bottom: 28px;
+    transform: translateX(calc(-50% - (var(--lesson-sidebar-collapsed-width) / 2)));
+    z-index: 950;
+    width: min(720px, calc(100vw - 160px));
+    padding: 0 12px;
+    pointer-events: none;
+}
+
+body.lesson-sidebar-open .steqyy-subtitle-banner {
+    transform: translateX(calc(-50% - (var(--lesson-sidebar-expanded-width) / 2)));
+}
+
+.steqyy-subtitle-banner[hidden] {
+    display: none;
+}
+
+.steqyy-subtitle-text {
+    margin: 0;
+    padding: 14px 18px;
+    border-radius: 8px;
+    background: rgba(17, 24, 39, 0.88);
+    color: #ffffff;
+    font-size: 22px;
+    line-height: 1.2;
+    font-weight: 600;
+    text-align: center;
+    box-shadow: 0 14px 36px rgba(15, 23, 42, 0.22);
+    white-space: nowrap;
+}
+
+#menuBtn {
+    margin-bottom: 16px;
+}
+
+.sidebar.open .spacer {
+    min-height: 8px;
+}
+
+.mode-hidden {
+    display: none !important;
+}
+
+/* Fullscreen styling */
+.container:fullscreen,
+.container:-webkit-full-screen,
+.container:-moz-full-screen,
+.container:-ms-fullscreen {
+    background-color: #f9fafb;
+}
+
+.container:fullscreen .main-content,
+.container:-webkit-full-screen .main-content,
+.container:-moz-full-screen .main-content,
+.container:-ms-fullscreen .main-content {
+    gap: 18px;
+}
+
+.container:fullscreen .visual-section,
+.container:-webkit-full-screen .visual-section,
+.container:-moz-full-screen .visual-section,
+.container:-ms-fullscreen .visual-section {
+    flex: 0 0 min(58vw, calc(100vh - 48px));
+}
+
+.container:fullscreen .video-container,
+.container:-webkit-full-screen .video-container,
+.container:-moz-full-screen .video-container,
+.container:-ms-fullscreen .video-container {
+    flex: 0 0 auto;
+    width: min(100%, calc(100vh - 120px));
+    aspect-ratio: 1 / 1;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.container:fullscreen .lesson-content,
+.container:-webkit-full-screen .lesson-content,
+.container:-moz-full-screen .lesson-content,
+.container:-ms-fullscreen .lesson-content {
+    flex: 0 1 460px;
+    max-width: 460px;
+}
+
+.container:fullscreen .live-tutor,
+.container:-webkit-full-screen .live-tutor,
+.container:-moz-full-screen .live-tutor,
+.container:-ms-fullscreen .live-tutor {
+    position: absolute;
+    top: 0;
+    right: calc(var(--lesson-sidebar-collapsed-width) + var(--lesson-sidebar-gutter));
+    bottom: 0;
+    width: min(320px, calc(100vw - 112px));
+    z-index: 900;
+}
+
+body.lesson-sidebar-open .container:fullscreen .live-tutor,
+body.lesson-sidebar-open .container:-webkit-full-screen .live-tutor,
+body.lesson-sidebar-open .container:-moz-full-screen .live-tutor,
+body.lesson-sidebar-open .container:-ms-fullscreen .live-tutor {
+    right: calc(var(--lesson-sidebar-expanded-width) + var(--lesson-sidebar-gutter));
+}
+
+.container:fullscreen .live-tutor-stage,
+.container:-webkit-full-screen .live-tutor-stage,
+.container:-moz-full-screen .live-tutor-stage,
+.container:-ms-fullscreen .live-tutor-stage {
+    height: 100%;
+}
+
+.container:fullscreen .preview-live-media,
+.container:-webkit-full-screen .preview-live-media,
+.container:-moz-full-screen .preview-live-media,
+.container:-ms-fullscreen .preview-live-media {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.container::backdrop,
+.container::-webkit-backdrop {
+    background-color: #f9fafb;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .main-content {
+        flex-direction: column;
+    }
+
+    body.lesson-no-visual:not(.lesson-mode-manual) .lesson-content {
+        padding-right: calc(var(--lesson-sidebar-collapsed-width) + 250px);
+    }
+
+    .visual-section {
+        height: 50%;
+    }
+
+    .video-container {
+        width: min(100%, 500px);
+    }
+
+    .live-tutor {
+        right: 70px;
+        bottom: 0;
+        width: min(280px, calc(100vw - 92px));
+    }
+
+    body.lesson-sidebar-open .live-tutor {
+        right: calc(var(--lesson-sidebar-expanded-width) + var(--lesson-sidebar-gutter));
+    }
+
+    .live-tutor-size-small {
+        width: min(220px, calc(100vw - 92px));
+    }
+
+    .live-tutor-size-large {
+        width: min(340px, calc(100vw - 92px));
+    }
+
+    .live-tutor-size-extra-large {
+        width: min(400px, calc(100vw - 92px));
+    }
+
+    .live-tutor-stage {
+        height: 100%;
+    }
+
+    .live-tutor-size-small .live-tutor-stage {
+        height: 100%;
+    }
+
+    .live-tutor-size-large .live-tutor-stage {
+        height: 100%;
+    }
+
+    .live-tutor-size-extra-large .live-tutor-stage {
+        height: 100%;
+    }
+
+    .steqyy-subtitle-banner {
+        width: min(640px, calc(100vw - 136px));
+    }
+
+    .raise-hand-panel {
+        right: calc(var(--lesson-sidebar-collapsed-width) + 232px);
+        width: min(300px, calc(100vw - 156px));
+    }
+
+    body.lesson-sidebar-open .raise-hand-panel {
+        right: calc(var(--lesson-sidebar-expanded-width) + 232px);
+    }
+
+    .lesson-welcome-card {
+        min-height: 600px;
+    }
+
+    .lesson-welcome-stage-space {
+        height: 248px;
+        width: min(270px, 100%);
+    }
+}
+
+@media (max-width: 760px) {
+    body.lesson-no-visual:not(.lesson-mode-manual) .lesson-content {
+        padding-bottom: 230px;
+        padding-right: 92px;
+    }
+
+    body.lesson-no-visual .text-content,
+    body.lesson-no-visual.lesson-mode-manual .text-content {
+        font-size: 18px;
+    }
+
+    .live-tutor {
+        right: 8px;
+        bottom: 0;
+        width: min(230px, calc(100vw - 24px));
+    }
+
+    body.lesson-sidebar-open .live-tutor {
+        right: 92px;
+    }
+
+    .live-tutor-size-small {
+        width: min(185px, calc(100vw - 24px));
+    }
+
+    .live-tutor-size-large {
+        width: min(280px, calc(100vw - 24px));
+    }
+
+    .live-tutor-size-extra-large {
+        width: min(330px, calc(100vw - 24px));
+    }
+
+    .live-tutor-stage {
+        height: 100%;
+    }
+
+    .live-tutor-size-small .live-tutor-stage {
+        height: 100%;
+    }
+
+    .live-tutor-size-large .live-tutor-stage {
+        height: 100%;
+    }
+
+    .live-tutor-size-extra-large .live-tutor-stage {
+        height: 100%;
+    }
+
+    .steqyy-subtitle-banner {
+        bottom: 18px;
+        width: calc(100vw - 124px);
+        transform: translateX(calc(-50% - 30px));
+    }
+
+    body.lesson-sidebar-open .steqyy-subtitle-banner {
+        transform: translateX(calc(-50% - 72px));
+    }
+
+    .steqyy-subtitle-text {
+        font-size: 18px;
+        padding: 12px 14px;
+    }
+
+    .raise-hand-panel {
+        right: 92px;
+        left: 16px;
+        bottom: 208px;
+        width: auto;
+    }
+
+    body.lesson-sidebar-open .raise-hand-panel {
+        right: 92px;
+    }
+
+    .lesson-welcome-card {
+        min-height: 570px;
+        padding: 18px;
+    }
+
+    .lesson-welcome-copy {
+        padding: 16px;
+    }
+
+    .lesson-welcome-copy h2 {
+        font-size: 24px;
+    }
+
+    .lesson-welcome-stage-space {
+        height: 222px;
+        margin-bottom: 18px;
+        width: min(230px, 100%);
+    }
+
+    body.lesson-welcome-active .live-tutor {
+        top: 0;
+        width: min(230px, 100%);
+        transform: translateX(-50%);
+    }
+
+    body.lesson-welcome-active .live-tutor-stage {
+        height: 100%;
+    }
+
+    body.lesson-welcome-active .live-tutor-status {
+        bottom: 100px;
+    }
+
+    body.lesson-welcome-active .live-tutor-loading-notice {
+        top: 22%;
+        width: min(210px, calc(100% - 20px));
+    }
+}
+
+</style>
+<script type="module" src="../shared/course-messaging-supabase.js"></script>
+<script type="module" src="../shared/course-engagement-supabase.js"></script>
+</head>
+<body>
+    <div class="lesson-welcome-overlay" id="lessonWelcomeOverlay" hidden>
+        <div class="lesson-welcome-backdrop"></div>
+        <div class="lesson-welcome-card">
+            <div class="lesson-welcome-copy">
+                <p class="lesson-welcome-eyebrow">Lesson Session</p>
+                <h2 id="lessonWelcomeTitle">Welcome</h2>
+                <p class="lesson-welcome-subtitle" id="lessonWelcomeSubtitle" hidden></p>
+                <div class="lesson-welcome-stage-space" id="lessonWelcomeTutorSlot"></div>
+                <div class="lesson-welcome-modes">
+                    <button type="button" class="lesson-mode-btn active" data-mode-option="auto">
+                        <strong>Auto</strong>
+                        <span>Steqyy teaches, handles the visuals, and moves to the next slide automatically.</span>
+                    </button>
+                    <button type="button" class="lesson-mode-btn" data-mode-option="mixed">
+                        <strong>Mixed</strong>
+                        <span>Steqyy explains each slide, while you control when to move forward or back.</span>
+                    </button>
+                    <button type="button" class="lesson-mode-btn" data-mode-option="manual">
+                        <strong>Manual</strong>
+                        <span>You self-study each slide, control the visuals, and move forward yourself.</span>
+                    </button>
+                </div>
+                <div class="lesson-welcome-actions">
+                    <button type="button" class="lesson-welcome-start" id="lessonWelcomeStartBtn">Start Session</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lesson-complete-overlay" id="lessonCompleteOverlay" hidden>
+        <div class="lesson-welcome-backdrop"></div>
+        <div class="lesson-complete-card">
+            <div class="lesson-complete-copy">
+                <p class="lesson-welcome-eyebrow">Lesson Complete</p>
+                <h2 id="lessonCompleteTitle" hidden></h2>
+                <p class="lesson-welcome-subtitle" id="lessonCompleteSubtitle" hidden></p>
+                <div class="lesson-welcome-stage-space" id="lessonCompleteTutorSlot"></div>
+                <div class="lesson-completion-actions">
+                    <button type="button" class="lesson-completion-btn" id="lessonReadMoreBtn">Read More</button>
+                    <button type="button" class="lesson-completion-btn primary" id="lessonNextLessonBtn">Next Lesson</button>
+                    <button type="button" class="lesson-completion-btn" id="lessonLeaveAfterCompleteBtn">Leave</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            <div class="visual-section">
+                <div class="section-header">
+                    <div class="icon-box">
+                        <svg class="icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h2>Visual Representation</h2>
+                </div>
+                <div class="manual-visual-tabs" id="manualVisualTabs" hidden></div>
+                <div class="video-container" id="previewVisualContainer">
+                    <button class="play-button" id="previewPlayButton">
+                        <svg class="play-icon" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </button>
+                    <p class="video-placeholder" id="previewVisualPlaceholder">Video / Diagram / Image</p>
+                </div>
+            </div>
+
+            <div class="lesson-content" id="lessonContent">
+                <div class="lesson-header">
+                    <h1 id="lessonTitle">Lesson 1: Introduction to Photosynthesis</h1>
+                    <p class="subtitle" id="lessonSubtitle">Understanding how plants convert light into energy</p>
+                </div>
+
+                <div class="lesson-text-card">
+                    <div class="card-header">
+                        <svg class="icon-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        </svg>
+                        <h3>Lesson Text</h3>
+                    </div>
+                    <div class="text-content" id="lessonTextContent">
+                        <p>
+                            Photosynthesis is the process by which plants use sunlight, water, and carbon dioxide
+                            to create oxygen and energy in the form of sugar.
+                        </p>
+                        <p>
+                            The process takes place in the chloroplasts of plant cells, where chlorophyll captures
+                            light energy and drives the reactions needed for plant growth.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar" id="sidebar">
+            <button class="sidebar-btn" id="menuBtn" onclick="toggleSidebar()">
+                <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+                <span class="btn-label">Menu</span>
+            </button>
+
+            <div class="sidebar-section">
+                <div class="sidebar-section-label">Mode</div>
+                <div class="lesson-mode-switcher" id="lessonModeSwitcher">
+                    <button type="button" class="lesson-mode-chip active" data-mode-switch="auto">Auto</button>
+                    <button type="button" class="lesson-mode-chip" data-mode-switch="mixed">Mixed</button>
+                    <button type="button" class="lesson-mode-chip" data-mode-switch="manual">Manual</button>
+                </div>
+            </div>
+
+            <div class="sidebar-section" id="lessonSteqyyControlsSection">
+                <div class="sidebar-section-label" id="lessonControlsLabel">Auto</div>
+
+                <button class="sidebar-btn" id="raiseHandBtn" type="button">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"/>
+                    </svg>
+                    <span class="btn-label">Ask Question</span>
+                </button>
+
+                <button class="sidebar-btn" id="replayBtn" type="button">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                    </svg>
+                    <span class="btn-label">Replay 5s</span>
+                </button>
+
+                <button class="sidebar-btn" id="fastForwardBtn" type="button">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7"/>
+                    </svg>
+                    <span class="btn-label">Fast Forward 5s</span>
+                </button>
+
+                <button class="sidebar-btn" id="subtitleBtn" type="button">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/>
+                    </svg>
+                    <span class="btn-label" id="subtitleBtnLabel">Subtitles Off</span>
+                </button>
+
+                <button class="sidebar-btn" id="tutorSizeBtn" type="button">
+                    <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8">
+                            <path d="M12 3.5v2"/>
+                            <rect x="6.5" y="6.5" width="11" height="9" rx="2.5"/>
+                            <path d="M9.5 10.5h.01"/>
+                            <path d="M14.5 10.5h.01"/>
+                            <path d="M9 13h6"/>
+                            <path d="M4.5 9.5h2"/>
+                            <path d="M17.5 9.5h2"/>
+                            <path d="M9 15.5v2"/>
+                            <path d="M15 15.5v2"/>
+                            <path d="M7.5 4.8 6.2 3.5"/>
+                            <path d="M16.5 4.8 17.8 3.5"/>
+                        </g>
+                    </svg>
+                    <span class="btn-label" id="tutorSizeBtnLabel">Size: Normal</span>
+                </button>
+
+                <button class="sidebar-btn" id="tutorVisibilityBtn" type="button">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.25 12s3.75-6 9.75-6 9.75 6 9.75 6-3.75 6-9.75 6-9.75-6-9.75-6z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15a3 3 0 100-6 3 3 0 000 6z"/>
+                    </svg>
+                    <span class="btn-label" id="tutorVisibilityBtnLabel">Hide Steqyy</span>
+                </button>
+
+            </div>
+
+            <div class="sidebar-section" id="lessonSlideControlsSection">
+                <div class="sidebar-section-label">Slide</div>
+
+                <button class="sidebar-btn admin-preview-btn" id="previewPrevBtn" hidden type="button">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                    </svg>
+                    <span class="btn-label">Previous</span>
+                </button>
+
+                <button class="sidebar-btn admin-preview-btn" id="previewNextBtn" hidden type="button">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                    </svg>
+                    <span class="btn-label">Next</span>
+                </button>
+
+                <div class="admin-preview-meta" id="previewToolbarMeta" hidden>Slide 1 of 1</div>
+            </div>
+
+            <div class="sidebar-section sidebar-section-general">
+                <div class="sidebar-section-label">General</div>
+
+                <button class="sidebar-btn" id="languageBtn" type="button">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"/>
+                    </svg>
+                    <span class="btn-label" id="languageBtnLabel">Language: English</span>
+                </button>
+
+                <button class="sidebar-btn" id="fullscreenBtn" type="button" onclick="toggleFullscreen()">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>
+                    </svg>
+                    <span class="btn-label">Fullscreen</span>
+                </button>
+
+                <button class="sidebar-btn btn-danger" id="leaveLessonBtn" type="button">
+                    <svg class="btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h8v14H3z"/>
+                    </svg>
+                    <span class="btn-label">Leave Lesson</span>
+                </button>
+            </div>
+
+            <div class="spacer"></div>
+        </div>
+    </div>
+
+    <div class="live-tutor" id="liveTutor" aria-label="Virtual tutor Steqyy">
+        <div class="live-tutor-stage" id="liveTutorStage">
+            <canvas id="liveTutorCanvas" aria-label="Steqyy Live2D model"></canvas>
+            <div class="live-tutor-loading-notice" id="liveTutorLoadingNotice" aria-live="polite">
+                <div class="live-tutor-loading-spinner" aria-hidden="true">
+                    <span class="live-tutor-loading-ring ring-one"></span>
+                    <span class="live-tutor-loading-ring ring-two"></span>
+                </div>
+                <strong class="live-tutor-loading-title">Preparing Steqyy</strong>
+            </div>
+            <div class="live-tutor-status is-hidden" id="liveTutorStatus"></div>
+        </div>
+        <div class="live-tutor-table" aria-hidden="true">
+            <div class="live-tutor-open-book">
+                <span class="open-book-page open-book-left"></span>
+                <span class="open-book-page open-book-right"></span>
+                <span class="open-book-spine"></span>
+            </div>
+            <div class="live-tutor-table-top"></div>
+            <div class="live-tutor-table-front">
+                <div class="live-tutor-table-panel"></div>
+            </div>
+        </div>
+    </div>
+
+    <aside class="raise-hand-panel" id="raiseHandPanel" hidden aria-live="polite">
+        <div class="raise-hand-panel-card">
+            <div class="raise-hand-panel-header">
+                <strong>Ask a Question</strong>
+                <span id="raiseHandPanelStatus">Write your question or concern for the admin team.</span>
+            </div>
+            <form class="raise-hand-question-box" id="raiseHandQuestionForm">
+                <label for="raiseHandQuestionInput">Message for Admin</label>
+                <textarea id="raiseHandQuestionInput" rows="4" placeholder="Write your question or concern here."></textarea>
+                <div class="raise-hand-question-actions">
+                    <button type="button" class="raise-hand-mini-btn" id="cancelQuestionBtn">Close</button>
+                    <button type="submit" class="raise-hand-mini-btn primary">Send</button>
+                </div>
+            </form>
+        </div>
+    </aside>
+
+    <div class="manual-visual-confirm-modal" id="manualVisualConfirmModal" hidden role="dialog" aria-modal="true" aria-labelledby="manualVisualConfirmTitle">
+        <div class="manual-visual-confirm-backdrop" data-manual-visual-cancel></div>
+        <div class="manual-visual-confirm-card">
+            <p class="manual-visual-confirm-eyebrow">Unchecked Visuals</p>
+            <h3 id="manualVisualConfirmTitle">Are you sure you want to continue?</h3>
+            <p class="manual-visual-confirm-copy">Some red visual tabs are still unwatched. These may contain important lesson content.</p>
+            <div class="manual-visual-confirm-list" id="manualVisualConfirmList"></div>
+            <div class="manual-visual-confirm-actions">
+                <button type="button" class="manual-visual-confirm-btn secondary" id="manualVisualCancelBtn">Go Back</button>
+                <button type="button" class="manual-visual-confirm-btn danger" id="manualVisualContinueBtn">Continue Anyway</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="steqyy-subtitle-banner" id="steqyySubtitleBanner" hidden aria-live="polite">
+        <p class="steqyy-subtitle-text" id="steqyySubtitleText"></p>
+    </div>
+
+    <script src="../shared/media-store.js"></script>
+    <script>
+let isSidebarOpen = false;
+let isFullscreen = false;
+
+const PREVIEW_KEY = 'simpLessonLivePreview';
+const SESSION_KEY = 'simpCurrentLessonSession';
+const LESSON_PROGRESS_KEY = 'simpLessonProgress';
+const ACTIVITY_LOG_KEY = 'simpLearningActivityLog';
+const PUBLISHED_COURSES_KEY = 'simpPublishedCourses';
+
+let previewPayload = null;
+let previewSlideIndex = 0;
+let currentLessonPayload = null;
+let isAdminPreviewMode = false;
+let currentProgressEntry = null;
+let lessonSessionStartedAt = Date.now();
+let activeMediaElement = null;
+let subtitlesEnabled = false;
+let autoPlayEnabled = true;
+let isLessonPaused = false;
+let currentLearningMode = 'auto';
+let isLessonWelcomePending = false;
+let currentSlideVisualReviewed = true;
+let currentSlideManualVisualIndex = 0;
+let currentSlideVisualStateKey = '';
+let currentSlideVisualItems = [];
+let currentSlideReviewedVisualIds = new Set();
+let manualVisualWarningActive = false;
+let pendingManualVisualSkipStep = 0;
+let currentSlideVisualToken = 0;
+let currentLanguageIndex = 0;
+let lessonCompletionShown = false;
+let lessonLanguageOptions = ['English'];
+const DEFAULT_LESSON_LANGUAGE = 'English';
+const LEARNING_MODE_LABELS = {
+    auto: 'Auto',
+    mixed: 'Mixed',
+    manual: 'Manual'
+};
+const STEQYY_VOICE_SETTINGS_KEY = 'simpSteqyyVoiceSettings';
+const STEQYY_VOICE_SETTINGS_VERSION = 'screenshot-reference-v1';
+const STEQYY_VOICE_PROFILE = {
+    version: 'google-us-kid-tutor-v1',
+    rate: 0.93,
+    pitch: 1.02,
+    volume: 0.96,
+    kidAmount: 90,
+    maleAgeAmount: 10,
+    humanAmount: 30,
+    sentencePauseMs: 20,
+    questionPauseMs: 20,
+    clausePauseMs: 0,
+    shortPauseMs: 80
+};
+let slideScriptRunId = 0;
+let activeSpeechUtterance = null;
+let activeSubtitleState = null;
+let preferredSteqyyVoice = null;
+let liveTutorApp = null;
+let liveTutorModel = null;
+let liveTutorIdleFrame = 0;
+let liveTutorActionUntil = 0;
+let liveTutorAction = 'idle';
+let liveTutorSizeIndex = 1;
+let liveTutorLockedSizeIndex = null;
+let isLiveTutorHidden = false;
+let liveTutorTalkBlend = 0;
+let liveTutorIdleWave = null;
+let liveTutorNextWaveAt = 0;
+let liveTutorWaveExit = null;
+let liveTutorLookX = 0;
+let liveTutorLookY = 0;
+let liveTutorCurrentLookX = 0;
+let liveTutorCurrentLookY = 0;
+let liveTutorLastMouseMoveAt = 0;
+let liveTutorMouthEnergy = 0;
+let liveTutorLastMouthPulseAt = 0;
+let liveTutorFallbackSpeechUntil = 0;
+let liveTutorHomeParent = null;
+let liveTutorHomeNextSibling = null;
+let isLiveTutorLoading = true;
+const LIVE_TUTOR_WAVE_SEGMENT_MS = 2000;
+const LIVE_TUTOR_WAVE_EXIT_MS = 420;
+const LIVE_TUTOR_LOOK_TIMEOUT_MS = 900;
+const LIVE_TUTOR_MODEL_PATH = '../Steqyy_model.model3.json';
+const LIVE_TUTOR_SIZES = [
+    {
+        label: 'Small',
+        className: 'live-tutor-size-small',
+        bottomPadding: 48,
+        scale: 0.54
+    },
+    {
+        label: 'Normal',
+        className: 'live-tutor-size-normal',
+        bottomPadding: 64,
+        scale: 0.7
+    },
+    {
+        label: 'Large',
+        className: 'live-tutor-size-large',
+        bottomPadding: 82,
+        scale: 0.9
+    },
+    {
+        label: 'Extra Large',
+        className: 'live-tutor-size-extra-large',
+        bottomPadding: 100,
+        scale: 1.08
+    }
+];
+const LIVE_TUTOR_OVERLAY_SIZE_INDEX = 1;
+const LIVE_TUTOR_ASSET_NAMES = {
+    Model: 'Steqyy_model.model3.json',
+    Moc: 'Steqyy_model.moc3',
+    DisplayInfo: 'Steqyy_model.cdi3.json',
+    Textures: 'Steqyy_model.2048/texture_00.png'
+};
+const LIVE_TUTOR_FALLBACK_MAX_MOC_VERSION = 5;
+const LIVE_TUTOR_HAND_POSES = {
+    neutral: {
+        Param23: 0,
+        Param10: -30,
+        Param6: -30,
+        Param7: 30,
+        Param8: 30,
+        Param9: 30
+    }
+};
+const LIVE_TUTOR_VIEWER_SCRIPTS = [
+    {
+        label: 'Live2D Cubism Core',
+        localPath: 'shared/vendor/live2d/live2dcubismcore.min.js',
+        fallbackUrl: 'https://cubism.live2d.com/sdk-web/cubismcore/live2dcubismcore.min.js',
+        isReady: () => Boolean(window.Live2DCubismCore)
+    },
+    {
+        label: 'PixiJS',
+        localPath: 'shared/vendor/live2d/pixi.min.js',
+        fallbackUrl: 'https://cdn.jsdelivr.net/npm/pixi.js@6.5.10/dist/browser/pixi.min.js',
+        isReady: () => Boolean(window.PIXI?.Application && window.PIXI?.Container && window.PIXI?.Ticker)
+    },
+    {
+        label: 'Pixi Live2D Display',
+        localPath: 'shared/vendor/live2d/pixi-live2d-display.min.js',
+        fallbackUrls: [
+            'https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/cubism4.min.js',
+            'https://cdn.jsdelivr.net/npm/pixi-live2d-display@0.4.0/dist/index.min.js'
+        ],
+        isReady: () => Boolean(window.PIXI?.live2d?.Live2DModel)
+    }
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+    mountLiveTutorInContainer();
+    initializeSteqyyVoice();
+    initializePreviewMode();
+    bindLessonControls();
+    initializeLiveTutor();
+});
+
+function mountLiveTutorInContainer() {
+    const container = document.querySelector('.container');
+    const tutor = document.getElementById('liveTutor');
+    if (!container || !tutor || tutor.parentElement === container) {
+        return;
+    }
+
+    container.appendChild(tutor);
+}
+
+function initializePreviewMode() {
+    try {
+        const raw = localStorage.getItem(PREVIEW_KEY);
+        previewPayload = raw ? JSON.parse(raw) : null;
+    } catch (error) {
+        previewPayload = null;
+    }
+
+    if (previewPayload && Array.isArray(previewPayload.slides) && previewPayload.slides.length > 0) {
+        isAdminPreviewMode = true;
+        currentLearningMode = 'mixed';
+        isLessonWelcomePending = true;
+        autoPlayEnabled = false;
+        previewSlideIndex = Number.isInteger(previewPayload.initialSlideIndex)
+            ? previewPayload.initialSlideIndex
+            : 0;
+
+        const prevButton = document.getElementById('previewPrevBtn');
+        const nextButton = document.getElementById('previewNextBtn');
+
+        prevButton.hidden = false;
+        nextButton.hidden = false;
+        document.getElementById('previewToolbarMeta').hidden = false;
+        prevButton.addEventListener('click', () => changePreviewSlide(-1));
+        nextButton.addEventListener('click', () => changePreviewSlide(1));
+
+        currentLessonPayload = previewPayload;
+        refreshLessonLanguageOptions(currentLessonPayload?.selectedLanguageName);
+        renderLessonSlide();
+        renderLearningModeUI();
+        window.setTimeout(showLessonWelcomeOverlay, 180);
+        return;
+    }
+
+    try {
+        const rawSession = localStorage.getItem(SESSION_KEY);
+        currentLessonPayload = rawSession ? JSON.parse(rawSession) : null;
+    } catch (error) {
+        currentLessonPayload = null;
+    }
+
+    if (currentLessonPayload && Array.isArray(currentLessonPayload.slides) && currentLessonPayload.slides.length > 0) {
+        currentLearningMode = normalizeLearningMode(currentLessonPayload.learningMode || 'auto');
+        isLessonWelcomePending = Boolean(currentLessonPayload.welcomePending);
+        isLessonPaused = false;
+        autoPlayEnabled = !isLessonWelcomePending && currentLearningMode !== 'manual';
+        initializeStudentProgressMode();
+        refreshLessonLanguageOptions(currentLessonPayload?.selectedLanguageName);
+        renderLessonSlide();
+        renderLearningModeUI();
+        if (isLessonWelcomePending) {
+            window.setTimeout(showLessonWelcomeOverlay, 180);
+        }
+        persistCurrentLessonSession({ paused: false });
+        return;
+    }
+}
+
+function initializeStudentProgressMode() {
+    currentProgressEntry = getOrCreateLessonProgressEntry(currentLessonPayload);
+    recordLearningActivity('study_session_started', currentLessonPayload);
+    previewSlideIndex = Math.min(
+        Math.max(Number(currentLessonPayload?.currentSlideIndex ?? currentProgressEntry?.currentSlideIndex) || 0, 0),
+        Math.max((currentLessonPayload.slides || []).length - 1, 0)
+    );
+
+    const prevButton = document.getElementById('previewPrevBtn');
+    const nextButton = document.getElementById('previewNextBtn');
+    const toolbarMeta = document.getElementById('previewToolbarMeta');
+
+    if (prevButton) {
+        prevButton.hidden = false;
+        prevButton.addEventListener('click', () => changePreviewSlide(-1));
+    }
+
+    if (nextButton) {
+        nextButton.hidden = false;
+        nextButton.addEventListener('click', () => changePreviewSlide(1));
+    }
+
+    if (toolbarMeta) {
+        toolbarMeta.hidden = false;
+    }
+}
+
+function normalizeLessonLanguageName(value) {
+    return String(value || '').trim();
+}
+
+function getLessonLanguageKey(value) {
+    return normalizeLessonLanguageName(value).toLowerCase();
+}
+
+function ensureSlideTranslations(slide) {
+    slide.translations = Array.isArray(slide?.translations)
+        ? slide.translations
+            .map((translation, index) => ({
+                id: translation?.id || `translation-${index + 1}`,
+                languageName: normalizeLessonLanguageName(translation?.languageName),
+                lessonText: String(translation?.lessonText || ''),
+                keyNotes: String(translation?.keyNotes || '')
+            }))
+            .filter((translation) => translation.languageName)
+        : [];
+    return slide.translations;
+}
+
+function getLessonLanguageOptions(payload = currentLessonPayload) {
+    const options = [DEFAULT_LESSON_LANGUAGE];
+    const seen = new Set([getLessonLanguageKey(DEFAULT_LESSON_LANGUAGE)]);
+    const slides = Array.isArray(payload?.slides) ? payload.slides : [];
+
+    slides.forEach((slide) => {
+        ensureSlideTranslations(slide).forEach((translation) => {
+            const languageName = normalizeLessonLanguageName(translation.languageName);
+            const languageKey = getLessonLanguageKey(languageName);
+            if (!languageName || seen.has(languageKey)) {
+                return;
+            }
+            seen.add(languageKey);
+            options.push(languageName);
+        });
+    });
+
+    return options;
+}
+
+function getCurrentLessonLanguageName() {
+    return lessonLanguageOptions[currentLanguageIndex] || DEFAULT_LESSON_LANGUAGE;
+}
+
+function updateLanguageButtonLabel() {
+    const label = document.getElementById('languageBtnLabel');
+    if (label) {
+        label.textContent = `Language: ${getCurrentLessonLanguageName()}`;
+    }
+}
+
+function refreshLessonLanguageOptions(preferredLanguageName = '') {
+    lessonLanguageOptions = getLessonLanguageOptions(currentLessonPayload);
+    const targetLanguageKey = getLessonLanguageKey(
+        preferredLanguageName
+        || currentLessonPayload?.selectedLanguageName
+        || getCurrentLessonLanguageName()
+        || DEFAULT_LESSON_LANGUAGE
+    );
+    const matchedIndex = lessonLanguageOptions.findIndex((languageName) => getLessonLanguageKey(languageName) === targetLanguageKey);
+    currentLanguageIndex = matchedIndex >= 0 ? matchedIndex : 0;
+    updateLanguageButtonLabel();
+}
+
+function getSlideTranslationForLanguage(slide, languageName = getCurrentLessonLanguageName()) {
+    const languageKey = getLessonLanguageKey(languageName);
+    if (!slide || !languageKey || languageKey === getLessonLanguageKey(DEFAULT_LESSON_LANGUAGE)) {
+        return null;
+    }
+
+    return ensureSlideTranslations(slide).find((translation) =>
+        getLessonLanguageKey(translation.languageName) === languageKey
+    ) || null;
+}
+
+function getLocalizedLessonText(slide) {
+    const translation = getSlideTranslationForLanguage(slide);
+    const translatedText = String(translation?.lessonText || '').trim();
+    return translatedText || String(slide?.lessonText || '').trim();
+}
+
+function getLocalizedSteqyyScript(slide) {
+    const translation = getSlideTranslationForLanguage(slide);
+    const translatedScript = String(translation?.keyNotes || '').trim();
+    return translatedScript || String(slide?.keyNotes || '').trim();
+}
+
+function inferSpeechLanguageCode(languageName = getCurrentLessonLanguageName()) {
+    const normalizedName = getLessonLanguageKey(languageName);
+    const directMatches = {
+        english: 'en-US',
+        filipino: 'fil-PH',
+        tagalog: 'fil-PH',
+        spanish: 'es-ES',
+        japanese: 'ja-JP',
+        korean: 'ko-KR',
+        chinese: 'zh-CN',
+        mandarin: 'zh-CN',
+        french: 'fr-FR',
+        german: 'de-DE',
+        italian: 'it-IT',
+        portuguese: 'pt-PT',
+        arabic: 'ar-SA',
+        hindi: 'hi-IN',
+        indonesian: 'id-ID',
+        malay: 'ms-MY',
+        vietnamese: 'vi-VN',
+        thai: 'th-TH'
+    };
+
+    if (directMatches[normalizedName]) {
+        return directMatches[normalizedName];
+    }
+
+    if (normalizedName.includes('filipino') || normalizedName.includes('tagalog')) {
+        return 'fil-PH';
+    }
+    if (normalizedName.includes('english')) {
+        return 'en-US';
+    }
+    if (normalizedName.includes('spanish')) {
+        return 'es-ES';
+    }
+
+    return 'en-US';
+}
+
+function recordLearningActivity(type, payload) {
+    if (!payload?.lessonId) {
+        return;
+    }
+
+    let entries = [];
+    try {
+        const raw = localStorage.getItem(ACTIVITY_LOG_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        entries = Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+        entries = [];
+    }
+
+    entries.push({
+        id: `${type}-${payload.courseId || 'course'}-${payload.levelId || 'level'}-${payload.lessonId}-${Date.now()}`,
+        type,
+        timestamp: Date.now(),
+        courseId: payload.courseId || '',
+        levelId: payload.levelId || '',
+        lessonId: payload.lessonId || '',
+        courseTitle: payload.courseTitle || '',
+        levelTitle: payload.levelTitle || '',
+        lessonTitle: payload.lessonTitle || ''
+    });
+
+    localStorage.setItem(ACTIVITY_LOG_KEY, JSON.stringify(entries.slice(-300)));
+    window.dispatchEvent(new CustomEvent('simp-learning-activity-updated'));
+}
+
+function renderLessonSlide() {
+    if (!currentLessonPayload) {
+        return;
+    }
+
+    const slides = currentLessonPayload.slides || [];
+    previewSlideIndex = Math.min(Math.max(previewSlideIndex, 0), slides.length - 1);
+    const slide = slides[previewSlideIndex];
+    const hasVisualContent = slideHasReviewableVisual(slide);
+    document.body.classList.toggle('lesson-no-visual', !hasVisualContent);
+
+    document.getElementById('lessonTitle').textContent = `Slide ${previewSlideIndex + 1}: ${currentLessonPayload.lessonTitle || 'Lesson Preview'}`;
+    document.getElementById('lessonSubtitle').textContent = buildCurrentLessonSubtitle();
+
+    const toolbarMeta = document.getElementById('previewToolbarMeta');
+    if (isAdminPreviewMode) {
+        toolbarMeta.textContent = `Slide ${previewSlideIndex + 1} of ${slides.length}`;
+        document.getElementById('previewPrevBtn').disabled = previewSlideIndex <= 0;
+        document.getElementById('previewNextBtn').disabled = previewSlideIndex >= slides.length - 1;
+    } else {
+        toolbarMeta.textContent = `Slide ${previewSlideIndex + 1} of ${slides.length}`;
+        document.getElementById('previewPrevBtn').disabled = previewSlideIndex <= 0;
+        document.getElementById('previewNextBtn').disabled = previewSlideIndex >= slides.length - 1;
+        syncLessonProgress();
+    }
+
+    renderVisual(slide);
+    renderLessonText(slide);
+    renderKeyNotes(slide);
+    persistCurrentLessonSession();
+    clearSteqyySubtitle();
+    if (!isLessonPaused && !isLessonWelcomePending && currentLearningMode !== 'manual') {
+        startSteqyySlideScript(slide);
+    }
+}
+
+function buildCurrentLessonSubtitle() {
+    const baseSubtitle = currentLessonPayload?.lessonSubtitle
+        || `${currentLessonPayload?.courseTitle || ''} ${currentLessonPayload?.levelTitle ? '| ' + currentLessonPayload.levelTitle : ''}`.trim()
+        || 'Lesson subtitle';
+    const contextLabel = String(currentLessonPayload?.adminContextLabel || '').trim();
+    return contextLabel ? `${baseSubtitle} | ${contextLabel}` : baseSubtitle;
+}
+
+function renderVisual(slide) {
+    const renderToken = ++currentSlideVisualToken;
+    const container = document.getElementById('previewVisualContainer');
+    const placeholder = document.getElementById('previewVisualPlaceholder');
+    const playButton = document.getElementById('previewPlayButton');
+    const visualDataUrl = String(slide?.visualDataUrl || '');
+    const visualStateKey = getSlideVisualStateKey(slide);
+    const isNewVisualState = visualStateKey !== currentSlideVisualStateKey;
+    currentSlideVisualItems = getSlideVisualItems(slide);
+    if (isNewVisualState) {
+        currentSlideVisualStateKey = visualStateKey;
+        currentSlideReviewedVisualIds = new Set();
+        manualVisualWarningActive = false;
+        currentSlideManualVisualIndex = 0;
+    } else {
+        currentSlideManualVisualIndex = Math.min(
+            Math.max(currentSlideManualVisualIndex, 0),
+            Math.max(currentSlideVisualItems.length - 1, 0)
+        );
+    }
+    currentSlideVisualReviewed = currentSlideVisualItems.length === 0
+        || currentSlideVisualItems.every((visual) => currentSlideReviewedVisualIds.has(visual.id));
+    renderManualVisualTabs();
+
+    if (playButton) {
+        playButton.style.display = 'none';
+    }
+    if (placeholder) {
+        placeholder.style.display = 'none';
+    }
+
+    clearPreviewVisualMedia(container);
+
+    activeMediaElement = null;
+
+    if (currentLearningMode === 'manual') {
+        const selectedVisual = currentSlideVisualItems[currentSlideManualVisualIndex];
+        if (!selectedVisual) {
+            currentSlideVisualReviewed = true;
+            if (playButton) {
+                playButton.style.display = 'flex';
+            }
+            if (placeholder) {
+                placeholder.style.display = 'block';
+                placeholder.textContent = 'No visual added for this slide';
+            }
+            return;
+        }
+
+        renderManualVisualItem(selectedVisual, renderToken);
+        return;
+    }
+
+    const hasPrimaryVisual = Boolean(visualDataUrl || slide?.visualName);
+
+    if (!hasPrimaryVisual) {
+        currentSlideVisualReviewed = true;
+        if (playButton) {
+            playButton.style.display = 'flex';
+        }
+        if (placeholder) {
+            placeholder.style.display = 'block';
+            placeholder.textContent = 'Video / Diagram / Image';
+        }
+        return;
+    }
+
+    if (visualDataUrl) {
+        renderImageSource(visualDataUrl, slide.visualName || 'Lesson visual', 'cover').then(() => {
+            scheduleImageVisualReview(renderToken);
+        });
+        return;
+    }
+
+    if (playButton) {
+        playButton.style.display = 'none';
+    }
+    if (placeholder) {
+        placeholder.style.display = 'block';
+        placeholder.textContent = slide?.visualName ? `${slide.visualName} uploaded` : 'Visual uploaded';
+    }
+}
+
+function slideHasReviewableVisual(slide) {
+    return getSlideVisualItems(slide).length > 0;
+}
+
+function getSlideVisualStateKey(slide) {
+    return String(slide?.id || slide?.slideId || slide?.title || `slide-${previewSlideIndex}`);
+}
+
+function scheduleImageVisualReview(token, visualId = '') {
+    window.setTimeout(() => {
+        if (token !== currentSlideVisualToken) {
+            return;
+        }
+        markSlideVisualReviewed(visualId);
+    }, 1200);
+}
+
+function getSlideVisualItems(slide) {
+    const items = [];
+    const visualDataUrl = String(slide?.visualDataUrl || '').trim();
+    if (visualDataUrl) {
+        items.push({
+            id: 'primary-visual',
+            type: visualDataUrl.startsWith('data:video/') ? 'video' : 'image',
+            label: slide?.visualName || 'Visual 1',
+            dataUrl: visualDataUrl
+        });
+    } else if (slide?.visualName) {
+        items.push({
+            id: 'primary-placeholder',
+            type: 'placeholder',
+            label: slide.visualName,
+            dataUrl: ''
+        });
+    }
+
+    const assets = Array.isArray(slide?.mediaAssets) ? slide.mediaAssets : [];
+    assets.forEach((asset, index) => {
+        if (!asset || !['image', 'video'].includes(asset.type)) {
+            return;
+        }
+
+        if (!getRenderableImageSource(asset.dataUrl) && !isMediaStoreRef(asset.dataUrl)) {
+            return;
+        }
+
+        items.push({
+            ...asset,
+            id: asset.id || asset.label || asset.name || `asset-${index}`,
+            label: asset.label || asset.name || `${asset.type === 'video' ? 'Video' : 'Image'} ${index + 1}`
+        });
+    });
+
+    return items;
+}
+
+function renderManualVisualTabs() {
+    const tabs = document.getElementById('manualVisualTabs');
+    if (!tabs) {
+        return;
+    }
+
+    const shouldShow = currentLearningMode === 'manual' && currentSlideVisualItems.length > 0;
+    tabs.hidden = !shouldShow;
+    tabs.innerHTML = '';
+    if (!shouldShow) {
+        return;
+    }
+
+    currentSlideVisualItems.forEach((visual, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'manual-visual-tab';
+        button.textContent = visual.label || `Visual ${index + 1}`;
+        const isReviewed = currentSlideReviewedVisualIds.has(visual.id);
+        button.classList.toggle('active', index === currentSlideManualVisualIndex);
+        button.classList.toggle('is-reviewed', isReviewed);
+        button.classList.toggle('is-warning', manualVisualWarningActive && !isReviewed);
+        button.setAttribute('aria-pressed', index === currentSlideManualVisualIndex ? 'true' : 'false');
+        button.addEventListener('click', () => {
+            currentSlideManualVisualIndex = index;
+            renderVisual(currentLessonPayload?.slides?.[previewSlideIndex]);
+        });
+        tabs.appendChild(button);
+    });
+}
+
+function renderManualVisualItem(visual, renderToken) {
+    if (visual.type === 'placeholder') {
+        const placeholder = document.getElementById('previewVisualPlaceholder');
+        if (placeholder) {
+            placeholder.style.display = 'block';
+            placeholder.textContent = `${visual.label || 'Visual'} uploaded`;
+        }
+        scheduleImageVisualReview(renderToken, visual.id);
+        return;
+    }
+
+    const renderPromise = visual.type === 'video'
+        ? renderVisualAsset(visual, { reviewToken: renderToken, visualId: visual.id })
+        : renderVisualAsset(visual, { reviewToken: renderToken, visualId: visual.id });
+
+    renderPromise.then(() => {
+        if (visual.type !== 'video') {
+            scheduleImageVisualReview(renderToken, visual.id);
+        }
+    });
+}
+
+function markSlideVisualReviewed(visualId = '') {
+    if (visualId) {
+        currentSlideReviewedVisualIds.add(visualId);
+    } else if (currentSlideVisualItems.length === 1) {
+        currentSlideReviewedVisualIds.add(currentSlideVisualItems[0].id);
+    }
+
+    currentSlideVisualReviewed = currentSlideVisualItems.every((visual) => currentSlideReviewedVisualIds.has(visual.id));
+    if (currentSlideVisualReviewed) {
+        manualVisualWarningActive = false;
+    }
+    renderManualVisualTabs();
+}
+
+function getUncheckedSlideVisualLabels() {
+    return currentSlideVisualItems
+        .filter((visual) => !currentSlideReviewedVisualIds.has(visual.id))
+        .map((visual) => visual.label || 'Visual');
+}
+
+function openManualVisualConfirmModal(uncheckedVisuals, step) {
+    const modal = document.getElementById('manualVisualConfirmModal');
+    const list = document.getElementById('manualVisualConfirmList');
+    const cancelButton = document.getElementById('manualVisualCancelBtn');
+    if (!modal || !list) {
+        return;
+    }
+
+    pendingManualVisualSkipStep = step;
+    list.innerHTML = '';
+    uncheckedVisuals.forEach((label) => {
+        const item = document.createElement('span');
+        item.textContent = label;
+        list.appendChild(item);
+    });
+    modal.hidden = false;
+    cancelButton?.focus();
+}
+
+function closeManualVisualConfirmModal() {
+    const modal = document.getElementById('manualVisualConfirmModal');
+    if (modal) {
+        modal.hidden = true;
+    }
+    pendingManualVisualSkipStep = 0;
+}
+
+function continuePastUncheckedManualVisuals() {
+    const step = pendingManualVisualSkipStep || 1;
+    closeManualVisualConfirmModal();
+    changePreviewSlide(step, { force: true });
+}
+
+function getRenderableImageSource(source) {
+    const value = String(source || '').trim();
+    if (
+        value.startsWith('data:image/')
+        || value.startsWith('data:video/')
+        || value.startsWith('blob:')
+        || value.startsWith('http://')
+        || value.startsWith('https://')
+        || value.startsWith('../')
+        || value.startsWith('./')
+        || value.startsWith('/')
+    ) {
+        return value;
+    }
+
+    return '';
+}
+
+function getFirstRenderableImageAsset(slide) {
+    const assets = Array.isArray(slide?.mediaAssets) ? slide.mediaAssets : [];
+    return assets.find((asset) => asset?.type === 'image' && (getRenderableImageSource(asset.dataUrl) || isMediaStoreRef(asset.dataUrl))) || null;
+}
+
+function isMediaStoreRef(source) {
+    return String(source || '').startsWith(window.SIMPMediaStore?.REF_PREFIX || 'simp-media:');
+}
+
+async function resolveRenderableMediaSource(source) {
+    const directSource = getRenderableImageSource(source);
+    if (directSource) {
+        return directSource;
+    }
+
+    if (isMediaStoreRef(source) && window.SIMPMediaStore?.getObjectUrl) {
+        return window.SIMPMediaStore.getObjectUrl(source);
+    }
+
+    return '';
+}
+
+async function renderImageSource(source, alt, objectFit = 'contain') {
+    const container = document.getElementById('previewVisualContainer');
+    const placeholder = document.getElementById('previewVisualPlaceholder');
+    const imageSource = await resolveRenderableMediaSource(source);
+    if (!imageSource) {
+        if (placeholder) {
+            placeholder.style.display = 'block';
+            placeholder.textContent = alt
+                ? `${alt} could not be loaded from browser storage`
+                : 'Image could not be loaded from browser storage';
+        }
+        return null;
+    }
+
+    const img = document.createElement('img');
+    img.className = 'preview-live-media';
+    img.src = imageSource;
+    img.alt = alt || 'Lesson visual';
+    img.style.width = '100%';
+    img.style.height = '100%';
+    img.style.objectFit = objectFit;
+    container.appendChild(img);
+    return img;
+}
+
+function clearPreviewVisualMedia(container) {
+    container.querySelectorAll('.preview-live-media').forEach((element) => element.remove());
+}
+
+async function renderVisualAsset(asset, options = {}) {
+    const container = document.getElementById('previewVisualContainer');
+    const placeholder = document.getElementById('previewVisualPlaceholder');
+    const playButton = document.getElementById('previewPlayButton');
+    if (!container || !asset) {
+        return null;
+    }
+
+    if (playButton) {
+        playButton.style.display = 'none';
+    }
+    if (placeholder) {
+        placeholder.style.display = 'none';
+    }
+
+    clearPreviewVisualMedia(container);
+    activeMediaElement = null;
+
+    if (asset.type === 'video') {
+        const videoSource = await resolveRenderableMediaSource(asset.dataUrl);
+        if (!videoSource) {
+            if (placeholder) {
+                placeholder.style.display = 'block';
+                placeholder.textContent = asset.name
+                    ? `${asset.name} could not be loaded from browser storage`
+                    : 'Video could not be loaded from browser storage';
+            }
+            return null;
+        }
+
+        const video = document.createElement('video');
+        video.className = 'preview-live-media preview-live-video';
+        video.src = videoSource;
+        video.controls = true;
+        video.playsInline = true;
+        video.autoplay = Boolean(options.autoplay);
+        video.style.width = '100%';
+        video.style.height = '100%';
+        video.style.objectFit = 'contain';
+        const reviewToken = options.reviewToken ?? currentSlideVisualToken;
+        const visualId = options.visualId || '';
+        video.addEventListener('play', () => {
+            if (reviewToken === currentSlideVisualToken) {
+                markSlideVisualReviewed(visualId);
+            }
+        });
+        video.addEventListener('ended', () => {
+            if (reviewToken === currentSlideVisualToken) {
+                markSlideVisualReviewed(visualId);
+            }
+        });
+        container.appendChild(video);
+        activeMediaElement = video;
+        return video;
+    }
+
+    return renderImageSource(asset.dataUrl, asset.name || asset.label || 'Lesson visual');
+}
+
+function renderLessonText(slide) {
+    const textContent = document.getElementById('lessonTextContent');
+    textContent.innerHTML = '';
+
+    const text = getLocalizedLessonText(slide);
+    if (!text) {
+        textContent.innerHTML = '<p style="color:#9ca3af;font-style:italic;">No lesson text added yet.</p>';
+        return;
+    }
+
+    const paragraphs = text.split(/\n\n+/).filter((paragraph) => paragraph.trim());
+    paragraphs.forEach((paragraph) => {
+        const p = document.createElement('p');
+        p.textContent = paragraph.trim();
+        textContent.appendChild(p);
+    });
+}
+
+function renderKeyNotes(slide) {
+    const keyNotesSection = document.getElementById('keyNotesSection');
+    const keyNotesList = document.getElementById('keyNotesList');
+    if (keyNotesList) {
+        keyNotesList.innerHTML = '';
+    }
+    if (keyNotesSection) {
+        keyNotesSection.style.display = 'none';
+    }
+}
+
+function startSteqyySlideScript(slide) {
+    cancelSteqyySlideScript();
+    const steps = parseSteqyyScript(getLocalizedSteqyyScript(slide));
+    if (!autoPlayEnabled) {
+        return;
+    }
+
+    if (!steps.length) {
+        if (!hasNextLessonSlide() && !isLessonPaused && !isLessonWelcomePending && currentLearningMode !== 'manual') {
+            window.setTimeout(() => {
+                if (!hasNextLessonSlide() && !isLessonPaused && !isLessonWelcomePending && currentLearningMode !== 'manual') {
+                    showLessonCompletionOverlay();
+                }
+            }, 300);
+        }
+        return;
+    }
+
+    const runId = slideScriptRunId;
+    window.setTimeout(() => runSteqyyScriptSteps(slide, steps, runId), 450);
+}
+
+function cancelSteqyySlideScript() {
+    slideScriptRunId += 1;
+    if (activeSpeechUtterance && window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+    }
+    activeSpeechUtterance = null;
+    clearSteqyySubtitle();
+    if (activeMediaElement && typeof activeMediaElement.pause === 'function') {
+        activeMediaElement.pause();
+    }
+    if (liveTutorAction === 'talk') {
+        stopLiveTutorTalkTest();
+    }
+}
+
+async function runSteqyyScriptSteps(slide, steps, runId) {
+    for (const step of steps) {
+        if (runId !== slideScriptRunId) {
+            return;
+        }
+
+        if (step.type === 'text') {
+            await speakSteqyyLine(step.text, runId);
+        } else if (step.type === 'show') {
+            clearSteqyySubtitle();
+            const asset = findSlideVisualByLabel(slide, step.label, 'image');
+            if (asset) {
+                await renderVisualAsset(asset);
+            }
+        } else if (step.type === 'play') {
+            clearSteqyySubtitle();
+            const asset = findSlideVisualByLabel(slide, step.label, 'video');
+            if (asset) {
+                await playSlideVideoAsset(asset, runId);
+            }
+        }
+    }
+
+    if (runId === slideScriptRunId && liveTutorAction === 'talk') {
+        stopLiveTutorTalkTest();
+    }
+
+    if (runId === slideScriptRunId && currentLearningMode !== 'manual' && !isLessonPaused && !isLessonWelcomePending) {
+        if (hasNextLessonSlide()) {
+            await speakSteqyyLine("Let's proceed to the next slide.", runId);
+            if (runId !== slideScriptRunId) {
+                return;
+            }
+            if (currentLearningMode === 'auto') {
+                scheduleAutoNextSlide();
+            }
+            return;
+        }
+        showLessonCompletionOverlay();
+    }
+}
+
+function parseSteqyyScript(script) {
+    const pattern = /\[(show|play):\s*([^\]]+)\]/gi;
+    const steps = [];
+    let lastIndex = 0;
+    let match = pattern.exec(script);
+
+    while (match) {
+        const textBefore = script.slice(lastIndex, match.index).trim();
+        if (textBefore) {
+            steps.push({ type: 'text', text: textBefore });
+        }
+        steps.push({
+            type: match[1].toLowerCase(),
+            label: match[2].trim()
+        });
+        lastIndex = pattern.lastIndex;
+        match = pattern.exec(script);
+    }
+
+    const tailText = script.slice(lastIndex).trim();
+    if (tailText) {
+        steps.push({ type: 'text', text: tailText });
+    }
+
+    return steps;
+}
+
+function findSlideVisualByLabel(slide, label, preferredType = '') {
+    const normalizedLabel = normalizeVisualLabel(label);
+    const assets = Array.isArray(slide?.mediaAssets) ? slide.mediaAssets : [];
+    return assets.find((asset) =>
+        (!preferredType || asset.type === preferredType)
+        && normalizeVisualLabel(asset.label) === normalizedLabel
+    ) || assets.find((asset) => normalizeVisualLabel(asset.label) === normalizedLabel);
+}
+
+function normalizeVisualLabel(value) {
+    return String(value || '').trim().toLowerCase().replace(/\s+/g, ' ');
+}
+
+function initializeSteqyyVoice() {
+    localStorage.setItem('simpSteqyyVoiceProfile', STEQYY_VOICE_PROFILE.version);
+
+    if (!window.speechSynthesis?.getVoices) {
+        return;
+    }
+
+    getPreferredSteqyyVoice(inferSpeechLanguageCode());
+    window.speechSynthesis.onvoiceschanged = () => {
+        preferredSteqyyVoice = null;
+        getPreferredSteqyyVoice(inferSpeechLanguageCode());
+    };
+}
+
+async function speakSteqyyLine(text, runId) {
+    const cleanText = String(text || '').replace(/\s+/g, ' ').trim();
+    if (!cleanText) {
+        return Promise.resolve();
+    }
+
+    const subtitleState = setSteqyySubtitle(cleanText);
+    startLiveTutorTalkTest();
+
+    if (!('speechSynthesis' in window) || typeof window.SpeechSynthesisUtterance !== 'function') {
+        return playEstimatedSubtitleBatches(subtitleState, cleanText, runId).finally(() => {
+            if (runId === slideScriptRunId) {
+                stopLiveTutorTalkTest();
+                clearSteqyySubtitle();
+            }
+        });
+    }
+
+    const phrases = splitSteqyySpeechPhrases(cleanText);
+    for (let index = 0; index < phrases.length; index += 1) {
+        if (runId !== slideScriptRunId) {
+            clearSteqyySubtitle();
+            return;
+        }
+
+        const profile = getSteqyyChunkProfile(index, phrases.length);
+        await speakSteqyyPhrase(phrases[index], runId, profile, subtitleState);
+
+        if (index < phrases.length - 1) {
+            await waitForSteqyyPause(getSteqyyPauseMs(phrases[index].text), runId);
+        }
+    }
+
+    if (runId === slideScriptRunId) {
+        stopLiveTutorTalkTest();
+        clearSteqyySubtitle();
+    }
+}
+
+function splitSteqyySpeechPhrases(text) {
+    const source = String(text || '').replace(/\s+/g, ' ').trim();
+    const matches = [...source.matchAll(/[^,.!?;:]+[,.!?;:]?/g)];
+    return matches
+        .map((match) => ({
+            text: match[0].trim(),
+            start: match.index ?? 0
+        }))
+        .filter((part) => part.text);
+}
+
+function getSteqyyChunkProfile(index, total) {
+    const settings = getSteqyyVoiceSettings();
+    const isFinalChunk = index === total - 1;
+    const robotPitchSteps = [0.06, -0.04, 0.045, -0.025];
+    const robotRateSteps = [-0.03, 0.018, -0.02, 0.012];
+
+    return {
+        pitch: clampNumber(
+            settings.pitch + (robotPitchSteps[index % robotPitchSteps.length] * settings.robotLevel) - (isFinalChunk ? 0.02 : 0),
+            0.68,
+            1.72
+        ),
+        rate: clampNumber(
+            settings.rate + (robotRateSteps[index % robotRateSteps.length] * settings.robotLevel),
+            0.72,
+            1.16
+        )
+    };
+}
+
+function speakSteqyyPhrase(phrase, runId, profile = {}, subtitleState = null) {
+    return new Promise((resolve) => {
+        const utterance = new SpeechSynthesisUtterance(phrase.text);
+        let resolved = false;
+        let fallbackScheduled = false;
+        utterance.lang = inferSpeechLanguageCode();
+        utterance.rate = profile.rate || STEQYY_VOICE_PROFILE.rate;
+        utterance.pitch = profile.pitch || STEQYY_VOICE_PROFILE.pitch;
+        utterance.volume = STEQYY_VOICE_PROFILE.volume;
+        utterance.voice = getPreferredSteqyyVoice(utterance.lang);
+        window.speechSynthesis.cancel();
+        activeSpeechUtterance = utterance;
+        utterance.onstart = () => {
+            updateSteqyySubtitleProgress(subtitleState, phrase.start);
+            scheduleSteqyySubtitlePhraseFallback(subtitleState, phrase, utterance.rate, runId);
+            fallbackScheduled = true;
+            beginLiveTutorSpeechMouth(phrase.text, utterance.rate);
+        };
+        utterance.onboundary = (event) => {
+            const boundaryText = getSpeechBoundaryText(phrase.text, event);
+            pulseLiveTutorMouthFromSpeech(boundaryText);
+            updateSteqyySubtitleProgress(subtitleState, phrase.start + Math.max(0, Number(event?.charIndex) || 0));
+        };
+        const finish = () => {
+            if (resolved) {
+                return;
+            }
+            resolved = true;
+            if (fallbackScheduled) {
+                clearSteqyySubtitleFallbackTimers(subtitleState);
+            }
+            updateSteqyySubtitleProgress(subtitleState, phrase.start + phrase.text.length);
+            const wasActiveUtterance = activeSpeechUtterance === utterance;
+            if (activeSpeechUtterance === utterance) {
+                activeSpeechUtterance = null;
+            }
+            if (wasActiveUtterance) {
+                liveTutorFallbackSpeechUntil = 0;
+            }
+            resolve();
+        };
+        utterance.onend = finish;
+        utterance.onerror = () => {
+            waitForSteqyySpeechEstimate(phrase.text, runId).then(finish);
+        };
+        beginLiveTutorSpeechMouth(phrase.text, utterance.rate);
+        window.speechSynthesis.speak(utterance);
+    });
+}
+
+function getSpeechBoundaryText(text, event) {
+    const source = String(text || '');
+    const start = Number(event?.charIndex);
+    const length = Number(event?.charLength);
+
+    if (Number.isFinite(start) && start >= 0 && Number.isFinite(length) && length > 0) {
+        return source.slice(start, start + length);
+    }
+
+    if (Number.isFinite(start) && start >= 0) {
+        return source.slice(start).split(/\s+/)[0] || source;
+    }
+
+    return source;
+}
+
+function scheduleSteqyySubtitlePhraseFallback(subtitleState, phrase, rate, runId) {
+    if (!subtitleState || activeSubtitleState !== subtitleState) {
+        return;
+    }
+
+    clearSteqyySubtitleFallbackTimers(subtitleState);
+
+    const phraseStart = phrase.start;
+    const phraseEnd = phrase.start + phrase.text.length;
+    const duration = estimateLiveTutorSpeechDuration(phrase.text, rate);
+    const phraseLength = Math.max(phrase.text.length, 1);
+    const relevantBatches = subtitleState.batches.filter((batch) => batch.start > phraseStart && batch.start < phraseEnd);
+
+    relevantBatches.forEach((batch) => {
+        const relativeStart = batch.start - phraseStart;
+        const delay = Math.max(120, Math.round((relativeStart / phraseLength) * duration));
+        const timerId = window.setTimeout(() => {
+            if (runId !== slideScriptRunId || activeSubtitleState !== subtitleState) {
+                return;
+            }
+            updateSteqyySubtitleProgress(subtitleState, batch.start);
+        }, delay);
+        subtitleState.fallbackTimers.push(timerId);
+    });
+}
+
+function clearSteqyySubtitleFallbackTimers(subtitleState) {
+    if (!subtitleState?.fallbackTimers?.length) {
+        return;
+    }
+
+    subtitleState.fallbackTimers.forEach((timerId) => window.clearTimeout(timerId));
+    subtitleState.fallbackTimers = [];
+}
+
+function beginLiveTutorSpeechMouth(text, rate = STEQYY_VOICE_PROFILE.rate) {
+    const now = performance.now();
+    const duration = estimateLiveTutorSpeechDuration(text, rate);
+
+    startLiveTutorTalkTest({ showStatus: false });
+    liveTutorFallbackSpeechUntil = Math.max(liveTutorFallbackSpeechUntil, now + duration);
+    pulseLiveTutorMouthFromSpeech(text);
+}
+
+function estimateLiveTutorSpeechDuration(text, rate = STEQYY_VOICE_PROFILE.rate) {
+    const cleanText = String(text || '').replace(/\s+/g, ' ').trim();
+    const wordCount = cleanText.split(/\s+/).filter(Boolean).length;
+    const characterEstimate = cleanText.length * 54;
+    const wordEstimate = wordCount * 310;
+    const rateFactor = clampNumber(Number(rate) || STEQYY_VOICE_PROFILE.rate, 0.7, 1.2);
+
+    return clampNumber(Math.max(characterEstimate, wordEstimate) / rateFactor + 260, 520, 9000);
+}
+
+function pulseLiveTutorMouthFromSpeech(text) {
+    const cleanText = String(text || '').replace(/[^\w]+/g, '');
+    const now = performance.now();
+    const syllableHint = Math.max(1, Math.ceil(cleanText.length / 3));
+    const energy = clampLiveTutorValue(0.32 + (syllableHint * 0.08), 0.36, 0.92);
+
+    liveTutorMouthEnergy = Math.max(liveTutorMouthEnergy, energy);
+    liveTutorLastMouthPulseAt = now;
+    liveTutorFallbackSpeechUntil = Math.max(
+        liveTutorFallbackSpeechUntil,
+        now + clampNumber(cleanText.length * 42, 150, 620)
+    );
+}
+
+function getPreferredSteqyyVoice(language) {
+    const voices = window.speechSynthesis?.getVoices?.() || [];
+    if (!voices.length) {
+        return null;
+    }
+
+    if (preferredSteqyyVoice && String(preferredSteqyyVoice.lang || '').toLowerCase().startsWith(language.split('-')[0].toLowerCase())) {
+        return preferredSteqyyVoice;
+    }
+
+    const isEnglish = language.toLowerCase().startsWith('en');
+    const languagePrefix = language.split('-')[0].toLowerCase();
+    const matchingVoices = isEnglish
+        ? voices.filter(isGoogleUsEnglishVoice)
+        : voices.filter((voice) => String(voice.lang || '').toLowerCase().startsWith(languagePrefix));
+    const candidates = matchingVoices.length ? matchingVoices : voices;
+    preferredSteqyyVoice = candidates
+        .map((voice) => ({
+            voice,
+            score: scoreSteqyyVoice(voice, language)
+        }))
+        .sort((left, right) => right.score - left.score)[0]?.voice || candidates[0];
+
+    return preferredSteqyyVoice;
+}
+
+function isGoogleUsEnglishVoice(voice) {
+    const name = String(voice.name || '').toLowerCase();
+    const voiceLanguage = String(voice.lang || '').toLowerCase();
+    return name.includes('google us english') && voiceLanguage === 'en-us';
+}
+
+function scoreSteqyyVoice(voice, language) {
+    const name = String(voice.name || '').toLowerCase();
+    const voiceLanguage = String(voice.lang || '').toLowerCase();
+    const targetLanguage = language.toLowerCase();
+    let score = 0;
+
+    if (voiceLanguage === targetLanguage) {
+        score += 60;
+    } else if (voiceLanguage.startsWith(targetLanguage.split('-')[0])) {
+        score += 20;
+    }
+
+    if (targetLanguage.startsWith('en') && isGoogleUsEnglishVoice(voice)) {
+        score += 120;
+    }
+
+    if (targetLanguage === 'en-ph' && /filipino|philippine|philippines/i.test(name)) {
+        score += 50;
+    }
+
+    if (/natural|online|neural/i.test(name)) {
+        score += 16;
+    }
+
+    if (/google|microsoft/i.test(name)) {
+        score += 6;
+    }
+
+    return score;
+}
+
+function getSteqyyVoiceSettings() {
+    let saved = {};
+
+    try {
+        saved = JSON.parse(localStorage.getItem(STEQYY_VOICE_SETTINGS_KEY) || '{}') || {};
+    } catch (error) {
+        localStorage.removeItem(STEQYY_VOICE_SETTINGS_KEY);
+    }
+    if (saved.settingsVersion !== STEQYY_VOICE_SETTINGS_VERSION) {
+        saved = {};
+    }
+
+    const kidAmount = Number.isFinite(Number(saved.kidAmount))
+        ? clampNumber(Number(saved.kidAmount), 0, 100)
+        : STEQYY_VOICE_PROFILE.kidAmount;
+    const maleAgeAmount = Number.isFinite(Number(saved.maleAgeAmount))
+        ? clampNumber(Number(saved.maleAgeAmount), 0, 100)
+        : Number.isFinite(Number(saved.kidAmount))
+            ? 100 - kidAmount
+            : STEQYY_VOICE_PROFILE.maleAgeAmount;
+    const humanAmount = Number.isFinite(Number(saved.humanAmount))
+        ? clampNumber(Number(saved.humanAmount), 0, 100)
+        : STEQYY_VOICE_PROFILE.humanAmount;
+    const grownMaleLevel = maleAgeAmount / 100;
+    const youngMaleLevel = 1 - grownMaleLevel;
+    const robotLevel = 1 - (humanAmount / 100);
+    const baseRate = Number.isFinite(Number(saved.baseRate || saved.rate))
+        ? clampNumber(Number(saved.baseRate || saved.rate), 0.75, 1.12)
+        : STEQYY_VOICE_PROFILE.rate;
+    const pitchMix = 1
+        + (youngMaleLevel * 0.34)
+        - (grownMaleLevel * 0.16)
+        + (robotLevel * 0.04);
+    const rateMix = baseRate
+        - (youngMaleLevel * 0.035)
+        - (grownMaleLevel * 0.015)
+        - (robotLevel * 0.035);
+
+    return {
+        kidAmount: Math.round(youngMaleLevel * 100),
+        maleAgeAmount,
+        humanAmount,
+        robotLevel,
+        rate: clampNumber(rateMix, 0.72, 1.16),
+        pitch: clampNumber(pitchMix, 0.68, 1.72),
+        commaPauseMs: Number.isFinite(Number(saved.commaPauseMs))
+            ? clampNumber(Number(saved.commaPauseMs), 0, 900)
+            : STEQYY_VOICE_PROFILE.clausePauseMs,
+        periodPauseMs: Number.isFinite(Number(saved.periodPauseMs))
+            ? clampNumber(Number(saved.periodPauseMs), 0, 1400)
+            : STEQYY_VOICE_PROFILE.sentencePauseMs
+    };
+}
+
+function clampNumber(value, min, max) {
+    return Math.min(max, Math.max(min, value));
+}
+
+function getSteqyyPauseMs(phrase) {
+    const settings = getSteqyyVoiceSettings();
+
+    if (/[!?]$/.test(phrase)) {
+        return settings.periodPauseMs;
+    }
+
+    if (/[,;:]$/.test(phrase)) {
+        return /[;:]$/.test(phrase)
+            ? Math.round(settings.commaPauseMs * 1.3)
+            : settings.commaPauseMs;
+    }
+
+    if (/[.]$/.test(phrase)) {
+        return settings.periodPauseMs;
+    }
+
+    return STEQYY_VOICE_PROFILE.shortPauseMs;
+}
+
+function waitForSteqyyPause(duration, runId) {
+    return new Promise((resolve) => {
+        window.setTimeout(() => {
+            resolve(runId === slideScriptRunId);
+        }, duration);
+    });
+}
+
+function waitForSteqyySpeechEstimate(text, runId) {
+    const duration = Math.min(Math.max(text.length * 76, 1500), 10000);
+    return new Promise((resolve) => {
+        window.setTimeout(() => {
+            if (runId === slideScriptRunId) {
+                stopLiveTutorTalkTest();
+            }
+            resolve();
+        }, duration);
+    });
+}
+
+async function playSlideVideoAsset(asset, runId) {
+    const video = await renderVisualAsset(asset, { autoplay: true });
+    if (!video) {
+        return Promise.resolve();
+    }
+
+    return new Promise((resolve) => {
+        let resolved = false;
+        const finish = () => {
+            if (resolved) {
+                return;
+            }
+            resolved = true;
+            resolve();
+        };
+        video.addEventListener('ended', finish, { once: true });
+        video.addEventListener('error', finish, { once: true });
+        const playPromise = video.play();
+        if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.catch(() => {
+                showLiveTutorStatus('Press play to continue the video.', false, true);
+            });
+        }
+
+        const maxWait = Math.max((Number(asset.duration) || 0) * 1000 + 2000, 10000);
+        window.setTimeout(finish, maxWait);
+    });
+}
+
+function scheduleAutoNextSlide() {
+    if (!hasNextLessonSlide()) {
+        return;
+    }
+
+    const currentRunId = slideScriptRunId;
+    window.setTimeout(() => {
+        if (
+            currentRunId !== slideScriptRunId
+            || currentLearningMode !== 'auto'
+            || isLessonPaused
+            || isLessonWelcomePending
+        ) {
+            return;
+        }
+        changePreviewSlide(1, { force: true });
+    }, 900);
+}
+
+function hasNextLessonSlide() {
+    const totalSlides = Array.isArray(currentLessonPayload?.slides) ? currentLessonPayload.slides.length : 0;
+    return previewSlideIndex < totalSlides - 1;
+}
+
+function changePreviewSlide(step, options = {}) {
+    if (!currentLessonPayload) {
+        return;
+    }
+
+    if (!options.force && step > 0 && currentLearningMode === 'manual') {
+        const uncheckedVisuals = getUncheckedSlideVisualLabels();
+        if (uncheckedVisuals.length) {
+            manualVisualWarningActive = true;
+            renderManualVisualTabs();
+            openManualVisualConfirmModal(uncheckedVisuals, step);
+            return;
+        }
+    }
+
+    previewSlideIndex += step;
+    renderLessonSlide();
+}
+
+function bindLessonControls() {
+    document.querySelectorAll('[data-mode-option]').forEach((button) => {
+        button.addEventListener('click', () => selectLearningMode(button.dataset.modeOption || 'auto'));
+    });
+    document.querySelectorAll('[data-mode-switch]').forEach((button) => {
+        button.addEventListener('click', () => {
+            applyLearningMode(button.dataset.modeSwitch || 'auto');
+        });
+    });
+    document.getElementById('lessonWelcomeStartBtn')?.addEventListener('click', startLessonExperience);
+    document.getElementById('lessonReadMoreBtn')?.addEventListener('click', handleLessonReadMoreRequest);
+    document.getElementById('lessonNextLessonBtn')?.addEventListener('click', handleLessonNextLessonRequest);
+    document.getElementById('lessonLeaveAfterCompleteBtn')?.addEventListener('click', () => leaveLessonSession());
+    document.getElementById('raiseHandBtn')?.addEventListener('click', openRaiseHandPanel);
+    document.getElementById('cancelQuestionBtn')?.addEventListener('click', closeRaiseHandPanel);
+    document.getElementById('raiseHandQuestionForm')?.addEventListener('submit', handleRaiseHandQuestionSubmit);
+    document.getElementById('manualVisualCancelBtn')?.addEventListener('click', closeManualVisualConfirmModal);
+    document.getElementById('manualVisualContinueBtn')?.addEventListener('click', continuePastUncheckedManualVisuals);
+    document.querySelectorAll('[data-manual-visual-cancel]').forEach((element) => {
+        element.addEventListener('click', closeManualVisualConfirmModal);
+    });
+    document.getElementById('replayBtn')?.addEventListener('click', () => seekActiveMedia(-5));
+    document.getElementById('fastForwardBtn')?.addEventListener('click', () => seekActiveMedia(5));
+    document.getElementById('subtitleBtn')?.addEventListener('click', toggleSubtitles);
+    document.getElementById('tutorSizeBtn')?.addEventListener('click', cycleLiveTutorSize);
+    document.getElementById('tutorVisibilityBtn')?.addEventListener('click', toggleLiveTutorVisibility);
+    document.getElementById('languageBtn')?.addEventListener('click', cycleLanguage);
+    document.getElementById('leaveLessonBtn')?.addEventListener('click', leaveLessonSession);
+    document.addEventListener('pointermove', updateLiveTutorMouseLook);
+    applyLiveTutorDisplayState();
+    renderLearningModeUI();
+}
+
+function showLessonWelcomeOverlay() {
+    if (!currentLessonPayload) {
+        return;
+    }
+
+    const overlay = document.getElementById('lessonWelcomeOverlay');
+    const title = document.getElementById('lessonWelcomeTitle');
+    const subtitle = document.getElementById('lessonWelcomeSubtitle');
+    if (!overlay || !title || !subtitle) {
+        return;
+    }
+
+    configureLessonOverlayForWelcome();
+    hideLessonCompleteOverlay();
+    setLiveTutorLockedSize(LIVE_TUTOR_OVERLAY_SIZE_INDEX);
+    isLiveTutorHidden = false;
+    applyLiveTutorDisplayState();
+    overlay.hidden = false;
+    document.body.classList.add('lesson-welcome-active');
+    dockLiveTutorInWelcomeSlot();
+    selectLearningMode(currentLearningMode || 'auto');
+    window.setTimeout(() => {
+        if (!isLessonWelcomePending) {
+            return;
+        }
+        speakSteqyySystemMessage(buildLessonWelcomeMessage());
+    }, 180);
+}
+
+function hideLessonWelcomeOverlay() {
+    const overlay = document.getElementById('lessonWelcomeOverlay');
+    if (overlay) {
+        overlay.hidden = true;
+    }
+    setLiveTutorLockedSize(null);
+    restoreLiveTutorHome();
+    document.body.classList.remove('lesson-welcome-active');
+    window.setTimeout(fitLiveTutorModel, 80);
+}
+
+function hideLessonCompleteOverlay() {
+    const overlay = document.getElementById('lessonCompleteOverlay');
+    if (overlay) {
+        overlay.hidden = true;
+    }
+    setLiveTutorLockedSize(null);
+    restoreLiveTutorHome();
+    document.body.classList.remove('lesson-welcome-active');
+    window.setTimeout(fitLiveTutorModel, 80);
+}
+
+function dockLiveTutorInWelcomeSlot() {
+    dockLiveTutorInSlot('lessonWelcomeTutorSlot');
+}
+
+function dockLiveTutorInSlot(slotId) {
+    const tutor = document.getElementById('liveTutor');
+    const slot = document.getElementById(slotId);
+    if (!tutor || !slot || tutor.parentElement === slot) {
+        window.setTimeout(fitLiveTutorModel, 80);
+        return;
+    }
+
+    liveTutorHomeParent = tutor.parentElement;
+    liveTutorHomeNextSibling = tutor.nextSibling;
+    slot.appendChild(tutor);
+    window.setTimeout(fitLiveTutorModel, 80);
+}
+
+function restoreLiveTutorHome() {
+    const tutor = document.getElementById('liveTutor');
+    if (!tutor || !liveTutorHomeParent) {
+        return;
+    }
+
+    liveTutorHomeParent.insertBefore(tutor, liveTutorHomeNextSibling);
+    liveTutorHomeParent = null;
+    liveTutorHomeNextSibling = null;
+}
+
+function selectLearningMode(mode) {
+    currentLearningMode = normalizeLearningMode(mode);
+    document.querySelectorAll('[data-mode-option]').forEach((button) => {
+        button.classList.toggle('active', button.dataset.modeOption === currentLearningMode);
+    });
+}
+
+function configureLessonOverlayForWelcome() {
+    const title = document.getElementById('lessonWelcomeTitle');
+    const subtitle = document.getElementById('lessonWelcomeSubtitle');
+    const modes = document.querySelector('.lesson-welcome-modes');
+    const welcomeActions = document.querySelector('.lesson-welcome-actions');
+    if (!title || !subtitle) {
+        return;
+    }
+
+    title.textContent = `Welcome ${getLessonLearnerName()}`;
+    subtitle.textContent = '';
+    subtitle.hidden = true;
+    modes?.removeAttribute('hidden');
+    if (welcomeActions) {
+        welcomeActions.hidden = false;
+    }
+}
+
+function buildLessonWelcomeMessage() {
+    const learnerName = getLessonLearnerName();
+    const lessonTitle = currentLessonPayload?.lessonTitle || 'this lesson';
+    const lessonSubtitle = currentLessonPayload?.lessonSubtitle ? ` | ${currentLessonPayload.lessonSubtitle}` : '';
+    return `Welcome ${learnerName}. We will now start studying about ${lessonTitle}${lessonSubtitle}. Choose how you want this lesson to run.`;
+}
+
+function buildLessonCompletionMessage() {
+    const lessonTitle = currentLessonPayload?.lessonTitle || 'this lesson';
+    return `Well done. You have completed ${lessonTitle}. What would you like to do next? You can read more, go to the next lesson, or leave.`;
+}
+
+function showLessonCompletionOverlay() {
+    if (!currentLessonPayload || lessonCompletionShown) {
+        return;
+    }
+
+    const overlay = document.getElementById('lessonCompleteOverlay');
+    const title = document.getElementById('lessonCompleteTitle');
+    const subtitle = document.getElementById('lessonCompleteSubtitle');
+    const nextLessonButton = document.getElementById('lessonNextLessonBtn');
+    if (!overlay || !title || !subtitle) {
+        return;
+    }
+
+    lessonCompletionShown = true;
+    isLessonPaused = true;
+    autoPlayEnabled = false;
+    persistCurrentLessonSession({ paused: true });
+    hideLessonWelcomeOverlay();
+    title.textContent = '';
+    title.hidden = true;
+    subtitle.textContent = '';
+    subtitle.hidden = true;
+    const nextLesson = getNextLessonContext();
+    if (nextLessonButton) {
+        nextLessonButton.disabled = !nextLesson;
+        nextLessonButton.textContent = nextLesson ? 'Next Lesson' : 'No Next Lesson';
+    }
+    overlay.hidden = false;
+    document.body.classList.add('lesson-welcome-active');
+    setLiveTutorLockedSize(LIVE_TUTOR_OVERLAY_SIZE_INDEX);
+    dockLiveTutorInSlot('lessonCompleteTutorSlot');
+    window.setTimeout(() => {
+        if (lessonCompletionShown && !isLessonWelcomePending) {
+            speakSteqyySystemMessage(buildLessonCompletionMessage());
+        }
+    }, 120);
+}
+
+function handleLessonReadMoreRequest() {
+    lessonCompletionShown = false;
+    isLessonPaused = false;
+    autoPlayEnabled = currentLearningMode !== 'manual';
+    persistCurrentLessonSession({ paused: false });
+    hideLessonCompleteOverlay();
+}
+
+function handleLessonNextLessonRequest() {
+    const nextLesson = getNextLessonContext();
+    if (!nextLesson) {
+        return;
+    }
+
+    lessonCompletionShown = false;
+    isLessonPaused = false;
+    isLessonWelcomePending = true;
+    autoPlayEnabled = false;
+    previewSlideIndex = 0;
+    currentLessonPayload = nextLesson;
+    currentProgressEntry = null;
+    lessonSessionStartedAt = Date.now();
+    currentSlideVisualStateKey = '';
+    currentSlideReviewedVisualIds = new Set();
+    currentSlideManualVisualIndex = 0;
+    currentSlideVisualItems = [];
+    currentSlideVisualReviewed = true;
+    refreshLessonLanguageOptions(getCurrentLessonLanguageName());
+    renderLessonSlide();
+    renderLearningModeUI();
+    persistCurrentLessonSession({
+        currentSlideIndex: 0,
+        welcomePending: true,
+        paused: false,
+        learningMode: currentLearningMode
+    });
+    showLessonWelcomeOverlay();
+}
+
+function applyLearningMode(mode) {
+    currentLearningMode = normalizeLearningMode(mode);
+    autoPlayEnabled = !isLessonPaused && !isLessonWelcomePending && currentLearningMode !== 'manual';
+    renderLearningModeUI();
+    persistCurrentLessonSession({ learningMode: currentLearningMode, paused: isLessonPaused });
+
+    const slide = currentLessonPayload?.slides?.[previewSlideIndex];
+    if (!slide || isLessonWelcomePending || isLessonPaused) {
+        return;
+    }
+
+    renderVisual(slide);
+
+    if (currentLearningMode === 'manual') {
+        cancelSteqyySlideScript();
+        clearSteqyySubtitle();
+        return;
+    }
+
+    startSteqyySlideScript(slide);
+}
+
+function startLessonExperience() {
+    isLessonWelcomePending = false;
+    hideLessonWelcomeOverlay();
+    applyLearningMode(currentLearningMode);
+    persistCurrentLessonSession({ welcomePending: false, learningMode: currentLearningMode });
+    const slide = currentLessonPayload?.slides?.[previewSlideIndex];
+    if (slide && currentLearningMode !== 'manual' && !isLessonPaused) {
+        startSteqyySlideScript(slide);
+    }
+}
+
+function renderLearningModeUI() {
+    const controlsLabel = document.getElementById('lessonControlsLabel');
+    const steqyyControlsSection = document.getElementById('lessonSteqyyControlsSection');
+    const slideControlsSection = document.getElementById('lessonSlideControlsSection');
+    const prevButton = document.getElementById('previewPrevBtn');
+    const nextButton = document.getElementById('previewNextBtn');
+    const toolbarMeta = document.getElementById('previewToolbarMeta');
+    const showSteqyyControls = currentLearningMode !== 'manual';
+    const showSlideControls = currentLearningMode === 'manual' || currentLearningMode === 'mixed';
+    document.body.classList.toggle('lesson-mode-auto', currentLearningMode === 'auto');
+    document.body.classList.toggle('lesson-mode-mixed', currentLearningMode === 'mixed');
+    document.body.classList.toggle('lesson-mode-manual', currentLearningMode === 'manual');
+
+    if (controlsLabel) {
+        controlsLabel.textContent = LEARNING_MODE_LABELS[currentLearningMode] || 'Auto';
+    }
+
+    steqyyControlsSection?.classList.toggle('mode-hidden', !showSteqyyControls);
+    slideControlsSection?.classList.toggle('mode-hidden', !showSlideControls);
+
+    document.querySelectorAll('[data-mode-switch]').forEach((button) => {
+        button.classList.toggle('active', button.dataset.modeSwitch === currentLearningMode);
+    });
+
+    if (prevButton) {
+        prevButton.hidden = !showSlideControls;
+    }
+    if (nextButton) {
+        nextButton.hidden = !showSlideControls;
+    }
+    if (toolbarMeta) {
+        toolbarMeta.hidden = !showSlideControls;
+    }
+
+    applyLiveTutorDisplayState();
+}
+
+function normalizeLearningMode(mode) {
+    return ['auto', 'mixed', 'manual'].includes(mode) ? mode : 'auto';
+}
+
+async function initializeLiveTutor() {
+    const stage = document.getElementById('liveTutorStage');
+    const canvas = document.getElementById('liveTutorCanvas');
+    const status = document.getElementById('liveTutorStatus');
+    if (!stage || !canvas || !status) {
+        return;
+    }
+
+    bindLiveTutorActions();
+    setLiveTutorLoadingState(true);
+
+    try {
+        await ensureLiveTutorViewer();
+    } catch (error) {
+        console.error('Live2D viewer load failed:', error);
+        setLiveTutorLoadingState(false);
+        showLiveTutorStatus(error?.message || 'Live2D viewer failed to load.', true);
+        return;
+    }
+
+    if (!window.PIXI || !window.PIXI.live2d?.Live2DModel) {
+        setLiveTutorLoadingState(false);
+        showLiveTutorStatus('Live2D viewer failed to load. Pixi Live2D Display did not register.', true);
+        return;
+    }
+
+    try {
+        liveTutorApp = new PIXI.Application({
+            view: canvas,
+            autoStart: true,
+            resizeTo: stage,
+            backgroundAlpha: 0,
+            antialias: true
+        });
+
+        const modelUrl = resolveLiveTutorUrl(LIVE_TUTOR_MODEL_PATH);
+        await verifyLiveTutorAssets(modelUrl);
+
+        liveTutorModel = await PIXI.live2d.Live2DModel.from(modelUrl, {
+            autoInteract: false
+        });
+
+        liveTutorApp.stage.addChild(liveTutorModel);
+        fitLiveTutorModel();
+        window.addEventListener('resize', fitLiveTutorModel);
+        liveTutorApp.ticker.add(updateLiveTutorIdle);
+        setLiveTutorLoadingState(false);
+    } catch (error) {
+        console.error('Steqyy Live2D load failed:', error);
+        const message = window.location.protocol === 'file:'
+            ? 'Steqyy needs a local web server. Open this page with Live Server or your app server.'
+            : getLiveTutorErrorMessage(error);
+        setLiveTutorLoadingState(false);
+        showLiveTutorStatus(message, true);
+    }
+}
+
+async function ensureLiveTutorViewer() {
+    for (const script of LIVE_TUTOR_VIEWER_SCRIPTS) {
+        if (script.isReady()) {
+            continue;
+        }
+
+        await loadLiveTutorViewerScript(script);
+    }
+}
+
+async function loadLiveTutorViewerScript(script) {
+    const urls = getLiveTutorScriptUrls(script);
+    let lastError = null;
+
+    for (const url of urls) {
+        try {
+            await appendLiveTutorScript(url, script.isReady);
+            if (await waitForLiveTutorReady(script.isReady)) {
+                return;
+            }
+
+            lastError = new Error(`${script.label} loaded from ${url} but did not start.`);
+        } catch (error) {
+            lastError = error;
+        }
+    }
+
+    throw new Error(`Live2D viewer failed to load ${script.localPath}. ${lastError?.message || ''}`.trim());
+}
+
+function getLiveTutorScriptUrls(script) {
+    const urls = [
+        resolveLiveTutorUrl(`../${script.localPath}`)
+    ];
+    const projectBaseUrl = getLiveTutorProjectBaseUrl();
+
+    if (projectBaseUrl) {
+        urls.push(resolveLiveTutorUrl(script.localPath, projectBaseUrl));
+    }
+
+    urls.push(resolveLiveTutorUrl(`/${script.localPath}`, window.location.origin));
+
+    if (script.fallbackUrl) {
+        urls.push(script.fallbackUrl);
+    }
+
+    if (Array.isArray(script.fallbackUrls)) {
+        urls.push(...script.fallbackUrls);
+    }
+
+    return [...new Set(urls)];
+}
+
+function getLiveTutorProjectBaseUrl() {
+    const marker = '/enroll/';
+    const markerIndex = window.location.pathname.indexOf(marker);
+    if (markerIndex === -1) {
+        return null;
+    }
+
+    return `${window.location.origin}${window.location.pathname.slice(0, markerIndex + 1)}`;
+}
+
+function appendLiveTutorScript(url, isReady) {
+    return new Promise((resolve, reject) => {
+        if (isReady()) {
+            resolve();
+            return;
+        }
+
+        const existing = [...document.scripts].find((script) => script.src === url && script.dataset.liveTutorScript === 'true');
+        if (existing) {
+            if (existing.dataset.liveTutorLoaded === 'true' || isReady()) {
+                resolve();
+                return;
+            }
+
+            existing.addEventListener('load', () => resolve(), { once: true });
+            existing.addEventListener('error', () => reject(new Error(`Could not load ${url}`)), { once: true });
+            return;
+        }
+
+        const element = document.createElement('script');
+        element.src = url;
+        element.async = false;
+        element.dataset.liveTutorScript = 'true';
+        element.addEventListener('load', () => {
+            element.dataset.liveTutorLoaded = 'true';
+            resolve();
+        }, { once: true });
+        element.addEventListener('error', () => reject(new Error(`Could not load ${url}`)), { once: true });
+        document.head.appendChild(element);
+    });
+}
+
+function waitForLiveTutorReady(isReady, timeoutMs = 1200) {
+    return new Promise((resolve) => {
+        const startedAt = performance.now();
+        const check = () => {
+            if (isReady()) {
+                resolve(true);
+                return;
+            }
+
+            if (performance.now() - startedAt >= timeoutMs) {
+                resolve(false);
+                return;
+            }
+
+            window.setTimeout(check, 40);
+        };
+
+        check();
+    });
+}
+
+function resolveLiveTutorUrl(path, baseUrl = window.location.href) {
+    return new URL(path, baseUrl).href;
+}
+
+async function verifyLiveTutorAssets(modelUrl) {
+    const modelResponse = await fetch(modelUrl, { cache: 'no-store' });
+    if (!modelResponse.ok) {
+        throw new Error(`Missing ${LIVE_TUTOR_ASSET_NAMES.Model} (${modelResponse.status})`);
+    }
+
+    const modelSettings = await modelResponse.json();
+    const references = modelSettings?.FileReferences || {};
+    const modelBaseUrl = new URL('.', modelUrl).href;
+    const mocPath = references.Moc || LIVE_TUTOR_ASSET_NAMES.Moc;
+    const assetPaths = [
+        mocPath,
+        references.DisplayInfo || LIVE_TUTOR_ASSET_NAMES.DisplayInfo,
+        ...(Array.isArray(references.Textures) && references.Textures.length
+            ? references.Textures
+            : [LIVE_TUTOR_ASSET_NAMES.Textures])
+    ].filter(Boolean);
+
+    const failedAsset = await findMissingLiveTutorAsset(assetPaths, modelBaseUrl);
+    if (failedAsset) {
+        throw new Error(`Missing ${failedAsset.path} (${failedAsset.status})`);
+    }
+
+    await verifyLiveTutorMocVersion(resolveLiveTutorUrl(mocPath, modelBaseUrl));
+}
+
+async function findMissingLiveTutorAsset(assetPaths, modelBaseUrl) {
+    for (const assetPath of assetPaths) {
+        const assetUrl = resolveLiveTutorUrl(assetPath, modelBaseUrl);
+        let response = await fetch(assetUrl, { method: 'HEAD', cache: 'no-store' });
+        if (response.status === 405) {
+            response = await fetch(assetUrl, { cache: 'no-store' });
+        }
+        if (!response.ok) {
+            return {
+                path: assetPath,
+                status: response.status
+            };
+        }
+    }
+
+    return null;
+}
+
+function getLiveTutorErrorMessage(error) {
+    const detail = error?.message ? ` ${error.message}` : '';
+    return `Steqyy could not load.${detail}`;
+}
+
+async function verifyLiveTutorMocVersion(mocUrl) {
+    const response = await fetch(mocUrl, { cache: 'no-store' });
+    if (!response.ok) {
+        throw new Error(`Missing ${LIVE_TUTOR_ASSET_NAMES.Moc} (${response.status})`);
+    }
+
+    const mocBytes = await response.arrayBuffer();
+    const version = getLiveTutorMocVersion(mocBytes);
+
+    const supportedVersion = getLiveTutorSupportedMocVersion();
+    if (version > supportedVersion) {
+        throw new Error(
+            `${LIVE_TUTOR_ASSET_NAMES.Moc} uses Moc version ${version}, but this viewer supports up to ${supportedVersion}. ` +
+            'Re-export Steqyy from Live2D Cubism using an SDK 5.0 / compatible Moc setting.'
+        );
+    }
+}
+
+function getLiveTutorSupportedMocVersion() {
+    try {
+        const version = window.Live2DCubismCore?.Version?.csmGetLatestMocVersion?.();
+        return Number.isFinite(version) && version > 0
+            ? version
+            : LIVE_TUTOR_FALLBACK_MAX_MOC_VERSION;
+    } catch (error) {
+        return LIVE_TUTOR_FALLBACK_MAX_MOC_VERSION;
+    }
+}
+
+function getLiveTutorMocVersion(mocBytes) {
+    if (!mocBytes || mocBytes.byteLength < 8) {
+        throw new Error(`${LIVE_TUTOR_ASSET_NAMES.Moc} is too small or corrupted.`);
+    }
+
+    const header = new Uint8Array(mocBytes, 0, 4);
+    const magic = String.fromCharCode(...header);
+    if (magic !== 'MOC3') {
+        throw new Error(`${LIVE_TUTOR_ASSET_NAMES.Moc} is not a valid MOC3 file.`);
+    }
+
+    return new DataView(mocBytes).getUint32(4, true);
+}
+
+function bindLiveTutorActions() {
+    document.querySelectorAll('[data-tutor-action]').forEach((button) => {
+        button.addEventListener('click', () => {
+            triggerLiveTutorAction(button.dataset.tutorAction || 'idle');
+        });
+    });
+}
+
+function cycleLiveTutorSize() {
+    liveTutorSizeIndex = (liveTutorSizeIndex + 1) % LIVE_TUTOR_SIZES.length;
+    applyLiveTutorDisplayState();
+    window.setTimeout(fitLiveTutorModel, 80);
+}
+
+function getActiveLiveTutorSizeIndex() {
+    return Number.isInteger(liveTutorLockedSizeIndex) ? liveTutorLockedSizeIndex : liveTutorSizeIndex;
+}
+
+function getActiveLiveTutorSize() {
+    return LIVE_TUTOR_SIZES[getActiveLiveTutorSizeIndex()] || LIVE_TUTOR_SIZES[1];
+}
+
+function setLiveTutorLockedSize(sizeIndex = null) {
+    liveTutorLockedSizeIndex = Number.isInteger(sizeIndex) ? sizeIndex : null;
+    applyLiveTutorDisplayState();
+    window.setTimeout(fitLiveTutorModel, 80);
+}
+
+function toggleLiveTutorVisibility() {
+    isLiveTutorHidden = !isLiveTutorHidden;
+    applyLiveTutorDisplayState();
+}
+
+function startLiveTutorTalkTest(options = {}) {
+    const shouldShowStatus = options.showStatus !== false;
+
+    if (!liveTutorModel) {
+        setLiveTutorLoadingState(true, 'Steqyy is still loading.', 'Please wait while the tutor finishes getting ready.');
+        return;
+    }
+
+    liveTutorAction = 'talk';
+    liveTutorActionUntil = Number.POSITIVE_INFINITY;
+    liveTutorIdleWave = null;
+    liveTutorWaveExit = null;
+    if (shouldShowStatus) {
+        showLiveTutorStatus('Steqyy is talking.', false, true);
+    }
+}
+
+function stopLiveTutorTalkTest() {
+    liveTutorAction = 'settle';
+    liveTutorActionUntil = 0;
+    liveTutorMouthEnergy = 0;
+    liveTutorFallbackSpeechUntil = 0;
+}
+
+function updateLiveTutorMouseLook(event) {
+    if (liveTutorAction === 'talk') {
+        return;
+    }
+
+    const tutor = document.getElementById('liveTutor');
+    const bounds = tutor?.getBoundingClientRect();
+    const originX = bounds ? bounds.left + (bounds.width / 2) : window.innerWidth / 2;
+    const originY = bounds ? bounds.top + (bounds.height * 0.42) : window.innerHeight / 2;
+    const reachX = bounds ? Math.max(bounds.width * 0.45, 1) : Math.max(window.innerWidth / 3, 1);
+    const reachY = bounds ? Math.max(bounds.height * 0.32, 1) : Math.max(window.innerHeight / 3, 1);
+
+    liveTutorLookX = clampLiveTutorValue((event.clientX - originX) / reachX, -1, 1);
+    liveTutorLookY = clampLiveTutorValue((event.clientY - originY) / reachY, -1, 1);
+    liveTutorLastMouseMoveAt = performance.now();
+    liveTutorIdleWave = null;
+    liveTutorWaveExit = null;
+}
+
+function applyLiveTutorDisplayState() {
+    const tutor = document.getElementById('liveTutor');
+    const sizeLabel = document.getElementById('tutorSizeBtnLabel');
+    const visibilityLabel = document.getElementById('tutorVisibilityBtnLabel');
+    const visibilityButton = document.getElementById('tutorVisibilityBtn');
+    const size = getActiveLiveTutorSize();
+
+    if (tutor) {
+        LIVE_TUTOR_SIZES.forEach((option) => {
+            tutor.classList.remove(option.className);
+        });
+        tutor.classList.add(size.className);
+        tutor.classList.toggle('is-hidden', isLiveTutorHidden || currentLearningMode === 'manual');
+    }
+
+    if (sizeLabel) {
+        sizeLabel.textContent = `Size: ${size.label}`;
+    }
+
+    if (visibilityLabel) {
+        visibilityLabel.textContent = isLiveTutorHidden ? 'Show Steqyy' : 'Hide Steqyy';
+    }
+
+    visibilityButton?.classList.toggle('is-active', isLiveTutorHidden);
+}
+
+function showLiveTutorStatus(message, isError = false, autoHide = false) {
+    const status = document.getElementById('liveTutorStatus');
+    if (!status) {
+        return;
+    }
+
+    const normalizedMessage = String(message || '').trim().toLowerCase();
+    if (!isError && normalizedMessage.includes('still loading')) {
+        status.classList.add('is-hidden');
+        return;
+    }
+
+    status.textContent = message;
+    status.classList.toggle('is-error', isError);
+    status.classList.remove('is-hidden');
+
+    if (autoHide) {
+        window.setTimeout(() => {
+            status.classList.add('is-hidden');
+        }, 1400);
+    }
+}
+
+function setLiveTutorLoadingState(isLoading, title = 'Steqyy is loading', description = '') {
+    const loadingNotice = document.getElementById('liveTutorLoadingNotice');
+    const status = document.getElementById('liveTutorStatus');
+    if (!loadingNotice) {
+        isLiveTutorLoading = isLoading;
+        return;
+    }
+
+    isLiveTutorLoading = isLoading;
+    const titleNode = loadingNotice.querySelector('.live-tutor-loading-title');
+
+    if (titleNode) {
+        titleNode.textContent = title;
+    }
+
+    loadingNotice.classList.toggle('is-hidden', !isLoading);
+    if (status && isLoading) {
+        status.classList.add('is-hidden');
+    }
+}
+
+function fitLiveTutorModel() {
+    if (!liveTutorApp || !liveTutorModel) {
+        return;
+    }
+
+    const stage = document.getElementById('liveTutorStage');
+    if (stage) {
+        liveTutorApp.renderer.resize(stage.clientWidth, stage.clientHeight);
+    }
+
+    const rendererWidth = liveTutorApp.renderer.width;
+    const rendererHeight = liveTutorApp.renderer.height;
+    const localBounds = liveTutorModel.getLocalBounds();
+    const size = getActiveLiveTutorSize();
+    const scale = (rendererWidth / Math.max(localBounds.width, 1)) * size.scale;
+
+    liveTutorModel.scale.set(scale);
+    liveTutorModel.x = (rendererWidth / 2) - ((localBounds.x + (localBounds.width / 2)) * scale);
+    liveTutorModel.y = rendererHeight - size.bottomPadding - ((localBounds.y + localBounds.height) * scale);
+}
+
+function updateLiveTutorIdle(delta) {
+    if (!liveTutorModel) {
+        return;
+    }
+
+    liveTutorIdleFrame += delta;
+    const now = performance.now();
+    const isActing = liveTutorActionUntil > now;
+    const isTalking = liveTutorAction === 'talk' && isActing;
+    const blendStep = Math.min(Math.max(delta, 0.5), 2) * 0.035;
+    const isLooking = !isTalking && now - liveTutorLastMouseMoveAt < LIVE_TUTOR_LOOK_TIMEOUT_MS;
+    const lookTargetX = isLooking ? liveTutorLookX : Math.sin(liveTutorIdleFrame / 52) * 0.28;
+    const lookTargetY = isLooking ? liveTutorLookY : Math.sin(liveTutorIdleFrame / 68) * 0.28;
+    const blink = getLiveTutorSoftBlink(liveTutorIdleFrame);
+
+    liveTutorTalkBlend += (isTalking ? 1 : 0) > liveTutorTalkBlend
+        ? blendStep
+        : -blendStep;
+    liveTutorTalkBlend = clampLiveTutorValue(liveTutorTalkBlend, 0, 1);
+    liveTutorCurrentLookX = easeLiveTutorValue(liveTutorCurrentLookX, lookTargetX, isLooking ? 0.26 : 0.08);
+    liveTutorCurrentLookY = easeLiveTutorValue(liveTutorCurrentLookY, lookTargetY, isLooking ? 0.26 : 0.08);
+
+    setLiveTutorParam('ParamEyeLOpen', blink);
+    setLiveTutorParam('ParamEyeROpen', blink);
+    setLiveTutorParam('Param3', liveTutorCurrentLookX * -30);
+    setLiveTutorParam('Param5', liveTutorCurrentLookY * 30);
+
+    if (liveTutorTalkBlend <= 0.001) {
+        liveTutorAction = 'idle';
+        if (isLooking) {
+            liveTutorNextWaveAt = now + 1800;
+            liveTutorWaveExit = null;
+            applyLiveTutorDefaultPose();
+            return;
+        }
+
+        if (updateLiveTutorIdleWave(now)) {
+            return;
+        }
+        applyLiveTutorDefaultPose();
+        return;
+    }
+
+    updateLiveTutorTalkMotion(liveTutorTalkBlend);
+}
+
+function applyLiveTutorDefaultPose() {
+    applyLiveTutorHandPose(LIVE_TUTOR_HAND_POSES.neutral);
+    setLiveTutorParam('ParamMouthOpenY', 0);
+    setLiveTutorParam('Param4', 0);
+}
+
+function updateLiveTutorTalkMotion(blend) {
+    const ease = easeLiveTutorBlend(blend);
+    const mouthOpen = getLiveTutorSpeechMouthOpen(ease);
+    const leftRotation = clampLiveTutorValue(
+        -6 + (Math.sin(liveTutorIdleFrame / 24) * 17) + (Math.sin(liveTutorIdleFrame / 53) * 7),
+        -30,
+        30
+    );
+    const rightRotation = clampLiveTutorValue(
+        -12 + (Math.sin((liveTutorIdleFrame + 30) / 34) * 9) + (Math.sin(liveTutorIdleFrame / 61) * 4),
+        -30,
+        24
+    );
+    const handChange = leftRotation > 15 || rightRotation > 15 ? -30 : 0;
+
+    setLiveTutorParam('Param8', ease < 0.55 ? 30 : 0);
+    setLiveTutorParam('Param9', ease < 0.55 ? 30 : 0);
+    setLiveTutorParam('Param7', ease < 0.55 ? 30 : handChange);
+    setLiveTutorParam('Param10', easeLiveTutorValue(-30, leftRotation, ease));
+    setLiveTutorParam('Param6', easeLiveTutorValue(-30, rightRotation, ease));
+    setLiveTutorParam('ParamMouthOpenY', mouthOpen);
+    setLiveTutorParam('Param4', Math.sin(liveTutorIdleFrame / 42) * 11 * ease);
+}
+
+function getLiveTutorSpeechMouthOpen(ease) {
+    const now = performance.now();
+    const sincePulse = now - liveTutorLastMouthPulseAt;
+    const fallbackActive = now < liveTutorFallbackSpeechUntil;
+    const decay = fallbackActive
+        ? 0.975
+        : Math.max(0.62, 1 - (Math.max(sincePulse, 0) / 280));
+    const fallbackRhythm = fallbackActive
+        ? Math.max(0.18, Math.sin(liveTutorIdleFrame / 5.5) * 0.32 + 0.34)
+        : 0;
+
+    liveTutorMouthEnergy = clampLiveTutorValue(
+        Math.max(liveTutorMouthEnergy * decay, fallbackRhythm),
+        0,
+        1
+    );
+
+    if (!fallbackActive && sincePulse > 360) {
+        liveTutorMouthEnergy *= 0.74;
+    }
+
+    return clampLiveTutorValue(liveTutorMouthEnergy * ease, 0, 0.95);
+}
+
+function updateLiveTutorIdleWave(now) {
+    if (liveTutorAction !== 'idle') {
+        return false;
+    }
+
+    if (liveTutorWaveExit) {
+        const exitElapsed = now - liveTutorWaveExit.startedAt;
+        if (exitElapsed < LIVE_TUTOR_WAVE_EXIT_MS) {
+            updateLiveTutorWaveExitMotion(liveTutorWaveExit.hand, exitElapsed / LIVE_TUTOR_WAVE_EXIT_MS);
+            return true;
+        }
+
+        liveTutorWaveExit = null;
+    }
+
+    if (!liveTutorIdleWave) {
+        if (!liveTutorNextWaveAt) {
+            scheduleNextLiveTutorIdleWave(now);
+        }
+
+        if (now < liveTutorNextWaveAt) {
+            return false;
+        }
+
+        liveTutorIdleWave = createLiveTutorIdleWave(now);
+    }
+
+    const elapsed = now - liveTutorIdleWave.startedAt;
+    const segmentIndex = Math.floor(elapsed / LIVE_TUTOR_WAVE_SEGMENT_MS);
+    const hand = liveTutorIdleWave.sequence[segmentIndex];
+
+    if (!hand) {
+        const lastHand = liveTutorIdleWave.sequence[liveTutorIdleWave.sequence.length - 1];
+        liveTutorWaveExit = {
+            hand: lastHand,
+            startedAt: now
+        };
+        liveTutorIdleWave = null;
+        scheduleNextLiveTutorIdleWave(now);
+        return true;
+    }
+
+    updateLiveTutorWaveMotion(hand, elapsed % LIVE_TUTOR_WAVE_SEGMENT_MS);
+    return true;
+}
+
+function createLiveTutorIdleWave(now) {
+    const startsLeft = Math.random() > 0.5;
+    const isDualWave = Math.random() > 0.52;
+    const first = startsLeft ? 'left' : 'right';
+    const second = startsLeft ? 'right' : 'left';
+
+    return {
+        startedAt: now,
+        sequence: isDualWave ? [first, second] : [first]
+    };
+}
+
+function scheduleNextLiveTutorIdleWave(now) {
+    liveTutorNextWaveAt = now + 4500 + (Math.random() * 6500);
+}
+
+function updateLiveTutorWaveMotion(hand, segmentElapsed) {
+    const progress = segmentElapsed / LIVE_TUTOR_WAVE_SEGMENT_MS;
+    const waveBlend = getLiveTutorWaveBlend(progress);
+    const waveCycle = getLiveTutorWaveCycle(progress);
+    const activeRotation = easeLiveTutorValue(-30, waveCycle, waveBlend);
+    const enlargedEyes = easeLiveTutorValue(1, 2, waveBlend);
+    const headTilt = (hand === 'left' ? -30 : 30) * waveBlend;
+
+    setLiveTutorParam('ParamEyeLOpen', enlargedEyes);
+    setLiveTutorParam('ParamEyeROpen', enlargedEyes);
+    setLiveTutorParam('ParamMouthOpenY', 0);
+    setLiveTutorParam('Param8', 0);
+    setLiveTutorParam('Param9', 0);
+    setLiveTutorParam('Param7', 0);
+    setLiveTutorParam('Param4', headTilt);
+
+    if (hand === 'left') {
+        setLiveTutorParam('Param10', activeRotation);
+        setLiveTutorParam('Param6', -30);
+        return;
+    }
+
+    setLiveTutorParam('Param10', -30);
+    setLiveTutorParam('Param6', activeRotation);
+}
+
+function updateLiveTutorWaveExitMotion(hand, progress) {
+    const eased = easeLiveTutorBlend(clampLiveTutorValue(progress, 0, 1));
+    const activeRotation = easeLiveTutorValue(25, -30, eased);
+    const enlargedEyes = easeLiveTutorValue(2, 1, eased);
+    const headTilt = (hand === 'left' ? -30 : 30) * (1 - eased);
+
+    setLiveTutorParam('ParamEyeLOpen', enlargedEyes);
+    setLiveTutorParam('ParamEyeROpen', enlargedEyes);
+    setLiveTutorParam('ParamMouthOpenY', 0);
+    setLiveTutorParam('Param8', progress < 0.92 ? 0 : 30);
+    setLiveTutorParam('Param9', progress < 0.92 ? 0 : 30);
+    setLiveTutorParam('Param7', progress < 0.92 ? 0 : 30);
+    setLiveTutorParam('Param4', headTilt);
+
+    if (hand === 'left') {
+        setLiveTutorParam('Param10', activeRotation);
+        setLiveTutorParam('Param6', -30);
+        return;
+    }
+
+    setLiveTutorParam('Param10', -30);
+    setLiveTutorParam('Param6', activeRotation);
+}
+
+function getLiveTutorWaveBlend(progress) {
+    if (progress < 0.24) {
+        return easeLiveTutorBlend(progress / 0.24);
+    }
+
+    return 1;
+}
+
+function getLiveTutorWaveCycle(progress) {
+    const waveStart = 0.24;
+    const waveEnd = 1;
+    const waveProgress = clampLiveTutorValue((progress - waveStart) / (waveEnd - waveStart), 0, 1);
+    return 25 - (Math.cos(waveProgress * Math.PI * 6) * 5);
+}
+
+function applyLiveTutorHandPose(pose) {
+    Object.entries(pose).forEach(([parameterId, value]) => {
+        setLiveTutorParam(parameterId, value);
+    });
+}
+
+function clampLiveTutorValue(value, min, max) {
+    return Math.max(min, Math.min(max, value));
+}
+
+function getLiveTutorSoftBlink(frame) {
+    const cycle = frame % 230;
+    if (cycle > 22) {
+        return 1;
+    }
+
+    const progress = cycle / 22;
+    const closeAmount = Math.sin(progress * Math.PI);
+    const blinkIndex = Math.floor(frame / 230);
+    const isFullBlink = blinkIndex % 4 === 3;
+    return 1 - (closeAmount * (isFullBlink ? 0.94 : 0.22));
+}
+
+function easeLiveTutorBlend(value) {
+    return value * value * (3 - (2 * value));
+}
+
+function easeLiveTutorValue(from, to, blend) {
+    return from + ((to - from) * blend);
+}
+
+function triggerLiveTutorAction(action) {
+    if (!liveTutorModel) {
+        setLiveTutorLoadingState(true, 'Steqyy is still loading', 'Please wait a moment before asking Steqyy to speak.');
+        return;
+    }
+
+    liveTutorAction = action;
+    liveTutorActionUntil = action === 'idle' ? 0 : performance.now() + 2400;
+    if (action === 'idle') {
+        showLiveTutorStatus('Steqyy is listening.', false, true);
+    } else if (action === 'talk') {
+        showLiveTutorStatus('Steqyy explains the slide.', false, true);
+    } else {
+        showLiveTutorStatus('Steqyy says hello.', false, true);
+    }
+}
+
+function setLiveTutorParam(parameterId, value) {
+    const coreModel = liveTutorModel?.internalModel?.coreModel;
+    if (!coreModel) {
+        return;
+    }
+
+    try {
+        if (typeof coreModel.setParameterValueById === 'function') {
+            coreModel.setParameterValueById(parameterId, value);
+        } else if (typeof coreModel.setParameterValueByIndex === 'function' && typeof coreModel.getParameterIndex === 'function') {
+            coreModel.setParameterValueByIndex(coreModel.getParameterIndex(parameterId), value);
+        }
+    } catch (error) {
+        // Some exported models omit optional parameters; ignore missing IDs.
+    }
+}
+
+function toggleRaiseHand() {
+    openRaiseHandPanel();
+}
+
+function openRaiseHandPanel() {
+    const button = document.getElementById('raiseHandBtn');
+    const panel = document.getElementById('raiseHandPanel');
+    if (!button || !panel) {
+        return;
+    }
+
+    isLessonPaused = true;
+    autoPlayEnabled = false;
+    cancelSteqyySlideScript();
+    if (activeMediaElement && typeof activeMediaElement.pause === 'function') {
+        activeMediaElement.pause();
+    }
+    syncLessonProgress();
+    panel.hidden = false;
+    button.classList.add('is-active');
+    updateRaiseHandPanelStatus('Write your question or concern for the admin team.');
+    openRaiseHandQuestionBox();
+}
+
+function closeRaiseHandPanel() {
+    const button = document.getElementById('raiseHandBtn');
+    const panel = document.getElementById('raiseHandPanel');
+    if (panel) {
+        panel.hidden = true;
+    }
+    button?.classList.remove('is-active');
+    closeRaiseHandQuestionBox();
+    resumeLessonAfterQuestion();
+}
+
+function openRaiseHandQuestionBox() {
+    const form = document.getElementById('raiseHandQuestionForm');
+    const input = document.getElementById('raiseHandQuestionInput');
+    if (!form || !input) {
+        return;
+    }
+
+    form.hidden = false;
+    updateRaiseHandPanelStatus('Send your concern to the admin team.');
+    input.focus();
+}
+
+function closeRaiseHandQuestionBox() {
+    const form = document.getElementById('raiseHandQuestionForm');
+    if (form) {
+        form.hidden = true;
+    }
+}
+
+async function handleRaiseHandQuestionSubmit(event) {
+    event.preventDefault();
+    const input = document.getElementById('raiseHandQuestionInput');
+    if (!input) {
+        return;
+    }
+
+    const message = input.value.trim();
+    if (!message) {
+        input.focus();
+        return;
+    }
+
+    try {
+        await saveRaiseHandAdminMessage(message);
+    } catch (error) {
+        console.error('Unable to send private message to admin.', error);
+        const detail = error?.message ? ` (${error.message})` : '';
+        updateRaiseHandPanelStatus(`Unable to send your message right now${detail}`);
+        await speakSteqyySystemMessage('We could not send your message right now. Please try again in a moment.');
+        return;
+    }
+    input.value = '';
+    updateRaiseHandPanelStatus('Message sent to admin.');
+    await speakSteqyySystemMessage('Your message has been sent to our admin. Please check from time to time if the admin has responded to your concern.');
+    closeRaiseHandPanel();
+}
+
+async function speakSteqyySystemMessage(text) {
+    cancelSteqyySlideScript();
+    await speakSteqyyLine(text, slideScriptRunId);
+}
+
+function updateRaiseHandPanelStatus(message) {
+    const status = document.getElementById('raiseHandPanelStatus');
+    if (status) {
+        status.textContent = message;
+    }
+}
+
+function resumeLessonAfterQuestion() {
+    if (!isLessonPaused) {
+        return;
+    }
+
+    isLessonPaused = false;
+    autoPlayEnabled = currentLearningMode !== 'manual';
+    persistCurrentLessonSession({ paused: false });
+    const slide = currentLessonPayload?.slides?.[previewSlideIndex];
+    if (slide && currentLearningMode !== 'manual') {
+        startSteqyySlideScript(slide);
+    }
+}
+
+async function saveRaiseHandAdminMessage(message) {
+    if (typeof window.SIMPCourseMessaging?.sendMessage !== 'function') {
+        throw new Error('Private messaging is not available right now.');
+    }
+
+    if (typeof window.SIMPCourseMessaging?.ready === 'function') {
+        await window.SIMPCourseMessaging.ready();
+    }
+
+    const activeSlide = currentLessonPayload?.slides?.[previewSlideIndex] || null;
+    const slideNumber = Math.max(1, previewSlideIndex + 1);
+    await window.SIMPCourseMessaging.sendMessage({
+        body: message,
+        lessonContext: {
+            courseId: currentLessonPayload?.courseId || '',
+            levelId: currentLessonPayload?.levelId || '',
+            lessonId: currentLessonPayload?.lessonId || '',
+            courseTitle: currentLessonPayload?.courseTitle || '',
+            levelTitle: currentLessonPayload?.levelTitle || '',
+            lessonTitle: currentLessonPayload?.lessonTitle || '',
+            lessonSubtitle: currentLessonPayload?.lessonSubtitle || '',
+            slideIndex: previewSlideIndex,
+            slideNumber,
+            slideTitle: activeSlide?.title || activeSlide?.heading || '',
+            linkLabel: `Open lesson on Slide ${slideNumber}`
+        }
+    });
+}
+
+function getLessonLearnerName() {
+    return localStorage.getItem('simpLearnerName')
+        || localStorage.getItem('learnerName')
+        || 'Learner';
+}
+
+function persistCurrentLessonSession(overrides = {}) {
+    if (isAdminPreviewMode || !currentLessonPayload) {
+        return;
+    }
+
+    currentLessonPayload = {
+        ...currentLessonPayload,
+        currentSlideIndex: previewSlideIndex,
+        learningMode: currentLearningMode,
+        selectedLanguageName: getCurrentLessonLanguageName(),
+        welcomePending: isLessonWelcomePending,
+        paused: isLessonPaused,
+        updatedAt: Date.now(),
+        ...overrides
+    };
+
+    localStorage.setItem(SESSION_KEY, JSON.stringify(currentLessonPayload));
+}
+
+function seekActiveMedia(deltaSeconds) {
+    if (!activeMediaElement) {
+        changePreviewSlide(deltaSeconds > 0 ? 1 : -1);
+        return;
+    }
+
+    const duration = Number.isFinite(activeMediaElement.duration) ? activeMediaElement.duration : 0;
+    const nextTime = Math.max(0, Math.min((activeMediaElement.currentTime || 0) + deltaSeconds, duration || Number.MAX_SAFE_INTEGER));
+    activeMediaElement.currentTime = nextTime;
+}
+
+function toggleSubtitles() {
+    subtitlesEnabled = !subtitlesEnabled;
+    const label = document.getElementById('subtitleBtnLabel');
+    const button = document.getElementById('subtitleBtn');
+    if (label) {
+        label.textContent = subtitlesEnabled ? 'Subtitles On' : 'Subtitles Off';
+    }
+    button?.classList.toggle('is-active', subtitlesEnabled);
+    renderSteqyySubtitle();
+}
+
+function setSteqyySubtitle(text) {
+    const line = String(text || '').replace(/\s+/g, ' ').trim();
+    activeSubtitleState = line
+        ? {
+            line,
+            batches: createSteqyySubtitleBatches(line),
+            batchIndex: 0,
+            fallbackTimers: []
+        }
+        : null;
+    renderSteqyySubtitle();
+    return activeSubtitleState;
+}
+
+function clearSteqyySubtitle() {
+    clearSteqyySubtitleFallbackTimers(activeSubtitleState);
+    activeSubtitleState = null;
+    renderSteqyySubtitle();
+}
+
+function renderSteqyySubtitle() {
+    const banner = document.getElementById('steqyySubtitleBanner');
+    const text = document.getElementById('steqyySubtitleText');
+    if (!banner || !text) {
+        return;
+    }
+
+    const currentBatch = activeSubtitleState?.batches?.[activeSubtitleState.batchIndex]?.text || '';
+    const shouldShow = subtitlesEnabled && Boolean(currentBatch);
+    banner.hidden = !shouldShow;
+    text.textContent = shouldShow ? currentBatch : '';
+
+    if (shouldShow && text.scrollWidth > text.clientWidth && activeSubtitleState?.line) {
+        activeSubtitleState.batches = createSteqyySubtitleBatches(activeSubtitleState.line, true);
+        const safeIndex = Math.min(activeSubtitleState.batchIndex, Math.max(activeSubtitleState.batches.length - 1, 0));
+        activeSubtitleState.batchIndex = Math.max(safeIndex, 0);
+        text.textContent = activeSubtitleState.batches[activeSubtitleState.batchIndex]?.text || '';
+    }
+}
+
+function createSteqyySubtitleBatches(line, forceLiveMeasure = false) {
+    const text = document.getElementById('steqyySubtitleText');
+    const normalizedLine = String(line || '').replace(/\s+/g, ' ').trim();
+    if (!normalizedLine) {
+        return [];
+    }
+
+    const measureElement = document.createElement('p');
+    const words = normalizedLine.split(' ').filter(Boolean);
+    const batches = [];
+    let batchStart = 0;
+    let currentWords = [];
+    let currentStart = 0;
+    const computedStyles = text ? window.getComputedStyle(text) : null;
+    const maxWidth = getSteqyySubtitleMaxWidth(forceLiveMeasure);
+
+    measureElement.className = 'steqyy-subtitle-text';
+    measureElement.style.position = 'fixed';
+    measureElement.style.visibility = 'hidden';
+    measureElement.style.left = '-99999px';
+    measureElement.style.top = '0';
+    measureElement.style.width = `${maxWidth}px`;
+    measureElement.style.maxWidth = `${maxWidth}px`;
+    measureElement.style.minWidth = '0';
+    measureElement.style.whiteSpace = 'nowrap';
+    measureElement.style.padding = computedStyles?.padding || '14px 18px';
+    measureElement.style.fontSize = computedStyles?.fontSize || (window.innerWidth <= 760 ? '18px' : '22px');
+    measureElement.style.fontWeight = computedStyles?.fontWeight || '600';
+    measureElement.style.fontFamily = computedStyles?.fontFamily || 'inherit';
+    measureElement.style.letterSpacing = computedStyles?.letterSpacing || '0px';
+    measureElement.style.lineHeight = computedStyles?.lineHeight || '1.2';
+    measureElement.style.boxSizing = 'border-box';
+    document.body.appendChild(measureElement);
+
+    for (const word of words) {
+        const candidateWords = [...currentWords, word];
+        const candidateText = candidateWords.join(' ');
+        measureElement.textContent = candidateText;
+
+        if (!currentWords.length || measureElement.scrollWidth <= measureElement.clientWidth) {
+            currentWords = candidateWords;
+            continue;
+        }
+
+        const previousText = currentWords.join(' ');
+        batches.push({
+            text: previousText,
+            start: currentStart,
+            end: currentStart + previousText.length
+        });
+        batchStart += previousText.length + 1;
+        currentStart = batchStart;
+        currentWords = [word];
+    }
+
+    if (currentWords.length) {
+        const finalText = currentWords.join(' ');
+        batches.push({
+            text: finalText,
+            start: currentStart,
+            end: currentStart + finalText.length
+        });
+    }
+
+    measureElement.remove();
+
+    return batches.length ? batches : [{
+        text: normalizedLine,
+        start: 0,
+        end: normalizedLine.length
+    }];
+}
+
+function getSteqyySubtitleMaxWidth(forceLiveMeasure = false) {
+    const banner = document.getElementById('steqyySubtitleBanner');
+    const text = document.getElementById('steqyySubtitleText');
+
+    if ((forceLiveMeasure || !banner?.hidden) && text?.clientWidth) {
+        return Math.max(120, Math.floor(text.clientWidth - 6));
+    }
+
+    if (banner?.clientWidth) {
+        return Math.max(120, Math.floor(banner.clientWidth - 24));
+    }
+
+    return Math.max(120, Math.floor(Math.max(320, Math.min(720, window.innerWidth - 160) - 24)));
+}
+
+function updateSteqyySubtitleProgress(subtitleState, charIndex) {
+    if (!subtitleState || activeSubtitleState !== subtitleState) {
+        return;
+    }
+
+    const index = Math.max(0, Number(charIndex) || 0);
+    const nextBatchIndex = subtitleState.batches.findIndex((batch, batchIndex) => {
+        const isLastBatch = batchIndex === subtitleState.batches.length - 1;
+        return index < batch.end || isLastBatch;
+    });
+
+    subtitleState.batchIndex = nextBatchIndex === -1 ? subtitleState.batches.length - 1 : nextBatchIndex;
+    renderSteqyySubtitle();
+}
+
+async function playEstimatedSubtitleBatches(subtitleState, text, runId) {
+    const cleanText = String(text || '').replace(/\s+/g, ' ').trim();
+    if (!cleanText) {
+        return;
+    }
+
+    const duration = Math.min(Math.max(cleanText.length * 76, 1500), 10000);
+    const batches = subtitleState?.batches || [];
+    const totalChars = Math.max(cleanText.length, 1);
+
+    for (let index = 0; index < batches.length; index += 1) {
+        if (runId !== slideScriptRunId || activeSubtitleState !== subtitleState) {
+            return;
+        }
+
+        subtitleState.batchIndex = index;
+        renderSteqyySubtitle();
+
+        const batch = batches[index];
+        const batchChars = Math.max((batch.end - batch.start), 1);
+        const batchDuration = index === batches.length - 1
+            ? duration - Math.round((batch.start / totalChars) * duration)
+            : Math.max(240, Math.round((batchChars / totalChars) * duration));
+
+        await waitForSteqyyPause(batchDuration, runId);
+    }
+}
+
+function cycleLanguage() {
+    if (!lessonLanguageOptions.length) {
+        refreshLessonLanguageOptions();
+    }
+    currentLanguageIndex = (currentLanguageIndex + 1) % lessonLanguageOptions.length;
+    preferredSteqyyVoice = null;
+    updateLanguageButtonLabel();
+    renderLessonSlide();
+}
+
+function leaveLessonSession(options = {}) {
+    syncLessonProgress();
+    if (options.keepSession) {
+        window.history.back();
+        return;
+    }
+
+    if (isAdminPreviewMode) {
+        localStorage.removeItem(PREVIEW_KEY);
+        window.close();
+        window.location.href = 'admin.html#course-management';
+        return;
+    }
+
+    localStorage.removeItem(SESSION_KEY);
+    window.location.href = 'admin.html#course-management';
+}
+
+function getNextLessonContext() {
+    if (!currentLessonPayload?.courseId || !currentLessonPayload?.levelId || !currentLessonPayload?.lessonId) {
+        return null;
+    }
+
+    let courses = [];
+    try {
+        const raw = localStorage.getItem(PUBLISHED_COURSES_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        courses = Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+        courses = [];
+    }
+
+    const course = courses.find((item) => item.id === currentLessonPayload.courseId);
+    const level = course?.levels?.find((item) => item.id === currentLessonPayload.levelId);
+    const lessons = Array.isArray(level?.lessons) ? level.lessons : [];
+    const currentLessonIndex = lessons.findIndex((item) => item.id === currentLessonPayload.lessonId);
+    const nextLesson = currentLessonIndex >= 0 ? lessons[currentLessonIndex + 1] : null;
+    if (!course || !level || !nextLesson) {
+        return null;
+    }
+
+    return {
+        courseId: course.id || '',
+        levelId: level.id || '',
+        lessonId: nextLesson.id || '',
+        courseTitle: course.title || '',
+        levelTitle: level.title || '',
+        lessonTitle: nextLesson.title || 'Lesson',
+        lessonSubtitle: nextLesson.subtitle || `${course.title} | ${level.title}`,
+        slides: Array.isArray(nextLesson.slides) ? nextLesson.slides : [],
+        learningMode: currentLearningMode,
+        welcomePending: true,
+        paused: false
+    };
+}
+
+function getLessonProgressEntries() {
+    try {
+        const raw = localStorage.getItem(LESSON_PROGRESS_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+    } catch (error) {
+        return [];
+    }
+}
+
+function saveLessonProgressEntries(entries) {
+    localStorage.setItem(LESSON_PROGRESS_KEY, JSON.stringify(entries));
+    window.dispatchEvent(new CustomEvent('simp-lesson-progress-updated'));
+    if (typeof window.SIMPCourseEngagement?.replaceLessonProgressEntries === 'function') {
+        window.SIMPCourseEngagement.replaceLessonProgressEntries(entries).catch((error) => {
+            console.warn('Unable to persist lesson progress to Supabase.', error);
+        });
+    }
+}
+
+function getOrCreateLessonProgressEntry(payload) {
+    const entries = getLessonProgressEntries();
+    const totalSlides = Array.isArray(payload?.slides) ? payload.slides.length : 0;
+    const matchedEntry = entries.find((entry) =>
+        entry.courseId === payload?.courseId
+        && entry.levelId === payload?.levelId
+        && entry.lessonId === payload?.lessonId
+    );
+
+    if (matchedEntry) {
+        matchedEntry.totalSlides = totalSlides;
+        matchedEntry.lastVisitedAt = Date.now();
+        matchedEntry.startedAt = matchedEntry.startedAt || Date.now();
+        matchedEntry.viewedSlides = Array.isArray(matchedEntry.viewedSlides) ? matchedEntry.viewedSlides : [0];
+        matchedEntry.sessionCount = (Number(matchedEntry.sessionCount) || 0) + 1;
+        saveLessonProgressEntries(entries);
+        return matchedEntry;
+    }
+
+    const newEntry = {
+        courseId: payload?.courseId || '',
+        levelId: payload?.levelId || '',
+        lessonId: payload?.lessonId || '',
+        courseTitle: payload?.courseTitle || '',
+        levelTitle: payload?.levelTitle || '',
+        lessonTitle: payload?.lessonTitle || '',
+        totalSlides,
+        currentSlideIndex: 0,
+        maxSlideReached: 0,
+        viewedSlides: [0],
+        progressPercent: totalSlides ? Math.round((1 / totalSlides) * 100) : 0,
+        startedAt: Date.now(),
+        lastVisitedAt: Date.now(),
+        completedAt: null,
+        timeSpentMs: 0,
+        sessionCount: 1
+    };
+
+    entries.push(newEntry);
+    saveLessonProgressEntries(entries);
+    return newEntry;
+}
+
+function syncLessonProgress() {
+    if (isAdminPreviewMode || !currentLessonPayload) {
+        return;
+    }
+
+    const entries = getLessonProgressEntries();
+    const matchedEntry = entries.find((entry) =>
+        entry.courseId === currentLessonPayload.courseId
+        && entry.levelId === currentLessonPayload.levelId
+        && entry.lessonId === currentLessonPayload.lessonId
+    );
+
+    if (!matchedEntry) {
+        return;
+    }
+
+    const totalSlides = Math.max(Array.isArray(currentLessonPayload.slides) ? currentLessonPayload.slides.length : 0, 1);
+    const viewedSlides = new Set(Array.isArray(matchedEntry.viewedSlides) ? matchedEntry.viewedSlides : []);
+    viewedSlides.add(previewSlideIndex);
+    const now = Date.now();
+    const elapsed = Math.max(0, now - lessonSessionStartedAt);
+    lessonSessionStartedAt = now;
+
+    matchedEntry.courseTitle = currentLessonPayload.courseTitle || matchedEntry.courseTitle || '';
+    matchedEntry.levelTitle = currentLessonPayload.levelTitle || matchedEntry.levelTitle || '';
+    matchedEntry.lessonTitle = currentLessonPayload.lessonTitle || matchedEntry.lessonTitle || '';
+    matchedEntry.totalSlides = totalSlides;
+    matchedEntry.currentSlideIndex = previewSlideIndex;
+    matchedEntry.maxSlideReached = Math.max(Number(matchedEntry.maxSlideReached) || 0, previewSlideIndex);
+    matchedEntry.viewedSlides = [...viewedSlides].sort((left, right) => left - right);
+    matchedEntry.progressPercent = Math.min(100, Math.round((matchedEntry.viewedSlides.length / totalSlides) * 100));
+    matchedEntry.lastVisitedAt = now;
+    matchedEntry.timeSpentMs = (Number(matchedEntry.timeSpentMs) || 0) + elapsed;
+    matchedEntry.sessionCount = Math.max(1, Number(matchedEntry.sessionCount) || 1);
+
+    if (matchedEntry.progressPercent >= 100 && !matchedEntry.completedAt) {
+        matchedEntry.completedAt = now;
+    }
+
+    currentProgressEntry = matchedEntry;
+    saveLessonProgressEntries(entries);
+    persistCurrentLessonSession();
+}
+
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const lessonContent = document.getElementById('lessonContent');
+
+    isSidebarOpen = !isSidebarOpen;
+
+    if (isSidebarOpen) {
+        sidebar.classList.add('open');
+        lessonContent.classList.add('sidebar-open');
+        document.body.classList.add('lesson-sidebar-open');
+    } else {
+        sidebar.classList.remove('open');
+        lessonContent.classList.remove('sidebar-open');
+        document.body.classList.remove('lesson-sidebar-open');
+    }
+
+    window.setTimeout(fitLiveTutorModel, 320);
+}
+
+function toggleFullscreen() {
+    const container = document.querySelector('.container');
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const btnLabel = fullscreenBtn.querySelector('.btn-label');
+    const btnIcon = fullscreenBtn.querySelector('.btn-icon');
+
+    if (!isFullscreen) {
+        if (container.requestFullscreen) {
+            container.requestFullscreen();
+        } else if (container.webkitRequestFullscreen) {
+            container.webkitRequestFullscreen();
+        } else if (container.msRequestFullscreen) {
+            container.msRequestFullscreen();
+        }
+        isFullscreen = true;
+        btnLabel.textContent = 'Exit Fullscreen';
+        btnIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75m11.25 11.25V20.5m0-5.25h4.5m-4.5 0l5.25 5.25M20.25 9h-5.25m5.25 0V4.5m0 4.5l-5.25-5.25M3.75 14.25h5.25m-5.25 0V20.5m0-6.25l5.25 6.25"/>';
+    } else {
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+        isFullscreen = false;
+        btnLabel.textContent = 'Fullscreen';
+        btnIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>';
+    }
+}
+
+document.addEventListener('fullscreenchange', handleFullscreenChange);
+document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+document.addEventListener('msfullscreenchange', handleFullscreenChange);
+
+function handleFullscreenChange() {
+    const fullscreenBtn = document.getElementById('fullscreenBtn');
+    const btnLabel = fullscreenBtn.querySelector('.btn-label');
+    const btnIcon = fullscreenBtn.querySelector('.btn-icon');
+
+    mountLiveTutorInContainer();
+    applyLiveTutorDisplayState();
+    window.setTimeout(fitLiveTutorModel, 80);
+
+    if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+        isFullscreen = false;
+        btnLabel.textContent = 'Fullscreen';
+        btnIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/>';
+    }
+}
+
+window.addEventListener('beforeunload', () => {
+    syncLessonProgress();
+});
+
+</script>
+</body>
+</html>
+

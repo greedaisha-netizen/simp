@@ -1,0 +1,128 @@
+{
+	"Version": 3,
+	"Parameters": [
+		{
+			"Id": "Param23",
+			"GroupId": "ParamGroup10",
+			"Name": "___[HAND]___"
+		},
+		{
+			"Id": "Param10",
+			"GroupId": "ParamGroup10",
+			"Name": "L_Hand_Rotation"
+		},
+		{
+			"Id": "Param6",
+			"GroupId": "ParamGroup10",
+			"Name": "R_Hand_Rotation"
+		},
+		{
+			"Id": "Param7",
+			"GroupId": "ParamGroup10",
+			"Name": "Hand change"
+		},
+		{
+			"Id": "Param8",
+			"GroupId": "ParamGroup10",
+			"Name": "Lower_Arm_change"
+		},
+		{
+			"Id": "Param9",
+			"GroupId": "ParamGroup10",
+			"Name": "Upper_Arm_change"
+		},
+		{
+			"Id": "Param",
+			"GroupId": "ParamGroup",
+			"Name": "___[EYES]___"
+		},
+		{
+			"Id": "ParamEyeLOpen",
+			"GroupId": "ParamGroup",
+			"Name": "EyeL Open"
+		},
+		{
+			"Id": "ParamEyeROpen",
+			"GroupId": "ParamGroup",
+			"Name": "EyeR Open"
+		},
+		{
+			"Id": "Param5",
+			"GroupId": "ParamGroup",
+			"Name": "Look Up-Down"
+		},
+		{
+			"Id": "Param3",
+			"GroupId": "ParamGroup",
+			"Name": "Look Right-Left"
+		},
+		{
+			"Id": "Param2",
+			"GroupId": "ParamGroup3",
+			"Name": "___[MOUTH]___"
+		},
+		{
+			"Id": "ParamMouthOpenY",
+			"GroupId": "ParamGroup3",
+			"Name": "Mouth Open"
+		},
+		{
+			"Id": "Param4",
+			"GroupId": "ParamGroup4",
+			"Name": "Head_tilt"
+		}
+	],
+	"ParameterGroups": [
+		{
+			"Id": "ParamGroup10",
+			"GroupId": "",
+			"Name": "[HAND]"
+		},
+		{
+			"Id": "ParamGroup",
+			"GroupId": "",
+			"Name": "[EYES]"
+		},
+		{
+			"Id": "ParamGroup2",
+			"GroupId": "",
+			"Name": "Folder 1"
+		},
+		{
+			"Id": "ParamGroup3",
+			"GroupId": "",
+			"Name": "[MOUTH]"
+		},
+		{
+			"Id": "ParamGroup4",
+			"GroupId": "",
+			"Name": "[HEAD}"
+		}
+	],
+	"Parts": [
+		{
+			"Id": "Steqy",
+			"Name": "Steqy"
+		},
+		{
+			"Id": "Mouth",
+			"Name": "Mouth"
+		},
+		{
+			"Id": "head",
+			"Name": "head"
+		},
+		{
+			"Id": "L2_hand",
+			"Name": "L_hand"
+		},
+		{
+			"Id": "L_hand",
+			"Name": "L_hand"
+		},
+		{
+			"Id": "eyes",
+			"Name": "eyes"
+		}
+	]
+}

@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../img/simpHappyMascotLogo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css_files/sideBar.css" />
+    <title>Admin Settings</title>
+    <style>
+      /*DO NOT REMOVE THESE CSS!!!*/
+      /*for this file only*/
+      /*==START==*/
+      img {
+        display: block;
+        width: 100%;
+        object-fit: cover;
+      }
+
+      .material-icons-sharp {
+        display: flex;
+        align-items: center;
+      }
+
+      .container {
+        display: grid;
+        width: 96%;
+        margin: 0 auto;
+        gap: 1.8rem;
+        grid-template-columns: 12rem auto;
+        height: 100vh;
+      }
+
+      main {
+        height: 100%;
+        overflow: auto;
+      }
+
+      .settings-wrap {
+        /* (original) centers content with a cap */
+        max-width: 1080px;
+        margin: 0 auto;
+      }
+
+      @media (min-width: 1440px) {
+        .settings-wrap {
+          max-width: 1200px;
+        }
+      }
+
+      .card {
+        background: #fff;
+        border: 1px solid #e7edf3;
+        border-radius: 14px;
+        box-shadow: var(--box-shadow);
+        padding: 1.2rem 1.3rem;
+      }
+
+      .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.6rem;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+      }
+
+      .card-header h2 {
+        margin: 0;
+        font-weight: 800;
+        font-size: 1.8rem;
+      }
+
+      .muted {
+        color: #6c7a8a;
+      }
+
+      /* AUTO-FIT to maximize/minimize space */
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1rem 1.2rem;
+        margin-top: 1rem;
+      }
+
+      .form-grid .full {
+        grid-column: 1 / -1;
+      }
+
+      label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 0.35rem;
+      }
+
+      input {
+        width: 100%;
+        border: 1px solid #e7edf3;
+        border-radius: 10px;
+        padding: 0.65rem 0.8rem;
+      }
+
+      input[readonly],
+      input:disabled {
+        background: #f8f9fb;
+        color: #6c7a8a;
+      }
+
+      .row {
+        display: flex;
+        gap: 0.6rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        border: 1px solid #e7edf3;
+        border-radius: 9999px;
+        padding: 0.25rem 0.6rem;
+      }
+
+      .pill .material-icons-sharp {
+        font-size: 1rem;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.55rem 0.9rem;
+        border-radius: 10px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        line-height: 1;
+      }
+
+      .btn-ghost {
+        background: #fff;
+        border: 1px solid #e7edf3;
+      }
+
+      .btn-primary {
+        background: #1c2430;
+        color: #fff;
+      }
+
+      .btn-danger {
+        background: #ef4444;
+        color: #fff;
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+      }
+
+      .help {
+        font-size: 0.9rem;
+        color: #6c7a8a;
+      }
+
+      .success {
+        color: #20a44c;
+      }
+
+      .error {
+        color: #ef4444;
+      }
+
+      @media (max-width: 1200px) {
+        .container {
+          width: 95%;
+          grid-template-columns: 7rem auto;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .container {
+          width: 100%;
+          grid-template-columns: 1fr;
+          padding: 0 var(--padding-1);
+        }
+
+        main {
+          margin-top: 8rem;
+          padding: 0 1rem;
+        }
+      }
+
+      /*==END==*/
+
+      /* === Avatar (added, non-breaking) === */
+      .profile-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 0.6rem;
+        flex-wrap: wrap;
+      }
+
+      .avatar-wrap {
+        position: relative;
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        border: 1px solid #e7edf3;
+        background: #f1f5f9;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .avatar-fallback {
+        font-weight: 800;
+        color: #1c2430;
+        user-select: none;
+        font-size: 1.3rem;
+        letter-spacing: 0.5px;
+      }
+
+      .avatar-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: none;
+      }
+
+      .avatar-wrap.has-image .avatar-img {
+        display: block;
+      }
+
+      .avatar-actions .hint {
+        font-size: 0.85rem;
+        color: #6c7a8a;
+        margin-top: 0.2rem;
+      }
+
+      /* =========================================================
+         SPACE-AWARE COMPACT MODE (auto via JS)
+         ========================================================= */
+      body.is-compact .card {
+        padding: 0.9rem 1rem;
+      }
+
+      body.is-compact .muted {
+        font-size: 0.95rem;
+      }
+
+      body.is-compact input {
+        padding: 0.6rem 0.75rem;
+      }
+
+      body.is-compact .profile-row {
+        gap: 0.8rem;
+      }
+
+      body.is-compact .avatar-wrap {
+        width: 72px;
+        height: 72px;
+      }
+
+      body.is-compact .avatar-fallback {
+        font-size: 1.05rem;
+      }
+
+      body.is-compact .card-header > div {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      body.is-compact .btn {
+        padding: 0.55rem;
+        width: 40px;
+        height: 40px;
+        justify-content: center;
+        border-radius: 12px;
+        font-size: 0;
+        /* hide text, keep icon */
+      }
+
+      body.is-compact .btn .material-icons-sharp {
+        font-size: 20px;
+      }
+
+      body.is-compact .actions .btn-danger {
+        width: auto;
+        min-width: 44px;
+        height: 40px;
+        font-size: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+      }
+
+      body.is-compact .actions .btn-danger .material-icons-sharp {
+        font-size: 20px;
+      }
+
+      @media (max-width: 1024px) {
+        body:not(.is-compact) .row.help {
+          font-size: 0.95rem;
+        }
+
+        .row.help {
+          gap: 0.5rem;
+        }
+
+        .row.help span[style*="width: 1px"] {
+          height: 14px !important;
+        }
+      }
+
+      /* ========= NEW DESKTOP MAXIMIZATION OVERRIDES ========= */
+      @media (min-width: 1024px) {
+        /* Let settings content fill the available main column */
+        .settings-wrap {
+          max-width: 100%;
+          margin: 0;
+          /* align to left under main content; remove center cap */
+        }
+
+        /* Use wider field columns to better utilize space */
+        .form-grid {
+          grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        }
+      }
+
+      /* ============================= */
+      /*      SKELETON (ADDED)         */
+      /* ============================= */
+
+      /* Visibility toggles */
+      /* Show real content by default, skeleton hidden */
+      #settingsSkeleton {
+        display: none;
+      }
+
+      /* When loading: show skeleton, hide real content */
+      body.is-loading #settingsSkeleton {
+        display: block !important;
+      }
+
+      body.is-loading .settings-wrap {
+        display: none !important;
+      }
+
+      /* When loaded: hide skeleton, show real content */
+      body.is-loaded #settingsSkeleton {
+        display: none !important;
+      }
+
+      body.is-loaded .settings-wrap {
+        display: block !important;
+      }
+
+      /* Skeleton look & feel */
+      :root {
+        --skel-base: #eef3f7;
+        --skel-sheen: #f7fafc;
+      }
+
+      .skel-card {
+        background: #fff;
+        border: 1px solid #e7edf3;
+        border-radius: 14px;
+        box-shadow: var(--box-shadow);
+        padding: 1.2rem 1.3rem;
+      }
+
+      .skel-flex {
+        display: flex;
+        align-items: center;
+      }
+
+      .skel-row {
+        display: flex;
+        gap: 0.6rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .skel-block {
+        position: relative;
+        background: var(--skel-base);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+
+      .skel-circle {
+        border-radius: 9999px;
+      }
+
+      .skel-animate::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          var(--skel-sheen) 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        animation: skel-sheen 1.1s infinite;
+      }
+
+      @keyframes skel-sheen {
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      /* Layout mirrors real UI */
+      #settingsSkeleton .skel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+        margin-bottom: 0.6rem;
+      }
+
+      .skel-title {
+        width: 180px;
+        height: 22px;
+      }
+
+      .skel-btn {
+        width: 92px;
+        height: 38px;
+        border-radius: 10px;
+      }
+
+      .skel-avatar-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 0.6rem;
+        flex-wrap: wrap;
+      }
+
+      .skel-avatar {
+        width: 96px;
+        height: 96px;
+      }
+
+      .skel-mini-btn {
+        width: 140px;
+        height: 36px;
+        border-radius: 10px;
+      }
+
+      .skel-hint {
+        width: 200px;
+        height: 14px;
+        border-radius: 6px;
+      }
+
+      .skel-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1rem 1.2rem;
+        margin-top: 1rem;
+      }
+
+      .skel-label {
+        width: 100px;
+        height: 14px;
+        border-radius: 6px;
+        margin-bottom: 0.35rem;
+      }
+
+      .skel-input {
+        width: 100%;
+        height: 42px;
+        border-radius: 10px;
+      }
+
+      .skel-pill {
+        width: 120px;
+        height: 32px;
+        border-radius: 9999px;
+      }
+
+      .skel-row-help {
+        display: flex;
+        gap: 0.6rem;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .skel-time {
+        width: 160px;
+        height: 14px;
+        border-radius: 6px;
+      }
+
+      .skel-divider {
+        width: 1px;
+        height: 18px;
+        background: #e7edf3;
+      }
+
+      .skel-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+        gap: 0.6rem;
+        flex-wrap: wrap;
+      }
+
+      .skel-status {
+        width: 220px;
+        height: 14px;
+        border-radius: 6px;
+      }
+
+      .skel-delete {
+        width: 180px;
+        height: 40px;
+        border-radius: 10px;
+      }
+
+      /* Mobile tweaks */
+      @media (max-width: 1024px) {
+        .skel-mini-btn {
+          width: 120px;
+          height: 36px;
+        }
+
+        .skel-title {
+          width: 150px;
+        }
+
+        .skel-status {
+          width: 180px;
+        }
+
+        .skel-delete {
+          width: 52px;
+        }
+
+        /* icon-only feel on small screens */
+      }
+
+      /* ===== SweetAlert2 compact look (ADDED) ===== */
+      .swal2-popup {
+        border-radius: 12px !important;
+        padding: 16px 18px !important;
+        width: min(
+          380px,
+          90vw
+        ) !important; /* keep it short to avoid layout shift */
+        font-family: "Raleway", system-ui, -apple-system, Segoe UI, Roboto,
+          Arial, sans-serif;
+      }
+      .swal2-title {
+        font-size: 1.05rem !important;
+        font-weight: 800 !important;
+        margin: 0 0 0.25rem 0 !important;
+      }
+      .swal2-html-container {
+        font-size: 0.92rem !important;
+        margin: 0 !important;
+      }
+      .swal2-actions {
+        margin-top: 0.75rem !important;
+        gap: 0.5rem !important;
+      }
+      .swal2-styled.swal2-confirm {
+        border-radius: 10px !important;
+        background: #1c2430 !important;
+      }
+      .swal2-styled.swal2-cancel {
+        border-radius: 10px !important;
+        background: #e7edf3 !important;
+        color: #1c2430 !important;
+      }
+      .swal2-toast {
+        border-radius: 12px !important;
+      }
+      .swal2-container {
+        z-index: 10100 !important;
+      }
+    </style>
+  </head>
+  <!-- Start in loading state so the skeleton shows first -->
+
+  <body class="is-loading">
+    <div class="container">
+      <!-- Sidebar Section (unchanged) -->
+      <aside>
+        <div class="toggle">
+          <div class="logo">
+            <img src="../../../img/simpHappyMascotLogo.png" alt="logo" />
+            <h2>SIMP<span class="danger">Project</span></h2>
+          </div>
+        </div>
+        <div class="sidebar">
+          <a href="dashboard.html"
+            ><span class="material-icons-sharp">dashboard</span>
+            <h3>Dashboard</h3>
+          </a>
+          <a href="workerVerification.html"
+            ><span class="material-icons-sharp">engineering</span>
+            <h3>Workers<br />Verification</h3>
+          </a>
+          <a href="jobVerification.html"
+            ><span class="material-icons-sharp">work</span>
+            <h3>Jobs<br />Verification</h3>
+          </a>
+          <a href="jobApplicationVerification.html"
+            ><span class="material-icons-sharp">approval</span>
+            <h3>Application<br />Verification</h3>
+          </a>
+          <a href="adminVerification.html"
+            ><span class="material-icons-sharp">shield</span>
+            <h3>Admin<br />Verification</h3>
+          </a>
+          <a href="manageShop.html"
+            ><span class="material-icons-sharp">shop</span>
+            <h3>Manage<br />Shop</h3>
+          </a>
+          <a href="paymentsRequest.html"
+            ><span class="material-icons-sharp">payments</span>
+            <h3>Payments<br />Request</h3>
+          </a>
+          <a href="courseBuilder.html"
+            ><span class="material-icons-sharp">school</span>
+            <h3>Course<br />Publisher</h3>
+          </a>
+          <a href="settings.html" class="active"
+            ><span class="material-icons-sharp">settings</span>
+            <h3>Settings</h3>
+          </a>
+          <a href="#" id="logout-btn"
+            ><span class="material-icons-sharp">logout</span>
+            <h3>Logout</h3>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main>
+        <!-- ========================= SKELETON (ADDED) ========================= -->
+        <div id="settingsSkeleton" class="settings-wrap" aria-hidden="true">
+          <div class="skel-card">
+            <!-- Header -->
+            <div class="skel-header">
+              <div class="skel-block skel-animate skel-title"></div>
+              <div class="skel-row">
+                <div class="skel-block skel-animate skel-btn"></div>
+                <div class="skel-block skel-animate skel-btn"></div>
+                <div class="skel-block skel-animate skel-btn"></div>
+              </div>
+            </div>
+
+            <!-- Subtitle -->
+            <div
+              class="skel-block skel-animate"
+              style="
+                height: 14px;
+                width: 70%;
+                border-radius: 6px;
+                margin-bottom: 0.35rem;
+              "
+            ></div>
+            <div
+              class="skel-block skel-animate"
+              style="height: 14px; width: 55%; border-radius: 6px"
+            ></div>
+
+            <!-- Avatar Row -->
+            <div class="skel-avatar-row">
+              <div
+                class="skel-block skel-animate skel-circle skel-avatar"
+              ></div>
+              <div class="skel-row" style="gap: 0.5rem">
+                <div class="skel-block skel-animate skel-mini-btn"></div>
+                <div class="skel-block skel-animate skel-hint"></div>
+              </div>
+            </div>
+
+            <!-- Form grid -->
+            <div class="skel-grid">
+              <div>
+                <div class="skel-block skel-animate skel-label"></div>
+                <div class="skel-block skel-animate skel-input"></div>
+              </div>
+              <div>
+                <div class="skel-block skel-animate skel-label"></div>
+                <div class="skel-block skel-animate skel-pill"></div>
+              </div>
+              <div>
+                <div class="skel-block skel-animate skel-label"></div>
+                <div class="skel-block skel-animate skel-input"></div>
+              </div>
+              <div>
+                <div class="skel-block skel-animate skel-label"></div>
+                <div class="skel-block skel-animate skel-input"></div>
+              </div>
+              <div class="full">
+                <div
+                  class="skel-block skel-animate skel-label"
+                  style="width: 120px"
+                ></div>
+                <div class="skel-row-help" style="margin-top: 0.3rem">
+                  <div class="skel-block skel-animate skel-time"></div>
+                  <div class="skel-divider"></div>
+                  <div
+                    class="skel-block skel-animate skel-time"
+                    style="width: 180px"
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="skel-actions">
+              <div class="skel-block skel-animate skel-status"></div>
+              <div class="skel-block skel-animate skel-delete"></div>
+            </div>
+          </div>
+        </div>
+        <!-- ======================= /SKELETON (ADDED) ======================= -->
+
+        <div class="settings-wrap">
+          <div class="card">
+            <div class="card-header">
+              <h2>Admin Settings</h2>
+              <div>
+                <button id="edit-btn" class="btn btn-ghost" title="Edit">
+                  <span class="material-icons-sharp">edit</span> Edit
+                </button>
+                <button
+                  id="save-btn"
+                  class="btn btn-primary"
+                  style="display: none"
+                  title="Save"
+                >
+                  <span class="material-icons-sharp">save</span> Save
+                </button>
+                <button
+                  id="cancel-btn"
+                  class="btn btn-ghost"
+                  style="display: none"
+                  title="Cancel"
+                >
+                  <span class="material-icons-sharp">close</span> Cancel
+                </button>
+              </div>
+            </div>
+
+            <p class="muted">
+              View your profile. Click <strong>Edit</strong> to update your name
+              or phone. Email and role are read-only.
+              <strong>Admins/Pending</strong> may delete their own account;
+              <strong>Superadmins</strong> cannot.
+            </p>
+            <br />
+
+            <!-- NEW: Profile photo row -->
+            <div class="profile-row">
+              <div class="avatar-wrap" id="avatar-wrap">
+                <img id="avatar-img" class="avatar-img" alt="Profile photo" />
+                <div id="avatar-fallback" class="avatar-fallback">—</div>
+              </div>
+              <div class="avatar-actions">
+                <button
+                  id="avatar-btn"
+                  class="btn btn-ghost"
+                  title="Change photo"
+                >
+                  <span class="material-icons-sharp">photo_camera</span>
+                  Change photo
+                </button>
+                <div class="hint">.jpg, .png, or .webp (max 5MB)</div>
+              </div>
+              <input
+                id="avatar-input"
+                type="file"
+                accept="image/*"
+                style="display: none"
+              />
+            </div>
+
+            <div class="form-grid">
+              <div>
+                <label>Email</label>
+                <input id="email" type="email" readonly />
+              </div>
+              <div>
+                <label>Role</label>
+                <div class="row">
+                  <span id="role-pill" class="pill">
+                    <span class="material-icons-sharp">verified_user</span>
+                    <span id="role-text">—</span>
+                  </span>
+                </div>
+              </div>
+              <div>
+                <label>Full Name</label>
+                <input id="name" type="text" disabled />
+              </div>
+              <div>
+                <label>Phone</label>
+                <input id="phone" type="tel" disabled />
+              </div>
+              <div class="full">
+                <label>Timestamps</label>
+                <div class="row help">
+                  <span>Created: <strong id="created-at">—</strong></span>
+                  <span
+                    style="width: 1px; height: 18px; background: #e7edf3"
+                  ></span>
+                  <span>Updated: <strong id="updated-at">—</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="actions">
+              <span id="status-msg" class="help"></span>
+              <button
+                id="delete-btn"
+                class="btn btn-danger"
+                style="display: none"
+                title="Delete my account"
+              >
+                <span class="material-icons-sharp">delete_forever</span> Delete
+                my account
+              </button>
+            </div>
+          </div>
+
+          <!-- Payment Credentials Settings Card (ADDED) -->
+          <div class="card" style="margin-top: 1.8rem;" id="payment-card">
+            <div class="card-header">
+              <h2>Payment Credentials</h2>
+              <div id="payment-actions-wrap" style="display: none;">
+                <button id="payment-edit-btn" class="btn btn-ghost" title="Edit Payment Details">
+                  <span class="material-icons-sharp">edit</span> Edit
+                </button>
+                <button id="payment-pwd-btn" class="btn btn-ghost" title="Change Verification Password">
+                  <span class="material-icons-sharp">lock_reset</span> Security
+                </button>
+                <button
+                  id="payment-save-btn"
+                  class="btn btn-primary"
+                  style="display: none"
+                  title="Save Payment Details"
+                >
+                  <span class="material-icons-sharp">save</span> Save
+                </button>
+                <button
+                  id="payment-cancel-btn"
+                  class="btn btn-ghost"
+                  style="display: none"
+                  title="Cancel"
+                >
+                  <span class="material-icons-sharp">close</span> Cancel
+                </button>
+              </div>
+            </div>
+
+            <p class="muted" id="payment-notice-text">
+              Configure the bank account and GCash mobile number where installers will send level enrollment payments. 
+              <span id="role-lock-text" style="color: #ef4444; font-weight: 700; display: block; margin-top: 4px;">
+                <span class="material-icons-sharp" style="font-size: 14px; display: inline-flex; vertical-align: middle; margin-right: 4px;">lock</span> 
+                Read-Only: Only Superadmins are permitted to modify payment credentials.
+              </span>
+            </p>
+            <br />
+
+            <div class="form-grid">
+              <div class="full" style="font-weight: 800; font-size: 0.95rem; color: #1c2430; border-bottom: 1px solid #e7edf3; padding-bottom: 4px; margin-bottom: 0.5rem;">
+                GCash Details
+              </div>
+              <div>
+                <label>GCash Account Name</label>
+                <input id="payment-gcash-name" type="text" disabled placeholder="e.g. Juan dela Cruz" />
+              </div>
+              <div>
+                <label>GCash Mobile Number</label>
+                <input id="payment-gcash-num" type="text" disabled placeholder="e.g. 09171234567" maxlength="11" />
+              </div>
+
+              <div class="full" style="font-weight: 800; font-size: 0.95rem; color: #1c2430; border-bottom: 1px solid #e7edf3; padding-bottom: 4px; margin-top: 1rem; margin-bottom: 0.5rem;">
+                Bank Transfer Details
+              </div>
+              <div>
+                <label>Bank Name</label>
+                <input id="payment-bank-name" type="text" disabled placeholder="e.g. BDO Unibank" />
+              </div>
+              <div>
+                <label>Bank Account Name</label>
+                <input id="payment-bank-acc-name" type="text" disabled placeholder="e.g. SIMP Project Inc." />
+              </div>
+              <div>
+                <label>Bank Account Number</label>
+                <input id="payment-bank-acc-num" type="text" disabled placeholder="e.g. 0012-3456-7890" />
+              </div>
+            </div>
+            
+            <div class="actions">
+              <span id="payment-status-msg" class="help"></span>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- SweetAlert2 (ADDED) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Your global scripts -->
+    <script type="module" src="../../general_files/session.js"></script>
+    <script type="module" src="../../general_files/index.js"></script>
+
+    <!-- Page logic -->
+    <script type="module">
+      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+      import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../../../supabase.js";
+
+      const supa = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // Helpers & DOM
+      const $ = (s) => document.querySelector(s);
+      const emailEl = $("#email");
+      const nameEl = $("#name");
+      const phoneEl = $("#phone");
+      const roleText = $("#role-text");
+      const rolePill = $("#role-pill");
+      const createdAtEl = $("#created-at");
+      const updatedAtEl = $("#updated-at");
+      const editBtn = $("#edit-btn");
+      const saveBtn = $("#save-btn");
+      const cancelBtn = $("#cancel-btn");
+      const deleteBtn = $("#delete-btn");
+      const statusMsg = $("#status-msg");
+
+      // Avatar elements
+      const avatarWrap = $("#avatar-wrap");
+      const avatarImg = $("#avatar-img");
+      const avatarFallback = $("#avatar-fallback");
+      const avatarBtn = $("#avatar-btn");
+      const avatarInput = $("#avatar-input");
+
+      let currentUser = null;
+      let adminRowInitial = null;
+      let currentAvatarPath = null; // storage path like "<uid>/avatar.jpg"
+
+      /* ========================= */
+      /*  SweetAlert helpers (ADDED)
+    /* ========================= */
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 2200,
+        timerProgressBar: true,
+        showCloseButton: true,
+      });
+
+      function alertInfo(title = "Heads up", text = "") {
+        return Swal.fire({
+          icon: "info",
+          title,
+          text,
+          confirmButtonText: "Okay",
+          allowOutsideClick: true,
+          allowEscapeKey: true,
+        });
+      }
+
+      function alertSuccess(title = "Saved", text = "") {
+        return Swal.fire({
+          icon: "success",
+          title,
+          text,
+          confirmButtonText: "Great!",
+          allowOutsideClick: true,
+          allowEscapeKey: true,
+        });
+      }
+
+      function alertError(title = "Something went wrong", text = "") {
+        return Swal.fire({
+          icon: "error",
+          title,
+          text,
+          confirmButtonText: "Got it",
+          allowOutsideClick: true,
+          allowEscapeKey: true,
+        });
+      }
+
+      async function confirmAction({
+        title = "Are you sure?",
+        text = "",
+        confirmText = "Yes",
+        cancelText = "Cancel",
+        icon = "warning",
+      } = {}) {
+        const res = await Swal.fire({
+          icon,
+          title,
+          text,
+          showCancelButton: true,
+          confirmButtonText: confirmText,
+          cancelButtonText: cancelText,
+          reverseButtons: true,
+          allowOutsideClick: true,
+          allowEscapeKey: true,
+        });
+        return res.isConfirmed;
+      }
+
+      function toast(kind = "info", message = "") {
+        const icon =
+          kind === "success" || kind === "error" || kind === "warning"
+            ? kind
+            : "info";
+        Toast.fire({ icon, title: message });
+      }
+
+      /* ========================= */
+      /*  Loading state (ADDED)    */
+      /* ========================= */
+      function startLoading() {
+        document.body.classList.add("is-loading");
+        document.body.classList.remove("is-loaded");
+      }
+      function stopLoading() {
+        document.body.classList.remove("is-loading");
+        document.body.classList.add("is-loaded");
+      }
+
+      function setEdit(on) {
+        nameEl.disabled = !on;
+        phoneEl.disabled = !on;
+        editBtn.style.display = on ? "none" : "inline-flex";
+        saveBtn.style.display = on ? "inline-flex" : "none";
+        cancelBtn.style.display = on ? "inline-flex" : "none";
+      }
+
+      // ADDED: keep inline status AND show a compact toast
+      function setStatus(msg, cls) {
+        statusMsg.textContent = msg || "";
+        statusMsg.className = "help" + (cls ? " " + cls : "");
+        if (!msg) return;
+        if (cls === "success") toast("success", msg);
+        else if (cls === "error") toast("error", msg);
+        else toast("info", msg);
+      }
+
+      function fmt(dt) {
+        if (!dt) return "—";
+        try {
+          return new Date(dt).toLocaleString();
+        } catch (_) {
+          return String(dt);
+        }
+      }
+
+      function styleRolePill(role) {
+        const border =
+          role === "superadmin"
+            ? "#16a34a"
+            : role === "admin"
+            ? "#1c2430"
+            : "#f59e0b";
+        const color = border;
+        rolePill.style.borderColor = border;
+        rolePill.style.color = color;
+        const ic = rolePill.querySelector(".material-icons-sharp");
+        ic.textContent =
+          role === "superadmin"
+            ? "verified"
+            : role === "admin"
+            ? "shield"
+            : "hourglass_empty";
+      }
+
+      function showDeleteForRole(role) {
+        // Allow self-delete for admin & pending; block for superadmin
+        const canDelete = role === "admin" || role === "pending";
+        deleteBtn.style.display = canDelete ? "inline-flex" : "none";
+      }
+
+      function initialsFrom(name, email) {
+        const n = (name || "").trim();
+        if (n) {
+          const parts = n.split(/\s+/).filter(Boolean);
+          if (parts.length >= 2)
+            return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+          if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+        }
+        const e = (email || "").split("@")[0] || "";
+        return (e.slice(0, 2) || "AD").toUpperCase();
+      }
+
+      async function signAvatarUrl(path) {
+        try {
+          const { data, error } = await supa.storage
+            .from("admin_profile")
+            .createSignedUrl(path, 3600);
+          if (error) return null;
+          return data?.signedUrl || null;
+        } catch {
+          return null;
+        }
+      }
+
+      async function refreshAvatarDisplay(path, name, email) {
+        avatarFallback.textContent = initialsFrom(name, email);
+        if (path) {
+          const signed = await signAvatarUrl(path);
+          if (signed) {
+            avatarImg.src = signed;
+            avatarWrap.classList.add("has-image");
+            currentAvatarPath = path;
+            return;
+          }
+        }
+        avatarImg.removeAttribute("src");
+        avatarWrap.classList.remove("has-image");
+      }
+
+      function fillForm(row, userEmail) {
+        emailEl.value = userEmail || row.email || "";
+        nameEl.value = row.name || "";
+        phoneEl.value = row.phone || "";
+        const role = row.role || "pending";
+        roleText.textContent = role.toUpperCase();
+        styleRolePill(role);
+        createdAtEl.textContent = fmt(row.created_at);
+        updatedAtEl.textContent = fmt(row.updated_at);
+        showDeleteForRole(role);
+
+        currentAvatarPath = row.admin_profile_url || null;
+        refreshAvatarDisplay(
+          currentAvatarPath,
+          row.name,
+          userEmail || row.email
+        );
+      }
+
+      async function getAdminRowById(userId) {
+        const { data, error } = await supa
+          .from("admin")
+          .select(
+            "id,email,name,phone,role,created_at,updated_at,admin_profile_url"
+          )
+          .eq("id", userId)
+          .maybeSingle();
+        if (error) throw error;
+        return data;
+      }
+
+      async function getAdminRowByEmail(email) {
+        const normalized = String(email || "").trim().toLowerCase();
+        if (!normalized) return null;
+        const { data, error } = await supa
+          .from("admin")
+          .select(
+            "id,email,name,phone,role,created_at,updated_at,admin_profile_url"
+          )
+          .eq("email", normalized)
+          .maybeSingle();
+        if (error) throw error;
+        return data;
+      }
+
+      async function ensureAdminRowNow(user) {
+        const normalizedEmail = String(user?.email || "").trim().toLowerCase();
+        if (!normalizedEmail) {
+          throw new Error("This admin account has no email address.");
+        }
+
+        const existingById = await getAdminRowById(user.id);
+        if (existingById) return existingById;
+
+        const existingByEmail = await getAdminRowByEmail(normalizedEmail);
+        if (existingByEmail) {
+          const payload = {
+            id: user.id,
+            email: normalizedEmail,
+            name: existingByEmail.name || user.user_metadata?.name || "Admin User",
+            phone: existingByEmail.phone || user.user_metadata?.phone || null,
+            role: existingByEmail.role || "pending",
+          };
+          const { error } = await supa
+            .from("admin")
+            .update(payload)
+            .eq("email", normalizedEmail);
+          if (error) throw error;
+          return { ...existingByEmail, ...payload };
+        }
+
+        const payload = {
+          id: user.id,
+          email: normalizedEmail,
+          name: user.user_metadata?.name || "Admin User",
+          phone: user.user_metadata?.phone || null,
+          role: "pending",
+        };
+        const { error } = await supa.from("admin").insert([payload]);
+        if (error) throw error;
+        return payload;
+      }
+
+      async function load() {
+        // ADDED: show skeleton while loading
+        startLoading();
+        setStatus("Loading your profile…");
+        try {
+          const authRes = await supa.auth.getUser();
+          if (authRes.error || !authRes.data.user) {
+            setStatus("Not authenticated. Please log in.", "error");
+            await alertError(
+              "Not signed in",
+              "Please log in to manage your admin profile."
+            );
+            return;
+          }
+          currentUser = authRes.data.user;
+
+          const { data: row, error } = await supa
+            .from("admin")
+            .select(
+              "id,email,name,phone,role,created_at,updated_at,admin_profile_url"
+            )
+            .eq("id", currentUser.id)
+            .maybeSingle();
+
+          if (error) {
+            console.error(error);
+            setStatus("Failed to load admin profile.", "error");
+            await alertError(
+              "Couldn’t load profile",
+              "Please refresh the page or try again in a moment."
+            );
+            return;
+          }
+          if (!row) {
+            const resolvedRow =
+              (await ensureAdminRowNow(currentUser).catch(() => null)) ||
+              (await getAdminRowById(currentUser.id).catch(() => null)) ||
+              (await getAdminRowByEmail(currentUser.email).catch(() => null));
+
+            if (!resolvedRow) {
+              setStatus("Admin record not found.", "error");
+              await alertError(
+                "Profile not found",
+                "Your admin record doesn't exist. Contact a superadmin."
+              );
+              return;
+            }
+
+            adminRowInitial = JSON.parse(JSON.stringify(resolvedRow));
+            fillForm(resolvedRow, currentUser.email || resolvedRow.email);
+          } else {
+            adminRowInitial = JSON.parse(JSON.stringify(row));
+            fillForm(row, currentUser.email || row.email);
+          }
+          setEdit(false);
+          setStatus(""); // clear
+
+          // Payment credentials load & Superadmin check (ADDED)
+          const role = (row?.role || adminRowInitial?.role || "pending").toLowerCase();
+          isSuperadmin = (role === "superadmin");
+          
+          if (isSuperadmin) {
+            pActionsWrap.style.display = "inline-flex";
+            pRoleLockText.style.display = "none";
+          } else {
+            pActionsWrap.style.display = "none";
+            pRoleLockText.style.display = "block";
+          }
+          await loadPaymentCredentials();
+        } finally {
+          // ADDED: hide skeleton and reveal real content
+          stopLoading();
+        }
+      }
+
+      async function save() {
+        const newName = (nameEl.value || "").trim();
+        let newPhone = (phoneEl.value || "").trim();
+        if (!newName) {
+          setStatus("Name is required.", "error");
+          await alertInfo(
+            "Missing name",
+            "Please enter your full name before saving."
+          );
+          return;
+        }
+        if (newPhone.length === 0) newPhone = null;
+
+        const saveBtn = document.getElementById("save-btn");
+        saveBtn.disabled = true;
+
+        const { data, error } = await supa
+          .from("admin")
+          .update({ name: newName, phone: newPhone })
+          .eq("id", currentUser.id)
+          .select(
+            "id,email,name,phone,role,created_at,updated_at,admin_profile_url"
+          )
+          .maybeSingle();
+
+        saveBtn.disabled = false;
+
+        if (error) {
+          console.error(error);
+          const msg = error.message || "Failed to update.";
+          setStatus(msg, "error");
+          await alertError("Update failed", msg);
+          return;
+        }
+        adminRowInitial = JSON.parse(JSON.stringify(data));
+        fillForm(data, currentUser.email || data.email);
+        setEdit(false);
+        setStatus("Profile updated successfully.", "success");
+        await alertSuccess("Saved", "Your profile changes have been applied.");
+      }
+
+      function cancelEdit() {
+        if (!adminRowInitial) return;
+        fillForm(
+          adminRowInitial,
+          currentUser ? currentUser.email : adminRowInitial.email
+        );
+        setEdit(false);
+        setStatus("Changes discarded.");
+        toast("info", "No changes saved.");
+      }
+
+      async function deleteAccount() {
+        const proceed = await confirmAction({
+          title: "Delete your account?",
+          text: "This action is permanent and will sign you out.",
+          confirmText: "Delete",
+          cancelText: "Keep account",
+          icon: "warning",
+        });
+        if (!proceed) return;
+
+        const deleteBtn = document.getElementById("delete-btn");
+        deleteBtn.disabled = true;
+
+        const loading = Swal.fire({
+          title: "Deleting account…",
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          didOpen: () => Swal.showLoading(),
+        });
+
+        setStatus("Deleting…");
+        try {
+          const invokeRes = await supa.functions.invoke("delete-admin", {
+            body: { user_id: currentUser.id },
+          });
+          if (invokeRes.error) throw invokeRes.error;
+        } catch (e1) {
+          try {
+            const sessRes = await supa.auth.getSession();
+            const token = sessRes?.data?.session?.access_token || "";
+            if (!token)
+              throw new Error("Missing access token. Please re-login.");
+
+            const fnUrl =
+              SUPABASE_URL.replace(/\/+$/, "") + "/functions/v1/delete-admin";
+            const r = await fetch(fnUrl, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + token,
+              },
+              body: JSON.stringify({ user_id: currentUser.id }),
+            });
+
+            if (!r.ok) {
+              const txt = await r.text().catch(() => "");
+              throw new Error(`Direct call failed (${r.status}): ${txt}`);
+            }
+          } catch (e2) {
+            console.error("Edge Function error:", e1, e2);
+            const msg =
+              (e2?.message || e1?.message || "Edge Function unreachable.") +
+              " — Ensure 'delete-admin' is deployed and CORS allows this origin.";
+            setStatus("Delete failed: " + msg, "error");
+            (await loading).close();
+            await alertError("Delete failed", msg);
+            deleteBtn.disabled = false;
+            return;
+          }
+        }
+
+        try {
+          await supa.auth.signOut();
+        } catch (_) {}
+        (await loading).close();
+        setStatus("Account deleted. Redirecting…", "success");
+        await Swal.fire({
+          icon: "success",
+          title: "Account deleted",
+          text: "You will be redirected to the homepage.",
+          timer: 1400,
+          showConfirmButton: false,
+        });
+        setTimeout(() => {
+          window.location.href = "../../../index.html";
+        }, 200);
+      }
+
+      // === Avatar upload/change ===
+      function validImage(file) {
+        if (!file) return "No file selected.";
+        const allowed = ["image/jpeg", "image/png", "image/webp"];
+        if (!allowed.includes(file.type))
+          return "Unsupported type. Use JPG, PNG, or WEBP.";
+        const max = 5 * 1024 * 1024;
+        if (file.size > max) return "Image too large (max 5MB).";
+        return null;
+      }
+
+      function chooseExt(file) {
+        const byName = (file?.name || "").split(".").pop()?.toLowerCase();
+        if (["jpg", "jpeg", "png", "webp"].includes(byName)) return byName;
+        if (file?.type === "image/png") return "png";
+        if (file?.type === "image/webp") return "webp";
+        return "jpg";
+      }
+
+      async function uploadAvatar(file) {
+        const err = validImage(file);
+        if (err) {
+          setStatus(err, "error");
+          await alertInfo("Invalid image", err);
+          return;
+        }
+
+        try {
+          const blobUrl = URL.createObjectURL(file);
+          avatarImg.src = blobUrl;
+          avatarWrap.classList.add("has-image");
+        } catch {}
+
+        avatarBtn.disabled = true;
+
+        const loading = Swal.fire({
+          title: "Uploading photo…",
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          didOpen: () => Swal.showLoading(),
+        });
+
+        const ext = chooseExt(file);
+        const newPath = `${currentUser.id}/avatar.${ext}`;
+        const oldPath =
+          currentAvatarPath && currentAvatarPath !== newPath
+            ? currentAvatarPath
+            : null;
+
+        const { error: upErr } = await supa.storage
+          .from("admin_profile")
+          .upload(newPath, file, {
+            cacheControl: "3600",
+            upsert: true,
+            contentType: file.type || "image/*",
+          });
+
+        if (upErr) {
+          console.error(upErr);
+          const msg = upErr.message || "Upload failed.";
+          setStatus(msg, "error");
+          (await loading).close();
+          await alertError("Upload failed", msg);
+          avatarBtn.disabled = false;
+          await refreshAvatarDisplay(
+            currentAvatarPath,
+            nameEl.value,
+            emailEl.value
+          );
+          return;
+        }
+
+        if (oldPath) {
+          try {
+            await supa.storage.from("admin_profile").remove([oldPath]);
+          } catch (_) {}
+        }
+
+        const { data: updated, error: updErr } = await supa
+          .from("admin")
+          .update({ admin_profile_url: newPath })
+          .eq("id", currentUser.id)
+          .select(
+            "id,email,name,phone,role,created_at,updated_at,admin_profile_url"
+          )
+          .maybeSingle();
+
+        (await loading).close();
+
+        if (updErr) {
+          console.error(updErr);
+          const msg =
+            updErr.message || "Saved, but failed to update profile path.";
+          setStatus(msg, "error");
+          await alertError("Partial save", msg);
+          avatarBtn.disabled = false;
+          await refreshAvatarDisplay(newPath, nameEl.value, emailEl.value);
+          return;
+        }
+
+        adminRowInitial = JSON.parse(JSON.stringify(updated));
+        currentAvatarPath = updated.admin_profile_url || newPath;
+        await refreshAvatarDisplay(
+          currentAvatarPath,
+          updated.name,
+          updated.email || emailEl.value
+        );
+
+        avatarBtn.disabled = false;
+        setStatus("Profile photo updated.", "success");
+        await alertSuccess(
+          "Photo updated",
+          "Your profile picture has been saved."
+        );
+      }
+
+      // Wire up
+      document
+        .getElementById("edit-btn")
+        .addEventListener("click", () => setEdit(true));
+      document
+        .getElementById("save-btn")
+        .addEventListener("click", () => save());
+      document
+        .getElementById("cancel-btn")
+        .addEventListener("click", () => cancelEdit());
+      document
+        .getElementById("delete-btn")
+        .addEventListener("click", () => deleteAccount());
+
+      avatarBtn.addEventListener("click", () => avatarInput.click());
+      avatarInput.addEventListener("change", (e) => {
+        const file = e.target.files?.[0];
+        if (file) uploadAvatar(file);
+        e.target.value = "";
+      });
+
+      /* ========================================== */
+      /*  Payment Credentials Administration (ADDED)*/
+      /* ========================================== */
+      const pGcashName = $("#payment-gcash-name");
+      const pGcashNum = $("#payment-gcash-num");
+      const pBankName = $("#payment-bank-name");
+      const pBankAccName = $("#payment-bank-acc-name");
+      const pBankAccNum = $("#payment-bank-acc-num");
+
+      const pEditBtn = $("#payment-edit-btn");
+      const pPwdBtn = $("#payment-pwd-btn");
+      const pSaveBtn = $("#payment-save-btn");
+      const pCancelBtn = $("#payment-cancel-btn");
+      const pActionsWrap = $("#payment-actions-wrap");
+      const pNoticeText = $("#payment-notice-text");
+      const pRoleLockText = $("#role-lock-text");
+      const pStatusMsg = $("#payment-status-msg");
+
+      let currentCredentials = {
+        gcashName: "SIMP Training Account",
+        gcashNum: "0917-123-4567",
+        bankName: "BDO Unibank",
+        bankAccName: "SIMP Project Training Inc.",
+        bankAccNum: "0012-3456-7890"
+      };
+      
+      let savedPasswordHash = "admin"; // default password is "admin"
+      let isSuperadmin = false;
+
+      function fillPaymentForm(creds) {
+        pGcashName.value = creds.gcashName || "";
+        pGcashNum.value = creds.gcashNum || "";
+        pBankName.value = creds.bankName || "";
+        pBankAccName.value = creds.bankAccName || "";
+        pBankAccNum.value = creds.bankAccNum || "";
+      }
+
+      function setPaymentEdit(on) {
+        pGcashName.disabled = !on;
+        pGcashNum.disabled = !on;
+        pBankName.disabled = !on;
+        pBankAccName.disabled = !on;
+        pBankAccNum.disabled = !on;
+
+        pEditBtn.style.display = on ? "none" : "inline-flex";
+        pPwdBtn.style.display = on ? "none" : "inline-flex";
+        pSaveBtn.style.display = on ? "inline-flex" : "none";
+        pCancelBtn.style.display = on ? "inline-flex" : "none";
+      }
+
+      async function loadPaymentCredentials() {
+        try {
+          // 1. Fetch credentials
+          const { data: row, error } = await supa
+            .from("simp_course_state")
+            .select("state_value")
+            .eq("owner_key", "global:payment-settings")
+            .eq("state_key", "credentials")
+            .maybeSingle();
+
+          if (error) throw error;
+          if (row && row.state_value) {
+            currentCredentials = JSON.parse(row.state_value);
+          }
+          fillPaymentForm(currentCredentials);
+
+          // 2. Fetch password hash if it exists
+          const { data: pwdRow } = await supa
+            .from("simp_course_state")
+            .select("state_value")
+            .eq("owner_key", "global:payment-settings")
+            .eq("state_key", "password")
+            .maybeSingle();
+
+          if (pwdRow && pwdRow.state_value) {
+            savedPasswordHash = pwdRow.state_value;
+          }
+        } catch (e) {
+          console.error("Failed to load payment credentials:", e);
+        }
+      }
+
+      async function savePaymentCredentials() {
+        const newGcashName = pGcashName.value.trim();
+        const newGcashNum = pGcashNum.value.trim();
+        const newBankName = pBankName.value.trim();
+        const newBankAccName = pBankAccName.value.trim();
+        const newBankAccNum = pBankAccNum.value.trim();
+
+        if (!newGcashName || !newGcashNum || !newBankName || !newBankAccName || !newBankAccNum) {
+          pStatusMsg.textContent = "All fields are required.";
+          pStatusMsg.className = "help error";
+          await alertInfo("Missing fields", "Please fill in all GCash and Bank details.");
+          return;
+        }
+
+        pSaveBtn.disabled = true;
+        try {
+          const creds = {
+            ...currentCredentials,
+            gcashName: newGcashName,
+            gcashNum: newGcashNum,
+            bankName: newBankName,
+            bankAccName: newBankAccName,
+            bankAccNum: newBankAccNum
+          };
+
+          const { error } = await supa
+            .from("simp_course_state")
+            .upsert({
+              owner_key: "global:payment-settings",
+              state_key: "credentials",
+              state_value: JSON.stringify(creds),
+              updated_at: new Date().toISOString()
+            }, { onConflict: "owner_key,state_key" });
+
+          if (error) throw error;
+
+          currentCredentials = creds;
+          fillPaymentForm(currentCredentials);
+          setPaymentEdit(false);
+          
+          pStatusMsg.textContent = "Payment credentials saved successfully.";
+          pStatusMsg.className = "help success";
+          toast("success", "Saved successfully!");
+          await alertSuccess("Saved", "Payment details have been updated.");
+        } catch (e) {
+          console.error(e);
+          pStatusMsg.textContent = "Failed to save details: " + e.message;
+          pStatusMsg.className = "help error";
+          await alertError("Save failed", e.message);
+        } finally {
+          pSaveBtn.disabled = false;
+        }
+      }
+
+      function cancelPaymentEdit() {
+        fillPaymentForm(currentCredentials);
+        setPaymentEdit(false);
+        pStatusMsg.textContent = "Changes discarded.";
+        toast("info", "No changes saved.");
+      }
+
+      async function promptPasswordVerification() {
+        const { value: password } = await Swal.fire({
+          title: 'Double Security Check',
+          text: 'Please enter the verification password to unlock editing.',
+          input: 'password',
+          inputPlaceholder: 'Enter password',
+          showCancelButton: true,
+          confirmButtonText: 'Verify',
+          confirmButtonColor: '#1c2430',
+          footer: '<a href="#" id="swal-forgot-pwd" style="color: #3b82f6; font-size: 0.85rem; font-weight: 600; text-decoration: underline;">Forgot password?</a>',
+          didOpen: () => {
+            const forgotLink = document.getElementById('swal-forgot-pwd');
+            if (forgotLink) {
+              forgotLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                Swal.close();
+                handleForgotPassword();
+              });
+            }
+          }
+        });
+
+        if (password === undefined) return; // cancelled
+
+        if (password === savedPasswordHash) {
+          setPaymentEdit(true);
+          pStatusMsg.textContent = "Editing unlocked.";
+          toast("success", "Unlocked successfully!");
+        } else {
+          await alertError("Access Denied", "Incorrect verification password.");
+        }
+      }
+
+      async function handleForgotPassword() {
+        const { value: email } = await Swal.fire({
+          title: 'Password Recovery',
+          text: `To reset the payment verification password, please verify your identity by typing your registered admin email address (${currentUser?.email}):`,
+          input: 'text',
+          inputPlaceholder: 'Type email here...',
+          showCancelButton: true,
+          confirmButtonText: 'Reset Password',
+          confirmButtonColor: '#ef4444',
+        });
+
+        if (email === undefined) return;
+
+        if (String(email).trim().toLowerCase() === String(currentUser?.email).trim().toLowerCase()) {
+          Swal.showLoading();
+          try {
+            const { error } = await supa
+              .from("simp_course_state")
+              .upsert({
+                owner_key: "global:payment-settings",
+                state_key: "password",
+                state_value: "admin",
+                updated_at: new Date().toISOString()
+              }, { onConflict: "owner_key,state_key" });
+
+            if (error) throw error;
+
+            savedPasswordHash = "admin";
+            await Swal.fire({
+              icon: 'success',
+              title: 'Password Reset',
+              text: 'Identity verified successfully. The payment verification password has been reset to the default: "admin". Please change it immediately.',
+              confirmButtonColor: '#1c2430'
+            });
+            await loadPaymentCredentials();
+          } catch (e) {
+            await alertError("Reset Failed", e.message);
+          }
+        } else {
+          await alertError("Verification Failed", "Email address does not match your logged-in administrator email.");
+        }
+      }
+
+      async function changeVerificationPassword() {
+        const { value: current } = await Swal.fire({
+          title: 'Change Verification Password',
+          text: 'Enter your current payment verification password:',
+          input: 'password',
+          inputPlaceholder: 'Current password',
+          showCancelButton: true,
+          confirmButtonText: 'Next',
+          confirmButtonColor: '#1c2430',
+        });
+
+        if (current === undefined) return;
+
+        if (current !== savedPasswordHash) {
+          await alertError("Verification Failed", "Incorrect current password.");
+          return;
+        }
+
+        const { value: newPwd } = await Swal.fire({
+          title: 'Change Verification Password',
+          text: 'Enter your new payment verification password:',
+          input: 'password',
+          inputPlaceholder: 'New password',
+          showCancelButton: true,
+          confirmButtonText: 'Next',
+          confirmButtonColor: '#1c2430',
+        });
+
+        if (newPwd === undefined) return;
+
+        if (newPwd.trim().length < 4) {
+          await alertError("Too Weak", "New password must be at least 4 characters long.");
+          return;
+        }
+
+        const { value: confirmPwd } = await Swal.fire({
+          title: 'Change Verification Password',
+          text: 'Re-enter your new password to confirm:',
+          input: 'password',
+          inputPlaceholder: 'Confirm new password',
+          showCancelButton: true,
+          confirmButtonText: 'Save Password',
+          confirmButtonColor: '#20a44c',
+        });
+
+        if (confirmPwd === undefined) return;
+
+        if (newPwd !== confirmPwd) {
+          await alertError("Mismatch", "Passwords do not match.");
+          return;
+        }
+
+        Swal.showLoading();
+        try {
+          const { error } = await supa
+            .from("simp_course_state")
+            .upsert({
+              owner_key: "global:payment-settings",
+              state_key: "password",
+              state_value: newPwd,
+              updated_at: new Date().toISOString()
+            }, { onConflict: "owner_key,state_key" });
+
+          if (error) throw error;
+
+          savedPasswordHash = newPwd;
+          await alertSuccess("Password Changed", "Payment verification password updated successfully!");
+        } catch (e) {
+          await alertError("Failed to update password", e.message);
+        }
+      }
+
+      // Wire up payment settings
+      pEditBtn.addEventListener("click", () => promptPasswordVerification());
+      pPwdBtn.addEventListener("click", () => changeVerificationPassword());
+      pSaveBtn.addEventListener("click", () => savePaymentCredentials());
+      pCancelBtn.addEventListener("click", () => cancelPaymentEdit());
+
+      // Init
+      load();
+
+      /* =========================
+       Space-aware compact toggle
+       ========================= */
+      const CARD_MIN_FOR_TEXT = 560; // px
+      const header = document.querySelector(".card-header");
+      const bodyEl = document.body;
+
+      const ro = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const width = entry.contentRect.width;
+          if (width < CARD_MIN_FOR_TEXT || window.innerWidth < 500) {
+            bodyEl.classList.add("is-compact");
+          } else {
+            bodyEl.classList.remove("is-compact");
+          }
+        }
+      });
+      if (header) ro.observe(header);
+
+      // Accessibility: ensure titles are present for icon-only buttons
+      const ensureTitle = (btn, fallback) => {
+        if (btn && !btn.getAttribute("title"))
+          btn.setAttribute("title", fallback);
+      };
+      ensureTitle(document.getElementById("save-btn"), "Save");
+      ensureTitle(document.getElementById("cancel-btn"), "Cancel");
+      ensureTitle(document.getElementById("delete-btn"), "Delete my account");
+    </script>
+  </body>
+</html>
+

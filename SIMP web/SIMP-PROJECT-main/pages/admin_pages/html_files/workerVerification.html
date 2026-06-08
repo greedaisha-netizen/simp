@@ -1,0 +1,3342 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../img/simpHappyMascotLogo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../css_files/sideBar.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp"
+      rel="stylesheet"
+    />
+    <title>Worker Verification</title>
+
+    <style>
+      :root {
+        --ink: #1c2430;
+        --muted: #6c7a8a;
+        --line: #e7edf3;
+        --brand: #20a44c;
+        --warn: #f59e0b;
+        --danger: #e53935;
+        --bg: #f8fbfd;
+        --card: #ffffff;
+        --pill: #eef6ff;
+        --radius: 14px;
+        --modal-bg: #ffffff;
+        --modal-head: #f7fbff;
+        --shadow-xl: 0 24px 60px rgba(16, 24, 40, 0.18);
+        --shadow-lg: 0 12px 30px rgba(16, 24, 40, 0.12);
+        /* Skeleton */
+        --skel-base: #eef3f7;
+        --skel-sheen: #f7fafc;
+      }
+
+      .workers-wrap {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 1rem;
+      }
+
+      @media (max-width: 1024px) {
+        .workers-wrap {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 12px;
+      }
+
+      .panel h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1rem;
+        font-weight: bold;
+      }
+
+      .search {
+        position: relative;
+        margin-bottom: 0.6rem;
+      }
+
+      .search input {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px 10px 36px;
+        outline: none;
+        background: #fcfeff;
+      }
+
+      .search .material-icons-sharp {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 20px;
+        color: var(--muted);
+      }
+
+      .worker-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 70vh;
+        overflow: auto;
+      }
+
+      .worker-item {
+        display: grid;
+        grid-template-columns: 40px 1fr auto;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: background 0.15s, transform 0.06s;
+        background: #fff;
+      }
+
+      .worker-item:hover {
+        background: #f6fafc;
+      }
+
+      .worker-item:active {
+        transform: scale(0.997);
+      }
+
+      .worker-item.active {
+        border-color: var(--brand);
+        box-shadow: inset 0 0 0 1px var(--brand);
+        background: #f3fdf7;
+      }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid var(--line);
+      }
+
+      /* Initials avatar (added) */
+      .avatar-initials {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #1f2937;
+        background: linear-gradient(180deg, #f3f7fb, #ffffff);
+        text-transform: uppercase;
+        user-select: none;
+      }
+
+      .pill {
+        font-size: 0.75rem;
+        background: var(--pill);
+        padding: 4px 8px;
+        border-radius: 999px;
+        color: #2463a6;
+        border: 1px solid #d6e9ff;
+        white-space: nowrap;
+      }
+
+      .details {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        overflow: clip;
+      }
+
+      .details .head {
+        display: flex;
+        gap: 16px;
+        padding: 16px;
+        border-bottom: 1px solid var(--line);
+        align-items: center;
+        background: linear-gradient(180deg, #f9fbff, #ffffff);
+      }
+
+      .details .head img {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      /* Initials avatar for details size (72px) */
+      .avatar-initials.avatar-lg {
+        width: 72px;
+        height: 72px;
+        font-size: 1.2rem;
+      }
+
+      .details .head .name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin: 0 0 2px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .meta {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 4px;
+      }
+
+      .meta .kv {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 16px;
+      }
+
+      @media (max-width: 1024px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        background: #fff;
+      }
+
+      .card h4 {
+        margin: 0 0 0.6rem;
+        font-size: 0.95rem;
+      }
+
+      .info-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 12px;
+        font-size: 0.95rem;
+      }
+
+      @media (max-width: 640px) {
+        .info-list {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .info-list .label {
+        color: var(--muted);
+        font-size: 0.85rem;
+        display: block;
+      }
+
+      .doc-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 10px;
+      }
+
+      .doc {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px;
+        display: grid;
+        grid-template-rows: auto auto 1fr auto;
+        gap: 6px;
+        background: #fcfeff;
+      }
+
+      .doc .doc-title {
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .doc .actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 6px;
+      }
+
+      .btn {
+        appearance: none;
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 10px;
+        padding: 8px 10px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        line-height: 1;
+        box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+        transition: box-shadow 0.2s, transform 0.06s, background 0.2s;
+      }
+
+      .btn:hover {
+        box-shadow: var(--shadow-lg);
+        background: #fafcff;
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      .btn.primary {
+        background: var(--brand);
+        color: #fff;
+        border-color: var(--brand);
+      }
+
+      .btn.reject {
+        background: #fff5f5;
+        color: var(--danger);
+        border-color: #ffd7d7;
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        box-shadow: none;
+      }
+
+      .status-dot {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .status-dot .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #cbd5e1;
+      }
+
+      .status-dot.approved .dot {
+        background: var(--brand);
+      }
+
+      .status-dot.rejected .dot {
+        background: var(--danger);
+      }
+
+      .status-dot.pending .dot {
+        background: #94a3b8;
+      }
+
+      .status-dot.missing .dot {
+        background: #cbd5e1;
+      }
+
+      .hint {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(14, 25, 42, 0.5);
+        backdrop-filter: blur(2px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 10010;
+        opacity: 0;
+        transition: opacity 0.2s;
+      }
+
+      .modal.open {
+        display: flex;
+        opacity: 1;
+      }
+
+      .modal-card {
+        width: min(1080px, 96vw);
+        /* Reduced height so screen won't resize awkwardly */
+        height: min(70vh, 760px);
+        background: var(--modal-bg);
+        border-radius: 16px;
+        overflow: hidden;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        box-shadow: var(--shadow-xl);
+        border: 1px solid #eef2f7;
+        animation: zoomIn 0.18s ease-out;
+      }
+
+      .modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+        background: var(--modal-head);
+      }
+
+      .modal-head h4 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .modal-body {
+        background: #fff;
+        position: relative;
+        overflow: auto;
+      }
+
+      .modal-body iframe {
+        width: 100%;
+        height: 100%;
+        border: 0;
+      }
+
+      .modal-body img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+      }
+
+      @keyframes zoomIn {
+        from {
+          transform: scale(0.98);
+          opacity: 0;
+        }
+
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .worker-item {
+          grid-template-columns: 40px 1fr 24px;
+          padding: 8px;
+        }
+
+        .worker-item .pill {
+          justify-self: end;
+        }
+
+        .worker-item div:nth-child(2) div:nth-child(2) {
+          font-size: 0.78rem;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          max-width: 60vw;
+        }
+
+        .details {
+          display: none;
+        }
+
+        .details.as-modal {
+          display: grid;
+          position: fixed;
+          top: calc(4.6rem + 8px); /* Starts below the mobile header */
+          bottom: clamp(8px, 2vw, 16px);
+          left: clamp(8px, 2vw, 16px);
+          right: clamp(8px, 2vw, 16px);
+          z-index: 995; /* Above backdrop, but below mobile header */
+          background: var(--modal-bg);
+          border-radius: 16px;
+          border: 1px solid #eef2f7;
+          box-shadow: var(--shadow-xl);
+          grid-template-rows: auto 1fr;
+          overflow: hidden;
+          animation: slideUp 0.18s ease-out;
+        }
+
+        .details.as-modal .head {
+          position: sticky;
+          top: 0;
+          z-index: 2;
+          background: linear-gradient(180deg, #f9fbff, #ffffff);
+          border-bottom: 1px solid var(--line);
+          padding: 12px;
+        }
+
+        .details.as-modal .scroll-body {
+          overflow: auto;
+          -webkit-overflow-scrolling: touch;
+          background: #fff;
+        }
+
+        @keyframes slideUp {
+          from {
+            transform: translateY(8px);
+            opacity: 0;
+          }
+
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+
+        .mobile-backdrop {
+          position: fixed;
+          inset: 0;
+          background: rgba(14, 25, 42, 0.45);
+          backdrop-filter: blur(2px);
+          z-index: 990; /* Under mobile header, above rest */
+          display: none;
+          opacity: 0;
+          transition: opacity 0.2s;
+        }
+
+        .mobile-backdrop.show {
+          display: block;
+          opacity: 1;
+        }
+
+        .btn {
+          font-size: 0;
+          padding: 10px;
+        }
+
+        .btn .material-icons-sharp {
+          font-size: 20px;
+        }
+
+        .btn .btn-text {
+          display: none;
+        }
+
+        .card {
+          padding: 10px;
+        }
+
+        .grid-2 {
+          padding: 12px;
+          gap: 10px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .doc-list {
+          grid-template-columns: 1fr;
+        }
+
+        .details .head img {
+          width: 56px;
+          height: 56px;
+        }
+
+        .avatar-initials.avatar-lg {
+          width: 56px;
+          height: 56px;
+          font-size: 1rem;
+        }
+
+        .details .head .name {
+          font-size: 1rem;
+        }
+
+        .pill {
+          font-size: 0.7rem;
+          padding: 3px 6px;
+        }
+
+        .modal-card {
+          width: 94vw;
+          /* Slightly shorter on very small screens as well */
+          height: 68vh;
+        }
+      }
+
+      .empty-state {
+        padding: 24px;
+        border: 1px dashed var(--line);
+        border-radius: 12px;
+        background: #fbfeff;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      /* ========== SKELETON CONTROL & STYLES ========== */
+      /* Default: hide skeleton, show real */
+      #loadingSkeleton {
+        display: none;
+      }
+
+      /* When loading: force skeleton visible and real UI hidden */
+      body.is-loading #loadingSkeleton {
+        display: grid !important;
+      }
+
+      body.is-loading .workers-wrap {
+        display: none !important;
+      }
+
+      body.is-loaded #loadingSkeleton {
+        display: none !important;
+      }
+
+      body.is-loaded .workers-wrap {
+        display: grid !important;
+      }
+
+      #loadingSkeleton {
+        grid-template-columns: 340px 1fr;
+        gap: 1rem;
+      }
+
+      @media (max-width: 1024px) {
+        #loadingSkeleton {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .skel-panel,
+      .skel-card,
+      .skel-details {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+      }
+
+      .skel-block {
+        position: relative;
+        background: var(--skel-base);
+        overflow: hidden;
+        border-radius: 8px;
+      }
+
+      .skel-circle {
+        border-radius: 999px;
+      }
+
+      .skel-animate::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          var(--skel-sheen) 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        animation: skel-sheen 1.2s infinite;
+      }
+
+      @keyframes skel-sheen {
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      .skel-panel {
+        padding: 12px;
+      }
+
+      .skel-title {
+        width: 40%;
+        height: 16px;
+      }
+
+      .skel-search {
+        margin: 10px 0;
+        height: 38px;
+        border-radius: 10px;
+      }
+
+      .skel-chip {
+        width: 30%;
+        height: 36px;
+        margin-bottom: 8px;
+        border-radius: 10px;
+      }
+
+      .skel-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 70vh;
+        overflow: hidden;
+      }
+
+      .skel-row {
+        display: grid;
+        grid-template-columns: 40px 1fr 60px;
+        gap: 10px;
+        align-items: center;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px;
+        background: #fff;
+      }
+
+      .skel-avatar {
+        width: 40px;
+        height: 40px;
+      }
+
+      .skel-line {
+        height: 12px;
+      }
+
+      .skel-line.w70 {
+        width: 70%;
+      }
+
+      .skel-line.w50 {
+        width: 50%;
+      }
+
+      .skel-pill {
+        width: 60px;
+        height: 22px;
+        border-radius: 999px;
+      }
+
+      .skel-details .skel-head {
+        display: flex;
+        gap: 16px;
+        padding: 16px;
+        border-bottom: 1px solid var(--line);
+        background: linear-gradient(180deg, #f9fbff, #ffffff);
+      }
+
+      .skel-details .skel-avatar-lg {
+        width: 72px;
+        height: 72px;
+      }
+
+      .skel-details .skel-head-lines {
+        flex: 1;
+        display: grid;
+        gap: 8px;
+      }
+
+      .skel-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .skel-btn {
+        width: 120px;
+        height: 36px;
+        border-radius: 10px;
+      }
+
+      .skel-body {
+        padding: 16px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      @media (max-width: 1024px) {
+        .skel-body {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .skel-card {
+        padding: 12px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .skel-card .skel-section-title {
+        width: 35%;
+        height: 14px;
+      }
+
+      .skel-kv {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 12px;
+      }
+
+      .skel-kv .skel-key {
+        width: 60%;
+        height: 10px;
+      }
+
+      .skel-kv .skel-val {
+        width: 80%;
+        height: 12px;
+      }
+
+      .skel-docs {
+        margin: 0 16px 16px;
+        padding: 12px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        display: grid;
+        gap: 10px;
+      }
+
+      .skel-doc-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 10px;
+      }
+
+      .skel-doc-tile {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .skel-doc-title {
+        width: 70%;
+        height: 12px;
+      }
+
+      .skel-doc-btn {
+        width: 90px;
+        height: 30px;
+        border-radius: 8px;
+      }
+
+      .skel-doc-status {
+        width: 50%;
+        height: 10px;
+        border-radius: 6px;
+      }
+
+      @media (max-width: 1024px) {
+        .skel-row {
+          grid-template-columns: 40px 1fr 24px;
+        }
+
+        .skel-pill {
+          width: 24px;
+          height: 24px;
+          border-radius: 8px;
+        }
+
+        .skel-actions .skel-btn {
+          width: 44px;
+        }
+      }
+
+      /* Accomplishments, Badges & Certifications */
+      .badge-section {
+        margin: 0 16px 16px;
+      }
+      .badge-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+        margin-top: 10px;
+      }
+      .badge-card {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 16px;
+        background: linear-gradient(145deg, #ffffff, #fcfdfe);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+      }
+      .badge-card:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        border-color: rgba(32, 164, 76, 0.4);
+      }
+      .badge-card.unearned {
+        opacity: 0.65;
+        background: #fbfcfd;
+        cursor: not-allowed;
+      }
+      .badge-card.unearned:hover {
+        transform: none;
+        box-shadow: none;
+        border-color: var(--line);
+      }
+      .badge-icon-wrap {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: #fff;
+        flex-shrink: 0;
+        position: relative;
+      }
+      .badge-icon-wrap.course {
+        background: linear-gradient(135deg, #ffb300, #ff6f00);
+        box-shadow: 0 8px 16px rgba(255, 111, 0, 0.15);
+      }
+      .badge-icon-wrap.level {
+        background: linear-gradient(135deg, #00b0ff, #0057cb);
+        box-shadow: 0 8px 16px rgba(0, 87, 203, 0.15);
+      }
+      .badge-icon-wrap.study-only {
+        background: linear-gradient(135deg, #a855f7, #6b21a8);
+        box-shadow: 0 8px 16px rgba(107, 33, 168, 0.15);
+      }
+      .badge-icon-wrap.unearned {
+        background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+        box-shadow: none;
+      }
+      .badge-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        background: var(--brand);
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 999px;
+        border: 2px solid #fff;
+      }
+      .badge-badge.unearned {
+        background: #94a3b8;
+      }
+      .badge-info {
+        flex-grow: 1;
+        min-width: 0;
+      }
+      .badge-info h5 {
+        margin: 0 0 4px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--ink);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .badge-info p {
+        margin: 0;
+        font-size: 0.78rem;
+        color: var(--muted);
+        line-height: 1.3;
+      }
+      .badge-info .badge-status {
+        margin-top: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .badge-status.earned {
+        color: var(--brand);
+      }
+      .badge-status.unearned {
+        color: var(--muted);
+      }
+      
+      /* Skeleton loaders */
+      .skel-badge-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+        margin-top: 10px;
+      }
+      .skel-badge-card {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 16px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .skel-badge-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        background: var(--skel-base);
+      }
+      .skel-badge-title {
+        height: 16px;
+        width: 60%;
+        background: var(--skel-base);
+        border-radius: 4px;
+        margin-bottom: 8px;
+      }
+      .skel-badge-text {
+        height: 12px;
+        width: 85%;
+        background: var(--skel-base);
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+
+  <!-- Start in loading state -->
+
+  <body class="is-loading">
+    <div class="container">
+      <aside>
+        <div class="toggle">
+          <div class="logo">
+            <img src="../../../img/simpHappyMascotLogo.png" alt="logo" />
+            <h2>SIMP<span class="danger">Project</span></h2>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <a href="dashboard.html"
+            ><span class="material-icons-sharp">dashboard</span>
+            <h3>Dashboard</h3>
+          </a>
+          <a href="workerVerification.html" class="active"
+            ><span class="material-icons-sharp">engineering</span>
+            <h3>Workers<br />Verification</h3>
+          </a>
+          <a href="jobVerification.html"
+            ><span class="material-icons-sharp">work</span>
+            <h3>Jobs<br />Verification</h3>
+          </a>
+          <a href="jobApplicationVerification.html"
+            ><span class="material-icons-sharp">approval</span>
+            <h3>Application<br />Verification</h3>
+          </a>
+          <a href="adminVerification.html"
+            ><span class="material-icons-sharp">shield</span>
+            <h3>Admin<br />Verification</h3>
+          </a>
+          <a href="manageShop.html"
+            ><span class="material-icons-sharp">shop</span>
+            <h3>Manage<br />Shop</h3>
+          </a>
+          <a href="paymentsRequest.html"
+            ><span class="material-icons-sharp">payments</span>
+            <h3>Payments<br />Request</h3>
+          </a>
+          <a href="courseBuilder.html"
+            ><span class="material-icons-sharp">school</span>
+            <h3>Course<br />Publisher</h3>
+          </a>
+          <a href="settings.html"
+            ><span class="material-icons-sharp">settings</span>
+            <h3>Settings</h3>
+          </a>
+          <a href="#" id="logout-btn"
+            ><span class="material-icons-sharp">logout</span>
+            <h3>Logout</h3>
+          </a>
+        </div>
+      </aside>
+
+      <main>
+        <section id="tab-workers">
+          <!-- SKELETON -->
+          <div id="loadingSkeleton" aria-hidden="true">
+            <!-- Left panel skeleton -->
+            <div class="skel-panel">
+              <div class="skel-block skel-title skel-animate"></div>
+              <div class="skel-block skel-search skel-animate"></div>
+              <div class="skel-block skel-chip skel-animate"></div>
+
+              <div class="skel-list">
+                <!-- Repeat rows -->
+                <div class="skel-row">
+                  <div
+                    class="skel-block skel-circle skel-avatar skel-animate"
+                  ></div>
+                  <div>
+                    <div
+                      class="skel-block skel-line w70 skel-animate"
+                      style="margin-bottom: 6px"
+                    ></div>
+                    <div class="skel-block skel-line w50 skel-animate"></div>
+                  </div>
+                  <div class="skel-block skel-pill skel-animate"></div>
+                </div>
+                <div class="skel-row">
+                  <div
+                    class="skel-block skel-circle skel-avatar skel-animate"
+                  ></div>
+                  <div>
+                    <div
+                      class="skel-block skel-line w70 skel-animate"
+                      style="margin-bottom: 6px"
+                    ></div>
+                    <div class="skel-block skel-line w50 skel-animate"></div>
+                  </div>
+                  <div class="skel-block skel-pill skel-animate"></div>
+                </div>
+                <div class="skel-row">
+                  <div
+                    class="skel-block skel-circle skel-avatar skel-animate"
+                  ></div>
+                  <div>
+                    <div
+                      class="skel-block skel-line w70 skel-animate"
+                      style="margin-bottom: 6px"
+                    ></div>
+                    <div class="skel-block skel-line w50 skel-animate"></div>
+                  </div>
+                  <div class="skel-block skel-pill skel-animate"></div>
+                </div>
+                <div class="skel-row">
+                  <div
+                    class="skel-block skel-circle skel-avatar skel-animate"
+                  ></div>
+                  <div>
+                    <div
+                      class="skel-block skel-line w70 skel-animate"
+                      style="margin-bottom: 6px"
+                    ></div>
+                    <div class="skel-block skel-line w50 skel-animate"></div>
+                  </div>
+                  <div class="skel-block skel-pill skel-animate"></div>
+                </div>
+                <div class="skel-row">
+                  <div
+                    class="skel-block skel-circle skel-avatar skel-animate"
+                  ></div>
+                  <div>
+                    <div
+                      class="skel-block skel-line w70 skel-animate"
+                      style="margin-bottom: 6px"
+                    ></div>
+                    <div class="skel-block skel-line w50 skel-animate"></div>
+                  </div>
+                  <div class="skel-block skel-pill skel-animate"></div>
+                </div>
+                <div class="skel-row">
+                  <div
+                    class="skel-block skel-circle skel-avatar skel-animate"
+                  ></div>
+                  <div>
+                    <div
+                      class="skel-block skel-line w70 skel-animate"
+                      style="margin-bottom: 6px"
+                    ></div>
+                    <div class="skel-block skel-line w50 skel-animate"></div>
+                  </div>
+                  <div class="skel-block skel-pill skel-animate"></div>
+                </div>
+                <div class="skel-row">
+                  <div
+                    class="skel-block skel-circle skel-avatar skel-animate"
+                  ></div>
+                  <div>
+                    <div
+                      class="skel-block skel-line w70 skel-animate"
+                      style="margin-bottom: 6px"
+                    ></div>
+                    <div class="skel-block skel-line w50 skel-animate"></div>
+                  </div>
+                  <div class="skel-block skel-pill skel-animate"></div>
+                </div>
+                <div class="skel-row">
+                  <div
+                    class="skel-block skel-circle skel-avatar skel-animate"
+                  ></div>
+                  <div>
+                    <div
+                      class="skel-block skel-line w70 skel-animate"
+                      style="margin-bottom: 6px"
+                    ></div>
+                    <div class="skel-block skel-line w50 skel-animate"></div>
+                  </div>
+                  <div class="skel-block skel-pill skel-animate"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right details skeleton -->
+            <div class="skel-details">
+              <div class="skel-head">
+                <div
+                  class="skel-block skel-circle skel-avatar-lg skel-animate"
+                ></div>
+                <div class="skel-head-lines">
+                  <div
+                    class="skel-block skel-line skel-animate"
+                    style="width: 40%; height: 16px"
+                  ></div>
+                  <div
+                    class="skel-block skel-line skel-animate"
+                    style="width: 70%; height: 12px"
+                  ></div>
+                  <div
+                    class="skel-block skel-line skel-animate"
+                    style="width: 55%; height: 12px"
+                  ></div>
+                </div>
+                <div class="skel-actions">
+                  <div class="skel-block skel-btn skel-animate"></div>
+                  <div class="skel-block skel-btn skel-animate"></div>
+                </div>
+              </div>
+
+              <div class="skel-body">
+                <div class="skel-card">
+                  <div class="skel-block skel-section-title skel-animate"></div>
+                  <div class="skel-kv">
+                    <div class="skel-key skel-block skel-animate"></div>
+                    <div class="skel-val skel-block skel-animate"></div>
+                    <div class="skel-key skel-block skel-animate"></div>
+                    <div class="skel-val skel-block skel-animate"></div>
+                    <div class="skel-key skel-block skel-animate"></div>
+                    <div class="skel-val skel-block skel-animate"></div>
+                    <div class="skel-key skel-block skel-animate"></div>
+                    <div class="skel-val skel-block skel-animate"></div>
+                  </div>
+                </div>
+                <div class="skel-card">
+                  <div class="skel-block skel-section-title skel-animate"></div>
+                  <div class="skel-kv">
+                    <div class="skel-key skel-block skel-animate"></div>
+                    <div class="skel-val skel-block skel-animate"></div>
+                    <div class="skel-key skel-block skel-animate"></div>
+                    <div class="skel-val skel-block skel-animate"></div>
+                    <div class="skel-key skel-block skel-animate"></div>
+                    <div class="skel-val skel-block skel-animate"></div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="skel-docs">
+                <div
+                  class="skel-block skel-section-title skel-animate"
+                  style="width: 30%"
+                ></div>
+                <div class="skel-doc-grid">
+                  <div class="skel-doc-tile">
+                    <div class="skel-block skel-doc-title skel-animate"></div>
+                    <div class="skel-block skel-doc-btn skel-animate"></div>
+                    <div class="skel-block skel-doc-status skel-animate"></div>
+                  </div>
+                  <div class="skel-doc-tile">
+                    <div class="skel-block skel-doc-title skel-animate"></div>
+                    <div class="skel-block skel-doc-btn skel-animate"></div>
+                    <div class="skel-block skel-doc-status skel-animate"></div>
+                  </div>
+                  <div class="skel-doc-tile">
+                    <div class="skel-block skel-doc-title skel-animate"></div>
+                    <div class="skel-block skel-doc-btn skel-animate"></div>
+                    <div class="skel-block skel-doc-status skel-animate"></div>
+                  </div>
+                  <div class="skel-doc-tile">
+                    <div class="skel-block skel-doc-title skel-animate"></div>
+                    <div class="skel-block skel-doc-btn skel-animate"></div>
+                    <div class="skel-block skel-doc-status skel-animate"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- REAL CONTENT -->
+          <div class="workers-wrap">
+            <div class="panel">
+              <h3>New Sign-Ups</h3>
+              <div class="search">
+                <span class="material-icons-sharp">search</span>
+                <input
+                  id="searchInput"
+                  type="text"
+                  placeholder="Search name, email, phone…"
+                />
+              </div>
+              <div style="margin-bottom: 0.6rem">
+                <select
+                  id="statusFilter"
+                  style="
+                    width: 100%;
+                    border: 1px solid var(--line);
+                    border-radius: 10px;
+                    padding: 10px 12px;
+                    background: #fcfeff;
+                    outline: none;
+                  "
+                >
+                  <option value="">All statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="approved">Approved</option>
+                  <option value="rejected">Rejected</option>
+                </select>
+              </div>
+              <div id="workerList" class="worker-list"></div>
+              <div id="emptyWorkers" class="empty-state" style="display: none">
+                No workers found.
+              </div>
+            </div>
+
+            <div class="details" id="detailsPane">
+              <div class="empty-state">
+                Select a worker on the left to review their profile & documents.
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div id="mobileBackdrop" class="mobile-backdrop"></div>
+
+    <div
+      id="docModal"
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="docTitle"
+    >
+      <div class="modal-card">
+        <div class="modal-head">
+          <h4 id="docTitle">Document</h4>
+          <button class="btn" id="closeModal" aria-label="Close document">
+            <span class="material-icons-sharp">close</span>
+          </button>
+        </div>
+        <div class="modal-body" id="docBody"></div>
+      </div>
+    </div>
+
+    <script type="module" src="../../general_files/session.js"></script>
+    <script type="module" src="../../general_files/index.js"></script>
+
+    <!-- SweetAlert2 (added) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script type="module">
+      const { createClient } = supabase;
+      import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../../../supabase.js";
+      const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // === SweetAlert2 helpers (added) ===
+      const swalBtnColor =
+        getComputedStyle(document.documentElement)
+          .getPropertyValue("--brand")
+          ?.trim() || "#20a44c";
+      function notifySuccess(text = "Done.") {
+        return Swal.fire({
+          icon: "success",
+          title: "Success",
+          text,
+          confirmButtonColor: swalBtnColor,
+        });
+      }
+      function notifyError(text = "Something went wrong.") {
+        return Swal.fire({
+          icon: "error",
+          title: "Oops",
+          text,
+          confirmButtonColor: swalBtnColor,
+        });
+      }
+      function notifyInfo(text = "Heads up.") {
+        return Swal.fire({
+          icon: "info",
+          title: "Notice",
+          text,
+          confirmButtonColor: swalBtnColor,
+        });
+      }
+
+      const searchInput = document.getElementById("searchInput");
+      const statusFilter = document.getElementById("statusFilter");
+      const workerList = document.getElementById("workerList");
+      const emptyWorkers = document.getElementById("emptyWorkers");
+      const detailsPane = document.getElementById("detailsPane");
+      const docModal = document.getElementById("docModal");
+      const docBody = document.getElementById("docBody");
+      const docTitle = document.getElementById("docTitle");
+      const mobileBackdrop = document.getElementById("mobileBackdrop");
+
+      let WORKERS = [];
+      let ACTIVE_ID = null;
+      const DOC_REVIEW = new Map();
+
+      function startLoading() {
+        document.body.classList.add("is-loading");
+        document.body.classList.remove("is-loaded");
+      }
+      function stopLoading() {
+        document.body.classList.remove("is-loading");
+        document.body.classList.add("is-loaded");
+      }
+
+      const cap = (s = "") => (s ? s[0].toUpperCase() + s.slice(1) : s);
+
+      // Keeps original function (not used for fallback now)
+      function pravatar(id) {
+        const num =
+          (Math.abs([...String(id)].reduce((a, c) => a + c.charCodeAt(0), 0)) %
+            70) +
+          1;
+        return `https://i.pravatar.cc/150?img=${num}`;
+      }
+
+      // === NEW: build initials from name/email
+      function initialsFrom(name = "", email = "") {
+        const n = (name || "").trim();
+        if (n) {
+          const parts = n
+            .replace(/\s+/g, " ")
+            .split(" ")
+            .filter(Boolean)
+            .slice(0, 3);
+          const letters = parts.map((p) => p[0]).join("");
+          return letters.slice(0, 2).toUpperCase();
+        }
+        const em = (email || "").trim();
+        if (em) {
+          const handle = em.split("@")[0] || "";
+          if (handle.length >= 2) return handle.slice(0, 2).toUpperCase();
+          if (handle.length === 1) return (handle[0] + "?").toUpperCase();
+        }
+        return "??";
+      }
+
+      // === NEW: avatar renderer (URL image or initials)
+      function avatarHTML(size, worker) {
+        const px = Number(size) || 40;
+        if (worker.avatar) {
+          const alt = worker.fullName || "Profile photo";
+          return `<img class="avatar" src="${worker.avatar}" alt="${alt}" style="width:${px}px;height:${px}px;">`;
+        }
+        const text = (worker.initials || "??").toUpperCase();
+        const extra = px >= 70 ? "avatar-lg" : "";
+        return `<div class="avatar-initials ${extra}" style="width:${px}px;height:${px}px;">${text}</div>`;
+      }
+
+      function withOwnerPrefix(path, ownerId) {
+        if (!path) return "";
+        let key = String(path).replace(/^\/+/, "");
+        if (key.includes("/certificates/")) return key;
+        if (ownerId && !key.startsWith(ownerId + "/"))
+          key = `${ownerId}/${key}`;
+        return key;
+      }
+      async function getSignedUrlWithOwner(path, ownerId, expiresIn = 3600) {
+        if (!path) return "";
+        if (/^https?:\/\//i.test(path)) return path;
+        const key = withOwnerPrefix(path, ownerId);
+        const { data, error } = await sb.storage
+          .from("documents_review")
+          .createSignedUrl(key, expiresIn, { download: false });
+        if (error) {
+          console.error("Signed URL error:", error, "for", key);
+          return "";
+        }
+        return data?.signedUrl || "";
+      }
+      function fmtDateISO(d) {
+        if (!d) return "";
+        const dt = new Date(d);
+        if (isNaN(+dt)) return "";
+        return dt.toLocaleString();
+      }
+      function parseStorageUrl(u) {
+        try {
+          if (typeof u !== "string") return null;
+          if (/^https?:\/\//i.test(u))
+            return { bucket: null, key: null, https: u };
+          const m = u.match(/^storage:\/\/([^/]+)\/(.+)$/i);
+          if (!m) return null;
+          return { bucket: m[1], key: m[2] };
+        } catch {
+          return null;
+        }
+      }
+      async function signFromBucket(bucket, key, expiresIn = 3600) {
+        try {
+          const { data, error } = await sb.storage
+            .from(bucket)
+            .createSignedUrl(key, expiresIn, { download: false });
+          if (!error && data?.signedUrl) return data.signedUrl;
+          const { data: pub } = sb.storage.from(bucket).getPublicUrl(key);
+          return pub?.publicUrl || "";
+        } catch (e) {
+          console.error("Avatar signing error:", e);
+          const { data: pub } = sb.storage.from(bucket).getPublicUrl(key);
+          return pub?.publicUrl || "";
+        }
+      }
+      async function resolveProfileAvatar(profilePicUrl, ownerId) {
+        // Changed: if no profilePicUrl, do NOT fallback to pravatar—return empty string.
+        if (!profilePicUrl) return "";
+        const parsed = parseStorageUrl(profilePicUrl);
+        if (!parsed)
+          return /^https?:\/\//i.test(profilePicUrl)
+            ? profilePicUrl
+            : ""; // no fallback image
+        if (parsed.https) return parsed.https;
+        let key = parsed.key;
+        if (ownerId && !key.startsWith(ownerId + "/"))
+          key = `${ownerId}/${key.replace(/^\/+/, "")}`;
+        const url = await signFromBucket(parsed.bucket, key);
+        return url || "";
+      }
+
+      async function fetchWorkers() {
+        startLoading();
+        try {
+          const { data: docsRows, error: docsErr } = await sb
+            .from("installer_documents")
+            .select(
+              `
+              installer_id,
+              nbi, nbi_status,
+              police, police_status,
+              resume, resume_status,
+              portfolio, portfolio_status,
+              certificates, certificates_status,
+              tor, tor_status,
+              status, uploaded_at, updated_at
+            `
+            )
+            .order("uploaded_at", { ascending: false });
+
+          if (docsErr) {
+            console.error("installer_documents error:", docsErr);
+            workerList.innerHTML = "";
+            emptyWorkers.style.display = "block";
+            detailsPane.innerHTML = `<div class="empty-state">Could not load workers: ${docsErr.message}</div>`;
+            notifyError(
+              "Unable to load workers right now. Please refresh or try again shortly."
+            );
+            return;
+          }
+
+          if (!docsRows || docsRows.length === 0) {
+            WORKERS = [];
+            renderWorkerList();
+            detailsPane.innerHTML = `<div class="empty-state">No workers to review.</div>`;
+            notifyInfo("No new worker sign-ups found.");
+            return;
+          }
+
+          const ids = [...new Set(docsRows.map((r) => r.installer_id))];
+          const { data: profiles, error: profErr } = await sb
+            .from("installer")
+            .select(
+              'id, email, name, birthdate, age, phone, profession, "highestQualification", "employmentStatus", "mainIncomeSource", "bankName", "accountNumber", "accountHolder", "createdAt", profile_pic_url'
+            )
+            .in("id", ids);
+          if (profErr) console.error("installer error:", profErr);
+          const profById = new Map((profiles || []).map((p) => [p.id, p]));
+
+          // Fetch course states to detect pending certificate uploads for each worker
+          let allStates = [];
+          try {
+            const ownerKeys = ids.map(id => `user:${id}`);
+            const { data: stateRows, error: stateErr } = await sb
+              .from("simp_course_state")
+              .select("owner_key, state_key, state_value")
+              .in("owner_key", ownerKeys)
+              .in("state_key", ["myStudyRoomLibrary", "myStudyRoomCertificates"]);
+            if (!stateErr && stateRows) {
+              allStates = stateRows;
+            }
+          } catch (e) {
+            console.error("Failed to load worker course states:", e);
+          }
+
+          const catalog = await ensureCourseCatalog();
+          const statesByWorker = new Map();
+          for (const row of allStates) {
+            const workerId = row.owner_key.replace(/^user:/, "");
+            let map = statesByWorker.get(workerId);
+            if (!map) {
+              map = { library: [], certificates: {} };
+              statesByWorker.set(workerId, map);
+            }
+            if (row.state_key === "myStudyRoomLibrary" && row.state_value) {
+              try { map.library = JSON.parse(row.state_value); } catch(e){}
+            } else if (row.state_key === "myStudyRoomCertificates" && row.state_value) {
+              try { map.certificates = JSON.parse(row.state_value); } catch(e){}
+            }
+          }
+
+          WORKERS = docsRows.map((r) => {
+            const p = profById.get(r.installer_id) || {};
+            const fullName = p.name || "(No name)";
+            const email = p.email || "";
+            const wId = r.installer_id;
+
+            // Calculate pending certificate uploads
+            const workerState = statesByWorker.get(wId) || { library: [], certificates: {} };
+            const lib = workerState.library || [];
+            const certs = { ...(workerState.certificates || {}) };
+
+            // Merge course certificates from installer_documents (r.certificates)
+            let needsStateSync = false;
+            if (r && Array.isArray(r.certificates)) {
+              const docCerts = r.certificates;
+              
+              // 1. Additions/replacements
+              docCerts.forEach(path => {
+                if (path.includes("/certificates/") && path.includes("_certificate.")) {
+                  const filename = path.split("/").pop();
+                  const parts = filename.split("_");
+                  if (parts.length >= 3) {
+                    const courseId = parts[1];
+                    if (!certs[courseId] || certs[courseId].path !== path) {
+                      certs[courseId] = {
+                        path: path,
+                        uploadedAt: new Date().toISOString()
+                      };
+                      needsStateSync = true;
+                    }
+                  }
+                }
+              });
+
+              // 2. Deletions
+              Object.keys(certs).forEach(courseId => {
+                const certObj = certs[courseId];
+                if (certObj && certObj.path && certObj.path.includes("/certificates/") && certObj.path.includes("_certificate.")) {
+                  const stillExists = docCerts.some(p => p === certObj.path);
+                  if (!stillExists) {
+                    delete certs[courseId];
+                    needsStateSync = true;
+                  }
+                }
+              });
+            } else if (r) {
+              // Clear all course certificates if certificates array is empty/absent
+              Object.keys(certs).forEach(courseId => {
+                const certObj = certs[courseId];
+                if (certObj && certObj.path && certObj.path.includes("/certificates/") && certObj.path.includes("_certificate.")) {
+                  delete certs[courseId];
+                  needsStateSync = true;
+                }
+              });
+            }
+
+            // Sync with DB if needed (to auto-heal state in Supabase)
+            if (needsStateSync) {
+              (async () => {
+                try {
+                  const { error } = await sb.from("simp_course_state").upsert({
+                    owner_key: `user:${wId}`,
+                    state_key: "myStudyRoomCertificates",
+                    state_value: JSON.stringify(certs),
+                    updated_at: new Date().toISOString()
+                  }, { onConflict: "owner_key,state_key" });
+                  if (error) throw error;
+                } catch (err) {
+                  console.error("Async self-heal sync failed for worker", wId, err);
+                }
+              })();
+            }
+
+            const pendingCertCourses = [];
+
+            for (const course of catalog) {
+              const courseLevels = course.levels || [];
+              if (courseLevels.length === 0) continue;
+
+              let allLevelsStudyPassed = true;
+              for (const level of courseLevels) {
+                const totalLessons = level.lessons.length;
+                if (totalLessons === 0) {
+                  allLevelsStudyPassed = false;
+                  continue;
+                }
+                let completedLessonsCount = 0;
+                for (const lesson of level.lessons) {
+                  const isCompleted = lib.some(x => String(x.courseId) === String(course.id) && String(x.levelId) === String(level.id) && String(x.lessonId) === String(lesson.id) && x.isCompleted);
+                  if (isCompleted) completedLessonsCount++;
+                }
+                if (completedLessonsCount < totalLessons) {
+                  allLevelsStudyPassed = false;
+                }
+              }
+
+              if (allLevelsStudyPassed) {
+                const certData = certs[course.id] || null;
+                if (!certData || !certData.path) {
+                  pendingCertCourses.push(course.title);
+                }
+              }
+            }
+
+            return {
+              id: wId,
+              avatar: "",
+              initials: initialsFrom(fullName, email),
+              fullName,
+              birthdate: p.birthdate || "",
+              age: p.age ?? "",
+              phone: p.phone || "",
+              email,
+              role: "worker",
+              profession: p.profession || "",
+              highestQualification: p.highestQualification || "",
+              employmentStatus: p.employmentStatus || "",
+              mainIncomeSource: p.mainIncomeSource || "",
+              bankName: p.bankName || "",
+              accountHolder: p.accountHolder || "",
+              accountNumber: p.accountNumber || "",
+              createdAt: r.uploaded_at || p.createdAt || null,
+              profileStatus: String(r.status || "Pending").toLowerCase(),
+              _rawDocs: r,
+              _profilePicUrl: p.profile_pic_url || null,
+              pendingCertCourses: pendingCertCourses
+            };
+          });
+
+          for (const w of WORKERS) {
+            DOC_REVIEW.set(w.id, buildDocRows(w._rawDocs));
+          }
+          // Only set avatar URL if a profile pic exists
+          await Promise.all(
+            WORKERS.map(async (w) => {
+              try {
+                if (w._profilePicUrl) {
+                  const url = await resolveProfileAvatar(w._profilePicUrl, w.id);
+                  if (url) w.avatar = url;
+                }
+              } catch (e) {
+                console.warn("Avatar resolve failed for", w.id, e);
+              }
+            })
+          );
+          // Sign documents
+          await Promise.all(WORKERS.map((w) => signAllDocsForInstaller(w.id)));
+
+          renderWorkerList();
+          if (WORKERS.length) {
+            const keep = WORKERS.find((w) => w.id === ACTIVE_ID)
+              ? ACTIVE_ID
+              : WORKERS[0].id;
+            ACTIVE_ID = keep;
+            const found = WORKERS.find((w) => w.id === ACTIVE_ID);
+            renderDetails(found);
+            markActiveTile(ACTIVE_ID);
+          }
+        } finally {
+          stopLoading();
+        }
+      }
+
+      function buildDocRows(raw) {
+        const ownerId = raw?.installer_id || "";
+        const rows = [];
+        const singleDocs = [
+          ["resume", "Resume", "resume_status"],
+          ["nbi", "NBI Clearance", "nbi_status"],
+          ["police", "Police Clearance", "police_status"],
+          ["tor", "Transcript of Records (TOR)", "tor_status"],
+          ["portfolio", "Portfolio", "portfolio_status"],
+        ];
+        for (const [key, label, statusKey] of singleDocs) {
+          const path = raw?.[key] || null;
+          const st = String(
+            raw?.[statusKey] || (path ? "pending" : "missing")
+          ).toLowerCase();
+          rows.push({
+            key,
+            type: label,
+            path: path ? withOwnerPrefix(path, ownerId) : "",
+            url: "",
+            status: path ? st : "missing",
+          });
+        }
+        const certs = Array.isArray(raw?.certificates) ? raw.certificates : [];
+        const certStatuses = Array.isArray(raw?.certificates_status)
+          ? raw.certificates_status
+          : [];
+        if (certs.length === 0) {
+          rows.push({
+            key: "certificates",
+            type: "Certificates (none)",
+            path: "",
+            url: "",
+            status: "missing",
+          });
+        } else {
+          certs.forEach((c, idx) => {
+            const st = String(certStatuses[idx] || "pending").toLowerCase();
+            rows.push({
+              key: `certificates[${idx}]`,
+              type: `Certificate #${idx + 1}`,
+              path: withOwnerPrefix(c, ownerId),
+              url: "",
+              status: st,
+            });
+          });
+        }
+        return rows;
+      }
+
+      async function signAllDocsForInstaller(installerId) {
+        const list = (DOC_REVIEW.get(installerId) || []).slice();
+        if (!list.length) return;
+        const signed = await Promise.all(
+          list.map(async (item) => {
+            if (!item.path) return { ...item, url: "" };
+            const owner = installerId;
+            const url = await getSignedUrlWithOwner(
+              item.path.replace(new RegExp("^" + owner + "/"), ""),
+              owner
+            );
+            return { ...item, url };
+          })
+        );
+        DOC_REVIEW.set(installerId, signed);
+      }
+
+      function renderWorkerList(filter = "") {
+        workerList.innerHTML = "";
+        const selectedStatus = (statusFilter?.value || "").toLowerCase();
+        const q = filter.trim().toLowerCase();
+
+        const filtered = WORKERS.filter((w) => {
+          const inText =
+            !q ||
+            w.fullName.toLowerCase().includes(q) ||
+            w.email.toLowerCase().includes(q) ||
+            (w.phone || "").toLowerCase().includes(q);
+          const wStatus = (w.profileStatus || "pending").toLowerCase();
+          const inStatus =
+            !selectedStatus ||
+            (selectedStatus === "approved"
+              ? wStatus === "approved" || wStatus === "verified"
+              : wStatus === selectedStatus);
+          return inText && inStatus;
+        });
+
+        emptyWorkers.style.display = filtered.length ? "none" : "block";
+
+        filtered
+          .sort(
+            (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
+          )
+          .forEach((w) => {
+            const item = document.createElement("div");
+            item.className = "worker-item";
+            item.dataset.id = w.id;
+            if (w.id === ACTIVE_ID) item.classList.add("active");
+
+            let certWarningHtml = "";
+            if (w.pendingCertCourses && w.pendingCertCourses.length > 0) {
+              certWarningHtml = `<div class="cert-pending-pill" style="font-size: 0.76rem; background: #fffbeb; color: #d97706; border: 1px solid #fde68a; padding: 2px 6px; border-radius: 99px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; width: fit-content;" title="Pending Cert: ${w.pendingCertCourses.join(', ')}">⚠️ Cert Upload Pending</div>`;
+            }
+
+            item.innerHTML = `
+              ${avatarHTML(40, w)}
+              <div style="display: flex; flex-direction: column;">
+                <div style="font-weight:700">${w.fullName}</div>
+                <div style="font-size:.85rem;color:var(--muted)">${w.email}</div>
+                ${certWarningHtml}
+              </div>
+              <span class="pill">${cap(w.profileStatus || "pending")}</span>
+            `;
+            item.addEventListener("click", async () => {
+              ACTIVE_ID = w.id;
+              markActiveTile(ACTIVE_ID);
+              await signAllDocsForInstaller(w.id);
+              renderDetails(w);
+              if (window.matchMedia("(max-width: 1024px)").matches) {
+                openMobileDetails();
+              }
+            });
+            workerList.appendChild(item);
+          });
+      }
+
+      function updateWorkerTileWarning(workerId, pendingCertCourses) {
+        const worker = WORKERS.find(w => w.id === workerId);
+        if (worker) {
+          worker.pendingCertCourses = pendingCertCourses;
+        }
+
+        const tile = document.querySelector(`.worker-item[data-id="${workerId}"]`);
+        if (tile) {
+          let warnEl = tile.querySelector(".cert-pending-pill");
+          if (pendingCertCourses && pendingCertCourses.length > 0) {
+            if (!warnEl) {
+              const nameContainer = tile.querySelector("div");
+              if (nameContainer) {
+                warnEl = document.createElement("div");
+                warnEl.className = "cert-pending-pill";
+                warnEl.style.cssText = "font-size: 0.76rem; background: #fffbeb; color: #d97706; border: 1px solid #fde68a; padding: 2px 6px; border-radius: 99px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; margin-top: 4px; width: fit-content;";
+                warnEl.innerHTML = "⚠️ Cert Upload Pending";
+                nameContainer.appendChild(warnEl);
+              }
+            }
+            if (warnEl) {
+              warnEl.title = `Pending Cert: ${pendingCertCourses.join(', ')}`;
+              warnEl.style.display = "inline-flex";
+            }
+          } else {
+            if (warnEl) {
+              warnEl.remove();
+            }
+          }
+        }
+      }
+
+      function markActiveTile(id) {
+        document
+          .querySelectorAll(".worker-item")
+          .forEach((i) => i.classList.remove("active"));
+        const el = document.querySelector(`.worker-item[data-id="${id}"]`);
+        if (el) el.classList.add("active");
+      }
+
+      searchInput.addEventListener("input", (e) =>
+        renderWorkerList(e.target.value)
+      );
+      statusFilter.addEventListener("change", () =>
+        renderWorkerList(searchInput.value)
+      );
+
+      function renderDetails(worker) {
+        if (!worker) {
+          detailsPane.innerHTML = `<div class="empty-state">Select a worker to review.</div>`;
+          return;
+        }
+
+        const docs = DOC_REVIEW.get(worker.id) || [];
+        const status = (worker.profileStatus || "pending").toLowerCase();
+        const isPending = status === "pending";
+
+        let actionsHTML = "";
+        if (status === "pending") {
+          actionsHTML = `
+            <button class="btn reject" id="rejectProfileBtn" aria-label="Reject profile">
+              <span class="material-icons-sharp">thumb_down</span> <span class="btn-text">Reject Profile</span>
+            </button>
+            <button class="btn primary" id="approveProfileBtn" aria-label="Approve installer">
+              <span class="material-icons-sharp">thumb_up</span> <span class="btn-text">Approve Installer</span>
+            </button>
+          `;
+        } else {
+          actionsHTML = `
+            <button class="btn" id="revertPendingBtn" title="Set overall status back to Pending" aria-label="Revert to pending">
+              <span class="material-icons-sharp">history</span> <span class="btn-text">Revert to Pending</span>
+            </button>
+          `;
+        }
+
+        const isMobile = window.matchMedia("(max-width: 1024px)").matches;
+        const closeMobileBtn = isMobile
+          ? `<button class="btn" id="closeDetailsMobile" aria-label="Close details"><span class="material-icons-sharp">close</span><span class="btn-text">Close</span></button>`
+          : "";
+
+        detailsPane.innerHTML = `
+          <div class="head">
+            ${avatarHTML(72, worker)}
+            <div>
+              <div class="name">
+                ${worker.fullName}
+                <span class="pill" id="profileStatusPill">${cap(
+                  worker.profileStatus || "pending"
+                )}</span>
+              </div>
+              <div class="meta">
+                <span class="kv"><strong>Uploaded:</strong> ${
+                  fmtDateISO(worker.createdAt) || "—"
+                }</span>
+                <span class="kv"><strong>Birthdate:</strong> ${
+                  worker.birthdate || "—"
+                }</span>
+                <span class="kv"><strong>Age:</strong> ${
+                  worker.age || "—"
+                }</span>
+                <span class="kv"><strong>Phone:</strong> ${
+                  worker.phone || "—"
+                }</span>
+                <span class="kv"><strong>Email:</strong> ${
+                  worker.email || "—"
+                }</span>
+                <span class="kv"><strong>Role:</strong> Worker</span>
+              </div>
+            </div>
+
+            <div style="display:flex; gap:8px; margin-left:auto; align-items:center;">
+              ${actionsHTML}
+              ${closeMobileBtn}
+            </div>
+          </div>
+
+          <div class="scroll-body">
+            <!-- Dynamic Certificate Warning Alerts Banner Container -->
+            <div id="certificateAlertContainer"></div>
+
+            <!-- Course & Level Accomplishment Badges -->
+            <div class="card badge-section">
+              <h4>Course Accomplished</h4>
+              <div id="courseAccomplishedBadges">
+                <div class="skel-badge-grid">
+                  <div class="skel-badge-card">
+                    <div class="skel-badge-icon skel-animate"></div>
+                    <div style="flex-grow:1; margin-left: 12px;">
+                      <div class="skel-badge-title skel-animate"></div>
+                      <div class="skel-badge-text skel-animate"></div>
+                    </div>
+                  </div>
+                  <div class="skel-badge-card">
+                    <div class="skel-badge-icon skel-animate"></div>
+                    <div style="flex-grow:1; margin-left: 12px;">
+                      <div class="skel-badge-title skel-animate"></div>
+                      <div class="skel-badge-text skel-animate"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Project Accomplishments Placeholder -->
+            <div class="card badge-section" style="margin-top: -8px;">
+              <h4>Project Accomplished</h4>
+              <div class="badge-grid" style="margin-top:0;">
+                <div class="badge-card unearned">
+                  <div class="badge-icon-wrap unearned">🏆</div>
+                  <div class="badge-info">
+                    <h5>Project Accomplishments</h5>
+                    <p>No verified project accomplishments or client's reviews completed yet.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid-2">
+              <div class="card">
+                <h4>Basic Information</h4>
+                <div class="info-list">
+                  <div><span class="label">Full Name</span>${
+                    worker.fullName
+                  }</div>
+                  <div><span class="label">Profession</span>${
+                    worker.profession || "—"
+                  }</div>
+                  <div><span class="label">Highest Qualification</span>${
+                    worker.highestQualification || "—"
+                  }</div>
+                  <div><span class="label">Employment Status</span>${
+                    worker.employmentStatus || "—"
+                  }</div>
+                  <div><span class="label">Main Income Source</span>${
+                    worker.mainIncomeSource || "—"
+                  }</div>
+                </div>
+              </div>
+
+              <div class="card">
+                <h4>Bank Details</h4>
+                <div class="info-list">
+                  <div><span class="label">Bank Name</span>${
+                    worker.bankName || "—"
+                  }</div>
+                  <div><span class="label">Account Holder</span>${
+                    worker.accountHolder || "—"
+                  }</div>
+                  <div><span class="label">Account Number</span>${
+                    worker.accountNumber || "—"
+                  }</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="margin: 0 16px 16px">
+              <h4>Submitted Documents</h4>
+              <p class="hint">Click a document to preview. Approve/Reject each individually. All present documents must be <b>Approved</b> to enable "Approve Installer". Missing files block approval.</p>
+              <div class="doc-list">
+                ${docs
+                  .map(
+                    (d, idx) => `
+                  <div class="doc" data-doc="${idx}">
+                    <div class="doc-title"><span class="material-icons-sharp">description</span> ${
+                      d.type
+                    }</div>
+                    <button class="btn" data-view="${idx}" ${
+                      d.url ? "" : "disabled"
+                    } aria-label="Preview ${d.type}">
+                      <span class="material-icons-sharp" style="font-size:18px;">visibility</span> <span class="btn-text">Preview</span>
+                    </button>
+                    <div class="status-dot ${d.status}">
+                      <span class="dot"></span>
+                      <span class="label">${cap(d.status)}</span>
+                    </div>
+                    <div class="actions" ${
+                      status === "pending" ? "" : 'style="display:none"'
+                    }>
+                      <button class="btn primary" data-approve="${idx}" ${
+                      d.path ? "" : "disabled"
+                    } aria-label="Approve ${d.type}">
+                        <span class="material-icons-sharp">check</span> <span class="btn-text">Approve</span>
+                      </button>
+                      <button class="btn reject" data-reject="${idx}" ${
+                      d.path ? "" : "disabled"
+                    } aria-label="Reject ${d.type}">
+                        <span class="material-icons-sharp">close</span> <span class="btn-text">Reject</span>
+                      </button>
+                    </div>
+                  </div>
+                `
+                  )
+                  .join("")}
+              </div>
+            </div>
+          </div>
+        `;
+
+        detailsPane.querySelectorAll("[data-view]").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            const idx = Number(btn.dataset.view);
+            const item = (DOC_REVIEW.get(worker.id) || [])[idx];
+            if (!item) return;
+            if (!item.url && item.path) {
+              const freshUrl = await getSignedUrlWithOwner(
+                item.path.replace(new RegExp("^" + worker.id + "/"), ""),
+                worker.id
+              );
+              item.url = freshUrl;
+              DOC_REVIEW.set(
+                worker.id,
+                (DOC_REVIEW.get(worker.id) || []).map((x, i) =>
+                  i === idx ? item : x
+                )
+              );
+              if (freshUrl) {
+                openDoc(item.type, freshUrl);
+                btn.disabled = false;
+                return;
+              }
+            }
+            if (!item.url) {
+              notifyInfo(
+                "Preview is unavailable for this file. It may be missing or access is not allowed."
+              );
+              return;
+            }
+            openDoc(item.type, item.url);
+          });
+        });
+
+        detailsPane.querySelectorAll("[data-approve]").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            const idx = Number(btn.dataset.approve);
+            await setDocStatus(worker.id, idx, "approved");
+          });
+        });
+        detailsPane.querySelectorAll("[data-reject]").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            const idx = Number(btn.dataset.reject);
+            await setDocStatus(worker.id, idx, "rejected");
+          });
+        });
+
+        const approveBtn = detailsPane.querySelector("#approveProfileBtn");
+        const rejectBtn = detailsPane.querySelector("#rejectProfileBtn");
+        const revertBtn = detailsPane.querySelector("#revertPendingBtn");
+
+        if (approveBtn) {
+          approveBtn.disabled = !allPresentDocsApproved(docs);
+          approveBtn.addEventListener("click", async () => {
+            if (!allPresentDocsApproved(docs)) {
+              notifyInfo("Please approve all submitted documents first.");
+              return;
+            }
+            await setOverallStatus(worker.id, "approved");
+          });
+        }
+        if (rejectBtn) {
+          rejectBtn.addEventListener("click", async () => {
+            await setOverallStatus(worker.id, "rejected");
+          });
+        }
+        if (revertBtn) {
+          revertBtn.addEventListener("click", async () => {
+            await setOverallStatus(worker.id, "pending");
+          });
+        }
+
+        const closeMobile = document.getElementById("closeDetailsMobile");
+        if (closeMobile)
+          closeMobile.addEventListener("click", closeMobileDetails);
+
+        // Load the accomplishments and badges asynchronously
+        loadWorkerAccomplishments(worker.id);
+      }
+
+      function allPresentDocsApproved(docs) {
+        for (const d of docs) {
+          if (d.status !== "approved") return false;
+        }
+        return docs.length > 0;
+      }
+
+      async function setDocStatus(installerId, docIndex, status) {
+        const list = DOC_REVIEW.get(installerId) || [];
+        const item = list[docIndex];
+        if (!item) return;
+        item.status = status;
+        DOC_REVIEW.set(installerId, list);
+        const w = WORKERS.find((x) => x.id === installerId);
+        if (w) renderDetails(w);
+
+        try {
+          await persistDocStatus(installerId, item.key, status);
+          const { data, error } = await sb
+            .from("installer_documents")
+            .select(
+              `
+              installer_id,
+              nbi, nbi_status,
+              police, police_status,
+              resume, resume_status,
+              portfolio, portfolio_status,
+              certificates, certificates_status,
+              tor, tor_status,
+              status, uploaded_at, updated_at
+            `
+            )
+            .eq("installer_id", installerId)
+            .maybeSingle();
+          if (!error && data) {
+            const freshRows = buildDocRows(data);
+            DOC_REVIEW.set(installerId, freshRows);
+            await signAllDocsForInstaller(installerId);
+            if (w) {
+              w._rawDocs = data;
+              renderDetails(w);
+            }
+            if (window.checkPendingCertificatesForSidebar) {
+              window.checkPendingCertificatesForSidebar(sb);
+            }
+            notifySuccess(`Marked "${item.type}" as ${cap(status)}.`);
+          }
+        } catch (e) {
+          notifyError(`Could not update document: ${e.message || e}`);
+        }
+      }
+
+      async function persistDocStatus(installerId, docKey, toStatus) {
+        const singleStatusCols = {
+          resume: "resume_status",
+          nbi: "nbi_status",
+          police: "police_status",
+          tor: "tor_status",
+          portfolio: "portfolio_status",
+        };
+        const certMatch = String(docKey).match(/^certificates\[(\d+)\]$/);
+
+        if (singleStatusCols[docKey]) {
+          const column = singleStatusCols[docKey];
+          const payload = {};
+          payload[column] = toStatus;
+          payload["updated_at"] = new Date().toISOString();
+          const { error } = await sb
+            .from("installer_documents")
+            .update(payload)
+            .eq("installer_id", installerId);
+          if (error) throw error;
+          return;
+        }
+
+        if (certMatch) {
+          const idx = Number(certMatch[1]);
+          const { data, error } = await sb
+            .from("installer_documents")
+            .select("certificates_status")
+            .eq("installer_id", installerId)
+            .maybeSingle();
+          if (error) throw error;
+          const current = Array.isArray(data?.certificates_status)
+            ? data.certificates_status.slice()
+            : [];
+          while (current.length <= idx) current.push("pending");
+          current[idx] = toStatus;
+          const { error: upErr } = await sb
+            .from("installer_documents")
+            .update({
+              certificates_status: current,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("installer_id", installerId);
+          if (upErr) throw upErr;
+          return;
+        }
+      }
+
+      async function setOverallStatus(installerId, toStatus) {
+        try {
+          const { data: row, error: fetchErr } = await sb
+            .from("installer_documents")
+            .select(
+              `
+            nbi, nbi_status, police, police_status, resume, resume_status,
+            portfolio, portfolio_status, certificates, certificates_status, tor, tor_status
+          `
+            )
+            .eq("installer_id", installerId)
+            .maybeSingle();
+          if (fetchErr) throw fetchErr;
+
+          const updatePayload = {
+            status: toStatus,
+            updated_at: new Date().toISOString(),
+          };
+          if (toStatus === "rejected" || toStatus === "pending") {
+            const map = [
+              ["resume", "resume_status"],
+              ["nbi", "nbi_status"],
+              ["police", "police_status"],
+              ["tor", "tor_status"],
+              ["portfolio", "portfolio_status"],
+            ];
+            for (const [fileCol, statusCol] of map) {
+              if (row && row[fileCol]) updatePayload[statusCol] = toStatus;
+            }
+            if (
+              row &&
+              Array.isArray(row.certificates) &&
+              row.certificates.length
+            ) {
+              updatePayload["certificates_status"] = row.certificates.map(
+                () => toStatus
+              );
+            }
+          }
+
+          const { error: upErr } = await sb
+            .from("installer_documents")
+            .update(updatePayload)
+            .eq("installer_id", installerId);
+          if (upErr) throw upErr;
+
+          const { data: fresh, error: refetchErr } = await sb
+            .from("installer_documents")
+            .select(
+              `
+            installer_id, nbi, nbi_status, police, police_status, resume, resume_status,
+            portfolio, portfolio_status, certificates, certificates_status, tor, tor_status,
+            status, uploaded_at, updated_at
+          `
+            )
+            .eq("installer_id", installerId)
+            .maybeSingle();
+          if (refetchErr) throw refetchErr;
+
+          const w = WORKERS.find((x) => x.id === installerId);
+          if (w && fresh) {
+            w.profileStatus = String(fresh.status || "pending").toLowerCase();
+            w._rawDocs = fresh;
+            DOC_REVIEW.set(installerId, buildDocRows(fresh));
+            await signAllDocsForInstaller(installerId);
+            renderWorkerList(searchInput.value);
+            renderDetails(w);
+          } else {
+            await fetchWorkers();
+          }
+
+          if (window.checkPendingCertificatesForSidebar) {
+            window.checkPendingCertificatesForSidebar(sb);
+          }
+
+          notifySuccess(`Installer marked as ${cap(toStatus)}.`);
+        } catch (err) {
+          notifyError(
+            `Failed to update installer status: ${err.message || err}`
+          );
+        }
+      }
+
+      function openDoc(title, url) {
+        if (!url) {
+          notifyInfo("Preview is unavailable for this file.");
+          return;
+        }
+        docTitle.textContent = title || "Document";
+        docBody.innerHTML = "";
+        const isImage = /\.(png|jpe?g|gif|webp|bmp|svg)($|\?)/i.test(url);
+        if (isImage) {
+          const img = document.createElement("img");
+          img.src = url;
+          img.alt = title;
+          docBody.appendChild(img);
+        } else {
+          const frame = document.createElement("iframe");
+          frame.src = url;
+          docBody.appendChild(frame);
+        }
+        docModal.classList.add("open");
+      }
+      function closeDoc() {
+        docModal.classList.remove("open");
+        docBody.innerHTML = "";
+      }
+      document.getElementById("closeModal").addEventListener("click", closeDoc);
+      document.getElementById("docModal").addEventListener("click", (e) => {
+        if (e.target.id === "docModal") closeDoc();
+      });
+
+      function openMobileDetails() {
+        detailsPane.classList.add("as-modal");
+        mobileBackdrop.classList.add("show");
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+      }
+      function closeMobileDetails() {
+        detailsPane.classList.remove("as-modal");
+        mobileBackdrop.classList.remove("show");
+        document.documentElement.style.overflow = "";
+        document.body.style.overflow = "";
+      }
+      mobileBackdrop.addEventListener("click", closeMobileDetails);
+      window.addEventListener("resize", () => {
+        if (!window.matchMedia("(max-width: 1024px)").matches) {
+          closeMobileDetails();
+        }
+      });
+
+      // Caching global catalog of courses
+      let ALL_COURSES_CACHE = null;
+
+      // Normalize simple question fields
+      function normalizeQuestionType(type) {
+        return ["essay", "identification", "matching"].includes(type)
+          ? type
+          : "multiple-choice";
+      }
+
+      function normalizeQuestions(questions = []) {
+        return (Array.isArray(questions) ? questions : []).map((q, idx) => {
+          const type = normalizeQuestionType(q?.type);
+          const choices = Array.isArray(q?.choices)
+            ? q.choices
+            : Array.isArray(q?.options)
+            ? q.options
+            : ["", "", "", ""];
+          return {
+            id: q?.id || `question-${Date.now()}-${idx + 1}`,
+            number: idx + 1,
+            type,
+            prompt: q?.prompt || q?.question || "",
+            choices,
+            correctAnswer: q?.correctAnswer || "",
+          };
+        });
+      }
+
+      function normalizeLessonPayload(payload = {}, lessonIndex = 0) {
+        const lessonId = payload.lessonId || payload.id || `lesson-${lessonIndex + 1}`;
+        const slides = Array.isArray(payload.slides) ? payload.slides : [];
+        const assessmentSource = payload.assessment || {};
+        const qList = normalizeQuestions(assessmentSource.questions || payload.questions || []);
+
+        return {
+          id: lessonId,
+          title: payload.title || `Lesson ${lessonIndex + 1}`,
+          slideCount: slides.length || 0,
+          questions: qList,
+          assessments: qList.length ? [
+            {
+              id: assessmentSource.id || `${lessonId}-assessment`,
+              title: assessmentSource.title || `${payload.title || `Lesson ${lessonIndex + 1}`} Assessment`,
+              passingScore: Number(assessmentSource.passingScore) || 70,
+              questions: qList
+            }
+          ] : []
+        };
+      }
+
+      function parseStructuredSectionLessons(contentRow) {
+        const rawBody = String(contentRow?.text_body || contentRow?.body || "").trim();
+        if (!rawBody) return null;
+        try {
+          const parsed = JSON.parse(rawBody);
+          if (parsed && parsed.kind === "section-lessons" && Array.isArray(parsed.lessons)) {
+            return parsed.lessons.map((l, idx) => normalizeLessonPayload(l, idx));
+          }
+        } catch (e) {}
+        return null;
+      }
+
+      async function ensureCourseCatalog() {
+        if (ALL_COURSES_CACHE) return ALL_COURSES_CACHE;
+
+        // Fetch courses, sections, contents from 'course' schema
+        const { data: courses, error: errC } = await sb.schema("course").from("courses").select("*");
+        if (errC) throw errC;
+
+        const { data: sections, error: errS } = await sb.schema("course").from("sections").select("*").order("position", { ascending: true });
+        if (errS) throw errS;
+
+        const { data: contents, error: errL } = await sb.schema("course").from("section_contents").select("*").order("position", { ascending: true });
+        if (errL) throw errL;
+
+        const contentsBySection = new Map();
+        for (const row of contents || []) {
+          const arr = contentsBySection.get(row.section_id) || [];
+          arr.push(row);
+          contentsBySection.set(row.section_id, arr);
+        }
+
+        const sectionsByCourse = new Map();
+        for (const row of sections || []) {
+          const arr = sectionsByCourse.get(row.course_id) || [];
+          const lessons = [];
+          const sectionContents = contentsBySection.get(row.id) || [];
+          if (sectionContents.length) {
+            const bundled = parseStructuredSectionLessons(sectionContents[0]);
+            if (bundled) {
+              lessons.push(...bundled);
+            } else {
+              sectionContents.forEach((cnt, idx) => {
+                lessons.push(normalizeLessonPayload(cnt, idx));
+              });
+            }
+          }
+          arr.push({
+            id: row.id,
+            title: row.title || `Level`,
+            lessons: lessons.filter(Boolean)
+          });
+          sectionsByCourse.set(row.course_id, arr);
+        }
+
+        ALL_COURSES_CACHE = (courses || []).map(c => {
+          return {
+            id: c.id,
+            title: c.title,
+            description: c.description || "",
+            level: Number(c.level) || 1,
+            levels: sectionsByCourse.get(c.id) || []
+          };
+        });
+
+        return ALL_COURSES_CACHE;
+      }
+
+      async function loadWorkerAccomplishments(workerId) {
+        const container = document.getElementById("courseAccomplishedBadges");
+        if (!container) return;
+
+        try {
+          const catalog = await ensureCourseCatalog();
+          const pendingUploadCourses = [];
+
+          // Fetch the worker's cloud states
+          const { data: stateRows, error: errState } = await sb
+            .from("simp_course_state")
+            .select("state_key, state_value")
+            .eq("owner_key", `user:${workerId}`);
+          if (errState) throw errState;
+
+          let library = [];
+          let attemptHistory = [];
+          let certificates = {};
+
+          if (stateRows && stateRows.length) {
+            const lib = stateRows.find(r => r.state_key === "myStudyRoomLibrary");
+            if (lib && lib.state_value) {
+              try { library = JSON.parse(lib.state_value); } catch(e){}
+            }
+            const hist = stateRows.find(r => r.state_key === "simpAssessmentAttemptHistory");
+            if (hist && hist.state_value) {
+              try { attemptHistory = JSON.parse(hist.state_value); } catch(e){}
+            }
+            const certs = stateRows.find(r => r.state_key === "myStudyRoomCertificates");
+            if (certs && certs.state_value) {
+              try { certificates = JSON.parse(certs.state_value); } catch(e){}
+            }
+          }
+
+          // Fetch from installer_documents to merge any admin-uploaded course certificates
+          const { data: docRow } = await sb
+            .from("installer_documents")
+            .select("certificates")
+            .eq("installer_id", workerId)
+            .maybeSingle();
+
+          let needsSync = false;
+          if (docRow && Array.isArray(docRow.certificates)) {
+            const docCerts = docRow.certificates;
+            
+            // Check for additions/replacements
+            docCerts.forEach(path => {
+              if (path.includes("/certificates/") && path.includes("_certificate.")) {
+                const filename = path.split("/").pop();
+                const parts = filename.split("_");
+                if (parts.length >= 3) {
+                  const courseId = parts[1];
+                  if (!certificates[courseId] || certificates[courseId].path !== path) {
+                    certificates[courseId] = {
+                      path: path,
+                      uploadedAt: new Date().toISOString()
+                    };
+                    needsSync = true;
+                  }
+                }
+              }
+            });
+
+            // Check for deletions
+            Object.keys(certificates).forEach(courseId => {
+              const certObj = certificates[courseId];
+              if (certObj && certObj.path && certObj.path.includes("/certificates/") && certObj.path.includes("_certificate.")) {
+                const stillExists = docCerts.some(p => p === certObj.path);
+                if (!stillExists) {
+                  delete certificates[courseId];
+                  needsSync = true;
+                }
+              }
+            });
+          } else if (docRow) {
+            // installer_documents has no certificates at all, so clear all course certificates
+            Object.keys(certificates).forEach(courseId => {
+              const certObj = certificates[courseId];
+              if (certObj && certObj.path && certObj.path.includes("/certificates/") && certObj.path.includes("_certificate.")) {
+                delete certificates[courseId];
+                needsSync = true;
+              }
+            });
+          }
+
+          if (needsSync) {
+            const { error: syncErr } = await sb
+              .from("simp_course_state")
+              .upsert({
+                owner_key: `user:${workerId}`,
+                state_key: "myStudyRoomCertificates",
+                state_value: JSON.stringify(certificates),
+                updated_at: new Date().toISOString()
+              }, { onConflict: "owner_key,state_key" });
+            if (syncErr) console.error("Self-healing certificate sync failed:", syncErr);
+          }
+
+          let html = "";
+          let badgeList = [];
+
+          // Compute Level and Course Badges
+          for (const course of catalog) {
+            // Keep it empty if they have not started the course at all
+            const hasStartedCourse = library.some(x => String(x.courseId) === String(course.id) && x.isCompleted);
+            if (!hasStartedCourse) {
+              continue;
+            }
+
+            const courseLevels = course.levels || [];
+            let allLevelsStudyPassed = true;
+            let allLevelsAssessmentsPassed = true;
+            let courseHasAnyQuizzes = false;
+
+            const courseLevelBadges = [];
+
+            for (let i = 0; i < courseLevels.length; i++) {
+              const level = courseLevels[i];
+              const totalLessons = level.lessons.length;
+              let completedLessonsCount = 0;
+              let lessonsWithQuiz = 0;
+              let quizPercentagesSum = 0;
+              let completedQuizzesCount = 0;
+
+              for (const lesson of level.lessons) {
+                const isCompleted = library.some(x => String(x.courseId) === String(course.id) && String(x.levelId) === String(level.id) && String(x.lessonId) === String(lesson.id) && x.isCompleted);
+                if (isCompleted) completedLessonsCount++;
+
+                const hasQuiz = (lesson.questions && lesson.questions.length > 0) || (lesson.assessments && lesson.assessments.length > 0);
+                if (hasQuiz) {
+                  lessonsWithQuiz++;
+                  courseHasAnyQuizzes = true;
+
+                  const attempt = attemptHistory.find(x => String(x.courseId) === String(course.id) && String(x.levelId) === String(level.id) && String(x.lessonId) === String(lesson.id));
+                  if (attempt) {
+                    if (attempt.isCompleted) completedQuizzesCount++;
+
+                    // Find latest attempt result
+                    const results = attempt.assessmentResults || [];
+                    const latestResult = results.sort((a,b) => Number(b.gradedAt || b.submittedAt || 0) - Number(a.gradedAt || a.submittedAt || 0))[0] || null;
+                    if (latestResult) {
+                      let scorePct = 0;
+                      if (latestResult.scoreEarned !== null && latestResult.scoreEarned !== undefined && latestResult.scoreTotal > 0) {
+                        scorePct = (Number(latestResult.scoreEarned) / Number(latestResult.scoreTotal)) * 100;
+                      } else if (latestResult.objectiveCorrect !== null && latestResult.objectiveCorrect !== undefined && latestResult.objectiveTotal > 0) {
+                        scorePct = (Number(latestResult.objectiveCorrect) / Number(latestResult.objectiveTotal)) * 100;
+                      } else if (attempt.isCompleted) {
+                        scorePct = 100;
+                      }
+                      quizPercentagesSum += scorePct;
+                    } else if (attempt.isCompleted) {
+                      quizPercentagesSum += 100;
+                    }
+                  }
+                }
+              }
+
+              const studyCompleted = totalLessons > 0 && completedLessonsCount === totalLessons;
+
+              const levelNumber = i + 1;
+              const passingScore = levelNumber >= 3 ? 80 : 70;
+              const overallLevelQuizScore = lessonsWithQuiz > 0 ? (quizPercentagesSum / lessonsWithQuiz) : 100;
+              const assessmentsCompleted = lessonsWithQuiz === 0 || overallLevelQuizScore >= passingScore;
+
+              if (!studyCompleted) allLevelsStudyPassed = false;
+              if (!studyCompleted || !assessmentsCompleted) allLevelsAssessmentsPassed = false;
+
+              // Build study progress registry details for level
+              const lessonsStudied = level.lessons.map(lesson => {
+                const isCompleted = library.some(x => String(x.courseId) === String(course.id) && String(x.levelId) === String(level.id) && String(x.lessonId) === String(lesson.id) && x.isCompleted);
+                
+                let quizInfo = "No assessment";
+                const hasQuiz = (lesson.questions && lesson.questions.length > 0) || (lesson.assessments && lesson.assessments.length > 0);
+                if (hasQuiz) {
+                  const attempt = attemptHistory.find(x => String(x.courseId) === String(course.id) && String(x.levelId) === String(level.id) && String(x.lessonId) === String(lesson.id));
+                  if (attempt) {
+                    const results = attempt.assessmentResults || [];
+                    const latestResult = results.sort((a,b) => Number(b.gradedAt || b.submittedAt || 0) - Number(a.gradedAt || a.submittedAt || 0))[0] || null;
+                    if (latestResult) {
+                      if (latestResult.scoreEarned !== null && latestResult.scoreEarned !== undefined) {
+                        quizInfo = `Score: ${latestResult.scoreEarned}/${latestResult.scoreTotal}`;
+                      } else if (latestResult.objectiveCorrect !== null && latestResult.objectiveCorrect !== undefined) {
+                        quizInfo = `Score: ${latestResult.objectiveCorrect}/${latestResult.objectiveTotal}`;
+                      } else {
+                        quizInfo = "Passed";
+                      }
+                    } else {
+                      quizInfo = attempt.isCompleted ? "Passed" : "Not Started";
+                    }
+                  } else {
+                    quizInfo = "Not Started";
+                  }
+                }
+
+                return {
+                  title: lesson.title,
+                  isCompleted,
+                  quizInfo
+                };
+              });
+
+              // Level completion badge
+              if (studyCompleted) {
+                const badgeTier = (lessonsWithQuiz > 0 && assessmentsCompleted) ? "Level Completed + Passed Quizzes" : "Level Completed";
+                courseLevelBadges.push({
+                  type: "level",
+                  courseId: course.id,
+                  levelId: level.id,
+                  courseTitle: course.title,
+                  title: `${course.title} – ${level.title || `Level ${i+1}`}`,
+                  description: `${completedLessonsCount}/${totalLessons} lessons finished.${lessonsWithQuiz ? ` Quiz average: ${Math.round(overallLevelQuizScore)}% (Passing score: ${passingScore}%).` : " No assessments."}`,
+                  tier: badgeTier,
+                  isPassed: assessmentsCompleted && lessonsWithQuiz > 0,
+                  earned: true,
+                  lessonsStudied: lessonsStudied,
+                  overallLevelQuizScore,
+                  passingScore
+                });
+              } else {
+                courseLevelBadges.push({
+                  type: "level",
+                  courseId: course.id,
+                  levelId: level.id,
+                  courseTitle: course.title,
+                  title: `${course.title} – ${level.title || `Level ${i+1}`}`,
+                  description: `${completedLessonsCount}/${totalLessons} lessons finished.`,
+                  tier: "Locked",
+                  isPassed: false,
+                  earned: false,
+                  lessonsStudied: lessonsStudied,
+                  overallLevelQuizScore: 0,
+                  passingScore
+                });
+              }
+            }
+
+            // Course completion badge
+            if (courseLevels.length > 0) {
+              // Build study progress registry levels for course
+              const levelsStudied = courseLevels.map((lvl, index) => {
+                const lvlLessons = lvl.lessons.map(lesson => {
+                  const isCompleted = library.some(x => String(x.courseId) === String(course.id) && String(x.levelId) === String(lvl.id) && String(x.lessonId) === String(lesson.id) && x.isCompleted);
+                  
+                  let quizInfo = "No assessment";
+                  const hasQuiz = (lesson.questions && lesson.questions.length > 0) || (lesson.assessments && lesson.assessments.length > 0);
+                  if (hasQuiz) {
+                    const attempt = attemptHistory.find(x => String(x.courseId) === String(course.id) && String(x.levelId) === String(lvl.id) && String(x.lessonId) === String(lesson.id));
+                    if (attempt) {
+                      const results = attempt.assessmentResults || [];
+                      const latestResult = results.sort((a,b) => Number(b.gradedAt || b.submittedAt || 0) - Number(a.gradedAt || a.submittedAt || 0))[0] || null;
+                      if (latestResult) {
+                        if (latestResult.scoreEarned !== null && latestResult.scoreEarned !== undefined) {
+                          quizInfo = `Score: ${latestResult.scoreEarned}/${latestResult.scoreTotal}`;
+                        } else if (latestResult.objectiveCorrect !== null && latestResult.objectiveCorrect !== undefined) {
+                          quizInfo = `Score: ${latestResult.objectiveCorrect}/${latestResult.objectiveTotal}`;
+                        } else {
+                          quizInfo = "Passed";
+                        }
+                      } else {
+                        quizInfo = attempt.isCompleted ? "Passed" : "Not Started";
+                      }
+                    } else {
+                      quizInfo = "Not Started";
+                    }
+                  }
+
+                  return {
+                    title: lesson.title,
+                    isCompleted,
+                    quizInfo
+                  };
+                });
+
+                return {
+                  title: lvl.title || `Level ${index + 1}`,
+                  lessons: lvlLessons
+                };
+              });
+
+              if (allLevelsStudyPassed) {
+                const certData = certificates[course.id] || null;
+                if (!certData || !certData.path) {
+                  pendingUploadCourses.push(course.title);
+                }
+                const badgeTier = (courseHasAnyQuizzes && allLevelsAssessmentsPassed) ? "Course Completed + Passed Quizzes" : "Course Completed";
+                
+                // Nest all earned level badges
+                const earnedLevels = courseLevelBadges.filter(x => x.earned).map(x => ({
+                  title: x.title,
+                  levelId: x.levelId,
+                  description: x.description,
+                  tier: x.tier,
+                  isPassed: x.isPassed,
+                  lessonsStudied: x.lessonsStudied
+                }));
+
+                badgeList.push({
+                  type: "course",
+                  courseId: course.id,
+                  title: `${course.title} – Professional Certification`,
+                  description: `All ${courseLevels.length} levels finished completely!`,
+                  tier: badgeTier,
+                  isPassed: allLevelsAssessmentsPassed && courseHasAnyQuizzes,
+                  earned: true,
+                  certificate: certData,
+                  nestedLevels: earnedLevels,
+                  levelsStudied: levelsStudied
+                });
+              } else {
+                badgeList.push({
+                  type: "course",
+                  courseId: course.id,
+                  title: `${course.title} – Professional Certification`,
+                  description: `Complete all levels of this course to unlock this credential.`,
+                  tier: "Locked",
+                  isPassed: false,
+                  earned: false,
+                  certificate: null,
+                  nestedLevels: [],
+                  levelsStudied: levelsStudied
+                });
+              }
+            }
+
+            // Skip showing minor level badges separately if the whole course is certified complete
+            if (!allLevelsStudyPassed) {
+              badgeList.push(...courseLevelBadges);
+            }
+          }
+
+          if (badgeList.length === 0) {
+            container.innerHTML = `<div class="empty-state" style="padding:24px; text-align:center; color:var(--muted)">No badges earned yet. The worker has not started any courses.</div>`;
+            const alertContainer = document.getElementById("certificateAlertContainer");
+            if (alertContainer) alertContainer.innerHTML = "";
+            updateWorkerTileWarning(workerId, []);
+            if (window.checkPendingCertificatesForSidebar) window.checkPendingCertificatesForSidebar(sb);
+            return;
+          }
+
+          // Sort badges: Earned first, then Course first, then title
+          badgeList.sort((a, b) => {
+            if (a.earned !== b.earned) return b.earned ? 1 : -1;
+            if (a.type !== b.type) return a.type === "course" ? -1 : 1;
+            return a.title.localeCompare(b.title);
+          });
+
+          html += `<div class="badge-grid">`;
+          badgeList.forEach((badge, idx) => {
+            const wrapClass = badge.earned
+              ? (badge.type === "course" ? "course" : (badge.isPassed ? "level" : "study-only"))
+              : "unearned";
+            const icon = badge.earned
+              ? (badge.type === "course" ? "🏆" : (badge.isPassed ? "⭐️" : "📖"))
+              : "🔒";
+            
+            const badgeLabel = badge.earned
+              ? (badge.type === "course" ? "Cert" : "Level")
+              : "Lock";
+
+            const cardClass = badge.earned ? "badge-card" : "badge-card unearned";
+
+            let nestedHtml = "";
+            if (badge.type === "course" && badge.earned && badge.nestedLevels && badge.nestedLevels.length > 0) {
+              nestedHtml = `
+                <div class="nested-badges" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
+                  ${badge.nestedLevels.map(level => {
+                    const levelLabel = level.title.split('–')[1] || level.title;
+                    return `
+                      <span class="nested-badge-pill" style="display: inline-flex; align-items: center; gap: 4px; background: rgba(27, 156, 133, 0.08); color: #1b9c85; border: 1px solid rgba(27, 156, 133, 0.15); padding: 3px 8px; border-radius: 99px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em;" title="${level.description}">
+                        ⭐️ ${levelLabel.trim()}
+                      </span>
+                    `;
+                  }).join('')}
+                </div>
+              `;
+            }
+
+            html += `
+              <div class="${cardClass}" data-badge-idx="${idx}">
+                <div class="badge-icon-wrap ${wrapClass}">
+                  ${icon}
+                  <span class="badge-badge ${badge.earned ? "" : "unearned"}">${badgeLabel}</span>
+                </div>
+                <div class="badge-info">
+                  <h5>${badge.title}</h5>
+                  <p>${badge.description}</p>
+                  ${nestedHtml}
+                  <span class="badge-status ${badge.earned ? "earned" : "unearned"}">${badge.tier}</span>
+                </div>
+              </div>
+            `;
+          });
+          html += `</div>`;
+
+          container.innerHTML = html;
+
+          // Attach click handlers
+          container.querySelectorAll(".badge-card").forEach(card => {
+            card.addEventListener("click", () => {
+              const idx = Number(card.dataset.badgeIdx);
+              const badge = badgeList[idx];
+              if (!badge || !badge.earned) return;
+
+              manageCourseCertificate(workerId, badge);
+            });
+          });
+
+          // Render Warning Banner in real-time
+          const alertContainer = document.getElementById("certificateAlertContainer");
+          if (alertContainer) {
+            if (pendingUploadCourses.length > 0) {
+              alertContainer.innerHTML = `
+                <div class="cert-alert-banner" style="background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 16px; margin: 0 16px 20px 16px; display: flex; align-items: flex-start; gap: 12px; box-shadow: 0 2px 4px rgba(217, 119, 6, 0.05);">
+                  <div style="font-size: 24px; color: #d97706; line-height: 1; flex-shrink: 0; margin-top: 2px;">⚠️</div>
+                  <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1;">
+                    <h5 style="margin: 0; color: #92400e; font-size: 0.92rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;">Digital Certification Required</h5>
+                    <p style="margin: 0; color: #b45309; font-size: 0.85rem; line-height: 1.4; font-weight: 500;">
+                      The installer has successfully completed all study modules and quizzes for: <strong style="color: #78350f;">${pendingUploadCourses.join(', ')}</strong>. 
+                      Please review their detailed registry below, and upload their soft copy certificate by clicking on the completed Course badge.
+                    </p>
+                  </div>
+                </div>
+              `;
+            } else {
+              alertContainer.innerHTML = "";
+            }
+          }
+
+          // Update lists and warnings in real-time
+          updateWorkerTileWarning(workerId, pendingUploadCourses);
+          if (window.checkPendingCertificatesForSidebar) {
+            window.checkPendingCertificatesForSidebar(sb);
+          }
+
+        } catch (e) {
+          console.error("Failed to load worker accomplishments:", e);
+          container.innerHTML = `<div class="empty-state" style="padding:16px; color:var(--danger)">Error calculating accomplishments: ${e.message || e}</div>`;
+        }
+      }
+
+      // Certificate & Progress Manager Modal inside workerVerification
+      async function manageCourseCertificate(workerId, badge) {
+        let detailsHtml = "";
+
+        if (badge.type === "level") {
+          detailsHtml = `
+            <div class="modal-study-details" style="margin-bottom: 20px; font-family: 'Poppins', sans-serif; text-align: left;">
+              <h5 style="margin: 0 0 10px 0; font-size: 0.92rem; font-weight: 700; color: #1c2430; text-transform: uppercase; letter-spacing: 0.03em;">Lessons Studied</h5>
+              <div style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;">
+                ${badge.lessonsStudied.map(lesson => {
+                  const studyBadge = lesson.isCompleted 
+                    ? `<span style="background: rgba(27, 156, 133, 0.08); color: #1b9c85; border: 1px solid rgba(27, 156, 133, 0.15); padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">📖 Completed</span>`
+                    : `<span style="background: rgba(100, 116, 139, 0.08); color: #64748b; border: 1px solid rgba(100, 116, 139, 0.15); padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">🔒 Locked</span>`;
+                  
+                  let quizColor = "#64748b";
+                  let quizBg = "rgba(100, 116, 139, 0.08)";
+                  let quizBorder = "rgba(100, 116, 139, 0.15)";
+                  
+                  if (lesson.quizInfo.includes("Score")) {
+                    quizColor = "#1b9c85";
+                    quizBg = "rgba(27, 156, 133, 0.08)";
+                    quizBorder = "rgba(27, 156, 133, 0.15)";
+                  } else if (lesson.quizInfo === "Passed") {
+                    quizColor = "#1b9c85";
+                    quizBg = "rgba(27, 156, 133, 0.08)";
+                    quizBorder = "rgba(27, 156, 133, 0.15)";
+                  }
+                  
+                  const quizBadge = `<span style="background: ${quizBg}; color: ${quizColor}; border: 1px solid ${quizBorder}; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">📝 ${lesson.quizInfo}</span>`;
+
+                  return `
+                    <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; gap: 12px; flex-shrink: 0;">
+                      <span style="font-size: 0.88rem; font-weight: 500; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px;" title="${lesson.title}">${lesson.title}</span>
+                      <div style="display: flex; gap: 6px; align-items: center; flex-shrink: 0;">
+                        ${studyBadge}
+                        ${quizBadge}
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+            
+            <div style="border-top: 1px dashed #e2e8f0; padding-top: 16px; text-align: left; font-family: 'Poppins', sans-serif;">
+              <h5 style="margin: 0 0 10px 0; font-size: 0.92rem; font-weight: 700; color: #1c2430; text-transform: uppercase; letter-spacing: 0.03em;">Level Badge Status</h5>
+              <div style="display: flex; align-items: center; gap: 12px; background: rgba(27, 156, 133, 0.04); border: 1px solid rgba(27, 156, 133, 0.15); border-radius: 8px; padding: 12px;">
+                <div style="width: 42px; height: 42px; background: #1b9c85; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; border-radius: 50%;">
+                  ⭐️
+                </div>
+                <div style="display: flex; flex-direction: column;">
+                  <span style="font-size: 0.92rem; font-weight: 700; color: #1c2430;">${badge.tier}</span>
+                  <span style="font-size: 0.78rem; color: #64748b;">${badge.description}</span>
+                </div>
+              </div>
+            </div>
+          `;
+
+          Swal.fire({
+            title: badge.title,
+            html: detailsHtml,
+            confirmButtonColor: swalBtnColor,
+            confirmButtonText: "Close"
+          });
+          return;
+        }
+
+        // Course completion registry AND certificate manager
+        let levelsStudiedHtml = "";
+        if (badge.levelsStudied && badge.levelsStudied.length > 0) {
+          levelsStudiedHtml = `
+            <div class="modal-study-details" style="margin-bottom: 20px; font-family: 'Poppins', sans-serif; text-align: left;">
+              <h5 style="margin: 0 0 10px 0; font-size: 0.92rem; font-weight: 700; color: #1c2430; text-transform: uppercase; letter-spacing: 0.03em;">Registry of Studied Levels</h5>
+              <div style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; padding-right: 4px;">
+                ${badge.levelsStudied.map(level => {
+                  return `
+                    <div style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+                      <div style="background: #f1f5f9; padding: 8px 12px; font-size: 0.85rem; font-weight: 700; color: #1e293b; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 6px;">
+                        ⭐️ ${level.title}
+                      </div>
+                      <div style="display: flex; flex-direction: column; background: white;">
+                        ${level.lessons.map(lesson => {
+                          const studyBadge = lesson.isCompleted 
+                            ? `<span style="background: rgba(27, 156, 133, 0.08); color: #1b9c85; border: 1px solid rgba(27, 156, 133, 0.15); padding: 2px 6px; border-radius: 99px; font-size: 10px; font-weight: 600;">📖 Completed</span>`
+                            : `<span style="background: rgba(100, 116, 139, 0.08); color: #64748b; border: 1px solid rgba(100, 116, 139, 0.15); padding: 2px 6px; border-radius: 99px; font-size: 10px; font-weight: 600;">🔒 Locked</span>`;
+                          
+                          let quizColor = "#64748b";
+                          let quizBg = "rgba(100, 116, 139, 0.08)";
+                          let quizBorder = "rgba(100, 116, 139, 0.15)";
+                          
+                          if (lesson.quizInfo.includes("Score")) {
+                            quizColor = "#1b9c85";
+                            quizBg = "rgba(27, 156, 133, 0.08)";
+                            quizBorder = "rgba(27, 156, 133, 0.15)";
+                          } else if (lesson.quizInfo === "Passed") {
+                            quizColor = "#1b9c85";
+                            quizBg = "rgba(27, 156, 133, 0.08)";
+                            quizBorder = "rgba(27, 156, 133, 0.15)";
+                          }
+                          const quizBadge = `<span style="background: ${quizBg}; color: ${quizColor}; border: 1px solid ${quizBorder}; padding: 2px 6px; border-radius: 99px; font-size: 10px; font-weight: 600;">📝 ${lesson.quizInfo}</span>`;
+
+                          return `
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-bottom: 1px solid #f1f5f9; gap: 8px; flex-shrink: 0;">
+                              <span style="font-size: 0.82rem; font-weight: 500; color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;" title="${lesson.title}">${lesson.title}</span>
+                              <div style="display: flex; gap: 4px; align-items: center; flex-shrink: 0;">
+                                  ${studyBadge}
+                                  ${quizBadge}
+                              </div>
+                            </div>
+                          `;
+                        }).join('')}
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        let cert = badge.certificate;
+        let previewHtml = "";
+
+        if (cert) {
+          const signed = await getSignedUrlWithOwner(cert.path, workerId);
+          const isImage = /\.(png|jpe?g|gif|webp|bmp|svg)($|\?)/i.test(cert.path);
+          if (isImage) {
+            previewHtml = `<div style="text-align:center; margin: 12px 0;"><img src="${signed}" style="max-width:100%; max-height:160px; border-radius:8px; border:1px solid var(--line); box-shadow:0 4px 12px rgba(0,0,0,0.06);"></div>`;
+          } else {
+            previewHtml = `
+              <div style="text-align:center; margin: 12px 0;">
+                <div style="padding: 16px; border: 1px solid var(--line); border-radius: 8px; background: #f0fdf4; display: inline-flex; align-items:center; gap:8px;">
+                  <span class="material-icons-sharp" style="color:var(--brand); font-size:24px;">verified_user</span>
+                  <div style="text-align:left;">
+                    <div style="font-weight:700; color:var(--ink); font-size:0.85rem;">Certificate (PDF) Verified</div>
+                    <div style="font-size:0.75rem; color:var(--muted)">Uploaded: ${new Date(cert.uploadedAt).toLocaleDateString()}</div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+        } else {
+          previewHtml = `
+            <div style="text-align:center; margin: 12px 0;">
+              <div style="padding: 16px; border: 1px dashed var(--line); border-radius: 8px; background: #fafafa; color: var(--muted); font-size: 0.85rem;">
+                No certification soft copy uploaded yet.
+              </div>
+            </div>
+          `;
+        }
+
+        const result = await Swal.fire({
+          title: "Soft Copy & Study Progress Manager",
+          html: `
+            ${levelsStudiedHtml}
+
+            <div style="border-top: 1px dashed var(--line); padding-top: 16px; text-align: left; font-family: 'Poppins', sans-serif;">
+              <h5 style="margin: 0 0 8px 0; font-size: 0.92rem; font-weight: 700; color: var(--ink); text-transform: uppercase; letter-spacing: 0.03em;">Digital Certificate Manager</h5>
+              <p style="margin:0 0 12px; font-size: 0.78rem; color:var(--muted);">Manage the digital soft copy of the certification for this installer. Once uploaded, the installer can download or print it instantly from their credentials board.</p>
+              
+              ${previewHtml}
+
+              <div style="margin-top:16px;">
+                <label style="display:block; font-weight:700; font-size: 0.82rem; margin-bottom:6px;">Select PDF or Image Certificate:</label>
+                <input type="file" id="certFileInput" accept="application/pdf,image/*" style="width:100%; padding:8px; border:1px solid var(--line); border-radius:8px; background:#fff; font-size:0.8rem;">
+              </div>
+            </div>
+          `,
+          showCancelButton: true,
+          confirmButtonText: cert ? "Upload / Replace" : "Upload Certificate",
+          cancelButtonText: "Close",
+          showDenyButton: cert ? true : false,
+          denyButtonText: "Remove Certificate",
+          denyButtonColor: "#ef4444",
+          confirmButtonColor: swalBtnColor,
+          cancelButtonColor: "#64748b",
+          preConfirm: () => {
+            const fileInput = document.getElementById("certFileInput");
+            if (!fileInput.files || !fileInput.files[0]) {
+              if (cert) return null; // keep existing if replace was clicked with no new file
+              Swal.showValidationMessage("Please select a file to upload.");
+              return false;
+            }
+            return fileInput.files[0];
+          }
+        });
+
+        // Handle File Upload
+        if (result.isConfirmed) {
+          const file = result.value;
+          if (!file) return; // closed without selecting new file on a replace
+          
+          Swal.fire({
+            title: "Uploading soft copy...",
+            allowOutsideClick: false,
+            didOpen: () => {
+              Swal.showLoading();
+            }
+          });
+
+          try {
+            const { data: { user: adminUser } } = await sb.auth.getUser();
+            if (!adminUser) throw new Error("Administrator session not found. Please log in again.");
+            const adminId = adminUser.id;
+
+            const ext = file.name.split('.').pop();
+            const filePath = `${adminId}/certificates/${workerId}_${badge.courseId}_certificate.${ext}`;
+
+            // Upload directly to Supabase storage bucket 'documents_review' under the admin's folder
+            const { data, error } = await sb.storage
+              .from("documents_review")
+              .upload(filePath, file, { upsert: true });
+            if (error) throw error;
+
+            // Fetch current certificates list from installer_documents
+            const { data: docRow, error: docErr } = await sb
+              .from("installer_documents")
+              .select("certificates, certificates_status")
+              .eq("installer_id", workerId)
+              .maybeSingle();
+            if (docErr) throw docErr;
+
+            let certList = [];
+            let statusList = [];
+            if (docRow) {
+              certList = Array.isArray(docRow.certificates) ? docRow.certificates : [];
+              statusList = Array.isArray(docRow.certificates_status) ? docRow.certificates_status : [];
+            }
+
+            // Filter out any existing certificate path for this course
+            const targetPattern = `certificates/${workerId}_${badge.courseId}_certificate.`;
+            const cleanCerts = [];
+            const cleanStatus = [];
+            for (let i = 0; i < certList.length; i++) {
+              const path = certList[i];
+              if (!path.includes(targetPattern)) {
+                cleanCerts.push(path);
+                cleanStatus.push(statusList[i] || "approved");
+              }
+            }
+
+            // Append the new course certificate path
+            cleanCerts.push(data.path);
+            cleanStatus.push("approved");
+
+            // Update installer_documents table
+            const { error: updateErr } = await sb
+              .from("installer_documents")
+              .update({
+                certificates: cleanCerts,
+                certificates_status: cleanStatus
+              })
+              .eq("installer_id", workerId);
+            if (updateErr) throw updateErr;
+
+            await Swal.fire({
+              title: "Certificate Uploaded!",
+              text: "The certification soft copy has been successfully processed and logged.",
+              icon: "success",
+              confirmButtonColor: swalBtnColor
+            });
+
+            // Reload accomplishments panel
+            loadWorkerAccomplishments(workerId);
+
+          } catch (err) {
+            console.error("Certificate upload failed:", err);
+            notifyError(`Upload failed: ${err.message || err}`);
+          }
+        } else if (result.isDenied) {
+          // Delete/Remove certificate
+          const confirmDel = await Swal.fire({
+            title: "Delete Certification?",
+            text: "Are you sure you want to remove the certificate soft copy? The installer will no longer be able to download/print this.",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes, Delete",
+            cancelButtonText: "Keep Certificate",
+            confirmButtonColor: "#ef4444"
+          });
+
+          if (confirmDel.isConfirmed) {
+            Swal.fire({
+              title: "Deleting soft copy...",
+              allowOutsideClick: false,
+              didOpen: () => { Swal.showLoading(); }
+            });
+
+            try {
+              // Delete from storage
+              await sb.storage.from("documents_review").remove([cert.path]);
+
+              // Fetch current certificates list from installer_documents
+              const { data: docRow, error: docErr } = await sb
+                .from("installer_documents")
+                .select("certificates, certificates_status")
+                .eq("installer_id", workerId)
+                .maybeSingle();
+              if (docErr) throw docErr;
+
+              let certList = [];
+              let statusList = [];
+              if (docRow) {
+                certList = Array.isArray(docRow.certificates) ? docRow.certificates : [];
+                statusList = Array.isArray(docRow.certificates_status) ? docRow.certificates_status : [];
+              }
+
+              // Filter out the certificate path for this course
+              const targetPattern = `certificates/${workerId}_${badge.courseId}_certificate.`;
+              const cleanCerts = [];
+              const cleanStatus = [];
+              for (let i = 0; i < certList.length; i++) {
+                const path = certList[i];
+                if (!path.includes(targetPattern)) {
+                  cleanCerts.push(path);
+                  cleanStatus.push(statusList[i] || "approved");
+                }
+              }
+
+              // Update installer_documents table
+              const { error: updateErr } = await sb
+                .from("installer_documents")
+                .update({
+                  certificates: cleanCerts,
+                  certificates_status: cleanStatus
+                })
+                .eq("installer_id", workerId);
+              if (updateErr) throw updateErr;
+
+              await Swal.fire({
+                title: "Certificate Deleted",
+                text: "The soft copy reference has been deleted successfully.",
+                icon: "success",
+                confirmButtonColor: swalBtnColor
+              });
+
+              // Reload accomplishments panel
+              loadWorkerAccomplishments(workerId);
+
+            } catch (err) {
+              console.error("Certificate deletion failed:", err);
+              notifyError(`Deletion failed: ${err.message || err}`);
+            }
+          }
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        startLoading();
+        fetchWorkers();
+      });
+    </script>
+  </body>
+</html>

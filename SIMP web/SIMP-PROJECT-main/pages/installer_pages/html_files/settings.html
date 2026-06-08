@@ -1,0 +1,2797 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../img/simpHappyMascotLogo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Keep your existing sidebar styles and icons -->
+    <link rel="stylesheet" href="../css_files/sideBar.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp"
+      rel="stylesheet"
+    />
+
+    <title>Settings • Installer</title>
+
+    <style>
+      :root {
+        --color-primary: #6c9bcf;
+        --color-danger: #20a44c;
+        --color-white: #fff;
+        --color-info-dark: #7d8da1;
+        --color-dark: #363949;
+        --color-light: rgba(132, 139, 200, 0.18);
+        --color-background: #f6f6f9;
+        --box-shadow: 0 2rem 3rem var(--color-light);
+        --success: #1b9c85;
+
+        /* Skeleton tokens */
+        --sk-bg: #eef3f9;
+        --sk-shine: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.7) 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+      }
+
+      .container {
+        display: grid;
+        width: 96%;
+        margin: 0 auto;
+        gap: 1.8rem;
+        grid-template-columns: 12rem auto;
+        min-width: 0;
+      }
+
+      /* ===== Main / Settings ===== */
+      main {
+        margin-top: 1.4rem;
+        min-width: 0;
+      }
+
+      .page {
+        background: var(--color-white);
+        border-radius: 15px;
+        box-shadow: var(--box-shadow);
+        padding: 1.2rem 1.4rem;
+        min-height: 60vh;
+        border: 1px solid #e5e7eb;
+      }
+
+      .page h1 {
+        font-size: 1.4rem;
+        margin-bottom: 0.25rem;
+      }
+
+      .page p.lead {
+        color: var(--color-info-dark);
+        margin-bottom: 1rem;
+      }
+
+      .card {
+        border: 1px solid var(--color-light);
+        border-radius: 12px;
+        padding: 1rem;
+        background: #fff;
+        margin-top: 1rem;
+      }
+
+      .card h2 {
+        font-size: 1.05rem;
+        margin: 0 0 0.6rem;
+      }
+
+      /* simple head row to place Created At on the right */
+      .card-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 0.6rem;
+      }
+
+      .meta {
+        font-size: 0.92rem;
+        color: #314155;
+        display: flex;
+        gap: 0.4rem;
+        align-items: center;
+      }
+
+      .meta .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        background: #f3f6fa;
+        border: 1px solid #dbe5f1;
+        color: #233047;
+        padding: 0.25rem 0.55rem;
+        border-radius: 999px;
+        font-size: 0.86rem;
+      }
+
+      .meta .material-icons-sharp {
+        font-size: 18px;
+      }
+
+      .row {
+        display: grid;
+        gap: 0.65rem;
+      }
+
+      @media (min-width: 860px) {
+        .row {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (min-width: 1100px) {
+        .row-3 {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      .field {
+        display: grid;
+        gap: 0.35rem;
+        align-content: start;
+      }
+
+      .field label {
+        font-weight: 700;
+        color: #314155;
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+      }
+
+      .field .hint {
+        color: var(--color-info-dark);
+        font-size: 0.85rem;
+      }
+
+      .value-view {
+        border: 1px dashed #e1e7f0;
+        background: #fafcff;
+        color: #233047;
+        padding: 0.6rem 0.7rem;
+        border-radius: 10px;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+      }
+
+      .value-view .text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .value-view .actions {
+        display: flex;
+        gap: 0.25rem;
+      }
+
+      .icon-btn {
+        appearance: none;
+        border: none;
+        background: transparent;
+        cursor: pointer;
+        padding: 0.2rem;
+        border-radius: 8px;
+      }
+
+      .icon-btn:hover {
+        background: #eef3f9;
+      }
+
+      .icon-btn .material-icons-sharp {
+        font-size: 18px;
+        vertical-align: middle;
+      }
+
+      input,
+      select {
+        border: 1px solid #dbe5f1;
+        border-radius: 10px;
+        padding: 0.6rem 0.7rem;
+        font: inherit;
+        background: #fff;
+        width: 100%;
+      }
+
+      input[readonly],
+      input:disabled {
+        background: #f3f6fa;
+        color: #6d7b8e;
+      }
+
+      .edit-wrap {
+        display: none;
+        gap: 0.4rem;
+        align-items: center;
+      }
+
+      .edit-wrap.show {
+        display: flex;
+      }
+
+      .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 0.55rem 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+      }
+
+      .btn.danger {
+        background: var(--color-danger);
+        color: #fff;
+      }
+
+      .btn.ghost {
+        background: #eef3f9;
+        color: #233047;
+      }
+
+      .btn.primary {
+        background: var(--color-primary);
+        color: #fff;
+      }
+
+      .btn.outline {
+        background: #fff;
+        border: 1px solid #dbe5f1;
+        color: #233047;
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .btn .material-icons-sharp {
+        font-size: 18px;
+        line-height: 1;
+      }
+
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
+          "Liberation Mono", monospace;
+      }
+
+      .toast {
+        position: fixed;
+        right: 16px;
+        bottom: 16px;
+        background: #121a24;
+        color: #fff;
+        padding: 0.75rem 1rem;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        display: none;
+        z-index: 9999;
+        max-width: 78vw;
+      }
+
+      .toast.show {
+        display: block;
+      }
+
+      .danger-box {
+        border: 1px solid #ffd8d6;
+        background: #fff4f3;
+        border-radius: 12px;
+        padding: 1rem;
+        color: #7a1a14;
+      }
+
+      /* ===== Avatar Uploader ===== */
+      .avatar-card {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .avatar {
+        width: 92px;
+        height: 92px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        font-size: 1.4rem;
+        color: #fff;
+        background: linear-gradient(135deg, #6c9bcf, #1b9c85);
+        user-select: none;
+        overflow: hidden;
+        border: 3px solid #eef3f9;
+      }
+
+      .avatar img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .avatar-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .muted {
+        color: var(--color-info-dark);
+        font-size: 0.9rem;
+      }
+
+      .avatar-hint {
+        margin-top: 0.3rem;
+      }
+
+      .progress {
+        display: none;
+        height: 8px;
+        border-radius: 999px;
+        background: #eef3f9;
+        overflow: hidden;
+        margin-top: 0.5rem;
+      }
+
+      .progress > div {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #6c9bcf, #1b9c85);
+      }
+
+      /* ====== RESPONSIVE ENHANCEMENTS ====== */
+      @media (max-width: 1100px) {
+        .container {
+          width: 98%;
+          gap: 1.2rem;
+        }
+
+        .page {
+          padding: 1rem 1.1rem;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        /* Layout compaction */
+        .container {
+          grid-template-columns: 1fr;
+          width: 100%;
+          gap: 1rem;
+          padding: 0 1rem;
+        }
+
+        main {
+          margin-top: 0.8rem;
+          width: 100%;
+          min-width: 0;
+        }
+
+        .page {
+          padding: 0.9rem 0.9rem;
+          border-radius: 12px;
+          box-shadow: none;
+          width: 100%;
+          min-width: 0;
+        }
+
+        .page h1 {
+          font-size: 1.2rem;
+        }
+
+        .page p.lead {
+          font-size: 0.95rem;
+        }
+
+        .card {
+          padding: 0.8rem;
+          border-radius: 10px;
+        }
+
+        .row,
+        .row-3 {
+          grid-template-columns: 1fr !important;
+          gap: 0.55rem;
+        }
+
+        .field label {
+          font-size: 0.95rem;
+        }
+
+        .field .hint {
+          font-size: 0.8rem;
+        }
+
+        .value-view {
+          min-height: 38px;
+          padding: 0.5rem 0.6rem;
+        }
+
+        .value-view .text {
+          max-width: 70vw;
+        }
+
+        .avatar-card {
+          grid-template-columns: 72px 1fr;
+          gap: 0.75rem;
+        }
+
+        .avatar {
+          width: 72px;
+          height: 72px;
+          font-size: 1.1rem;
+          border-width: 2px;
+        }
+
+        /* Icon-only buttons that shouldn't keep text/padding */
+        .avatar-actions {
+          gap: 0.35rem;
+        }
+
+        .iconify-on-mobile {
+          width: 44px;
+          height: 44px;
+          padding: 0 !important;
+          justify-content: center;
+          align-items: center;
+          border-radius: 10px;
+        }
+
+        .iconify-on-mobile .btn-label {
+          display: none !important;
+        }
+
+        .iconify-on-mobile .material-icons-sharp {
+          font-size: 20px;
+        }
+
+        /* Keep small icon buttons tidy */
+        .icon-btn {
+          padding: 0.3rem;
+        }
+
+        .danger-box {
+          padding: 0.8rem;
+        }
+      }
+
+      @media (max-width: 400px) {
+        .page {
+          padding: 0.75rem;
+        }
+
+        .card {
+          padding: 0.7rem;
+        }
+
+        .avatar {
+          width: 64px;
+          height: 64px;
+          font-size: 1rem;
+        }
+
+        .iconify-on-mobile {
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      /* Visually hidden utility for JS placeholders */
+      .sr-only {
+        position: absolute !important;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      /* ====== SKELETON LOADER ====== */
+      @keyframes shimmer {
+        0% {
+          background-position: -200% 0;
+        }
+
+        100% {
+          background-position: 200% 0;
+        }
+      }
+
+      .skeleton {
+        background: var(--color-white);
+        border-radius: 15px;
+        box-shadow: var(--box-shadow);
+        padding: 1.2rem 1.4rem;
+        min-height: 60vh;
+      }
+
+      .sk-line,
+      .sk-rect,
+      .sk-circle {
+        position: relative;
+        overflow: hidden;
+        background: var(--sk-bg);
+      }
+
+      .sk-line::after,
+      .sk-rect::after,
+      .sk-circle::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: var(--sk-shine);
+        background-size: 200% 100%;
+        animation: shimmer 1.2s linear infinite;
+      }
+
+      .sk-title {
+        height: 22px;
+        width: min(340px, 60%);
+        border-radius: 8px;
+      }
+
+      .sk-subtitle {
+        height: 14px;
+        width: min(520px, 80%);
+        margin-top: 10px;
+        border-radius: 8px;
+      }
+
+      .sk-card {
+        border: 1px solid var(--color-light);
+        border-radius: 12px;
+        padding: 1rem;
+        margin-top: 1rem;
+      }
+
+      .sk-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 0.6rem;
+      }
+
+      .sk-badge {
+        height: 28px;
+        width: 160px;
+        border-radius: 999px;
+      }
+
+      .sk-avatar-row {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 1rem;
+        align-items: center;
+      }
+
+      .sk-avatar {
+        width: 92px;
+        height: 92px;
+        border-radius: 50%;
+      }
+
+      .sk-btns {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .sk-btn {
+        height: 38px;
+        width: 130px;
+        border-radius: 10px;
+      }
+
+      .sk-hint {
+        height: 14px;
+        width: 60%;
+        margin-top: 8px;
+        border-radius: 6px;
+      }
+
+      .sk-grid {
+        display: grid;
+        gap: 0.65rem;
+      }
+
+      @media (min-width: 860px) {
+        .sk-grid.cols-2 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (min-width: 1100px) {
+        .sk-grid.cols-3 {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      .sk-field {
+        display: grid;
+        gap: 0.35rem;
+      }
+
+      .sk-label {
+        height: 14px;
+        width: 140px;
+        border-radius: 6px;
+      }
+
+      .sk-value {
+        height: 40px;
+        border-radius: 10px;
+      }
+
+      .sk-danger {
+        border: 1px solid #ffd8d6;
+        background: #fff4f3;
+        border-radius: 12px;
+        padding: 1rem;
+        margin-top: 1rem;
+      }
+
+      .sk-danger-line {
+        height: 16px;
+        width: 70%;
+        border-radius: 8px;
+      }
+
+      .sk-danger-btn {
+        height: 40px;
+        width: 160px;
+        border-radius: 10px;
+        margin-top: 10px;
+      }
+
+      /* Toggle visibility: show skeleton while loading */
+      body.is-loading .page {
+        display: none !important;
+      }
+
+      body.is-loading .skeleton {
+        display: block !important;
+      }
+
+      body:not(.is-loading) .skeleton {
+        display: none !important;
+      }
+
+      /* ===== SweetAlert2 compact modal tweaks ===== */
+      .swal2-container {
+        z-index: 10100 !important;
+      }
+      .simp-swal .swal2-title {
+        font-size: 1.05rem !important;
+        line-height: 1.3 !important;
+      }
+      .simp-swal .swal2-html-container {
+        font-size: 0.95rem !important;
+        margin-top: 0.25rem !important;
+      }
+      .simp-swal .swal2-actions {
+        gap: 0.5rem !important;
+      }
+
+      /* Badges & Accomplishments */
+      .badge-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+        margin-top: 10px;
+      }
+      .badge-card {
+        border: 1px solid var(--color-light);
+        border-radius: 12px;
+        padding: 16px;
+        background: linear-gradient(145deg, #ffffff, #fcfdfe);
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        position: relative;
+        cursor: pointer;
+        user-select: none;
+      }
+      .badge-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        border-color: rgba(108, 155, 207, 0.4);
+      }
+      .badge-card.unearned {
+        opacity: 0.65;
+        background: #fbfcfd;
+        cursor: not-allowed;
+      }
+      .badge-card.unearned:hover {
+        transform: none;
+        box-shadow: none;
+        border-color: var(--color-light);
+      }
+      .badge-icon-wrap {
+        width: 60px;
+        height: 60px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: #fff;
+        flex-shrink: 0;
+        position: relative;
+      }
+      .badge-icon-wrap.course {
+        background: linear-gradient(135deg, #ffb300, #ff6f00);
+        box-shadow: 0 8px 16px rgba(255, 111, 0, 0.15);
+      }
+      .badge-icon-wrap.level {
+        background: linear-gradient(135deg, #00b0ff, #0057cb);
+        box-shadow: 0 8px 16px rgba(0, 87, 203, 0.15);
+      }
+      .badge-icon-wrap.study-only {
+        background: linear-gradient(135deg, #a855f7, #6b21a8);
+        box-shadow: 0 8px 16px rgba(107, 33, 168, 0.15);
+      }
+      .badge-icon-wrap.unearned {
+        background: linear-gradient(135deg, #cbd5e1, #94a3b8);
+        box-shadow: none;
+      }
+      .badge-badge {
+        position: absolute;
+        top: -6px;
+        right: -6px;
+        background: #1b9c85;
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 999px;
+        border: 2px solid #fff;
+      }
+      .badge-badge.unearned {
+        background: #94a3b8;
+      }
+      .badge-info {
+        flex-grow: 1;
+        min-width: 0;
+      }
+      .badge-info h5 {
+        margin: 0 0 4px;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--color-dark);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .badge-info p {
+        margin: 0;
+        font-size: 0.78rem;
+        color: var(--color-info-dark);
+        line-height: 1.3;
+      }
+      .badge-info .badge-status {
+        margin-top: 6px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+      .badge-status.earned {
+        color: #1b9c85;
+      }
+      .badge-status.unearned {
+        color: var(--color-info-dark);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- ===== Sidebar (unchanged) ===== -->
+      <aside>
+        <div class="toggle">
+          <div class="logo">
+            <img src="../../../img/simpHappyMascotLogo.png" alt="logo" />
+            <h2>SIMP<span class="danger">Project</span></h2>
+          </div>
+          <div class="close" id="close-btn">
+            <span class="material-icons-sharp">close</span>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <a href="dashboard.html"
+            ><span class="material-icons-sharp">dashboard</span>
+            <h3>Dashboard</h3>
+          </a>
+          <a href="job.html"
+            ><span class="material-icons-sharp">work</span>
+            <h3>Jobs</h3>
+          </a>
+          <a href="myApplication.html"
+            ><span class="material-icons-sharp">receipt</span>
+            <h3>My Application</h3>
+          </a>
+          <a href="courses.html"
+            ><span class="material-icons-sharp">school</span>
+            <h3>Courses</h3>
+          </a>
+          <a href="shop.html"
+            ><span class="material-icons-sharp">shopping_cart</span>
+            <h3>Shop</h3>
+          </a>
+          <a href="earnings.html"
+            ><span class="material-icons-sharp">account_balance</span>
+            <h3>Earnings</h3>
+          </a>
+          <a href="documents.html"
+            ><span class="material-icons-sharp">file_copy</span>
+            <h3>Documents</h3>
+          </a>
+          <a href="settings.html" class="active"
+            ><span class="material-icons-sharp">settings</span>
+            <h3>Settings</h3>
+          </a>
+          <a href="#" id="logout-btn"
+            ><span class="material-icons-sharp">logout</span>
+            <h3>Logout</h3>
+          </a>
+        </div>
+      </aside>
+
+      <!-- ===== Settings Main Content ===== -->
+      <main>
+        <!-- ===== Skeleton shown while loading (PC + Mobile) ===== -->
+        <div class="skeleton" id="settingsSkeleton" aria-hidden="true">
+          <div class="sk-title sk-line"></div>
+          <div class="sk-subtitle sk-line"></div>
+
+          <!-- Profile Picture card -->
+          <div class="sk-card">
+            <div class="sk-head">
+              <div
+                class="sk-line"
+                style="height: 18px; width: 140px; border-radius: 8px"
+              ></div>
+              <div class="sk-badge sk-line"></div>
+            </div>
+            <div class="sk-avatar-row">
+              <div class="sk-avatar sk-circle"></div>
+              <div>
+                <div class="sk-btns">
+                  <div class="sk-btn sk-rect"></div>
+                  <div class="sk-btn sk-rect" style="width: 120px"></div>
+                </div>
+                <div class="sk-hint sk-line"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Profile card -->
+          <div class="sk-card">
+            <div
+              class="sk-line"
+              style="
+                height: 18px;
+                width: 120px;
+                border-radius: 8px;
+                margin-bottom: 8px;
+              "
+            ></div>
+            <div class="sk-grid cols-2">
+              <div class="sk-field">
+                <div class="sk-label sk-line"></div>
+                <div class="sk-value sk-rect"></div>
+              </div>
+              <div class="sk-field">
+                <div class="sk-label sk-line"></div>
+                <div class="sk-value sk-rect"></div>
+              </div>
+            </div>
+            <div class="sk-grid cols-2" style="margin-top: 0.6rem">
+              <div class="sk-field">
+                <div class="sk-label sk-line"></div>
+                <div class="sk-value sk-rect"></div>
+              </div>
+              <div class="sk-field">
+                <div class="sk-label sk-line"></div>
+                <div class="sk-value sk-rect"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Education & Employment -->
+          <div class="sk-card">
+            <div
+              class="sk-line"
+              style="
+                height: 18px;
+                width: 220px;
+                border-radius: 8px;
+                margin-bottom: 8px;
+              "
+            ></div>
+            <div class="sk-grid cols-2">
+              <div class="sk-field">
+                <div class="sk-label sk-line"></div>
+                <div class="sk-value sk-rect"></div>
+              </div>
+              <div class="sk-field">
+                <div class="sk-label sk-line"></div>
+                <div class="sk-value sk-rect"></div>
+              </div>
+            </div>
+            <div class="sk-grid cols-2" style="margin-top: 0.6rem">
+              <div class="sk-field">
+                <div class="sk-label sk-line"></div>
+                <div class="sk-value sk-rect"></div>
+              </div>
+              <div class="sk-field">
+                <div class="sk-label sk-line"></div>
+                <div class="sk-value sk-rect"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Payout Details -->
+          <div class="sk-card">
+            <div
+              class="sk-line"
+              style="
+                height: 18px;
+                width: 160px;
+                border-radius: 8px;
+                margin-bottom: 8px;
+              "
+            ></div>
+            <div class="sk-grid cols-2">
+              <div class="sk-field">
+                <div class="sk-label sk-line"></div>
+                <div class="sk-value sk-rect"></div>
+              </div>
+              <div class="sk-field">
+                <div class="sk-label sk-line"></div>
+                <div class="sk-value sk-rect"></div>
+              </div>
+            </div>
+            <div class="sk-grid cols-2" style="margin-top: 0.6rem">
+              <div class="sk-field">
+                <div class="sk-label sk-line"></div>
+                <div class="sk-value sk-rect"></div>
+              </div>
+              <div class="sk-field">
+                <div class="sk-label sk-line"></div>
+                <div class="sk-value sk-rect"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Danger Zone -->
+          <div class="sk-danger">
+            <div class="sk-danger-line sk-line"></div>
+            <div class="sk-danger-btn sk-rect"></div>
+          </div>
+        </div>
+        <h1>Installer Settings</h1>
+        <p class="lead">
+          View and update your profile, employment, and payout details. Click
+          the ✏️ to edit a field.
+        </p>
+        <br />
+        <!-- ===== REAL CONTENT (hidden while loading) ===== -->
+        <div class="page" id="settingsPage">
+          <!-- Profile Picture (with Created At on the right) -->
+          <section class="card">
+            <div class="card-head">
+              <h2>Profile Picture</h2>
+              <div class="meta">
+                <span class="badge" title="Account creation date">
+                  <span class="material-icons-sharp" aria-hidden="true"
+                    >event</span
+                  >
+                  <strong>Created:</strong>
+                  <span id="createdAtTop">—</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="avatar-card">
+              <div
+                class="avatar"
+                id="avatarBox"
+                aria-label="Profile avatar"
+              ></div>
+              <div>
+                <div class="avatar-actions">
+                  <!-- Iconify on mobile without extra padding -->
+                  <button
+                    class="btn primary iconify-on-mobile"
+                    id="btnPickPhoto"
+                    title="Replace Photo"
+                    aria-label="Replace Photo"
+                  >
+                    <span class="material-icons-sharp">upload</span>
+                    <span class="btn-label">Replace Photo</span>
+                  </button>
+                  <button
+                    class="btn outline iconify-on-mobile"
+                    id="btnRemovePhoto"
+                    title="Remove Photo"
+                    aria-label="Remove Photo"
+                  >
+                    <span class="material-icons-sharp">delete</span>
+                    <span class="btn-label">Remove Photo</span>
+                  </button>
+                </div>
+                <div class="muted avatar-hint">
+                  JPG/PNG, up to ~5 MB. Stored in
+                  <code>installer_profile/&lt;userId&gt;/avatar.jpg</code>.
+                </div>
+                <div
+                  class="progress"
+                  id="avatarProgress"
+                  aria-hidden="true"
+                  aria-label="Upload progress"
+                >
+                  <div id="avatarProgressFill"></div>
+                </div>
+              </div>
+            </div>
+            <input
+              id="avatarInput"
+              type="file"
+              accept="image/*"
+              style="display: none"
+            />
+          </section>
+
+          <!-- Course Accomplished & Project Accomplished Sections -->
+          <section class="card">
+            <h2>Course Accomplished</h2>
+            <div id="installerAccomplishmentsBadges">
+              <div class="badge-grid" style="margin-top:0;">
+                <div class="badge-card unearned">
+                  <div class="badge-icon-wrap unearned">🎓</div>
+                  <div class="badge-info">
+                    <h5>Badges Loading...</h5>
+                    <p>Hydrating accomplishments state from classroom sync.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2>Project Accomplished</h2>
+            <div class="badge-grid" style="margin-top:0;">
+              <div class="badge-card unearned">
+                <div class="badge-icon-wrap unearned">🏆</div>
+                <div class="badge-info">
+                  <h5>Project Accomplishments</h5>
+                  <p>No verified project accomplishments or client's reviews completed yet.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Profile -->
+          <section class="card">
+            <h2>Profile</h2>
+            <div class="row">
+              <!-- Name -->
+              <div class="field" data-key="name">
+                <label>Full Name</label>
+                <div class="value-view">
+                  <span class="text" data-view></span>
+                  <span class="actions"
+                    ><button class="icon-btn" data-edit title="Edit">
+                      <span class="material-icons-sharp">edit</span>
+                    </button></span
+                  >
+                </div>
+                <div class="edit-wrap" data-editwrap>
+                  <input
+                    type="text"
+                    data-input
+                    placeholder="e.g. Juan Dela Cruz"
+                  />
+                  <button class="icon-btn" data-save title="Save">
+                    <span class="material-icons-sharp">check_circle</span>
+                  </button>
+                  <button class="icon-btn" data-cancel title="Cancel">
+                    <span class="material-icons-sharp">cancel</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Email (read-only) -->
+              <div class="field">
+                <label>Email</label>
+                <div class="value-view">
+                  <span class="text mono" id="emailView"></span>
+                </div>
+                <div class="hint">
+                  Email is from your sign-in and can’t be edited here.
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <!-- Birthdate -->
+              <div class="field" data-key="birthdate">
+                <label>Birthdate</label>
+                <div class="value-view">
+                  <span class="text" data-view></span>
+                  <span class="actions"
+                    ><button class="icon-btn" data-edit title="Edit">
+                      <span class="material-icons-sharp">edit</span>
+                    </button></span
+                  >
+                </div>
+                <div class="edit-wrap" data-editwrap>
+                  <input type="date" data-input />
+                  <button class="icon-btn" data-save title="Save">
+                    <span class="material-icons-sharp">check_circle</span>
+                  </button>
+                  <button class="icon-btn" data-cancel title="Cancel">
+                    <span class="material-icons-sharp">cancel</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Age -->
+              <div class="field" data-key="age">
+                <label>Age</label>
+                <div class="value-view">
+                  <span class="text" data-view></span>
+                  <span class="actions"
+                    ><button class="icon-btn" data-edit title="Edit">
+                      <span class="material-icons-sharp">edit</span>
+                    </button></span
+                  >
+                </div>
+                <div class="edit-wrap" data-editwrap>
+                  <input type="number" min="0" step="1" data-input />
+                  <button class="icon-btn" data-save title="Save">
+                    <span class="material-icons-sharp">check_circle</span>
+                  </button>
+                  <button class="icon-btn" data-cancel title="Cancel">
+                    <span class="material-icons-sharp">cancel</span>
+                  </button>
+                </div>
+                <div class="hint">
+                  Usually computed from birthdate; you can adjust if needed.
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Education & Employment -->
+          <section class="card">
+            <h2>Education & Employment</h2>
+            <div class="row">
+              <div class="field" data-key="highestQualification">
+                <label>Highest Qualification</label>
+                <div class="value-view">
+                  <span class="text" data-view></span>
+                  <span class="actions"
+                    ><button class="icon-btn" data-edit title="Edit">
+                      <span class="material-icons-sharp">edit</span>
+                    </button></span
+                  >
+                </div>
+                <div class="edit-wrap" data-editwrap>
+                  <input
+                    type="text"
+                    data-input
+                    placeholder="e.g. Bachelor's Degree"
+                  />
+                  <button class="icon-btn" data-save title="Save">
+                    <span class="material-icons-sharp">check_circle</span>
+                  </button>
+                  <button class="icon-btn" data-cancel title="Cancel">
+                    <span class="material-icons-sharp">cancel</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="field" data-key="employmentStatus">
+                <label>Employment Status</label>
+                <div class="value-view">
+                  <span class="text" data-view></span>
+                  <span class="actions"
+                    ><button class="icon-btn" data-edit title="Edit">
+                      <span class="material-icons-sharp">edit</span>
+                    </button></span
+                  >
+                </div>
+                <div class="edit-wrap" data-editwrap>
+                  <select data-input>
+                    <option value="">Select…</option>
+                    <option>Employed</option>
+                    <option>Self-employed</option>
+                    <option>Unemployed</option>
+                    <option>Student</option>
+                  </select>
+                  <button class="icon-btn" data-save title="Save">
+                    <span class="material-icons-sharp">check_circle</span>
+                  </button>
+                  <button class="icon-btn" data-cancel title="Cancel">
+                    <span class="material-icons-sharp">cancel</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="field" data-key="employer">
+                <label>Employer (optional)</label>
+                <div class="value-view">
+                  <span class="text" data-view></span>
+                  <span class="actions"
+                    ><button class="icon-btn" data-edit title="Edit">
+                      <span class="material-icons-sharp">edit</span>
+                    </button></span
+                  >
+                </div>
+                <div class="edit-wrap" data-editwrap>
+                  <input
+                    type="text"
+                    data-input
+                    placeholder="Company name (optional)"
+                  />
+                  <button class="icon-btn" data-save title="Save">
+                    <span class="material-icons-sharp">check_circle</span>
+                  </button>
+                  <button class="icon-btn" data-cancel title="Cancel">
+                    <span class="material-icons-sharp">cancel</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="field" data-key="mainIncomeSource">
+                <label>Main Income Source</label>
+                <div class="value-view">
+                  <span class="text" data-view></span>
+                  <span class="actions"
+                    ><button class="icon-btn" data-edit title="Edit">
+                      <span class="material-icons-sharp">edit</span>
+                    </button></span
+                  >
+                </div>
+                <div class="edit-wrap" data-editwrap>
+                  <input
+                    type="text"
+                    data-input
+                    placeholder="e.g. Contracting"
+                  />
+                  <button class="icon-btn" data-save title="Save">
+                    <span class="material-icons-sharp">check_circle</span>
+                  </button>
+                  <button class="icon-btn" data-cancel title="Cancel">
+                    <span class="material-icons-sharp">cancel</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Payout / Bank -->
+          <section class="card">
+            <h2>Payout Details</h2>
+            <div class="row">
+              <div class="field" data-key="bankName">
+                <label>Bank Name</label>
+                <div class="value-view">
+                  <span class="text" data-view></span>
+                  <span class="actions"
+                    ><button class="icon-btn" data-edit title="Edit">
+                      <span class="material-icons-sharp">edit</span>
+                    </button></span
+                  >
+                </div>
+                <div class="edit-wrap" data-editwrap>
+                  <input
+                    type="text"
+                    data-input
+                    placeholder="e.g. BPI / BDO / GCash"
+                  />
+                  <button class="icon-btn" data-save title="Save">
+                    <span class="material-icons-sharp">check_circle</span>
+                  </button>
+                  <button class="icon-btn" data-cancel title="Cancel">
+                    <span class="material-icons-sharp">cancel</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="field" data-key="accountHolder">
+                <label>Account Holder</label>
+                <div class="value-view">
+                  <span class="text" data-view></span>
+                  <span class="actions"
+                    ><button class="icon-btn" data-edit title="Edit">
+                      <span class="material-icons-sharp">edit</span>
+                    </button></span
+                  >
+                </div>
+                <div class="edit-wrap" data-editwrap>
+                  <input
+                    type="text"
+                    data-input
+                    placeholder="Name on the account"
+                  />
+                  <button class="icon-btn" data-save title="Save">
+                    <span class="material-icons-sharp">check_circle</span>
+                  </button>
+                  <button class="icon-btn" data-cancel title="Cancel">
+                    <span class="material-icons-sharp">cancel</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="field" data-key="accountNumber">
+                <label>Account / Mobile No.</label>
+                <div class="value-view">
+                  <span class="text" data-view></span>
+                  <span class="actions"
+                    ><button class="icon-btn" data-edit title="Edit">
+                      <span class="material-icons-sharp">edit</span>
+                    </button></span
+                  >
+                </div>
+                <div class="edit-wrap" data-editwrap>
+                  <input
+                    type="text"
+                    data-input
+                    placeholder="09xxxxxxxxx or account #"
+                  />
+                  <button class="icon-btn" data-save title="Save">
+                    <span class="material-icons-sharp">check_circle</span>
+                  </button>
+                  <button class="icon-btn" data-cancel title="Cancel">
+                    <span class="material-icons-sharp">cancel</span>
+                  </button>
+                </div>
+                <div class="hint">
+                  For GCash, use your registered mobile number.
+                </div>
+              </div>
+
+              <div class="field">
+                <label>Masked Preview</label>
+                <div class="value-view">
+                  <span class="text mono" id="accountMasked">—</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Danger zone -->
+          <section class="card danger-box" style="margin-bottom: 0.2rem">
+            <h2 style="margin-bottom: 0.4rem">Danger Zone</h2>
+            <p style="margin-bottom: 0.6rem">
+              Deleting your account will remove your sign-in and (because your
+              tables reference
+              <code>auth.users</code> with <strong>ON DELETE CASCADE</strong>)
+              related rows will be removed automatically. This action is
+              permanent.
+            </p>
+            <button
+              class="btn danger"
+              id="deleteAccountBtn"
+              title="Delete Account"
+              aria-label="Delete Account"
+            >
+              <span
+                class="material-icons-sharp"
+                style="vertical-align: middle; font-size: 18px"
+                >delete_forever</span
+              >
+              Delete Account
+            </button>
+            <div class="hint" style="margin-top: 0.45rem">
+              Note: Client apps cannot call the Admin API with an anon key. This
+              button will try an Edge Function
+              <code>delete-account</code> (recommended), and will fall back to
+              the Admin API if your environment allows it.
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <!-- Hidden placeholders so existing JS stays happy (no visual output) -->
+    <div aria-hidden="true" class="sr-only">
+      <span id="levelView">0</span>
+      <span id="balanceView">₱0.00</span>
+      <span id="userIdView">—</span>
+    </div>
+
+    <!-- Toast (kept; now unused visually but retained as requested) -->
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script type="module" src="../../general_files/index.js"></script>
+    <script type="module" src="../../general_files/session.js"></script>
+    <!-- Supabase UMD + your keys -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="../../../../shared/course-store.js"></script>
+    <script type="module" src="../../../../shared/course-store-supabase.js"></script>
+
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script type="module">
+      const { createClient } = supabase;
+      import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../../../supabase.js";
+      const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      /* =========================
+       SweetAlert2 helpers (compact)
+       ========================= */
+      const swalBase = Swal.mixin({
+        customClass: { popup: "simp-swal" },
+        width: 420, // shorter/narrower to avoid page resize
+        padding: "0.9rem",
+        heightAuto: false, // prevent layout jump
+        scrollbarPadding: false, // avoid adding padding to body
+        allowOutsideClick: true,
+        allowEscapeKey: true,
+        focusConfirm: false,
+        showConfirmButton: true,
+        confirmButtonText: "OK",
+      });
+
+      const swalToast = (title, ok = true) => {
+        // compact modal (not top-right toast to keep accessible focus)
+        return swalBase.fire({
+          icon: ok ? "success" : "error",
+          title: title,
+          timer: 1800,
+          showConfirmButton: false,
+        });
+      };
+
+      const swalInfo = (title) => swalBase.fire({ icon: "info", title });
+      const swalError = (title) => swalBase.fire({ icon: "error", title });
+      const swalSuccess = (title) => swalBase.fire({ icon: "success", title });
+
+      const confirmAction = async (
+        title,
+        text = "",
+        confirmText = "Yes",
+        confirmColor = "#20a44c"
+      ) => {
+        const res = await swalBase.fire({
+          icon: "warning",
+          title,
+          text,
+          showCancelButton: true,
+          confirmButtonText: confirmText,
+          cancelButtonText: "Cancel",
+          confirmButtonColor: confirmColor,
+        });
+        return !!res.isConfirmed;
+      };
+
+      /* =========================
+       KEEP your old API surface
+       - toast(msg, ok) now uses Swal, no DOM removal
+       ========================= */
+      const toast = (msg, ok = true) => {
+        // Friendly, concise phrasing
+        const friendly =
+          String(msg || "").trim() || (ok ? "Done." : "Something went wrong.");
+        swalToast(friendly, ok);
+      };
+
+      const peso = (n) =>
+        "₱" +
+        Number(n || 0).toLocaleString("en-PH", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      const maskAccount = (v) => {
+        const s = String(v || "").replace(/\s+/g, "");
+        if (!s) return "—";
+        if (s.length <= 4) return "••••";
+        return "•••• •••• •••• " + s.slice(-4);
+      };
+      const computeAgeFromDOB = (iso) => {
+        if (!iso) return "";
+        const d = new Date(iso);
+        if (isNaN(d)) return "";
+        const t = new Date();
+        let age = t.getFullYear() - d.getFullYear();
+        const m = t.getMonth() - d.getMonth();
+        if (m < 0 || (m === 0 && t.getDate() < d.getDate())) age--;
+        return Math.max(0, age);
+      };
+
+      // Map field -> column name (exact, with quotes where needed)
+      const COLS = {
+        name: "name",
+        birthdate: "birthdate",
+        age: "age",
+        phone: "phone",
+        profession: "profession",
+        highestQualification: '"highestQualification"',
+        employmentStatus: '"employmentStatus"',
+        employer: "employer",
+        mainIncomeSource: '"mainIncomeSource"',
+        bankName: '"bankName"',
+        accountNumber: '"accountNumber"',
+        accountHolder: '"accountHolder"',
+      };
+
+      // ===== Avatar (private bucket ready) =====
+      const AVATAR_BUCKET = "installer_profile";
+      const avatarPathFor = (userId) => `${userId}/avatar.jpg`;
+
+      function parseStorageRef(ref) {
+        if (!ref) return null;
+        if (ref.startsWith("storage://")) {
+          const [, bucket, ...rest] = ref.split("/");
+          return { bucket, path: rest.join("/") };
+        }
+        // public form: /storage/v1/object/public/<bucket>/<path>
+        let m = ref.match(/\/storage\/v1\/object\/public\/([^/]+)\/(.+)$/);
+        if (m) return { bucket: m[1], path: m[2] };
+        // signed form: /storage\/v1\/object\/sign\/([^/]+)\/(.+)\?/
+        m = ref.match(/\/storage\/v1\/object\/sign\/([^/]+)\/(.+)\?/);
+        if (m) return { bucket: m[1], path: m[2] };
+        return null;
+      }
+
+      async function getDisplayableAvatarURL(userId, storedUrl) {
+        const parsed = parseStorageRef(storedUrl) || {
+          bucket: AVATAR_BUCKET,
+          path: avatarPathFor(userId),
+        };
+
+        try {
+          const { data: signed, error } = await sb.storage
+            .from(parsed.bucket)
+            .createSignedUrl(parsed.path, 60 * 60 * 24);
+          if (error) throw error;
+          if (signed?.signedUrl) return `${signed.signedUrl}&t=${Date.now()}`;
+        } catch (e) {
+          console.warn(
+            "createSignedUrl failed, will attempt publicUrl fallback:",
+            e?.message
+          );
+        }
+
+        try {
+          const { data: pub } = sb.storage
+            .from(parsed.bucket)
+            .getPublicUrl(parsed.path);
+          if (pub?.publicUrl) return `${pub.publicUrl}?t=${Date.now()}`;
+        } catch {}
+
+        return null;
+      }
+
+      const avatarBox = () => document.getElementById("avatarBox");
+      const avatarInput = () => document.getElementById("avatarInput");
+      const progressWrap = () => document.getElementById("avatarProgress");
+      const progressFill = () => document.getElementById("avatarProgressFill");
+
+      function initialsFrom(nameOrEmail) {
+        const src = (nameOrEmail || "").trim();
+        if (!src) return "U";
+        const parts = src.split(/\s+/).filter(Boolean);
+        if (parts.length >= 2)
+          return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+        if (parts.length === 1) return parts[0][0].toUpperCase();
+        return src[0]?.toUpperCase() || "U";
+      }
+
+      function renderAvatar(url, nameOrEmail) {
+        const box = document.getElementById("avatarBox");
+        box.innerHTML = "";
+        if (url) {
+          const img = new Image();
+          img.alt = "Profile photo";
+          img.src = url;
+
+          // If a signed URL expires, re-sign once automatically
+          let retried = false;
+          img.onerror = async () => {
+            if (retried) return;
+            retried = true;
+            const refreshed = await getDisplayableAvatarURL(
+              USER?.id,
+              CURRENT?.profile_pic_url
+            );
+            if (refreshed) img.src = refreshed;
+          };
+
+          box.appendChild(img);
+        } else {
+          const initialsFrom = (s) => {
+            const src = (s || "").trim();
+            if (!src) return "U";
+            const parts = src.split(/\s+/).filter(Boolean);
+            if (parts.length >= 2)
+              return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+            if (parts.length === 1) return parts[0][0].toUpperCase();
+            return src[0]?.toUpperCase() || "U";
+          };
+          box.textContent = initialsFrom(nameOrEmail);
+        }
+      }
+
+      async function uploadAvatar(file) {
+        if (!USER?.id)
+          return { ok: false, message: "Please sign in to update your photo." };
+        if (!file) return { ok: false, message: "No file selected." };
+        if (!/^image\//.test(file.type))
+          return { ok: false, message: "Please choose an image file." };
+        if (file.size > 5 * 1024 * 1024)
+          return { ok: false, message: "That file is too large (max ~5 MB)." };
+
+        // simple fake progress
+        progressWrap().style.display = "block";
+        progressFill().style.width = "10%";
+
+        const path = avatarPathFor(USER.id);
+        try {
+          const { error: upErr } = await sb.storage
+            .from(AVATAR_BUCKET)
+            .upload(path, file, {
+              cacheControl: "3600",
+              upsert: true,
+              contentType: file.type || "image/jpeg",
+            });
+          if (upErr) throw upErr;
+          progressFill().style.width = "70%";
+
+          const toPersist = `storage://${AVATAR_BUCKET}/${path}`;
+          const { error: updErr } = await sb
+            .from("installer")
+            .update({ profile_pic_url: toPersist })
+            .eq("id", USER.id);
+          if (updErr) throw updErr;
+
+          CURRENT.profile_pic_url = toPersist;
+          const displayUrl = await getDisplayableAvatarURL(USER.id, toPersist);
+          renderAvatar(displayUrl, CURRENT?.name || CURRENT?.email);
+
+          progressFill().style.width = "100%";
+          setTimeout(() => (progressWrap().style.display = "none"), 500);
+          return { ok: true, message: "Profile photo updated." };
+        } catch (e) {
+          progressWrap().style.display = "none";
+          return {
+            ok: false,
+            message: e?.message || "Upload failed. Please try again.",
+          };
+        }
+      }
+
+      async function removeAvatar() {
+        if (!USER?.id)
+          return { ok: false, message: "Please sign in to remove your photo." };
+        const path = avatarPathFor(USER.id);
+        try {
+          await sb.storage
+            .from(AVATAR_BUCKET)
+            .remove([path])
+            .catch(() => {});
+          const { error: updErr } = await sb
+            .from("installer")
+            .update({ profile_pic_url: null })
+            .eq("id", USER.id);
+          if (updErr) throw updErr;
+
+          CURRENT.profile_pic_url = null;
+          renderAvatar(null, CURRENT?.name || CURRENT?.email);
+          return { ok: true, message: "Profile photo removed." };
+        } catch (e) {
+          return {
+            ok: false,
+            message: e?.message || "Could not remove your photo.",
+          };
+        }
+      }
+
+      let CURRENT = null;
+      let USER = null;
+
+      function wireField(el, key) {
+        const view = el.querySelector("[data-view]");
+        const wrap = el.querySelector("[data-editwrap]");
+        const input = el.querySelector("[data-input]");
+        const btnEdit = el.querySelector("[data-edit]");
+        const btnSave = el.querySelector("[data-save]");
+        const btnCancel = el.querySelector("[data-cancel]");
+
+        const setView = (v) => {
+          view.textContent = v ?? "—";
+        };
+
+        const open = () => {
+          const curr = CURRENT?.[key] ?? "";
+          if (input.type === "date")
+            input.value = curr ? String(curr).slice(0, 10) : "";
+          else if (input.tagName === "SELECT") input.value = curr ?? "";
+          else input.value = curr ?? "";
+          wrap.classList.add("show");
+          el.querySelector(".value-view").style.display = "none";
+          input.focus();
+        };
+
+        const close = () => {
+          wrap.classList.remove("show");
+          el.querySelector(".value-view").style.display = "";
+        };
+
+        const save = async () => {
+          if (!USER?.id) return;
+          let value = input.value;
+
+          if (key === "age") {
+            value = Number(value || 0);
+            if (isNaN(value) || value < 0)
+              return toast("Please enter a valid age (0+).", false);
+          }
+          if (key === "birthdate" && value) {
+            const computed = computeAgeFromDOB(value);
+            if (computed && computed !== CURRENT?.age) {
+              CURRENT.age = computed;
+              document.querySelector(
+                '[data-key="age"] [data-view]'
+              ).textContent = String(computed);
+            }
+          }
+          if (key === "accountNumber" && String(value).trim().length < 4) {
+            return toast("That account number looks too short.", false);
+          }
+
+          const col = COLS[key];
+          const updateObj = {};
+          updateObj[col] = value?.trim?.() ?? value;
+          try {
+            const { error } = await sb
+              .from("installer")
+              .update(updateObj)
+              .eq("id", USER.id);
+            if (error) throw error;
+
+            CURRENT[key] = input.type === "number" ? Number(value) : value;
+
+            if (key === "accountNumber") {
+              document.getElementById("accountMasked").textContent =
+                maskAccount(value);
+            }
+            if (key === "name" && !CURRENT.profile_pic_url) {
+              renderAvatar(null, CURRENT?.name || CURRENT?.email);
+            }
+
+            setView(CURRENT[key] || "—");
+            toast("Saved successfully ✓", true);
+            close();
+          } catch (e) {
+            console.error(e);
+            toast(e?.message || "Couldn’t save your changes.", false);
+          }
+        };
+
+        btnEdit?.addEventListener("click", open);
+        btnCancel?.addEventListener("click", close);
+        btnSave?.addEventListener("click", save);
+
+        setView(CURRENT?.[key] ?? "—");
+      }
+
+      function fillAllViews(row) {
+        document.getElementById("emailView").textContent = row?.email ?? "—";
+
+        document.querySelectorAll(".field[data-key]").forEach((el) => {
+          const key = el.getAttribute("data-key");
+          const view = el.querySelector("[data-view]");
+          let val = row?.[key];
+          if (key === "birthdate" && val) val = String(val).slice(0, 10);
+          view.textContent = val ?? "—";
+        });
+
+        renderAvatar(null, row?.name || row?.email);
+
+        document.getElementById("accountMasked").textContent = maskAccount(
+          row?.accountNumber
+        );
+
+        // moved createdAt to the top badge
+        document.getElementById("createdAtTop").textContent = row?.createdAt
+          ? new Date(row.createdAt).toLocaleString()
+          : "—";
+
+        // keep these updates for compatibility (hidden placeholders exist)
+        document.getElementById("levelView").textContent =
+          row?.levelstatus ?? 0;
+        document.getElementById("balanceView").textContent = peso(
+          row?.earningBalance ?? 0
+        );
+        document.getElementById("userIdView").textContent = row?.id ?? "—";
+      }
+
+      /* ============= Badge & Accomplishments calculation for Installer ============= */
+      let ALL_COURSES_CACHE = null;
+
+      function normalizeQuestionType(type) {
+        return ["essay", "identification", "matching"].includes(type) ? type : "multiple-choice";
+      }
+
+      function normalizeQuestions(questions = []) {
+        return (Array.isArray(questions) ? questions : []).map((q, idx) => {
+          const type = normalizeQuestionType(q?.type);
+          const choices = Array.isArray(q?.choices) ? q.choices : Array.isArray(q?.options) ? q.options : ["", "", "", ""];
+          return {
+            id: q?.id || `question-${Date.now()}-${idx + 1}`,
+            number: idx + 1,
+            type,
+            prompt: q?.prompt || q?.question || "",
+            choices,
+            correctAnswer: q?.correctAnswer || "",
+          };
+        });
+      }
+
+      function normalizeLessonPayload(payload = {}, lessonIndex = 0) {
+        const lessonId = payload.lessonId || payload.id || `lesson-${lessonIndex + 1}`;
+        const slides = Array.isArray(payload.slides) ? payload.slides : [];
+        const assessmentSource = payload.assessment || {};
+        const qList = normalizeQuestions(assessmentSource.questions || payload.questions || []);
+
+        return {
+          id: lessonId,
+          title: payload.title || `Lesson ${lessonIndex + 1}`,
+          slideCount: slides.length || 0,
+          questions: qList,
+          assessments: qList.length ? [
+            {
+              id: assessmentSource.id || `${lessonId}-assessment`,
+              title: assessmentSource.title || `${payload.title || `Lesson ${lessonIndex + 1}`} Assessment`,
+              passingScore: Number(assessmentSource.passingScore) || 70,
+              questions: qList
+            }
+          ] : []
+        };
+      }
+
+      function parseStructuredSectionLessons(contentRow) {
+        const rawBody = String(contentRow?.text_body || contentRow?.body || "").trim();
+        if (!rawBody) return null;
+        try {
+          const parsed = JSON.parse(rawBody);
+          if (parsed && parsed.kind === "section-lessons" && Array.isArray(parsed.lessons)) {
+            return parsed.lessons.map((l, idx) => normalizeLessonPayload(l, idx));
+          }
+        } catch (e) {}
+        return null;
+      }
+
+      async function ensureCourseCatalog() {
+        if (ALL_COURSES_CACHE) return ALL_COURSES_CACHE;
+
+        const { data: courses, error: errC } = await sb.schema("course").from("courses").select("*");
+        if (errC) throw errC;
+
+        const { data: sections, error: errS } = await sb.schema("course").from("sections").select("*").order("position", { ascending: true });
+        if (errS) throw errS;
+
+        const { data: contents, error: errL } = await sb.schema("course").from("section_contents").select("*").order("position", { ascending: true });
+        if (errL) throw errL;
+
+        const contentsBySection = new Map();
+        for (const row of contents || []) {
+          const arr = contentsBySection.get(row.section_id) || [];
+          arr.push(row);
+          contentsBySection.set(row.section_id, arr);
+        }
+
+        const sectionsByCourse = new Map();
+        for (const row of sections || []) {
+          const arr = sectionsByCourse.get(row.course_id) || [];
+          const lessons = [];
+          const sectionContents = contentsBySection.get(row.id) || [];
+          if (sectionContents.length) {
+            const bundled = parseStructuredSectionLessons(sectionContents[0]);
+            if (bundled) {
+              lessons.push(...bundled);
+            } else {
+              sectionContents.forEach((cnt, idx) => {
+                lessons.push(normalizeLessonPayload(cnt, idx));
+              });
+            }
+          }
+          arr.push({
+            id: row.id,
+            title: row.title || `Level`,
+            lessons: lessons.filter(Boolean)
+          });
+          sectionsByCourse.set(row.course_id, arr);
+        }
+
+        ALL_COURSES_CACHE = (courses || []).map(c => {
+          return {
+            id: c.id,
+            title: c.title,
+            description: c.description || "",
+            level: Number(c.level) || 1,
+            levels: sectionsByCourse.get(c.id) || []
+          };
+        });
+
+        return ALL_COURSES_CACHE;
+      }
+
+      async function getSignedCertificateURL(path, ownerId) {
+        if (!path) return "";
+        const { data, error } = await sb.storage
+          .from("documents_review")
+          .createSignedUrl(path, 3600);
+        if (error) {
+          console.error("Certificate sign error:", error);
+          return "";
+        }
+        return data?.signedUrl || "";
+      }
+
+      async function loadInstallerAccomplishments(installerId) {
+        const container = document.getElementById("installerAccomplishmentsBadges");
+        if (!container) return;
+
+        try {
+          const catalog = await ensureCourseCatalog();
+
+          // Fetch user's local progress states
+          const { data: stateRows, error: errState } = await sb
+            .from("simp_course_state")
+            .select("state_key, state_value")
+            .eq("owner_key", `user:${installerId}`);
+          if (errState) throw errState;
+
+          let library = [];
+          let attemptHistory = [];
+          let certificates = {};
+
+          if (stateRows && stateRows.length) {
+            const lib = stateRows.find(r => r.state_key === "myStudyRoomLibrary");
+            if (lib && lib.state_value) {
+              try { library = JSON.parse(lib.state_value); } catch(e){}
+            }
+            const hist = stateRows.find(r => r.state_key === "simpAssessmentAttemptHistory");
+            if (hist && hist.state_value) {
+              try { attemptHistory = JSON.parse(hist.state_value); } catch(e){}
+            }
+            const certs = stateRows.find(r => r.state_key === "myStudyRoomCertificates");
+            if (certs && certs.state_value) {
+              try { certificates = JSON.parse(certs.state_value); } catch(e){}
+            }
+          }
+
+          // Fetch installer's documents to check for admin-uploaded course certificates
+          const { data: docRow, error: docErr } = await sb
+            .from("installer_documents")
+            .select("certificates")
+            .eq("installer_id", installerId)
+            .maybeSingle();
+
+          let needsSync = false;
+          if (docRow && Array.isArray(docRow.certificates)) {
+            const docCerts = docRow.certificates;
+            
+            // Check for additions/replacements
+            docCerts.forEach(path => {
+              // Check if it's a course certificate path
+              if (path.includes("/certificates/") && path.includes("_certificate.")) {
+                const filename = path.split("/").pop();
+                const parts = filename.split("_");
+                if (parts.length >= 3) {
+                  const courseId = parts[1];
+                  // If this course certificate is not in the simp_course_state map, or has a different path, update it!
+                  if (!certificates[courseId] || certificates[courseId].path !== path) {
+                    certificates[courseId] = {
+                      path: path,
+                      uploadedAt: new Date().toISOString()
+                    };
+                    needsSync = true;
+                  }
+                }
+              }
+            });
+
+            // Check for deletions
+            Object.keys(certificates).forEach(courseId => {
+              const certObj = certificates[courseId];
+              if (certObj && certObj.path && certObj.path.includes("_certificate.")) {
+                const stillExists = docCerts.some(p => p === certObj.path);
+                if (!stillExists) {
+                  delete certificates[courseId];
+                  needsSync = true;
+                }
+              }
+            });
+          } else if (docRow) {
+            // installer_documents has no certificates at all, so clear all course certificates
+            Object.keys(certificates).forEach(courseId => {
+              const certObj = certificates[courseId];
+              if (certObj && certObj.path && certObj.path.includes("_certificate.")) {
+                delete certificates[courseId];
+                needsSync = true;
+              }
+            });
+          }
+
+          if (needsSync) {
+            const { error: syncErr } = await sb
+              .from("simp_course_state")
+              .upsert({
+                owner_key: `user:${installerId}`,
+                state_key: "myStudyRoomCertificates",
+                state_value: JSON.stringify(certificates),
+                updated_at: new Date().toISOString()
+              }, { onConflict: "owner_key,state_key" });
+            if (syncErr) console.error("Self-healing certificate sync failed:", syncErr);
+          }
+
+          let html = "";
+          let badgeList = [];
+
+          // Compute Level and Course Badges
+          for (const course of catalog) {
+            // Keep it empty if they have not started the course at all
+            const hasStartedCourse = library.some(x => String(x.courseId) === String(course.id) && x.isCompleted);
+            if (!hasStartedCourse) {
+              continue;
+            }
+
+            const courseLevels = course.levels || [];
+            let allLevelsStudyPassed = true;
+            let allLevelsAssessmentsPassed = true;
+            let courseHasAnyQuizzes = false;
+
+            const courseLevelBadges = [];
+
+            for (let i = 0; i < courseLevels.length; i++) {
+              const level = courseLevels[i];
+              const totalLessons = level.lessons.length;
+              let completedLessonsCount = 0;
+              let lessonsWithQuiz = 0;
+              let quizPercentagesSum = 0;
+              let completedQuizzesCount = 0;
+
+              for (const lesson of level.lessons) {
+                const isCompleted = library.some(x => String(x.courseId) === String(course.id) && String(x.levelId) === String(level.id) && String(x.lessonId) === String(lesson.id) && x.isCompleted);
+                if (isCompleted) completedLessonsCount++;
+
+                const hasQuiz = (lesson.questions && lesson.questions.length > 0) || (lesson.assessments && lesson.assessments.length > 0);
+                if (hasQuiz) {
+                  lessonsWithQuiz++;
+                  courseHasAnyQuizzes = true;
+
+                  const attempt = attemptHistory.find(x => String(x.courseId) === String(course.id) && String(x.levelId) === String(level.id) && String(x.lessonId) === String(lesson.id));
+                  if (attempt) {
+                    if (attempt.isCompleted) completedQuizzesCount++;
+
+                    // Find latest attempt result
+                    const results = attempt.assessmentResults || [];
+                    const latestResult = results.sort((a,b) => Number(b.gradedAt || b.submittedAt || 0) - Number(a.gradedAt || a.submittedAt || 0))[0] || null;
+                    if (latestResult) {
+                      let scorePct = 0;
+                      if (latestResult.scoreEarned !== null && latestResult.scoreEarned !== undefined && latestResult.scoreTotal > 0) {
+                        scorePct = (Number(latestResult.scoreEarned) / Number(latestResult.scoreTotal)) * 100;
+                      } else if (latestResult.objectiveCorrect !== null && latestResult.objectiveCorrect !== undefined && latestResult.objectiveTotal > 0) {
+                        scorePct = (Number(latestResult.objectiveCorrect) / Number(latestResult.objectiveTotal)) * 100;
+                      } else if (attempt.isCompleted) {
+                        scorePct = 100;
+                      }
+                      quizPercentagesSum += scorePct;
+                    } else if (attempt.isCompleted) {
+                      quizPercentagesSum += 100;
+                    }
+                  }
+                }
+              }
+
+              const studyCompleted = totalLessons > 0 && completedLessonsCount === totalLessons;
+
+              const levelNumber = i + 1;
+              const passingScore = levelNumber >= 3 ? 80 : 70;
+              const overallLevelQuizScore = lessonsWithQuiz > 0 ? (quizPercentagesSum / lessonsWithQuiz) : 100;
+              const assessmentsCompleted = lessonsWithQuiz === 0 || overallLevelQuizScore >= passingScore;
+
+              if (!studyCompleted) allLevelsStudyPassed = false;
+              if (!studyCompleted || !assessmentsCompleted) allLevelsAssessmentsPassed = false;
+
+              // Build study progress registry details for level
+              const lessonsStudied = level.lessons.map(lesson => {
+                const isCompleted = library.some(x => String(x.courseId) === String(course.id) && String(x.levelId) === String(level.id) && String(x.lessonId) === String(lesson.id) && x.isCompleted);
+                
+                let quizInfo = "No assessment";
+                const hasQuiz = (lesson.questions && lesson.questions.length > 0) || (lesson.assessments && lesson.assessments.length > 0);
+                if (hasQuiz) {
+                  const attempt = attemptHistory.find(x => String(x.courseId) === String(course.id) && String(x.levelId) === String(level.id) && String(x.lessonId) === String(lesson.id));
+                  if (attempt) {
+                    const results = attempt.assessmentResults || [];
+                    const latestResult = results.sort((a,b) => Number(b.gradedAt || b.submittedAt || 0) - Number(a.gradedAt || a.submittedAt || 0))[0] || null;
+                    if (latestResult) {
+                      if (latestResult.scoreEarned !== null && latestResult.scoreEarned !== undefined) {
+                        quizInfo = `Score: ${latestResult.scoreEarned}/${latestResult.scoreTotal}`;
+                      } else if (latestResult.objectiveCorrect !== null && latestResult.objectiveCorrect !== undefined) {
+                        quizInfo = `Score: ${latestResult.objectiveCorrect}/${latestResult.objectiveTotal}`;
+                      } else {
+                        quizInfo = "Passed";
+                      }
+                    } else {
+                      quizInfo = attempt.isCompleted ? "Passed" : "Not Started";
+                    }
+                  } else {
+                    quizInfo = "Not Started";
+                  }
+                }
+
+                return {
+                  title: lesson.title,
+                  isCompleted,
+                  quizInfo
+                };
+              });
+
+              // Level completion badge
+              if (studyCompleted) {
+                const badgeTier = (lessonsWithQuiz > 0 && assessmentsCompleted) ? "Level Completed + Passed Quizzes" : "Level Completed";
+                courseLevelBadges.push({
+                  type: "level",
+                  courseId: course.id,
+                  levelId: level.id,
+                  courseTitle: course.title,
+                  title: `${course.title} – ${level.title || `Level ${i+1}`}`,
+                  description: `${completedLessonsCount}/${totalLessons} lessons finished.${lessonsWithQuiz ? ` Quiz average: ${Math.round(overallLevelQuizScore)}% (Passing score: ${passingScore}%).` : " No assessments."}`,
+                  tier: badgeTier,
+                  isPassed: assessmentsCompleted && lessonsWithQuiz > 0,
+                  earned: true,
+                  lessonsStudied: lessonsStudied,
+                  overallLevelQuizScore,
+                  passingScore
+                });
+              } else {
+                courseLevelBadges.push({
+                  type: "level",
+                  courseId: course.id,
+                  levelId: level.id,
+                  courseTitle: course.title,
+                  title: `${course.title} – ${level.title || `Level ${i+1}`}`,
+                  description: `${completedLessonsCount}/${totalLessons} lessons finished.`,
+                  tier: "Locked",
+                  isPassed: false,
+                  earned: false,
+                  lessonsStudied: lessonsStudied,
+                  overallLevelQuizScore: 0,
+                  passingScore
+                });
+              }
+            }
+
+            // Course completion badge
+            if (courseLevels.length > 0) {
+              // Build study progress registry levels for course
+              const levelsStudied = courseLevels.map((lvl, index) => {
+                const lvlLessons = lvl.lessons.map(lesson => {
+                  const isCompleted = library.some(x => String(x.courseId) === String(course.id) && String(x.levelId) === String(lvl.id) && String(x.lessonId) === String(lesson.id) && x.isCompleted);
+                  
+                  let quizInfo = "No assessment";
+                  const hasQuiz = (lesson.questions && lesson.questions.length > 0) || (lesson.assessments && lesson.assessments.length > 0);
+                  if (hasQuiz) {
+                    const attempt = attemptHistory.find(x => String(x.courseId) === String(course.id) && String(x.levelId) === String(lvl.id) && String(x.lessonId) === String(lesson.id));
+                    if (attempt) {
+                      const results = attempt.assessmentResults || [];
+                      const latestResult = results.sort((a,b) => Number(b.gradedAt || b.submittedAt || 0) - Number(a.gradedAt || a.submittedAt || 0))[0] || null;
+                      if (latestResult) {
+                        if (latestResult.scoreEarned !== null && latestResult.scoreEarned !== undefined) {
+                          quizInfo = `Score: ${latestResult.scoreEarned}/${latestResult.scoreTotal}`;
+                        } else if (latestResult.objectiveCorrect !== null && latestResult.objectiveCorrect !== undefined) {
+                          quizInfo = `Score: ${latestResult.objectiveCorrect}/${latestResult.objectiveTotal}`;
+                        } else {
+                          quizInfo = "Passed";
+                        }
+                      } else {
+                        quizInfo = attempt.isCompleted ? "Passed" : "Not Started";
+                      }
+                    } else {
+                      quizInfo = "Not Started";
+                    }
+                  }
+
+                  return {
+                    title: lesson.title,
+                    isCompleted,
+                    quizInfo
+                  };
+                });
+
+                return {
+                  title: lvl.title || `Level ${index + 1}`,
+                  lessons: lvlLessons
+                };
+              });
+
+              if (allLevelsStudyPassed) {
+                const certData = certificates[course.id] || null;
+                const badgeTier = (courseHasAnyQuizzes && allLevelsAssessmentsPassed) ? "Course Completed + Passed Quizzes" : "Course Completed";
+                
+                // Nest all earned level badges
+                const earnedLevels = courseLevelBadges.filter(x => x.earned).map(x => ({
+                  title: x.title,
+                  levelId: x.levelId,
+                  description: x.description,
+                  tier: x.tier,
+                  isPassed: x.isPassed,
+                  lessonsStudied: x.lessonsStudied
+                }));
+
+                badgeList.push({
+                  type: "course",
+                  courseId: course.id,
+                  title: `${course.title} – Professional Certification`,
+                  description: `All ${courseLevels.length} levels finished completely!`,
+                  tier: badgeTier,
+                  isPassed: allLevelsAssessmentsPassed && courseHasAnyQuizzes,
+                  earned: true,
+                  certificate: certData,
+                  nestedLevels: earnedLevels,
+                  levelsStudied: levelsStudied
+                });
+              } else {
+                badgeList.push({
+                  type: "course",
+                  courseId: course.id,
+                  title: `${course.title} – Professional Certification`,
+                  description: `Complete all levels of this course to unlock this credential.`,
+                  tier: "Locked",
+                  isPassed: false,
+                  earned: false,
+                  certificate: null,
+                  nestedLevels: [],
+                  levelsStudied: levelsStudied
+                });
+              }
+            }
+
+            // Skip showing minor level badges separately if the whole course is certified complete
+            if (!allLevelsStudyPassed) {
+              badgeList.push(...courseLevelBadges);
+            }
+          }
+
+          if (badgeList.length === 0) {
+            container.innerHTML = `<div class="empty-state" style="padding:20px; text-align:center; color:var(--color-info-dark)">No badges earned yet. Start a course in the study room to view your accomplishments.</div>`;
+            return;
+          }
+
+          badgeList.sort((a, b) => {
+            if (a.earned !== b.earned) return b.earned ? 1 : -1;
+            if (a.type !== b.type) return a.type === "course" ? -1 : 1;
+            return a.title.localeCompare(b.title);
+          });
+
+          html += `<div class="badge-grid">`;
+          badgeList.forEach((badge, idx) => {
+            const wrapClass = badge.earned
+              ? (badge.type === "course" ? "course" : (badge.isPassed ? "level" : "study-only"))
+              : "unearned";
+            const icon = badge.earned
+              ? (badge.type === "course" ? "🏆" : (badge.isPassed ? "⭐️" : "📖"))
+              : "🔒";
+            const badgeLabel = badge.earned ? (badge.type === "course" ? "Cert" : "Level") : "Lock";
+            const cardClass = badge.earned ? "badge-card" : "badge-card unearned";
+
+            let nestedHtml = "";
+            if (badge.type === "course" && badge.earned && badge.nestedLevels && badge.nestedLevels.length > 0) {
+              nestedHtml = `
+                <div class="nested-badges" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
+                  ${badge.nestedLevels.map(level => {
+                    const levelLabel = level.title.split('–')[1] || level.title;
+                    return `
+                      <span class="nested-badge-pill" style="display: inline-flex; align-items: center; gap: 4px; background: rgba(27, 156, 133, 0.08); color: #1b9c85; border: 1px solid rgba(27, 156, 133, 0.15); padding: 3px 8px; border-radius: 99px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em;" title="${level.description}">
+                        ⭐️ ${levelLabel.trim()}
+                      </span>
+                    `;
+                  }).join('')}
+                </div>
+              `;
+            }
+
+            html += `
+              <div class="${cardClass}" data-badge-idx="${idx}">
+                <div class="badge-icon-wrap ${wrapClass}">
+                  ${icon}
+                  <span class="badge-badge ${badge.earned ? "" : "unearned"}">${badgeLabel}</span>
+                </div>
+                <div class="badge-info">
+                  <h5>${badge.title}</h5>
+                  <p>${badge.description}</p>
+                  ${nestedHtml}
+                  <span class="badge-status ${badge.earned ? "earned" : "unearned"}">${badge.tier}</span>
+                </div>
+              </div>
+            `;
+          });
+          html += `</div>`;
+
+          container.innerHTML = html;
+
+          // Click handlers
+          container.querySelectorAll(".badge-card").forEach(card => {
+            card.addEventListener("click", async () => {
+              const idx = Number(card.dataset.badgeIdx);
+              const badge = badgeList[idx];
+              if (!badge || !badge.earned) return;
+
+              await viewAndDownloadCertificate(installerId, badge);
+            });
+          });
+
+        } catch (e) {
+          console.error("Failed to load accomplishments:", e);
+          container.innerHTML = `<div class="empty-state" style="padding:16px; color:#ef4444">Error loading credentials: ${e.message || e}</div>`;
+        }
+      }
+
+      async function viewAndDownloadCertificate(installerId, badge) {
+        let detailsHtml = "";
+
+        if (badge.type === "level") {
+          detailsHtml = `
+            <div class="modal-study-details" style="margin-bottom: 20px; font-family: 'Poppins', sans-serif; text-align: left;">
+              <h5 style="margin: 0 0 10px 0; font-size: 0.92rem; font-weight: 700; color: #1c2430; text-transform: uppercase; letter-spacing: 0.03em;">Lessons Studied</h5>
+              <div style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding-right: 4px;">
+                ${badge.lessonsStudied.map(lesson => {
+                  const studyBadge = lesson.isCompleted 
+                    ? `<span style="background: rgba(27, 156, 133, 0.08); color: #1b9c85; border: 1px solid rgba(27, 156, 133, 0.15); padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">📖 Completed</span>`
+                    : `<span style="background: rgba(100, 116, 139, 0.08); color: #64748b; border: 1px solid rgba(100, 116, 139, 0.15); padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">🔒 Locked</span>`;
+                  
+                  let quizColor = "#64748b";
+                  let quizBg = "rgba(100, 116, 139, 0.08)";
+                  let quizBorder = "rgba(100, 116, 139, 0.15)";
+                  
+                  if (lesson.quizInfo.includes("Score")) {
+                    quizColor = "#1b9c85";
+                    quizBg = "rgba(27, 156, 133, 0.08)";
+                    quizBorder = "rgba(27, 156, 133, 0.15)";
+                  } else if (lesson.quizInfo === "Passed") {
+                    quizColor = "#1b9c85";
+                    quizBg = "rgba(27, 156, 133, 0.08)";
+                    quizBorder = "rgba(27, 156, 133, 0.15)";
+                  }
+                  
+                  const quizBadge = `<span style="background: ${quizBg}; color: ${quizColor}; border: 1px solid ${quizBorder}; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">📝 ${lesson.quizInfo}</span>`;
+
+                  return `
+                    <div style="display: flex; align-items: center; justify-content: space-between; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; gap: 12px; flex-shrink: 0;">
+                      <span style="font-size: 0.88rem; font-weight: 500; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 220px;" title="${lesson.title}">${lesson.title}</span>
+                      <div style="display: flex; gap: 6px; align-items: center; flex-shrink: 0;">
+                        ${studyBadge}
+                        ${quizBadge}
+                      </div>
+                    </div>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+            
+            <div style="border-top: 1px dashed #e2e8f0; padding-top: 16px; text-align: left; font-family: 'Poppins', sans-serif;">
+              <h5 style="margin: 0 0 10px 0; font-size: 0.92rem; font-weight: 700; color: #1c2430; text-transform: uppercase; letter-spacing: 0.03em;">Level Badge Status</h5>
+              <div style="display: flex; align-items: center; gap: 12px; background: rgba(27, 156, 133, 0.04); border: 1px solid rgba(27, 156, 133, 0.15); border-radius: 8px; padding: 12px;">
+                <div style="width: 42px; height: 42px; background: #1b9c85; color: white; display: flex; align-items: center; justify-content: center; font-size: 20px; border-radius: 50%;">
+                  ⭐️
+                </div>
+                <div style="display: flex; flex-direction: column;">
+                  <span style="font-size: 0.92rem; font-weight: 700; color: #1c2430;">${badge.tier}</span>
+                  <span style="font-size: 0.78rem; color: #64748b;">${badge.description}</span>
+                </div>
+              </div>
+            </div>
+          `;
+
+          Swal.fire({
+            title: badge.title,
+            html: detailsHtml,
+            confirmButtonColor: "#1b9c85",
+            confirmButtonText: "Close"
+          });
+
+        } else {
+          // Course completion certificate badge
+          let levelsStudiedHtml = "";
+          if (badge.levelsStudied && badge.levelsStudied.length > 0) {
+            levelsStudiedHtml = `
+              <div class="modal-study-details" style="margin-bottom: 20px; font-family: 'Poppins', sans-serif; text-align: left;">
+                <h5 style="margin: 0 0 10px 0; font-size: 0.92rem; font-weight: 700; color: #1c2430; text-transform: uppercase; letter-spacing: 0.03em;">Registry of Studied Levels</h5>
+                <div style="max-height: 280px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; padding-right: 4px;">
+                  ${badge.levelsStudied.map(level => {
+                    return `
+                      <div style="border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
+                        <div style="background: #f1f5f9; padding: 8px 12px; font-size: 0.85rem; font-weight: 700; color: #1e293b; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 6px;">
+                          ⭐️ ${level.title}
+                        </div>
+                        <div style="display: flex; flex-direction: column; background: white;">
+                          ${level.lessons.map(lesson => {
+                            const studyBadge = lesson.isCompleted 
+                              ? `<span style="background: rgba(27, 156, 133, 0.08); color: #1b9c85; border: 1px solid rgba(27, 156, 133, 0.15); padding: 2px 6px; border-radius: 99px; font-size: 10px; font-weight: 600;">📖 Completed</span>`
+                              : `<span style="background: rgba(100, 116, 139, 0.08); color: #64748b; border: 1px solid rgba(100, 116, 139, 0.15); padding: 2px 6px; border-radius: 99px; font-size: 10px; font-weight: 600;">🔒 Locked</span>`;
+                            
+                            let quizColor = "#64748b";
+                            let quizBg = "rgba(100, 116, 139, 0.08)";
+                            let quizBorder = "rgba(100, 116, 139, 0.15)";
+                            
+                            if (lesson.quizInfo.includes("Score")) {
+                              quizColor = "#1b9c85";
+                              quizBg = "rgba(27, 156, 133, 0.08)";
+                              quizBorder = "rgba(27, 156, 133, 0.15)";
+                            } else if (lesson.quizInfo === "Passed") {
+                              quizColor = "#1b9c85";
+                              quizBg = "rgba(27, 156, 133, 0.08)";
+                              quizBorder = "rgba(27, 156, 133, 0.15)";
+                            }
+                            const quizBadge = `<span style="background: ${quizBg}; color: ${quizColor}; border: 1px solid ${quizBorder}; padding: 2px 6px; border-radius: 99px; font-size: 10px; font-weight: 600;">📝 ${lesson.quizInfo}</span>`;
+
+                            return `
+                              <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 12px; border-bottom: 1px solid #f1f5f9; gap: 8px; flex-shrink: 0;">
+                                <span style="font-size: 0.82rem; font-weight: 500; color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;" title="${lesson.title}">${lesson.title}</span>
+                                <div style="display: flex; gap: 4px; align-items: center; flex-shrink: 0;">
+                                  ${studyBadge}
+                                  ${quizBadge}
+                                </div>
+                              </div>
+                            `;
+                          }).join('')}
+                        </div>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            `;
+          }
+
+          const cert = badge.certificate;
+          if (!cert) {
+            // Certificate is pending
+            Swal.fire({
+              title: badge.title,
+              html: `
+                ${levelsStudiedHtml}
+                
+                <div style="border-top: 1px dashed #e2e8f0; padding-top: 16px; text-align: left; font-family: 'Poppins', sans-serif;">
+                  <h5 style="margin: 0 0 10px 0; font-size: 0.92rem; font-weight: 700; color: #1c2430; text-transform: uppercase; letter-spacing: 0.03em;">Digital Certificate Status</h5>
+                  <div style="display: flex; align-items: flex-start; gap: 12px; background: rgba(56, 189, 248, 0.04); border: 1px solid rgba(56, 189, 248, 0.15); border-radius: 8px; padding: 12px;">
+                    <div style="width: 32px; height: 32px; background: #0ea5e9; color: white; display: flex; align-items: center; justify-content: center; font-size: 16px; border-radius: 50%; flex-shrink:0; margin-top:2px;">
+                      i
+                    </div>
+                    <div style="display: flex; flex-direction: column;">
+                      <span style="font-size: 0.9rem; font-weight: 700; color: #0369a1;">Certificate Pending Approval</span>
+                      <span style="font-size: 0.78rem; color: #0284c7; margin-top: 2px;">Congratulations on completing the entire course! Your digital signed soft copy certificate is currently being processed by the administrator. Check back shortly!</span>
+                    </div>
+                  </div>
+                </div>
+              `,
+              confirmButtonColor: "#1b9c85",
+              confirmButtonText: "Close"
+            });
+            return;
+          }
+
+          // Certificate is approved/available!
+          Swal.fire({
+            title: "Securing certificate...",
+            allowOutsideClick: false,
+            didOpen: () => { Swal.showLoading(); }
+          });
+
+          const signedUrl = await getSignedCertificateURL(cert.path, installerId);
+          if (!signedUrl) {
+            Swal.fire({
+              title: "Connection Issue",
+              text: "We couldn't generate a secure link to your certificate. Please refresh and try again.",
+              icon: "error",
+              confirmButtonColor: "#1b9c85"
+            });
+            return;
+          }
+
+          const isImage = /\.(png|jpe?g|gif|webp|bmp|svg)($|\?)/i.test(cert.path);
+          let previewHtml = "";
+          if (isImage) {
+            previewHtml = `<div style="text-align:center; margin: 12px 0;"><img src="${signedUrl}" style="max-width:100%; max-height:180px; border-radius:8px; border:1px solid #e2e8f0; box-shadow:0 4px 12px rgba(0,0,0,0.06);"></div>`;
+          } else {
+            previewHtml = `
+              <div style="text-align:center; margin: 12px 0;">
+                <div style="padding: 16px; border: 1px solid rgba(27, 156, 133, 0.15); border-radius: 8px; background: rgba(27, 156, 133, 0.03); display: inline-flex; align-items:center; gap:8px;">
+                  <span style="color:#1b9c85; font-size:24px; font-weight:bold;">🏆</span>
+                  <div style="text-align:left;">
+                    <div style="font-weight:700; color:#1c2430; font-size:0.85rem;">Credential Verified (PDF)</div>
+                    <div style="font-size:0.75rem; color:#64748b;">Earned: ${new Date(cert.uploadedAt).toLocaleDateString()}</div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+
+          Swal.fire({
+            title: badge.title,
+            html: `
+              ${levelsStudiedHtml}
+              
+              <div style="border-top: 1px dashed #e2e8f0; padding-top: 16px; text-align: left; font-family: 'Poppins', sans-serif;">
+                <h5 style="margin: 0 0 10px 0; font-size: 0.92rem; font-weight: 700; color: #1c2430; text-transform: uppercase; letter-spacing: 0.03em;">Digital Certificate Credential</h5>
+                ${previewHtml}
+                <p style="margin: 8px 0 0; font-size: 0.78rem; color: #64748b; text-align:center;">Click "Print / Download" below to open the certificate in high resolution for saving or printing.</p>
+              </div>
+            `,
+            showCancelButton: true,
+            confirmButtonText: "Print / Download",
+            cancelButtonText: "Close",
+            confirmButtonColor: "#1b9c85",
+            cancelButtonColor: "#64748b"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.open(signedUrl, "_blank");
+            }
+          });
+        }
+      }
+
+      async function loadInstaller() {
+        const {
+          data: { user },
+          error: uErr,
+        } = await sb.auth.getUser();
+        if (uErr) {
+          toast("Auth error. Please sign in again.", false);
+          return;
+        }
+        USER = user;
+        if (!user) {
+          toast("You’re not signed in.", false);
+          return;
+        }
+
+        const { data, error } = await sb
+          .from("installer")
+          .select(
+            'id, email, name, birthdate, age, phone, profession, "highestQualification", "employmentStatus", employer, "mainIncomeSource", "bankName", "accountNumber", "accountHolder", "createdAt", levelstatus, "earningBalance", profile_pic_url'
+          )
+          .eq("id", user.id)
+          .maybeSingle();
+
+        if (error) {
+          console.error(error);
+          toast("Couldn’t load your settings.", false);
+        }
+
+        CURRENT = data || { id: user.id, email: user.email };
+        fillAllViews(CURRENT);
+
+        if (CURRENT?.profile_pic_url) {
+          const displayUrl = await getDisplayableAvatarURL(
+            USER.id,
+            CURRENT.profile_pic_url
+          );
+          if (displayUrl)
+            renderAvatar(displayUrl, CURRENT?.name || CURRENT?.email);
+        }
+
+        document
+          .querySelectorAll(".field[data-key]")
+          .forEach((el) => wireField(el, el.getAttribute("data-key")));
+
+        await loadInstallerAccomplishments(USER.id);
+      }
+
+      // === documents_review purge (kept) ===
+      async function listAllPaths(bucket, prefix) {
+        const paths = [];
+        const stack = [prefix];
+        while (stack.length) {
+          const folder = stack.pop();
+          const { data, error } = await sb.storage.from(bucket).list(folder, {
+            limit: 1000,
+            offset: 0,
+            sortBy: { column: "name", order: "asc" },
+          });
+          if (error) {
+            if (error.message?.toLowerCase().includes("not found")) continue;
+            throw error;
+          }
+          for (const item of data || []) {
+            if (item?.metadata)
+              paths.push((folder ? folder + "/" : "") + item.name);
+            else stack.push((folder ? folder + "/" : "") + item.name);
+          }
+        }
+        return paths;
+      }
+
+      async function purgeDocumentsReviewFolder(userId) {
+        const bucket = "documents_review";
+        const prefix = userId;
+        try {
+          const files = await listAllPaths(bucket, prefix);
+          if (!files.length)
+            return { ok: true, deleted: 0, message: "No files to delete." };
+          const chunkSize = 100;
+          let deleted = 0;
+          for (let i = 0; i < files.length; i += chunkSize) {
+            const chunk = files.slice(i, i + chunkSize);
+            const { data, error } = await sb.storage.from(bucket).remove(chunk);
+            if (error) throw error;
+            deleted += data?.length || chunk.length;
+          }
+          return { ok: true, deleted, message: `Deleted ${deleted} file(s).` };
+        } catch (e) {
+          return {
+            ok: false,
+            deleted: 0,
+            message: e?.message || "Failed to purge storage.",
+          };
+        }
+      }
+
+      // Delete account helpers (kept)
+      async function deleteViaEdgeFunction(userId) {
+        try {
+          const { data, error } = await sb.functions.invoke("delete-account", {
+            body: { user_id: userId },
+          });
+          if (error) throw error;
+          return { ok: true, message: data?.message || "Deleted." };
+        } catch (e) {
+          return { ok: false, message: e?.message || "Edge function failed." };
+        }
+      }
+      async function deleteViaAdminAPI(userId) {
+        try {
+          const { error } = await sb.auth.admin.deleteUser(userId);
+          if (error) throw error;
+          return { ok: true, message: "Deleted." };
+        } catch (e) {
+          return {
+            ok: false,
+            message: e?.message || "Admin API not permitted with this key.",
+          };
+        }
+      }
+
+      document
+        .getElementById("deleteAccountBtn")
+        .addEventListener("click", async () => {
+          if (!USER?.id) return toast("You’re not signed in.", false);
+
+          const c1 = await confirmAction(
+            "Delete your account?",
+            "This will permanently remove your account and related data.",
+            "Delete"
+          );
+          if (!c1) return;
+
+          const c2 = await confirmAction(
+            "Are you absolutely sure?",
+            "This cannot be undone.",
+            "Yes, delete it"
+          );
+          if (!c2) return;
+
+          const btn = document.getElementById("deleteAccountBtn");
+          const prev = btn.innerHTML;
+          btn.disabled = true;
+          btn.textContent = "Deleting…";
+
+          const purge = await purgeDocumentsReviewFolder(USER.id);
+          toast(
+            purge.ok
+              ? `Storage: ${purge.message}`
+              : `Storage cleanup failed: ${purge.message}`,
+            purge.ok
+          );
+
+          let res = await deleteViaEdgeFunction(USER.id);
+          if (!res.ok) res = await deleteViaAdminAPI(USER.id);
+
+          if (res.ok) {
+            await swalSuccess("Account deleted. Signing out…");
+            try {
+              await sb.auth.signOut();
+            } catch {}
+            setTimeout(() => {
+              window.location.href = "../../../index.html";
+            }, 900);
+          } else {
+            btn.disabled = false;
+            btn.innerHTML = prev;
+            swalError(
+              "Deletion not configured. Please set up the `delete-account` Edge Function."
+            );
+          }
+        });
+
+      // Avatar events
+      document
+        .getElementById("btnPickPhoto")
+        .addEventListener("click", () => avatarInput().click());
+      document
+        .getElementById("btnRemovePhoto")
+        .addEventListener("click", async () => {
+          if (!USER?.id) return toast("You’re not signed in.", false);
+          const ok = await confirmAction("Remove profile photo?", "", "Remove");
+          if (!ok) return;
+          const res = await removeAvatar();
+          toast(res.message, !!res.ok);
+        });
+      avatarInput().addEventListener("change", async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const res = await uploadAvatar(file);
+        toast(res.message, !!res.ok);
+        e.target.value = "";
+      });
+
+      // ===== Loading toggles (ONLY additions) =====
+      const setLoading = (on) => {
+        document.body.classList.toggle("is-loading", !!on);
+      };
+
+      // Boot
+      (async function init() {
+        try {
+          setLoading(true); // <-- show skeleton
+          const {
+            data: { user },
+          } = await sb.auth.getUser();
+          USER = user;
+          await loadInstaller();
+        } catch (e) {
+          console.error(e);
+          toast("Could not initialize settings.", false);
+        } finally {
+          setLoading(false); // <-- hide skeleton, show content
+        }
+      })();
+    </script>
+  </body>
+</html>

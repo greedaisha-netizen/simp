@@ -1,0 +1,2256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add/Edit Lesson - E-Learning Platform</title>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: #f5f7fa;
+    color: #2d3748;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+header {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+}
+
+.level-info {
+    font-size: 14px;
+    color: #718096;
+    margin-top: 12px;
+}
+
+.assessment-rule {
+    font-size: 13px;
+    color: #718096;
+    margin-top: 6px;
+}
+
+.assessment-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.form-section {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    font-size: 14px;
+    font-weight: 500;
+    color: #2d3748;
+    margin-bottom: 8px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="file"],
+textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #2d3748;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    font-family: inherit;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+    outline: none;
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+}
+
+textarea {
+    resize: vertical;
+}
+
+small {
+    display: block;
+    font-size: 12px;
+    color: #a0aec0;
+    margin-top: 4px;
+}
+
+/* Empty Message */
+.empty-message {
+    text-align: center;
+    padding: 60px 20px;
+    color: #a0aec0;
+    font-size: 14px;
+    background: #f7fafc;
+    border: 2px dashed #e2e8f0;
+    border-radius: 8px;
+}
+
+/* Slide Card Styles */
+.slide-card {
+    background: #f7fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+    animation: slideIn 0.3s ease-out;
+}
+
+.slide-card:hover {
+    border-color: #cbd5e0;
+}
+
+.slide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.slide-number {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.slide-number-badge {
+    background: #4299e1;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 6px;
+    min-width: 60px;
+    text-align: center;
+}
+
+.slide-label {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.slide-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.slide-content {
+    display: grid;
+    gap: 20px;
+}
+
+.content-section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.content-section-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.content-section-title::before {
+    content: '';
+    display: inline-block;
+    width: 4px;
+    height: 16px;
+    background: #4299e1;
+    border-radius: 2px;
+}
+
+.file-upload-area {
+    position: relative;
+    border: 2px dashed #cbd5e0;
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    transition: all 0.2s;
+    cursor: pointer;
+    background: #f7fafc;
+    overflow: hidden;
+}
+
+.file-upload-area:hover {
+    border-color: #4299e1;
+    background: #edf2f7;
+}
+
+.file-upload-area.has-file {
+    border-color: #48bb78;
+    background: #f0fff4;
+}
+
+.file-upload-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.visual-file-input {
+    display: block;
+    width: 100%;
+    font-size: 14px;
+    color: #2d3748;
+    padding: 10px 12px;
+    border: 1px solid #d6e0eb;
+    border-radius: 8px;
+    background: #fff;
+}
+
+.visual-upload-note {
+    display: block;
+    margin-top: 8px;
+    color: #718096;
+}
+
+.upload-icon {
+    font-size: 32px;
+    color: #a0aec0;
+    margin-bottom: 8px;
+}
+
+.upload-text {
+    font-size: 14px;
+    color: #4a5568;
+    margin-bottom: 4px;
+}
+
+.upload-hint {
+    font-size: 12px;
+    color: #a0aec0;
+}
+
+.file-preview {
+    margin-top: 12px;
+    padding: 12px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.file-name {
+    font-size: 13px;
+    color: #2d3748;
+    font-weight: 500;
+}
+
+.char-counter {
+    text-align: right;
+    font-size: 12px;
+    color: #718096;
+    margin-top: 4px;
+}
+
+.char-counter.warning {
+    color: #ed8936;
+}
+
+.char-counter.error {
+    color: #f56565;
+}
+
+.key-notes-input {
+    min-height: 150px;
+}
+
+.key-notes-preview {
+    margin-top: 12px;
+    padding: 16px;
+    background: #f7fafc;
+    border-radius: 6px;
+    border-left: 4px solid #4299e1;
+}
+
+.key-notes-preview-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.key-notes-preview ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.key-notes-preview li {
+    font-size: 14px;
+    color: #2d3748;
+    padding: 4px 0;
+    padding-left: 20px;
+    position: relative;
+}
+
+.key-notes-preview li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #4299e1;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+/* Button Styles */
+button {
+    cursor: pointer;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 20px;
+    border-radius: 6px;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: inherit;
+}
+
+.btn-primary {
+    background: #4299e1;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #3182ce;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(66, 153, 225, 0.3);
+}
+
+.btn-secondary {
+    background: #48bb78;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #38a169;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px rgba(72, 187, 120, 0.3);
+}
+
+.btn-outline {
+    background: white;
+    color: #4a5568;
+    border: 1px solid #e2e8f0;
+}
+
+.btn-outline:hover {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 13px;
+}
+
+.btn-danger {
+    background: #fc8181;
+    color: white;
+    padding: 8px 16px;
+    font-size: 13px;
+}
+
+.btn-danger:hover {
+    background: #f56565;
+}
+
+.btn-icon {
+    font-size: 18px;
+    line-height: 1;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 32px;
+    padding: 24px 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px 16px;
+    }
+
+    header {
+        padding: 20px;
+    }
+
+    .form-section {
+        padding: 20px;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .section-header button {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .slide-card {
+        padding: 16px;
+    }
+
+    .slide-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .slide-actions {
+        width: 100%;
+    }
+
+    .slide-actions button {
+        flex: 1;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+        padding: 20px;
+    }
+
+    .form-actions button {
+        width: 100%;
+    }
+}
+
+/* Animation */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.slide-card {
+    animation: slideIn 0.3s ease-out;
+}
+
+/* Question Card Styles */
+.question-card {
+    background: #f7fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+    animation: slideIn 0.3s ease-out;
+}
+
+.question-card:hover {
+    border-color: #cbd5e0;
+}
+
+.question-type-tag {
+    background: #ede9fe;
+    color: #6d28d9;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 6px 10px;
+    border-radius: 999px;
+}
+
+.question-type-tag.essay {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.assessment-help {
+    margin-top: 10px;
+    padding: 12px 14px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    color: #1e3a8a;
+    font-size: 13px;
+}
+
+.question-number-badge {
+    background: #9f7aea;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 6px;
+    min-width: 60px;
+    text-align: center;
+}
+
+.question-section-title::before {
+    background: #9f7aea;
+}
+
+/* Answer Choice Styles */
+.answer-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.answer-choice {
+    display: flex;
+    align-items: start;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 8px;
+    border: 2px solid #e2e8f0;
+    background: white;
+    transition: all 0.2s;
+}
+
+.answer-choice.correct {
+    border-color: #48bb78;
+    background: #f0fff4;
+}
+
+.answer-choice input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 8px;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.answer-content {
+    flex: 1;
+}
+
+.answer-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.answer-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #4a5568;
+}
+
+.correct-badge {
+    font-size: 11px;
+    background: #48bb78;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+}
+
+.answer-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #2d3748;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.answer-input:focus {
+    outline: none;
+    border-color: #9f7aea;
+    box-shadow: 0 0 0 3px rgba(159, 122, 234, 0.1);
+}
+
+/* Preview Modal Styles */
+.preview-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    z-index: 1000;
+    overflow: auto;
+    padding: 20px;
+}
+
+.preview-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview-modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 1400px;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.preview-header {
+    padding: 20px 30px;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preview-header h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.preview-close {
+    background: #f7fafc;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.preview-close:hover {
+    background: #e2e8f0;
+}
+
+.preview-body {
+    flex: 1;
+    overflow: auto;
+    padding: 24px;
+    background: #f9fafb;
+}
+
+.preview-container {
+    height: 100%;
+    background: #f9fafb;
+}
+
+/* Preview Main Content Area - matching class.css */
+.preview-main-content {
+    display: flex;
+    gap: 24px;
+    height: 100%;
+    min-height: 600px;
+}
+
+/* Preview Visual Section */
+.preview-visual-section {
+    flex: 1;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.preview-icon-box {
+    width: 32px;
+    height: 32px;
+    background-color: black;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.preview-icon {
+    width: 20px;
+    height: 20px;
+    color: white;
+}
+
+.preview-section-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.preview-video-container {
+    flex: 1;
+    background-color: #111827;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-height: 400px;
+}
+
+.preview-video-container img,
+.preview-video-container video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.preview-play-button {
+    width: 80px;
+    height: 80px;
+    background-color: #1f2937;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.preview-play-button:hover {
+    background-color: #374151;
+}
+
+.preview-play-icon {
+    width: 40px;
+    height: 40px;
+    color: white;
+    margin-left: 4px;
+}
+
+.preview-video-placeholder {
+    position: absolute;
+    bottom: 16px;
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+/* Preview Lesson Content */
+.preview-lesson-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow-y: auto;
+}
+
+.preview-lesson-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.preview-lesson-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.preview-lesson-content::-webkit-scrollbar-thumb {
+    background: #d1d5db;
+    border-radius: 4px;
+}
+
+.preview-lesson-header {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+}
+
+.preview-lesson-header h1 {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.preview-subtitle {
+    color: #4b5563;
+    font-size: 16px;
+}
+
+.preview-lesson-text-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+}
+
+.preview-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.preview-card-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.preview-icon-blue {
+    width: 20px;
+    height: 20px;
+    color: #2563eb;
+    flex-shrink: 0;
+}
+
+.preview-text-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    color: #374151;
+    line-height: 1.6;
+}
+
+/* Preview Key Notes */
+.preview-key-notes {
+    background-color: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.preview-key-notes .preview-card-header {
+    margin-bottom: 12px;
+}
+
+.preview-key-notes h3 {
+    color: #78350f;
+}
+
+.preview-icon-amber {
+    width: 20px;
+    height: 20px;
+    color: #d97706;
+    flex-shrink: 0;
+}
+
+.preview-key-notes ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+}
+
+.preview-key-notes li {
+    display: flex;
+    align-items: start;
+    gap: 8px;
+    color: #374151;
+}
+
+.preview-bullet {
+    color: #d97706;
+    margin-top: 2px;
+}
+
+/* Responsive Design for Preview */
+@media (max-width: 1024px) {
+    .preview-main-content {
+        flex-direction: column;
+    }
+    
+    .preview-visual-section {
+        min-height: 300px;
+    }
+}
+
+/* Classroom-style preview override */
+.preview-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.72);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 1000;
+}
+
+.preview-modal.active {
+    display: flex;
+}
+
+.preview-modal-content {
+    width: min(1380px, 100%);
+    max-height: 92vh;
+    background: #ffffff;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(15, 23, 42, 0.35);
+}
+
+.preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 22px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.preview-close {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #0f172a;
+    justify-content: center;
+}
+
+.preview-body {
+    background: #f8fafc;
+}
+
+.classroom-preview-shell {
+    display: flex;
+    min-height: 78vh;
+}
+
+.classroom-preview-main {
+    flex: 1;
+    display: flex;
+    gap: 24px;
+    padding: 24px;
+    padding-right: 0;
+    min-width: 0;
+}
+
+.classroom-preview-visual {
+    flex: 1;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.classroom-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.classroom-icon-box {
+    width: 32px;
+    height: 32px;
+    background: #000;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.classroom-icon {
+    width: 20px;
+    height: 20px;
+    color: #fff;
+}
+
+.classroom-video-container {
+    flex: 1;
+    min-height: 420px;
+    background: #111827;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.classroom-play-button {
+    width: 80px;
+    height: 80px;
+    border: none;
+    border-radius: 50%;
+    background: #1f2937;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.classroom-play-icon {
+    width: 40px;
+    height: 40px;
+    color: #fff;
+    margin-left: 4px;
+}
+
+.classroom-video-placeholder {
+    position: absolute;
+    bottom: 16px;
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+.classroom-preview-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    overflow-y: auto;
+    padding-right: 24px;
+}
+
+.classroom-lesson-header,
+.classroom-lesson-text-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+}
+
+.classroom-lesson-header h1 {
+    font-size: 30px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.classroom-subtitle {
+    color: #4b5563;
+    font-size: 16px;
+}
+
+.classroom-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.classroom-icon-blue,
+.classroom-icon-amber {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+}
+
+.classroom-icon-blue {
+    color: #2563eb;
+}
+
+.classroom-icon-amber {
+    color: #d97706;
+}
+
+.classroom-text-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    color: #374151;
+    line-height: 1.6;
+}
+
+.classroom-key-notes {
+    background: #fffbeb;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.classroom-key-notes h3 {
+    color: #78350f;
+}
+
+.classroom-key-notes ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 0;
+    margin: 0;
+}
+
+.classroom-key-notes li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    color: #374151;
+}
+
+.classroom-preview-sidebar {
+    width: 256px;
+    background: #fff;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    padding: 24px 18px;
+}
+
+.classroom-sidebar-btn {
+    width: 100%;
+    justify-content: flex-start;
+    background: #f8fafc;
+    color: #374151;
+    margin-bottom: 12px;
+    padding: 12px 16px;
+}
+
+.classroom-dark-btn {
+    background: #000;
+    color: #fff;
+}
+
+.classroom-sidebar-menu {
+    margin-bottom: 18px;
+}
+
+.classroom-sidebar-spacer {
+    flex: 1;
+}
+
+@media (max-width: 1024px) {
+    .classroom-preview-shell,
+    .classroom-preview-main {
+        flex-direction: column;
+    }
+
+    .classroom-preview-main {
+        padding-right: 24px;
+    }
+
+    .classroom-preview-sidebar {
+        width: 100%;
+    }
+}
+
+</style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="form-group">
+                <label for="lessonTitle">Lesson Title *</label>
+                <input type="text" id="lessonTitle" name="lessonTitle" required placeholder="Enter lesson title">
+            </div>
+
+            <div class="form-group">
+                <label for="lessonSubtitle">Lesson Subtitle</label>
+                <input type="text" id="lessonSubtitle" name="lessonSubtitle" placeholder="Enter a brief subtitle or tagline">
+            </div>
+
+            <p class="level-info" id="levelInfo">Creating lesson for Level</p>
+        </header>
+
+        <form id="lessonForm">
+            <section class="form-section">
+                <div class="section-header">
+                    <h2>Lesson Slides</h2>
+                    <button type="button" id="addSlideBtn" class="btn-secondary">
+                        <span class="btn-icon">+</span> Add Slide
+                    </button>
+                </div>
+
+                <div id="slidesContainer"></div>
+
+                <div id="emptySlidesMessage" class="empty-message">
+                    No slides added yet. Click "Add Slide" to create your first slide.
+                </div>
+            </section>
+
+            <section class="form-section">
+                <div class="section-header">
+                    <div>
+                        <h2>Assessment</h2>
+                        <p class="assessment-rule" id="assessmentRuleText">Assessment requirements load from the selected level.</p>
+                    </div>
+                    <div class="assessment-actions">
+                        <button type="button" id="addMultipleChoiceBtn" class="btn-secondary">
+                            <span class="btn-icon">+</span> Add Multiple Choice
+                        </button>
+                        <button type="button" id="addEssayBtn" class="btn-outline">
+                            <span class="btn-icon">+</span> Add Essay
+                        </button>
+                    </div>
+                </div>
+
+                <div id="questionsContainer"></div>
+
+                <div id="emptyQuestionsMessage" class="empty-message">
+                    No questions added yet. Click "Add Question" to create your first assessment question.
+                </div>
+            </section>
+
+            <div class="form-actions">
+                <button type="button" class="btn-outline" id="cancelBtn">Cancel</button>
+                <button type="submit" class="btn-primary">Save Lesson</button>
+            </div>
+        </form>
+    </div>
+
+    <div id="previewModal" class="preview-modal">
+        <div class="preview-modal-content">
+            <div class="preview-header">
+                <h2>Slide Preview</h2>
+                <button type="button" class="preview-close" onclick="closePreview()">x</button>
+            </div>
+            <div class="preview-body">
+                <div class="classroom-preview-shell">
+                    <div class="classroom-preview-main">
+                        <div class="classroom-preview-visual">
+                            <div class="classroom-section-header">
+                                <div class="classroom-icon-box">
+                                    <svg class="classroom-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                </div>
+                                <h3>Visual Representation</h3>
+                            </div>
+                            <div class="classroom-video-container" id="previewVisualContainer">
+                                <button class="classroom-play-button">
+                                    <svg class="classroom-play-icon" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M8 5v14l11-7z" />
+                                    </svg>
+                                </button>
+                                <p class="classroom-video-placeholder">Video / Diagram / Image</p>
+                            </div>
+                        </div>
+
+                        <div class="classroom-preview-content">
+                            <div class="classroom-lesson-header">
+                                <h1 id="previewLessonTitle">Lesson Title</h1>
+                                <p class="classroom-subtitle" id="previewLessonSubtitle">Lesson subtitle</p>
+                            </div>
+
+                            <div class="classroom-lesson-text-card" id="previewTextCard">
+                                <div class="classroom-card-header">
+                                    <svg class="classroom-icon-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                    </svg>
+                                    <h3>Lesson Text</h3>
+                                </div>
+                                <div class="classroom-text-content" id="previewTextContent">
+                                    <p>No lesson text added yet.</p>
+                                </div>
+                            </div>
+
+                            <div class="classroom-key-notes" id="previewKeyNotes" style="display: none;">
+                                <div class="classroom-card-header">
+                                    <svg class="classroom-icon-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                    </svg>
+                                    <h3>Key Notes</h3>
+                                </div>
+                                <ul id="previewKeyNotesList"></ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="classroom-preview-sidebar">
+                        <button class="classroom-sidebar-btn classroom-sidebar-menu"><span>Menu</span></button>
+                        <button class="classroom-sidebar-btn"><span>Ask Question</span></button>
+                        <button class="classroom-sidebar-btn"><span>Replay (10s)</span></button>
+                        <button class="classroom-sidebar-btn"><span>Fast Forward (10s)</span></button>
+                        <button class="classroom-sidebar-btn classroom-dark-btn"><span>Mute</span></button>
+                        <button class="classroom-sidebar-btn"><span>Toggle Subtitles</span></button>
+                        <button class="classroom-sidebar-btn"><span>Language Settings</span></button>
+                        <button class="classroom-sidebar-btn classroom-dark-btn"><span>Disable Auto-play</span></button>
+                        <div class="classroom-sidebar-spacer"></div>
+                        <button class="classroom-sidebar-btn"><span>Fullscreen</span></button>
+                        <button class="classroom-sidebar-btn"><span>Settings</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../shared/course-store.js"></script>
+    <script>
+const store = window.SIMPCourseStore;
+
+let lessonData = {
+    id: '',
+    title: '',
+    subtitle: '',
+    slides: [],
+    questions: [],
+    assessments: []
+};
+
+let courseDraft = null;
+let currentLevelId = '';
+let currentLessonId = '';
+let mode = 'add';
+let slideCounter = 0;
+let questionCounter = 0;
+let currentLevelNumber = 1;
+
+document.addEventListener('DOMContentLoaded', () => {
+    initializePage();
+    setupEventListeners();
+});
+
+function initializePage() {
+    courseDraft = store.getEditorDraft()?.course;
+    currentLevelId = localStorage.getItem('currentLevelId');
+    currentLessonId = localStorage.getItem('currentLessonId');
+    mode = localStorage.getItem('lessonMode') || 'add';
+
+    if (!courseDraft || !currentLevelId) {
+        alert('No course draft is active. Redirecting back.');
+        window.location.href = localStorage.getItem('courseEditorReturnPage') || 'addcourse.html';
+        return;
+    }
+
+    const level = courseDraft.levels.find((item) => item.id === currentLevelId);
+    if (!level) {
+        alert('Selected level was not found. Redirecting back.');
+        window.location.href = localStorage.getItem('courseEditorReturnPage') || 'addcourse.html';
+        return;
+    }
+
+    document.getElementById('levelInfo').textContent = `${mode === 'edit' ? 'Editing' : 'Creating'} lesson for ${level.title}`;
+    currentLevelNumber = getLevelNumber(level);
+    updateAssessmentRuleText();
+
+    if (mode === 'edit') {
+        const existingLesson = (level.lessons || []).find((lesson) => lesson.id === currentLessonId);
+        if (existingLesson) {
+            lessonData = store.clone(existingLesson);
+        }
+    } else {
+        lessonData.id = `lesson-${Date.now()}`;
+        lessonData.questions = [];
+        lessonData.assessments = [];
+    }
+
+    lessonData.slides = Array.isArray(lessonData.slides) ? lessonData.slides : [];
+    lessonData.questions = Array.isArray(lessonData.questions) ? lessonData.questions : [];
+    lessonData.assessments = Array.isArray(lessonData.assessments) ? lessonData.assessments : [];
+    ensureAssessmentDefaults();
+
+    slideCounter = lessonData.slides.length;
+    questionCounter = lessonData.questions.length;
+
+    loadLessonData();
+    updateEmptyStates();
+}
+
+function setupEventListeners() {
+    document.getElementById('addSlideBtn').addEventListener('click', addSlide);
+    document.getElementById('addMultipleChoiceBtn').addEventListener('click', () => addQuestion('multiple-choice'));
+    document.getElementById('addEssayBtn').addEventListener('click', () => addQuestion('essay'));
+    document.getElementById('cancelBtn').addEventListener('click', cancelLesson);
+    document.getElementById('lessonForm').addEventListener('submit', saveLesson);
+}
+
+function loadLessonData() {
+    document.getElementById('lessonTitle').value = lessonData.title || '';
+    document.getElementById('lessonSubtitle').value = lessonData.subtitle || '';
+
+    const slidesContainer = document.getElementById('slidesContainer');
+    slidesContainer.innerHTML = '';
+    lessonData.slides.forEach((slide, index) => {
+        slide.number = index + 1;
+        slidesContainer.appendChild(renderSlide(slide));
+    });
+
+    const questionsContainer = document.getElementById('questionsContainer');
+    questionsContainer.innerHTML = '';
+    lessonData.questions.forEach((question, index) => {
+        question.number = index + 1;
+        renderQuestion(question);
+    });
+}
+
+function getPrimaryAssessment() {
+    if (!Array.isArray(lessonData.assessments)) {
+        lessonData.assessments = [];
+    }
+
+    if (!lessonData.assessments.length) {
+        lessonData.assessments.push(createAssessmentRecord());
+    }
+
+    return lessonData.assessments[0];
+}
+
+function createAssessmentRecord() {
+    return {
+        id: `${lessonData.id || `lesson-${Date.now()}`}-assessment`,
+        title: `${lessonData.title || 'Lesson'} Assessment`,
+        description: currentLevelNumber >= 3
+            ? 'Includes multiple-choice and essay questions for applied understanding.'
+            : 'Multiple-choice assessment based on the lesson content.',
+        duration: 10,
+        totalQuestions: 0,
+        passingScore: currentLevelNumber >= 3 ? 80 : 70,
+        isDraft: true,
+        questions: []
+    };
+}
+
+function syncPrimaryAssessment() {
+    const assessment = getPrimaryAssessment();
+    const questionSet = lessonData.questions.map((question, index) => ({
+        ...question,
+        number: index + 1
+    }));
+    const essayCount = questionSet.filter((question) => question.type === 'essay').length;
+    const multipleChoiceCount = questionSet.filter((question) => question.type !== 'essay').length;
+
+    assessment.id = assessment.id || `${lessonData.id}-assessment`;
+    assessment.title = `${(lessonData.title || 'Lesson').trim() || 'Lesson'} Assessment`;
+    assessment.description = essayCount
+        ? 'Includes multiple-choice and essay questions for applied understanding.'
+        : 'Multiple-choice assessment based on the lesson content.';
+    assessment.duration = Math.max(10, multipleChoiceCount + (essayCount * 6));
+    assessment.totalQuestions = questionSet.length;
+    assessment.passingScore = currentLevelNumber >= 3 ? 80 : 70;
+    assessment.isDraft = true;
+    assessment.questions = questionSet;
+}
+
+function addSlide() {
+    slideCounter += 1;
+    const slideData = {
+        id: `slide-${Date.now()}-${slideCounter}`,
+        number: lessonData.slides.length + 1,
+        visualName: '',
+        visualDataUrl: '',
+        visualType: '',
+        lessonText: '',
+        keyNotes: ''
+    };
+
+    lessonData.slides.push(slideData);
+    const slidesContainer = document.getElementById('slidesContainer');
+    if (slidesContainer) {
+        slidesContainer.appendChild(renderSlide(slideData));
+    }
+    updateEmptyStates();
+}
+
+function renderSlide(slideData) {
+    const slideCard = document.createElement('div');
+    slideCard.className = 'slide-card';
+    slideCard.id = slideData.id;
+
+    slideCard.innerHTML = `
+        <div class="slide-header">
+            <div class="slide-number">
+                <div class="slide-number-badge">Slide ${slideData.number}</div>
+                <span class="slide-label">Lesson Content</span>
+            </div>
+            <div class="slide-actions">
+                <button type="button" class="btn-small btn-secondary" onclick="previewSlide('${slideData.id}')">Preview</button>
+                <button type="button" class="btn-small btn-outline" onclick="moveSlideUp('${slideData.id}')">Up</button>
+                <button type="button" class="btn-small btn-outline" onclick="moveSlideDown('${slideData.id}')">Down</button>
+                <button type="button" class="btn-small btn-danger" onclick="deleteSlide('${slideData.id}')">Delete</button>
+            </div>
+        </div>
+
+        <div class="slide-content">
+            <div class="content-section">
+                <div class="content-section-title">Visual Content</div>
+                <input
+                    type="file"
+                    id="visual-${slideData.id}"
+                    class="visual-file-input"
+                    accept="image/*"
+                    onclick="this.value='';"
+                    onchange="handleVisualUpload('${slideData.id}', this)">
+                <small class="visual-upload-note" id="visual-upload-hint-${slideData.id}">${slideData.visualName ? 'Selected image for this slide.' : 'Upload an image for this slide.'}</small>
+                ${slideData.visualName ? `
+                    <div class="file-preview" id="visual-preview-${slideData.id}">
+                        <span class="file-name">${escapeHtml(slideData.visualName)}</span>
+                        <button type="button" class="btn-small btn-danger" onclick="removeVisual('${slideData.id}')">Remove</button>
+                    </div>
+                ` : ''}
+            </div>
+
+            <div class="content-section">
+                <div class="content-section-title">Lesson Text</div>
+                <textarea
+                    id="text-${slideData.id}"
+                    placeholder="Enter the main lesson content for this slide..."
+                    maxlength="1000"
+                    rows="6"
+                    oninput="updateCharCounter('${slideData.id}', 'text')"
+                    onchange="updateSlideField('${slideData.id}', 'lessonText', this.value)">${escapeHtml(slideData.lessonText || '')}</textarea>
+                <div class="char-counter" id="counter-text-${slideData.id}">${(slideData.lessonText || '').length} / 1000 characters</div>
+                <small>Maximum 1000 characters including spaces and special characters</small>
+            </div>
+
+            <div class="content-section">
+                <div class="content-section-title">Key Notes</div>
+                <textarea
+                    id="notes-${slideData.id}"
+                    class="key-notes-input"
+                    placeholder="Enter key points, one per line"
+                    rows="6"
+                    oninput="updateKeyNotesPreview('${slideData.id}')"
+                    onchange="updateSlideField('${slideData.id}', 'keyNotes', this.value)">${escapeHtml(slideData.keyNotes || '')}</textarea>
+                <small>Each line is shown as a bullet in preview.</small>
+                ${buildKeyNotesPreviewMarkup(slideData)}
+            </div>
+        </div>
+    `;
+    return slideCard;
+}
+
+function buildKeyNotesPreviewMarkup(slideData) {
+    const notes = (slideData.keyNotes || '').split('\n').filter((line) => line.trim());
+    if (!notes.length) {
+        return '';
+    }
+
+    return `
+        <div class="key-notes-preview" id="preview-${slideData.id}">
+            <div class="key-notes-preview-title">Preview</div>
+            <ul>${notes.map((line) => `<li>${escapeHtml(line.trim())}</li>`).join('')}</ul>
+        </div>
+    `;
+}
+
+function addQuestion(type) {
+    questionCounter += 1;
+    const questionData = createQuestionTemplate(type, lessonData.questions.length + 1);
+
+    lessonData.questions.push(questionData);
+    renderQuestion(questionData);
+    updateEmptyStates();
+}
+
+function renderQuestion(questionData) {
+    const questionsContainer = document.getElementById('questionsContainer');
+    const questionCard = document.createElement('div');
+    questionCard.className = 'slide-card';
+    questionCard.id = questionData.id;
+    const isEssay = questionData.type === 'essay';
+
+    questionCard.innerHTML = `
+        <div class="slide-header">
+            <div class="slide-number">
+                <div class="slide-number-badge">Q${questionData.number}</div>
+                <span class="slide-label">Assessment Question</span>
+                <span class="question-type-tag ${isEssay ? 'essay' : ''}">${isEssay ? 'Essay' : 'Multiple Choice'}</span>
+            </div>
+            <div class="slide-actions">
+                <button type="button" class="btn-small btn-outline" onclick="moveQuestionUp('${questionData.id}')">Up</button>
+                <button type="button" class="btn-small btn-outline" onclick="moveQuestionDown('${questionData.id}')">Down</button>
+                <button type="button" class="btn-small btn-danger" onclick="deleteQuestion('${questionData.id}')">Delete</button>
+            </div>
+        </div>
+
+        <div class="slide-content">
+            <div class="content-section">
+                <div class="content-section-title">Question Prompt</div>
+                <textarea
+                    rows="4"
+                    placeholder="Enter the assessment question"
+                    onchange="updateQuestionPrompt('${questionData.id}', this.value)">${escapeHtml(questionData.prompt || '')}</textarea>
+            </div>
+
+            ${isEssay ? `
+                <div class="content-section">
+                    <div class="content-section-title">Answer Guide / Rubric</div>
+                    <textarea
+                        rows="5"
+                        placeholder="Enter the expected answer points or grading notes for reviewers"
+                        onchange="updateQuestionRubric('${questionData.id}', this.value)">${escapeHtml(questionData.rubric || '')}</textarea>
+                    <div class="assessment-help">Essay questions are for critical thinking and written responses. Add a short rubric so reviewers know what to look for.</div>
+                </div>
+            ` : `
+                <div class="content-section">
+                    <div class="content-section-title">Choices</div>
+                    ${questionData.choices.map((choice, index) => `
+                        <div class="form-group">
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="answer-${questionData.id}"
+                                    value="${index}"
+                                    ${questionData.answerIndex === index ? 'checked' : ''}
+                                    onchange="updateQuestionAnswer('${questionData.id}', ${index})">
+                                Correct answer
+                            </label>
+                            <input
+                                type="text"
+                                placeholder="Choice ${index + 1}"
+                                value="${escapeAttribute(choice || '')}"
+                                onchange="updateQuestionChoice('${questionData.id}', ${index}, this.value)">
+                        </div>
+                    `).join('')}
+                </div>
+            `}
+        </div>
+    `;
+
+    questionsContainer.appendChild(questionCard);
+}
+
+function handleVisualUpload(slideId, input) {
+    const file = input.files[0];
+    if (!file) {
+        return;
+    }
+
+    if (!String(file.type || '').startsWith('image/')) {
+        alert('Please upload an image file for the slide visual.');
+        input.value = '';
+        return;
+    }
+
+    const slide = lessonData.slides.find((item) => item.id === slideId);
+    if (!slide) {
+        return;
+    }
+
+    slide.visualName = file.name;
+    slide.visualType = file.type || '';
+    updateSlideVisualUI(slideId);
+
+    const reader = new FileReader();
+    reader.onload = () => {
+        slide.visualDataUrl = typeof reader.result === 'string' ? reader.result : '';
+        updateSlideVisualUI(slideId);
+        input.value = '';
+    };
+    reader.readAsDataURL(file);
+}
+
+function removeVisual(slideId) {
+    const slide = lessonData.slides.find((item) => item.id === slideId);
+    if (!slide) {
+        return;
+    }
+
+    slide.visualName = '';
+    slide.visualDataUrl = '';
+    slide.visualType = '';
+    updateSlideVisualUI(slideId);
+}
+
+function updateSlideField(slideId, field, value) {
+    const slide = lessonData.slides.find((item) => item.id === slideId);
+    if (slide) {
+        slide[field] = value;
+    }
+}
+
+function updateCharCounter(slideId, type) {
+    const textarea = document.getElementById(`${type}-${slideId}`);
+    const counter = document.getElementById(`counter-${type}-${slideId}`);
+    if (!textarea || !counter) {
+        return;
+    }
+
+    const length = textarea.value.length;
+    counter.textContent = `${length} / 1000 characters`;
+    counter.classList.remove('warning', 'error');
+    if (length > 900) {
+        counter.classList.add('error');
+    } else if (length > 750) {
+        counter.classList.add('warning');
+    }
+}
+
+function updateKeyNotesPreview(slideId) {
+    const textarea = document.getElementById(`notes-${slideId}`);
+    const slide = lessonData.slides.find((item) => item.id === slideId);
+    if (!textarea || !slide) {
+        return;
+    }
+
+    slide.keyNotes = textarea.value;
+    let preview = document.getElementById(`preview-${slideId}`);
+    const contentSection = textarea.closest('.content-section');
+    const notes = textarea.value.split('\n').filter((line) => line.trim());
+
+    if (!notes.length) {
+        if (preview) {
+            preview.remove();
+        }
+        return;
+    }
+
+    if (!preview) {
+        preview = document.createElement('div');
+        preview.className = 'key-notes-preview';
+        preview.id = `preview-${slideId}`;
+        contentSection.appendChild(preview);
+    }
+
+    preview.innerHTML = `
+        <div class="key-notes-preview-title">Preview</div>
+        <ul>${notes.map((line) => `<li>${escapeHtml(line.trim())}</li>`).join('')}</ul>
+    `;
+}
+
+function moveSlideUp(slideId) {
+    const index = lessonData.slides.findIndex((item) => item.id === slideId);
+    if (index <= 0) {
+        return;
+    }
+
+    [lessonData.slides[index - 1], lessonData.slides[index]] = [lessonData.slides[index], lessonData.slides[index - 1]];
+    renumberSlides();
+    refreshAllSlides();
+}
+
+function moveSlideDown(slideId) {
+    const index = lessonData.slides.findIndex((item) => item.id === slideId);
+    if (index === -1 || index >= lessonData.slides.length - 1) {
+        return;
+    }
+
+    [lessonData.slides[index + 1], lessonData.slides[index]] = [lessonData.slides[index], lessonData.slides[index + 1]];
+    renumberSlides();
+    refreshAllSlides();
+}
+
+function deleteSlide(slideId) {
+    if (!confirm('Delete this slide?')) {
+        return;
+    }
+
+    lessonData.slides = lessonData.slides.filter((item) => item.id !== slideId);
+    renumberSlides();
+    refreshAllSlides();
+    updateEmptyStates();
+}
+
+function renumberSlides() {
+    lessonData.slides.forEach((slide, index) => {
+        slide.number = index + 1;
+    });
+    slideCounter = lessonData.slides.length;
+}
+
+function refreshSlide(slideId) {
+    const slide = lessonData.slides.find((item) => item.id === slideId);
+    const existingCard = document.getElementById(slideId);
+    const slidesContainer = document.getElementById('slidesContainer');
+    if (slide && slidesContainer) {
+        const newCard = renderSlide(slide);
+        if (existingCard) {
+            existingCard.replaceWith(newCard);
+        } else {
+            slidesContainer.appendChild(newCard);
+        }
+    }
+}
+
+function refreshAllSlides() {
+    const slidesContainer = document.getElementById('slidesContainer');
+    slidesContainer.innerHTML = '';
+    lessonData.slides.forEach((slide) => {
+        slidesContainer.appendChild(renderSlide(slide));
+    });
+}
+
+function updateSlideVisualUI(slideId) {
+    const slide = lessonData.slides.find((item) => item.id === slideId);
+    if (!slide) {
+        return;
+    }
+
+    const uploadHint = document.getElementById(`visual-upload-hint-${slideId}`);
+    const slideCard = document.getElementById(slideId);
+
+    if (uploadHint) {
+        uploadHint.textContent = slide.visualName
+            ? 'Selected image for this slide.'
+            : 'Upload an image for this slide.';
+    }
+
+    if (!slideCard) {
+        return;
+    }
+
+    const existingPreview = document.getElementById(`visual-preview-${slideId}`);
+    if (!slide.visualName) {
+        if (existingPreview) {
+            existingPreview.remove();
+        }
+        return;
+    }
+
+    const previewMarkup = `
+        <div class="file-preview" id="visual-preview-${slideId}">
+            <span class="file-name">${escapeHtml(slide.visualName)}</span>
+            <button type="button" class="btn-small btn-danger" onclick="removeVisual('${slideId}')">Remove</button>
+        </div>
+    `;
+
+    if (existingPreview) {
+        existingPreview.outerHTML = previewMarkup;
+        return;
+    }
+
+    const visualSection = slideCard.querySelector('.content-section');
+    if (visualSection) {
+        visualSection.insertAdjacentHTML('beforeend', previewMarkup);
+    }
+}
+
+function moveQuestionUp(questionId) {
+    const index = lessonData.questions.findIndex((item) => item.id === questionId);
+    if (index <= 0) {
+        return;
+    }
+
+    [lessonData.questions[index - 1], lessonData.questions[index]] = [lessonData.questions[index], lessonData.questions[index - 1]];
+    renumberQuestions();
+    refreshAllQuestions();
+}
+
+function moveQuestionDown(questionId) {
+    const index = lessonData.questions.findIndex((item) => item.id === questionId);
+    if (index === -1 || index >= lessonData.questions.length - 1) {
+        return;
+    }
+
+    [lessonData.questions[index + 1], lessonData.questions[index]] = [lessonData.questions[index], lessonData.questions[index + 1]];
+    renumberQuestions();
+    refreshAllQuestions();
+}
+
+function deleteQuestion(questionId) {
+    if (!confirm('Delete this question?')) {
+        return;
+    }
+
+    lessonData.questions = lessonData.questions.filter((item) => item.id !== questionId);
+    renumberQuestions();
+    refreshAllQuestions();
+    updateEmptyStates();
+}
+
+function updateQuestionPrompt(questionId, value) {
+    const question = lessonData.questions.find((item) => item.id === questionId);
+    if (question) {
+        question.prompt = value;
+    }
+}
+
+function updateQuestionChoice(questionId, choiceIndex, value) {
+    const question = lessonData.questions.find((item) => item.id === questionId);
+    if (question && Array.isArray(question.choices)) {
+        question.choices[choiceIndex] = value;
+    }
+}
+
+function updateQuestionAnswer(questionId, answerIndex) {
+    const question = lessonData.questions.find((item) => item.id === questionId);
+    if (question) {
+        question.answerIndex = answerIndex;
+    }
+}
+
+function updateQuestionRubric(questionId, value) {
+    const question = lessonData.questions.find((item) => item.id === questionId);
+    if (question) {
+        question.rubric = value;
+    }
+}
+
+function renumberQuestions() {
+    lessonData.questions.forEach((question, index) => {
+        question.number = index + 1;
+    });
+    questionCounter = lessonData.questions.length;
+}
+
+function refreshAllQuestions() {
+    const questionsContainer = document.getElementById('questionsContainer');
+    questionsContainer.innerHTML = '';
+    lessonData.questions.forEach((question) => renderQuestion(question));
+}
+
+function updateEmptyStates() {
+    document.getElementById('emptySlidesMessage').style.display = lessonData.slides.length ? 'none' : 'block';
+    document.getElementById('emptyQuestionsMessage').style.display = lessonData.questions.length ? 'none' : 'block';
+}
+
+function cancelLesson() {
+    if (!confirm('Cancel lesson editing? Unsaved changes will be lost.')) {
+        return;
+    }
+
+    localStorage.removeItem('currentLevelId');
+    localStorage.removeItem('currentLessonId');
+    localStorage.removeItem('lessonMode');
+    window.location.href = localStorage.getItem('courseEditorReturnPage') || 'addcourse.html';
+}
+
+function saveLesson(event) {
+    event.preventDefault();
+
+    const title = document.getElementById('lessonTitle').value.trim();
+    const subtitle = document.getElementById('lessonSubtitle').value.trim();
+
+    if (!title) {
+        alert('Please enter a lesson title.');
+        return;
+    }
+
+    if (!lessonData.slides.length) {
+        alert('Add at least one slide before saving the lesson.');
+        return;
+    }
+
+    const assessmentError = validateAssessmentRules();
+    if (assessmentError) {
+        alert(assessmentError);
+        return;
+    }
+
+    lessonData.title = title;
+    lessonData.subtitle = subtitle;
+    lessonData.slideCount = lessonData.slides.length;
+    lessonData.duration = `${lessonData.slides.length} slides`;
+    syncPrimaryAssessment();
+
+    const level = courseDraft.levels.find((item) => item.id === currentLevelId);
+    if (!level) {
+        alert('Level not found while saving lesson.');
+        return;
+    }
+
+    const normalizedLesson = store.clone(lessonData);
+
+    if (mode === 'edit') {
+        const lessonIndex = level.lessons.findIndex((lesson) => lesson.id === currentLessonId);
+        if (lessonIndex >= 0) {
+            level.lessons[lessonIndex] = normalizedLesson;
+        }
+    } else {
+        if (!Array.isArray(level.lessons)) {
+            level.lessons = [];
+        }
+        level.lessons.push(normalizedLesson);
+    }
+
+    store.setEditorDraft({
+        mode: store.getEditorDraft()?.mode || 'create',
+        course: courseDraft
+    });
+
+    localStorage.removeItem('currentLevelId');
+    localStorage.removeItem('currentLessonId');
+    localStorage.removeItem('lessonMode');
+
+    alert(mode === 'edit' ? 'Lesson updated successfully.' : 'Lesson added successfully.');
+    window.location.href = localStorage.getItem('courseEditorReturnPage') || 'addcourse.html';
+}
+
+function getLevelNumber(level) {
+    const titleMatch = String(level?.title || '').match(/level\s*(\d+)/i);
+    if (titleMatch) {
+        return Number(titleMatch[1]);
+    }
+
+    const idMatch = String(level?.id || '').match(/level-(\d+)/i);
+    if (idMatch) {
+        return Number(idMatch[1]);
+    }
+
+    const levelIndex = courseDraft?.levels?.findIndex((item) => item.id === level?.id);
+    return levelIndex >= 0 ? levelIndex + 1 : 1;
+}
+
+function updateAssessmentRuleText() {
+    const ruleText = document.getElementById('assessmentRuleText');
+    const addEssayBtn = document.getElementById('addEssayBtn');
+
+    if (currentLevelNumber >= 3) {
+        ruleText.textContent = 'Level 3 requires 15-20 multiple-choice questions plus 3-5 essay questions.';
+        addEssayBtn.style.display = 'inline-flex';
+        return;
+    }
+
+    ruleText.textContent = 'Levels 1-2 require 10-15 multiple-choice questions. Essay questions are disabled for this level.';
+    addEssayBtn.style.display = 'none';
+}
+
+function createQuestionTemplate(type, number) {
+    const normalizedType = type === 'essay' ? 'essay' : 'multiple-choice';
+    return {
+        id: `question-${Date.now()}-${questionCounter}`,
+        number,
+        type: normalizedType,
+        prompt: '',
+        choices: normalizedType === 'essay' ? [] : ['', '', '', ''],
+        answerIndex: 0,
+        rubric: ''
+    };
+}
+
+function ensureAssessmentDefaults() {
+    const assessment = getPrimaryAssessment();
+    const sourceQuestions = Array.isArray(assessment.questions) && assessment.questions.length
+        ? assessment.questions
+        : lessonData.questions;
+
+    lessonData.questions = sourceQuestions.map((question, index) => normalizeQuestion(question, index + 1));
+
+    if (lessonData.questions.length) {
+        syncPrimaryAssessment();
+        return;
+    }
+
+    const defaults = currentLevelNumber >= 3
+        ? [...Array.from({ length: 15 }, () => 'multiple-choice'), ...Array.from({ length: 3 }, () => 'essay')]
+        : Array.from({ length: 10 }, () => 'multiple-choice');
+
+    lessonData.questions = defaults.map((type, index) => {
+        questionCounter += 1;
+        return createQuestionTemplate(type, index + 1);
+    });
+    syncPrimaryAssessment();
+}
+
+function normalizeQuestion(question, number) {
+    const type = question.type === 'essay' ? 'essay' : 'multiple-choice';
+    return {
+        id: question.id || `question-${Date.now()}-${number}`,
+        number,
+        type,
+        prompt: question.prompt || '',
+        choices: type === 'essay' ? [] : Array.isArray(question.choices) ? question.choices : ['', '', '', ''],
+        answerIndex: Number.isInteger(question.answerIndex) ? question.answerIndex : 0,
+        rubric: question.rubric || ''
+    };
+}
+
+function validateAssessmentRules() {
+    const multipleChoiceQuestions = lessonData.questions.filter((question) => question.type !== 'essay');
+    const essayQuestions = lessonData.questions.filter((question) => question.type === 'essay');
+
+    const invalidQuestion = lessonData.questions.find((question) => {
+        const hasPrompt = question.prompt && question.prompt.trim();
+        if (!hasPrompt) {
+            return true;
+        }
+
+        if (question.type === 'essay') {
+            return false;
+        }
+
+        const validChoices = (question.choices || []).filter((choice) => choice.trim()).length >= 2;
+        return !validChoices;
+    });
+
+    if (invalidQuestion) {
+        return invalidQuestion.type === 'essay'
+            ? 'Each essay question needs a question prompt.'
+            : 'Each multiple-choice question needs a prompt and at least two answer choices.';
+    }
+
+    if (currentLevelNumber >= 3) {
+        if (multipleChoiceQuestions.length < 15 || multipleChoiceQuestions.length > 20) {
+            return 'Level 3 lessons must have 15-20 multiple-choice questions.';
+        }
+
+        if (essayQuestions.length < 3 || essayQuestions.length > 5) {
+            return 'Level 3 lessons must have 3-5 essay questions.';
+        }
+
+        return '';
+    }
+
+    if (essayQuestions.length > 0) {
+        return 'Essay questions are only allowed for Level 3 lessons.';
+    }
+
+    if (multipleChoiceQuestions.length < 10 || multipleChoiceQuestions.length > 15) {
+        return 'Levels 1-2 lessons must have 10-15 multiple-choice questions.';
+    }
+
+    return '';
+}
+
+function previewSlide(slideId) {
+    const slide = lessonData.slides.find((item) => item.id === slideId);
+    if (!slide) {
+        return;
+    }
+    openLiveLessonPreview({
+        lessonTitle: document.getElementById('lessonTitle').value || 'Untitled Lesson',
+        lessonSubtitle: document.getElementById('lessonSubtitle').value || '',
+        slides: lessonData.slides
+    }, slide.number - 1);
+}
+
+function closePreview() {
+    document.getElementById('previewModal').classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+document.addEventListener('click', (event) => {
+    const modal = document.getElementById('previewModal');
+    if (event.target === modal) {
+        closePreview();
+    }
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        closePreview();
+    }
+});
+
+function escapeHtml(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function escapeAttribute(value) {
+    return escapeHtml(value);
+}
+
+function buildPreviewVisualMarkup(slide) {
+    const visualType = String(slide.visualType || '');
+    const visualName = String(slide.visualName || '');
+    const dataUrl = String(slide.visualDataUrl || '');
+    const inferredType = visualType || inferVisualTypeFromSlide(visualName, dataUrl);
+
+    if (dataUrl && inferredType.startsWith('image/')) {
+        return `<img src="${escapeAttribute(slide.visualDataUrl)}" alt="${escapeAttribute(slide.visualName || 'Lesson visual')}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">`;
+    }
+
+    if (slide.visualName) {
+        return `<div style="text-align: center; color: white; padding: 40px;"><div style="font-size: 18px; font-weight: 600; margin-bottom: 8px;">${escapeHtml(slide.visualName)}</div><div style="font-size: 14px; color: #9ca3af;">Visual content uploaded</div></div>`;
+    }
+
+    return '<button class="classroom-play-button"><svg class="classroom-play-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" /></svg></button><p class="classroom-video-placeholder">Video / Diagram / Image</p>';
+}
+
+function openLiveLessonPreview(payload, initialSlideIndex) {
+    localStorage.setItem('simpLessonLivePreview', JSON.stringify({
+        lessonTitle: payload.lessonTitle,
+        lessonSubtitle: payload.lessonSubtitle,
+        slides: payload.slides,
+        initialSlideIndex
+    }));
+    window.open('class.html', '_blank');
+}
+
+function inferVisualTypeFromSlide(fileName, dataUrl) {
+    if (dataUrl.startsWith('data:image/')) {
+        const mime = dataUrl.slice(5, dataUrl.indexOf(';'));
+        return mime || 'image/*';
+    }
+
+    if (dataUrl.startsWith('data:video/')) {
+        const mime = dataUrl.slice(5, dataUrl.indexOf(';'));
+        return mime || 'video/*';
+    }
+
+    const extension = String(fileName || '').split('.').pop().toLowerCase();
+    if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp', 'svg'].includes(extension)) {
+        return `image/${extension === 'jpg' ? 'jpeg' : extension}`;
+    }
+
+    return '';
+}
+
+window.addSlide = addSlide;
+window.previewSlide = previewSlide;
+window.moveSlideUp = moveSlideUp;
+window.moveSlideDown = moveSlideDown;
+window.deleteSlide = deleteSlide;
+window.handleVisualUpload = handleVisualUpload;
+window.removeVisual = removeVisual;
+window.updateSlideField = updateSlideField;
+window.updateCharCounter = updateCharCounter;
+window.updateKeyNotesPreview = updateKeyNotesPreview;
+window.addQuestion = addQuestion;
+window.moveQuestionUp = moveQuestionUp;
+window.moveQuestionDown = moveQuestionDown;
+window.deleteQuestion = deleteQuestion;
+window.updateQuestionPrompt = updateQuestionPrompt;
+window.updateQuestionChoice = updateQuestionChoice;
+window.updateQuestionAnswer = updateQuestionAnswer;
+window.updateQuestionRubric = updateQuestionRubric;
+window.closePreview = closePreview;
+
+</script>
+</body>
+</html>
+

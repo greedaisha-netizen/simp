@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp" rel="stylesheet" />
+  <title>Upload Documents – SIMP Project</title>
+  <style>
+    main {
+      margin-top: 1.4rem;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      outline: 0;
+      appearance: 0;
+      border: 0;
+      text-decoration: none;
+      box-sizing: border-box;
+      font-family: "Raleway", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+
+    .uploadDiv {
+      max-width: 900px;
+      width: 90%;
+      margin: 2.5rem auto;
+    }
+
+    .labelDiv {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 2rem;
+    }
+
+    h2 {
+      margin-bottom: 1rem;
+      text-align: center;
+    }
+
+    label {
+      font-size: .9rem;
+      grid-column: span 4;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .dropzone {
+      position: relative;
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 2rem 1rem;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color .2s ease, background .2s ease;
+    }
+
+    .dropzone:hover {
+      border-color: #20647c;
+      background: #f9fafb;
+    }
+
+    .dropzone .material-icons-sharp {
+      font-size: 36px;
+      color: #20647c;
+      margin-bottom: 10px;
+    }
+
+    .dropzone strong {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: #1c2430;
+    }
+
+    .dropzone small {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+
+    .dropzone span.browse {
+      display: inline-block;
+      background: #20a44c;
+      color: #fff;
+      font-size: 0.85rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: background .2s ease;
+    }
+
+    .dropzone span.browse:hover {
+      background: #20647c;
+    }
+
+    input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    /* filename display (auto-injected by JS) */
+    .file-name {
+      margin-top: 10px;
+      max-width: 90%;
+      font-size: 0.85rem;
+      color: #374151;
+      background: #f3f4f6;
+      border-radius: 8px;
+      padding: 6px 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .actions {
+      margin-top: 20px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    button {
+      padding: 10px 16px;
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .btn-primary {
+      background: #20a44c;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #20647c;
+    }
+
+    /* Tablet (≤1024px) → 2 per row */
+    @media (max-width: 1024px) {
+      label {
+        grid-column: span 6;
+      }
+    }
+
+    /* Mobile (≤640px) → 1 per row */
+    @media (max-width: 640px) {
+      label {
+        grid-column: span 12;
+      }
+    }
+
+    /* Compact SweetAlert2 popup to avoid screen resize jumps */
+    .swal-compact {
+      width: min(420px, 92vw) !important;
+      padding: 1rem 1rem !important;
+      border-radius: 14px !important;
+    }
+
+    .swal-compact .swal2-title {
+      font-size: 1.05rem !important;
+      line-height: 1.3 !important;
+    }
+
+    .swal-compact .swal2-html-container {
+      font-size: 0.92rem !important;
+      margin: .5rem 0 .75rem !important;
+    }
+
+    .swal-compact .swal2-actions {
+      margin: .5rem auto 0 !important;
+    }
+
+    .swal-compact .swal2-confirm,
+    .swal-compact .swal2-cancel {
+      padding: .5rem .9rem !important;
+      border-radius: 10px !important;
+      font-size: .9rem !important;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="uploadDiv">
+    <h2>Upload Your Documents (For Admin Review)</h2>
+
+    <div class="labelDiv">
+      <label>
+        <div class="dropzone">
+          <span class="material-icons-sharp">upload_file</span>
+          <strong>NBI Clearance</strong>
+          <small>PDF, PNG, JPG up to 50MB</small>
+          <span class="browse">Browse File</span>
+          <input id="nbi" type="file" accept="application/pdf,image/*" required />
+        </div>
+      </label>
+
+      <label>
+        <div class="dropzone">
+          <span class="material-icons-sharp">upload_file</span>
+          <strong>Police Clearance</strong>
+          <small>PDF, PNG, JPG up to 50MB</small>
+          <span class="browse">Browse File</span>
+          <input id="police" type="file" accept="application/pdf,image/*" required />
+        </div>
+      </label>
+
+      <label>
+        <div class="dropzone">
+          <span class="material-icons-sharp">upload_file</span>
+          <strong>Resume</strong>
+          <small>PDF format only</small>
+          <span class="browse">Browse File</span>
+          <input id="resume" type="file" accept="application/pdf" required />
+        </div>
+      </label>
+
+      <label>
+        <div class="dropzone">
+          <span class="material-icons-sharp">upload_file</span>
+          <strong>Portfolio</strong>
+          <small>PDF, PNG, JPG</small>
+          <span class="browse">Browse File</span>
+          <input id="portfolio" type="file" accept="application/pdf,image/*" required />
+        </div>
+      </label>
+
+      <label class="full">
+        <div class="dropzone">
+          <span class="material-icons-sharp">upload_file</span>
+          <strong>Certificates / Awards / Diploma</strong>
+          <small>Upload multiple files (PDF, PNG, JPG)</small>
+          <span class="browse">Browse Files</span>
+          <input id="certificates" type="file" accept="application/pdf,image/*" multiple />
+        </div>
+      </label>
+
+      <label class="full">
+        <div class="dropzone">
+          <span class="material-icons-sharp">upload_file</span>
+          <strong>Transcript of Records (TOR)</strong>
+          <small>PDF, PNG, JPG</small>
+          <span class="browse">Browse File</span>
+          <input id="tor" type="file" accept="application/pdf,image/*" required />
+        </div>
+      </label>
+    </div>
+
+    <div class="actions">
+      <button id="uploadBtn" class="btn-primary">Upload Documents</button>
+    </div>
+  </div>
+
+  <!-- SweetAlert2 (UMD; available on window.Swal). Loaded before module so it's ready. -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js" defer></script>
+
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
+    import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../../../supabase.js";
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    // Small helpers for consistent, compact modals
+    const dialog = (opts) =>
+      window.Swal.fire({
+        icon: opts.icon || "info",
+        title: opts.title || "",
+        html: opts.html || "",
+        confirmButtonText: opts.confirmText || "OK",
+        focusConfirm: true,
+        allowOutsideClick: false,
+        customClass: { popup: "swal-compact" }
+      });
+
+    const confirmDialog = (opts) =>
+      window.Swal.fire({
+        icon: opts.icon || "question",
+        title: opts.title || "",
+        html: opts.html || "",
+        showCancelButton: true,
+        confirmButtonText: opts.confirmText || "Yes",
+        cancelButtonText: opts.cancelText || "No",
+        customClass: { popup: "swal-compact" }
+      });
+
+    const toast = (opts) =>
+      window.Swal.fire({
+        icon: opts.icon || "info",
+        title: opts.title || "",
+        toast: true,
+        position: "top",
+        showConfirmButton: false,
+        timer: opts.timer || 1800,
+        timerProgressBar: true
+      });
+
+    function sanitizeFileName(fileName) {
+      return fileName.replace(/\s/g, "_").replace(/[()]/g, "");
+    }
+
+    // Inject/refresh filename display inside a dropzone
+    function showFilename(inputEl) {
+      const dz = inputEl.closest(".dropzone");
+      if (!dz) return;
+
+      let fn = dz.querySelector(".file-name");
+      if (!fn) {
+        fn = document.createElement("div");
+        fn.className = "file-name";
+        dz.appendChild(fn);
+      }
+
+      if (inputEl.multiple) {
+        const files = Array.from(inputEl.files || []);
+        if (files.length === 0) {
+          fn.textContent = "";
+          fn.style.display = "none";
+        } else if (files.length === 1) {
+          fn.textContent = files[0].name;
+          fn.style.display = "block";
+        } else {
+          // show count + first few names truncated
+          const names = files.slice(0, 3).map(f => f.name).join(", ");
+          const more = files.length > 3 ? ` +${files.length - 3} more` : "";
+          fn.textContent = `${files.length} files: ${names}${more}`;
+          fn.style.display = "block";
+        }
+      } else {
+        const f = inputEl.files && inputEl.files[0];
+        if (f) {
+          fn.textContent = f.name;
+          fn.style.display = "block";
+        } else {
+          fn.textContent = "";
+          fn.style.display = "none";
+        }
+      }
+    }
+
+    // Attach change listeners to show filenames immediately
+    function wireFilenamePreviews() {
+      const inputs = [
+        "nbi",
+        "police",
+        "resume",
+        "portfolio",
+        "certificates",
+        "tor",
+      ].map(id => document.getElementById(id));
+
+      inputs.forEach(inp => {
+        if (!inp) return;
+        inp.addEventListener("change", () => showFilename(inp));
+      });
+    }
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Require logged-in user
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        await dialog({
+          icon: "warning",
+          title: "Login Required",
+          html: "Please sign in to upload your documents.",
+          confirmText: "Go to Login"
+        });
+        // this file is in pages/installer_pages/, so go 2 levels up to login.html
+        window.location.href = "../../../login.html";
+        return;
+      }
+
+      wireFilenamePreviews();
+
+      const uploadBtn = document.getElementById("uploadBtn");
+      uploadBtn.addEventListener("click", async () => {
+        const files = {
+          nbi: document.getElementById("nbi").files[0],
+          police: document.getElementById("police").files[0],
+          resume: document.getElementById("resume").files[0],
+          portfolio: document.getElementById("portfolio").files[0],
+          certificates: document.getElementById("certificates").files,
+          tor: document.getElementById("tor").files[0],
+        };
+
+        // Validate required files
+        const missing = [];
+        if (!files.nbi) missing.push("NBI Clearance");
+        if (!files.police) missing.push("Police Clearance");
+        if (!files.resume) missing.push("Resume (PDF)");
+        if (!files.portfolio) missing.push("Portfolio");
+        if (!files.tor) missing.push("Transcript of Records (TOR)");
+
+        if (missing.length) {
+          await dialog({
+            icon: "error",
+            title: "Missing Required Files",
+            html: `Please upload the following:<br><b>${missing.join(", ")}</b>.`
+          });
+          return;
+        }
+
+        // Optional confirmation
+        const conf = await confirmDialog({
+          icon: "question",
+          title: "Ready to Upload?",
+          html: "Make sure your files are correct. You can update them later if needed.",
+          confirmText: "Upload Now",
+          cancelText: "Review Again"
+        });
+        if (!conf.isConfirmed) return;
+
+        try {
+          const userFolder = `${user.id}/`;
+
+          async function uploadFile(file, subfolder = "") {
+            const safeName = sanitizeFileName(file.name);
+            const filePath = `${userFolder}${subfolder}${safeName}`;
+            const { data, error } = await supabase.storage
+              .from("documents_review")
+              .upload(filePath, file, { upsert: true });
+            if (error) throw error;
+            return data.path; // returns "<userId>/<subfolder>/<name>"
+          }
+
+          // Progress indicator
+          window.Swal.showLoading();
+          await toast({ icon: "info", title: "Uploading files..." });
+
+          const nbiPath = await uploadFile(files.nbi);
+          const policePath = await uploadFile(files.police);
+          const resumePath = await uploadFile(files.resume);
+          const portfolioPath = await uploadFile(files.portfolio);
+          const torPath = await uploadFile(files.tor);
+
+          const certificatePaths = [];
+          for (let i = 0; i < files.certificates.length; i++) {
+            const p = await uploadFile(files.certificates[i], "certificates/");
+            certificatePaths.push(p);
+          }
+
+          // Save a DB record referencing uploaded paths
+          const { error: insertError } = await supabase
+            .from("installer_documents")
+            .insert([
+              {
+                installer_id: user.id,
+                nbi: nbiPath,
+                police: policePath,
+                resume: resumePath,
+                portfolio: portfolioPath,
+                certificates: certificatePaths, // array (jsonb) column in DB
+                tor: torPath,
+                status: "pending",
+                uploaded_at: new Date().toISOString(),
+              },
+            ]);
+          if (insertError) throw insertError;
+
+          // Optional but recommended: set status to Pending Review
+          const { error: statusErr } = await supabase
+            .from("installer")
+            .update({ status: "pending" })
+            .eq("id", user.id);
+          if (statusErr) {
+            console.warn("Status update warning:", statusErr);
+            await toast({ icon: "warning", title: "Uploaded. Status update will be retried by admin." });
+          }
+
+          // Success dialog, then go to the “under review” page (same folder)
+          await dialog({
+            icon: "success",
+            title: "Documents Submitted",
+            html: "Thanks! Your documents have been uploaded and are now pending admin review."
+          });
+
+          window.location.href = "review.html";
+        } catch (err) {
+          console.error("Error uploading documents:", err);
+
+          let readable = "Something went wrong while uploading your files. Please try again.";
+          if (err && err.message) readable = err.message;
+
+          await dialog({
+            icon: "error",
+            title: "Upload Failed",
+            html: `${readable}<br><small>If this keeps happening, please contact support.</small>`
+          });
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

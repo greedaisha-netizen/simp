@@ -1,0 +1,3036 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../img/simpHappyMascotLogo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../css_files/sideBar.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp"
+      rel="stylesheet"
+    />
+    <title>Choose the best applicant</title>
+
+    <style>
+      :root {
+        --ink: #1c2430;
+        --muted: #6c7a8a;
+        --line: #e7edf3;
+        --brand: #20a44c;
+        --bg: #f8fbfd;
+        --card: #ffffff;
+        --radius: 14px;
+
+        --modal-backdrop: rgba(14, 25, 42, 0.55);
+        --modal-head: #f7fbff;
+        --shadow-lg: 0 12px 30px rgba(16, 24, 40, 0.14);
+        --shadow-xl: 0 24px 60px rgba(16, 24, 40, 0.2);
+
+        /* skeleton palette */
+        --sk-base: #eef2f7;
+        --sk-highlight: #f7fafc;
+      }
+
+      /* =========
+         SKELETON
+         ========= */
+      /* Only flip visibility inside MAIN (sidebar remains visible) */
+      main .skeleton-ui {
+        display: none;
+        padding: 12px;
+      }
+
+      main .app-main {
+        display: block;
+      }
+
+      body.is-loading main .skeleton-ui {
+        display: block;
+      }
+
+      body.is-loading main .app-main {
+        display: none;
+      }
+
+      .sk-card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 12px;
+      }
+
+      .sk-line {
+        height: 12px;
+        border-radius: 8px;
+        background: var(--sk-base);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .sk-line.thin {
+        height: 8px;
+      }
+
+      .sk-line.tall {
+        height: 16px;
+      }
+
+      .sk-rect {
+        border-radius: 12px;
+        background: var(--sk-base);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .sk-photo {
+        width: 100%;
+        height: 140px;
+        border-radius: 12px;
+        background: var(--sk-base);
+        border: 1px solid var(--line);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .sk-table-head {
+        height: 34px;
+        border-radius: 10px;
+        background: var(--sk-base);
+        border: 1px solid var(--line);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .sk-table-row {
+        height: 46px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      @keyframes sk-shimmer {
+        0% {
+          transform: translateX(-100%);
+        }
+
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      .sk-line::after,
+      .sk-rect::after,
+      .sk-photo::after,
+      .sk-table-head::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--sk-highlight),
+          transparent
+        );
+        transform: translateX(-100%);
+        animation: sk-shimmer 1.2s infinite;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .sk-line::after,
+        .sk-rect::after,
+        .sk-photo::after,
+        .sk-table-head::after {
+          animation: none;
+          display: none;
+        }
+      }
+
+      /* =========
+         Your existing styles (unchanged)
+         ========= */
+      .two-col-wrap {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 1rem;
+      }
+
+      @media (max-width: 1024px) {
+        .two-col-wrap {
+          grid-template-columns: 1fr;
+        }
+
+        .two-col-wrap > .panel:nth-of-type(2) {
+          display: none;
+        }
+      }
+
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 12px;
+      }
+
+      .panel h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.05rem;
+        color: var(--ink);
+        font-weight: 700;
+      }
+
+      .search {
+        position: relative;
+        margin-bottom: 0.6rem;
+      }
+
+      .search input {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px 10px 36px;
+        outline: none;
+        background: #fcfeff;
+      }
+
+      .search .material-icons-sharp {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 20px;
+        color: var(--muted);
+      }
+
+      .job-list {
+        display: grid;
+        gap: 8px;
+        max-height: 70vh;
+        overflow: auto;
+      }
+
+      .job-item {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 14px 16px;
+        background: #fff;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .job-item.diff-0 { border-left: 4px solid #3498db; } /* Easy - blue */
+      .job-item.diff-1 { border-left: 4px solid #f39c12; } /* Intermediate - orange */
+      .job-item.diff-2 { border-left: 4px solid #e74c3c; } /* Hard - red */
+
+      .job-item.active {
+        border-color: #70a381;
+        background: hsl(140, 30%, 99%);
+        box-shadow: 0 4px 14px rgba(112, 163, 129, 0.12);
+      }
+
+      .job-item.active.diff-0 { border-left-width: 6px; }
+      .job-item.active.diff-1 { border-left-width: 6px; }
+      .job-item.active.diff-2 { border-left-width: 6px; }
+
+      .job-item:hover {
+        border-color: #b9dbe6;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+      }
+
+      .job-item:active {
+        transform: scale(0.99);
+      }
+
+      .job-item h4 {
+        margin: 4px 0 2px;
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--ink);
+        line-height: 1.3;
+      }
+
+      .job-tags {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 3px 8px;
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+      }
+      .badge-category {
+        background: hsl(140, 60%, 94%);
+        color: #147a35;
+        border: 1px solid hsl(140, 60%, 88%);
+      }
+      .badge-difficulty-0 {
+        background: hsl(200, 70%, 94%);
+        color: hsl(200, 80%, 30%);
+        border: 1px solid hsl(200, 70%, 88%);
+      }
+      .badge-difficulty-1 {
+        background: hsl(35, 90%, 94%);
+        color: hsl(35, 90%, 35%);
+        border: 1px solid hsl(35, 90%, 88%);
+      }
+      .badge-difficulty-2 {
+        background: hsl(0, 85%, 95%);
+        color: hsl(0, 85%, 40%);
+        border: 1px solid hsl(0, 85%, 90%);
+      }
+
+      .job-meta-new {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 4px;
+      }
+
+      .meta-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 12.5px;
+        line-height: 1.4;
+      }
+
+      .meta-row .icon {
+        font-size: 16px;
+        color: #8c9ba5;
+        margin-top: 1px;
+        flex-shrink: 0;
+      }
+
+      .meta-row .text {
+        white-space: normal;
+        word-break: break-word;
+      }
+
+      .detail-header {
+        display: grid;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .job-photo {
+        width: 100%;
+        height: 140px;
+        object-fit: cover;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #f7fafc;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 4px;
+      }
+
+      .kv {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 8px 10px;
+        background: #fff;
+      }
+
+      .kv label {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .kv span {
+        font-size: 14px;
+        color: var(--ink);
+      }
+
+      .divider {
+        height: 1px;
+        background: var(--line);
+        margin: 10px 0;
+      }
+
+      .table-wrap {
+        overflow: auto;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+      }
+
+      th,
+      td {
+        text-align: left;
+        padding: 10px;
+        border-bottom: 1px solid var(--line);
+        font-size: 14px;
+        vertical-align: middle;
+      }
+
+      th {
+        text-align: left;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        background: #70a381;
+        color: #fff;
+        white-space: nowrap;
+      }
+
+      tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: 1px solid var(--line);
+        background: #fff;
+        color: var(--ink);
+        font-size: 13px;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: box-shadow 0.2s ease, background 0.2s ease,
+          transform 0.06s ease;
+      }
+
+      .btn:hover {
+        box-shadow: var(--shadow-lg);
+        background: #fafcff;
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      .btn.brand {
+        background: #e9faf0;
+        border-color: #c9f0d9;
+        color: #147a35;
+      }
+
+      .btn.brand:hover {
+        border-color: #86d6a6;
+      }
+
+      .btn[disabled] {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .empty {
+        padding: 8px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+
+      .actions-row {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-top: 0;
+        border-radius: 0 0 12px 12px;
+        background: #fff;
+      }
+
+      .cell-user {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .cell-avatar {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        object-fit: cover;
+        background: #f6fafc;
+      }
+
+      .cell-initials {
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        display: grid;
+        place-items: center;
+        background: #eef2f7;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      tbody tr.clickable {
+        cursor: pointer;
+        transition: background 0.15s ease, box-shadow 0.15s ease;
+      }
+
+      tbody tr.clickable:hover {
+        background: #f6fafc;
+      }
+
+      tbody tr.is-viewed {
+        background: #fafcff;
+      }
+
+      @media (max-width: 1024px) {
+        .btn {
+          font-size: 0;
+          padding: 10px;
+        }
+
+        .btn .material-icons-sharp {
+          font-size: 20px;
+        }
+      }
+
+      /* ===== Mobile Job Modal ===== */
+      .job-modal {
+        position: fixed;
+        inset: 0;
+        background: var(--modal-backdrop);
+        backdrop-filter: blur(2px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+        z-index: 100;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+
+      .job-modal.open {
+        display: flex;
+        opacity: 1;
+      }
+
+      .job-modal-card {
+        width: min(1080px, 96vw);
+        height: min(
+          80vh,
+          780px
+        ); /* ↓ slightly shorter so screen doesn’t jump */
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid #eef2f7;
+        box-shadow: var(--shadow-xl);
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        animation: zoomIn 0.18s ease-out;
+      }
+
+      .job-modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--line);
+        background: var(--modal-head);
+      }
+
+      .job-modal-head h4 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--ink);
+      }
+
+      .job-modal-body {
+        overflow: auto;
+        padding: 10px;
+        display: grid;
+        gap: 8px;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .job-modal-foot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        padding: 8px 10px;
+        border-top: 1px solid var(--line);
+        background: #fff;
+      }
+
+      @keyframes zoomIn {
+        from {
+          transform: scale(0.98);
+          opacity: 0;
+        }
+
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* ===== TOP-LAYER Applicant Modal ===== */
+      .appl-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(8, 14, 22, 0.45);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        z-index: 200;
+        opacity: 0;
+        transition: opacity 0.18s ease;
+      }
+
+      .appl-modal.open {
+        display: flex;
+        opacity: 1;
+      }
+
+      .appl-card {
+        width: min(880px, 94vw);
+        max-height: 80vh; /* ↓ shorter */
+        background: #fff;
+        border: 1px solid #e9eef4;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 18px 70px rgba(10, 20, 40, 0.28);
+        display: grid;
+        grid-template-rows: auto 1fr;
+        animation: zoomIn 0.18s ease-out;
+      }
+
+      .appl-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        background: #f9fbff;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .appl-head h4 {
+        margin: 0;
+        font-size: 0.95rem;
+        color: var(--ink);
+      }
+
+      .appl-body {
+        padding: 12px;
+        overflow: auto;
+        display: grid;
+        gap: 10px;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .inline-profile {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        padding: 8px;
+        display: grid;
+        gap: 6px;
+        position: relative;
+      }
+
+      .profile-top {
+        display: grid;
+        grid-template-columns: 48px 1fr;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .profile-avatar,
+      .profile-initials {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        background: #f6fafc;
+        object-fit: cover;
+        display: grid;
+        place-items: center;
+        color: #475569;
+        font-weight: 700;
+      }
+
+      .profile-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .pitem {
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 6px 8px;
+      }
+
+      .pitem label {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+      }
+
+      .pitem span {
+        font-size: 13px;
+        color: var(--ink);
+      }
+
+      .pitem a {
+        color: #0f5f78;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        word-break: break-word;
+      }
+
+      .pitem a:hover {
+        text-decoration: underline;
+      }
+
+      .profile-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+      }
+
+      .profile-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border: 1px solid #dbeafe;
+        background: #eff6ff;
+        color: #1d4ed8;
+        border-radius: 999px;
+        padding: 5px 8px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .profile-section {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 10px;
+        background: #fbfdff;
+        display: grid;
+        gap: 8px;
+      }
+
+      .profile-section h5 {
+        margin: 0;
+        color: var(--ink);
+        font-size: 0.86rem;
+      }
+
+      .profile-section-pair {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+
+      .credential-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .credential-card {
+        border: 1px solid #e7edf5;
+        background: #fff;
+        border-radius: 12px;
+        padding: 10px;
+        display: grid;
+        gap: 7px;
+        min-width: 0;
+      }
+
+      .credential-title {
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 800;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .credential-meta {
+        color: var(--muted);
+        font-size: 11px;
+      }
+
+      .credential-status {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        border-radius: 999px;
+        padding: 3px 7px;
+        background: #eef2f7;
+        color: #475569;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .credential-status.verified,
+      .credential-status.approved {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .credential-status.pending {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      .credential-action {
+        justify-self: start;
+        border: 1px solid #d6e3ee;
+        background: #fff;
+        color: #164e63;
+        border-radius: 999px;
+        padding: 6px 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .credential-action:hover {
+        background: #ecfeff;
+      }
+
+      .empty-mini {
+        color: var(--muted);
+        font-size: 12px;
+        border: 1px dashed #d6e3ee;
+        border-radius: 10px;
+        padding: 10px;
+        background: #fff;
+      }
+
+      /* === SCROLLABLE RESUME PREVIEW === */
+      .preview-pane {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        height: clamp(220px, 48vh, 520px);
+        overflow: hidden;
+        display: block;
+      }
+
+      .preview-frame {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        display: block;
+        background: #fff;
+        border-radius: 10px;
+        overflow: auto;
+        touch-action: pan-y;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .preview-img {
+        width: 100%;
+        height: 100%;
+        display: block;
+        object-fit: contain;
+        border-radius: 10px;
+        background: #fff;
+      }
+
+      .preview-empty {
+        color: var(--muted);
+        font-size: 14px;
+        padding: 12px;
+      }
+
+      /* ===== Mobile applicants "rectangle like table" ===== */
+      .app-table {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+        background: #fff;
+      }
+
+      .app-thead {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 8px;
+        padding: 8px 10px;
+        background: #f3f7fb;
+        border-bottom: 1px solid var(--line);
+        font-size: 12px;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+      }
+
+      .app-thead span:last-child {
+        justify-self: end;
+      }
+
+      .app-rows {
+        display: grid;
+      }
+
+      .app-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 8px;
+        padding: 10px;
+        border-bottom: 1px solid var(--line);
+        cursor: pointer;
+        transition: background 0.12s ease, outline 0.12s ease;
+      }
+
+      .app-row:last-child {
+        border-bottom: 0;
+      }
+
+      .app-row:hover {
+        background: #f6fafc;
+      }
+
+      .app-row .left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .app-row .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 1px solid var(--line);
+        background: #f6fafc;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        color: #6b7280;
+        flex: 0 0 auto;
+      }
+
+      .app-row .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        border-radius: 50%;
+      }
+
+      .app-row .name {
+        font-size: 0.95rem;
+        color: var(--ink);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .app-row .right {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .app-status-badge {
+        border-radius: 999px;
+        padding: 5px 9px;
+        background: #eef2f7;
+        color: #475569;
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+      }
+
+      .app-status-badge.pending {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      .app-status-badge.viewed {
+        background: #dbeafe;
+        color: #1d4ed8;
+      }
+
+      .app-status-badge.approved {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .app-status-badge.rejected {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      .badge-approved {
+        font-size: 11px;
+        color: #147a35;
+        margin-left: 6px;
+      }
+
+      @media (max-width: 540px) {
+        .profile-grid,
+        .detail-grid,
+        .credential-grid,
+        .profile-section-pair {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Existing desktop modal */
+      .modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.35);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+        padding: 12px;
+      }
+
+      .modal.open {
+        display: flex;
+      }
+
+      .modal-card {
+        width: min(900px, 95vw);
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+        max-height: 86vh; /* ↓ shorter */
+        max-height: 86dvh;
+      }
+
+      .modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px;
+        border-bottom: 1px solid var(--line);
+        background: #fff;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        border-top-left-radius: 16px;
+        border-top-right-radius: 16px;
+      }
+
+      .modal-head h4 {
+        margin: 0;
+        font-size: 1rem;
+        color: var(--ink);
+      }
+
+      .close-x {
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+      }
+
+      .modal-body {
+        overflow: auto;
+        padding: 12px;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      /* ===== TOP-LAYER Resume Modal ===== */
+      .resume-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(6, 10, 16, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        z-index: 300;
+        /* highest */
+        opacity: 0;
+        transition: opacity 0.18s ease;
+      }
+
+      .resume-modal.open {
+        display: flex;
+        opacity: 1;
+      }
+
+      .resume-card {
+        width: min(800px, 96vw);
+        max-height: 84vh; /* ↓ shorter */
+        background: #fff;
+        border: 1px solid #e9eef4;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 22px 80px rgba(10, 20, 40, 0.32);
+        display: grid;
+        grid-template-rows: auto 1fr;
+        animation: zoomIn 0.18s ease-out;
+      }
+
+      .resume-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        background: #f9fbff;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .resume-head h4 {
+        margin: 0;
+        font-size: 0.95rem;
+        color: var(--ink);
+      }
+
+      .resume-body {
+        padding: 12px;
+        overflow: auto;
+        display: grid;
+        gap: 10px;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+      }
+    </style>
+  </head>
+
+  <!-- Start in loading mode so only MAIN skeleton shows (sidebar stays visible) -->
+
+  <body class="is-loading">
+    <div class="container">
+      <!-- ======= SIDEBAR (always visible; untouched) ======= -->
+      <aside>
+        <div class="toggle">
+          <div class="logo">
+            <img src="../../../img/simpHappyMascotLogo.png" alt="logo" />
+            <h2>SIMP<span class="danger">Project</span></h2>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <a href="dashboard.html"
+            ><span class="material-icons-sharp">dashboard</span>
+            <h3>Dashboard</h3>
+          </a>
+          <a href="workerVerification.html"
+            ><span class="material-icons-sharp">engineering</span>
+            <h3>Workers<br />Verification</h3>
+          </a>
+          <a href="jobVerification.html"
+            ><span class="material-icons-sharp">work</span>
+            <h3>Jobs<br />Verification</h3>
+          </a>
+          <a href="jobApplicationVerification.html" class="active"
+            ><span class="material-icons-sharp">approval</span>
+            <h3>Application<br />Verification</h3>
+          </a>
+          <a href="adminVerification.html"
+            ><span class="material-icons-sharp">shield</span>
+            <h3>Admin<br />Verification</h3>
+          </a>
+          <a href="manageShop.html"
+            ><span class="material-icons-sharp">shop</span>
+            <h3>Manage<br />Shop</h3>
+          </a>
+          <a href="paymentsRequest.html"
+            ><span class="material-icons-sharp">payments</span>
+            <h3>Payments<br />Request</h3>
+          </a>
+          <a href="courseBuilder.html"
+            ><span class="material-icons-sharp">school</span>
+            <h3>Course<br />Publisher</h3>
+          </a>
+          <a href="settings.html"
+            ><span class="material-icons-sharp">settings</span>
+            <h3>Settings</h3>
+          </a>
+          <a href="#" id="logout-btn"
+            ><span class="material-icons-sharp">logout</span>
+            <h3>Logout</h3>
+          </a>
+        </div>
+      </aside>
+
+      <!-- ======= MAIN (skeleton vs real app) ======= -->
+      <main>
+        <!-- SKELETON UI (shown while loading; desktop & mobile responsive) -->
+        <div class="skeleton-ui">
+          <div class="two-col-wrap">
+            <!-- LEFT skeleton: search + list -->
+            <div class="sk-card">
+              <div
+                class="sk-line tall"
+                style="width: 60%; margin-bottom: 10px"
+              ></div>
+              <div
+                class="sk-rect"
+                style="height: 40px; border-radius: 10px; margin-bottom: 10px"
+              ></div>
+              <div style="display: grid; gap: 8px">
+                <div class="sk-rect" style="height: 64px"></div>
+                <div class="sk-rect" style="height: 64px"></div>
+                <div class="sk-rect" style="height: 64px"></div>
+                <div class="sk-rect" style="height: 64px"></div>
+              </div>
+            </div>
+
+            <!-- RIGHT skeleton: job details + applicants table -->
+            <div class="sk-card">
+              <div class="sk-photo"></div>
+              <div
+                class="sk-line tall"
+                style="width: 40%; margin: 8px 0 12px"
+              ></div>
+              <div
+                style="
+                  display: grid;
+                  grid-template-columns: repeat(2, minmax(0, 1fr));
+                  gap: 8px;
+                "
+              >
+                <div class="sk-rect" style="height: 52px"></div>
+                <div class="sk-rect" style="height: 52px"></div>
+                <div class="sk-rect" style="height: 52px"></div>
+                <div class="sk-rect" style="height: 52px"></div>
+              </div>
+
+              <div class="divider" style="margin: 12px 0"></div>
+              <div
+                class="sk-line tall"
+                style="width: 30%; margin-bottom: 8px"
+              ></div>
+
+              <div
+                class="sk-rect"
+                style="
+                  border-radius: 12px;
+                  border: 1px solid var(--line);
+                  overflow: hidden;
+                "
+              >
+                <div class="sk-table-head"></div>
+                <div class="sk-table-row"></div>
+                <div class="sk-table-row"></div>
+                <div class="sk-table-row"></div>
+                <div class="sk-table-row"></div>
+              </div>
+
+              <div
+                style="
+                  display: flex;
+                  justify-content: flex-end;
+                  gap: 8px;
+                  margin-top: 10px;
+                "
+              >
+                <div
+                  class="sk-rect"
+                  style="width: 140px; height: 36px; border-radius: 10px"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- REAL APP (hidden while loading) -->
+        <div class="app-main">
+          <section id="tab-jobs">
+            <div class="two-col-wrap">
+              <!-- LEFT: jobs + search -->
+              <div class="panel">
+                <h3>Choose the best candidate.</h3>
+                <div class="search">
+                  <span class="material-icons-sharp">search</span>
+                  <input
+                    id="jobSearchInput"
+                    type="text"
+                    placeholder="Search jobs…"
+                  />
+                </div>
+                <div id="jobList" class="job-list">
+                  <div class="empty">Loading job applications…</div>
+                </div>
+              </div>
+
+              <!-- RIGHT: details + applicants (desktop view; hidden on mobile by CSS) -->
+              <div class="panel">
+                <div id="jobDetails" class="detail">
+                  <div class="empty">Select a job.</div>
+                </div>
+                <div class="divider"></div>
+                <h3>Applicants</h3>
+                <div id="applicantsWrap" class="table-wrap">
+                  <div class="empty">No job selected.</div>
+                </div>
+                <div
+                  id="globalActions"
+                  class="actions-row"
+                  style="display: none !important"
+                >
+                  <button id="hireBtn" class="btn brand" type="button" disabled hidden style="display: none !important">
+                    <span class="material-icons-sharp">badge</span>
+                    <span class="btn-text">Customer Selects Applicant</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <!-- Desktop Resume / Applicant Modal (kept) -->
+    <div id="moreModal" class="modal" aria-hidden="true">
+      <div
+        class="modal-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="moreTitle"
+      >
+        <div class="modal-head">
+          <h4 id="moreTitle">Applicant</h4>
+          <button class="close-x" onclick="closeMore()" aria-label="Close">
+            <span class="material-icons-sharp">close</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="moreBody">
+            <div class="preview-pane">
+              <div class="preview-empty">No content.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOBILE: Job Details Modal -->
+    <div
+      id="jobModal"
+      class="job-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="jobModalTitle"
+    >
+      <div class="job-modal-card">
+        <div class="job-modal-head">
+          <h4 id="jobModalTitle">Job</h4>
+          <button id="jobModalClose" class="btn" aria-label="Close job details">
+            <span class="material-icons-sharp">close</span>
+          </button>
+        </div>
+        <div id="jobModalBody" class="job-modal-body"><!-- dynamic --></div>
+        <div class="job-modal-foot" style="display: none !important">
+          <button id="jobModalHireBtn" class="btn brand" type="button" disabled hidden style="display: none !important">
+            <span class="material-icons-sharp">badge</span>
+            <span class="btn-text">Customer Selects Applicant</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOP-LAYER Applicant Modal (above job modal) -->
+    <div
+      id="applTopModal"
+      class="appl-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="applTopTitle"
+      aria-hidden="true"
+    >
+      <div class="appl-card">
+        <div class="appl-head">
+          <h4 id="applTopTitle">Applicant</h4>
+          <button id="applTopClose" class="btn" aria-label="Close applicant">
+            <span class="material-icons-sharp">close</span>
+          </button>
+        </div>
+        <div id="applTopBody" class="appl-body"><!-- dynamic --></div>
+      </div>
+    </div>
+
+    <!-- TOP-LAYER Resume Modal (above applicant & job modal) -->
+    <div
+      id="resumeTopModal"
+      class="resume-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="resumeTopTitle"
+      aria-hidden="true"
+    >
+      <div class="resume-card">
+        <div class="resume-head">
+          <h4 id="resumeTopTitle">Resume</h4>
+          <button id="resumeTopClose" class="btn" aria-label="Close resume">
+            <span class="material-icons-sharp">close</span>
+          </button>
+        </div>
+        <div id="resumeTopBody" class="resume-body"><!-- dynamic --></div>
+      </div>
+    </div>
+
+    <!-- Supabase + sessions -->
+    <script type="module" src="../../general_files/session.js"></script>
+    <script type="module" src="../../general_files/index.js"></script>
+
+    <!-- SweetAlert2 (added) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script type="module">
+      import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.4";
+      import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../../../supabase.js";
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      const STORAGE_BUCKET = "documents_review";
+      const JOBS_BUCKET = "jobs";
+      const INSTALLER_PROFILE_BUCKET = "installers_profile";
+
+      let applications = [];
+      let jobs = [];
+      let installers = [];
+      let installerDocs = [];
+
+      let jobMap = new Map();
+      let installerMap = new Map();
+      let docsMap = new Map();
+      let appsByJob = new Map();
+      let courseStateMap = new Map();
+      let completedJobsMap = new Map();
+
+      let installerAvatarMap = new Map();
+      let courseCatalogCache = null;
+
+      let filteredJobs = [];
+      let activeJobId = null;
+      let selectedApplicationId = null;
+
+      const $ = (s, root = document) => root.querySelector(s);
+      const el = (tag, attrs = {}) => {
+        const n = document.createElement(tag);
+        Object.entries(attrs).forEach(([k, v]) => {
+          if (k === "class") n.className = v;
+          else if (k === "text") n.textContent = v;
+          else if (k === "html") n.innerHTML = v;
+          else n.setAttribute(k, v);
+        });
+        return n;
+      };
+      const isMobile = () => window.matchMedia("(max-width: 1024px)").matches;
+
+      const fmtDateTime = (dateStr, timeStr) => {
+        if (!dateStr || !timeStr) return "—";
+        const [y, m, d] = dateStr.split("-").map(Number);
+        const [hh, mm, ss] = timeStr.split(":").map(Number);
+        const dt = new Date(y, m - 1, d, hh, mm ?? 0, ss ?? 0);
+        return dt.toLocaleString();
+      };
+      const difficultyLabel = (n) =>
+        ({ 0: "Easy", 1: "Intermediate", 2: "Hard" }[n] || String(n ?? "—"));
+      const isImageUrl = (url = "") =>
+        /\.(png|jpe?g|gif|webp|bmp|svg)(\?.*)?$/i.test(url);
+      const isPdfUrl = (url = "") => /\.pdf(\?.*)?$/i.test(url);
+      const initials = (name = "") => {
+        const parts = String(name).trim().split(/\s+/).slice(0, 2);
+        return parts.map((s) => s[0]?.toUpperCase() || "").join("") || "U";
+      };
+      const escapeHtml = (value = "") =>
+        String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      const fileNameFromPath = (path = "", fallback = "Document") => {
+        const clean = String(path || "").split("?")[0].replace(/\\/g, "/");
+        return decodeURIComponent(clean.split("/").pop() || fallback);
+      };
+      const statusClass = (status = "") => {
+        const clean = String(status || "pending").toLowerCase();
+        if (["verified", "approved", "accepted"].includes(clean)) return "approved";
+        if (["pending", "review", "for_review"].includes(clean)) return "pending";
+        return "";
+      };
+
+      /* =========================
+       SweetAlert2 helper layer
+       ========================= */
+      const swalToast = (icon = "info", title = "", text = "") =>
+        Swal.fire({
+          icon,
+          title: title || undefined,
+          text: text || undefined,
+          toast: true,
+          position: "top",
+          showConfirmButton: false,
+          timer: 2600,
+          timerProgressBar: true,
+        });
+
+      const swalError = (
+        title = "Something went wrong",
+        text = "Please try again."
+      ) =>
+        Swal.fire({
+          icon: "error",
+          title,
+          text,
+          confirmButtonText: "OK",
+          width: "34em",
+        });
+
+      const swalInfo = (title, text = "") =>
+        Swal.fire({
+          icon: "info",
+          title,
+          text,
+          confirmButtonText: "Got it",
+          width: "34em",
+        });
+
+      const swalSuccess = (title, text = "") =>
+        Swal.fire({
+          icon: "success",
+          title,
+          text,
+          confirmButtonText: "Great",
+          width: "34em",
+        });
+
+      const swalConfirm = async (title, text, confirmButtonText = "Yes") => {
+        const r = await Swal.fire({
+          icon: "question",
+          title,
+          text,
+          showCancelButton: true,
+          confirmButtonText,
+          cancelButtonText: "Cancel",
+          reverseButtons: true,
+          allowOutsideClick: false,
+          width: "34em",
+        });
+        return r.isConfirmed;
+      };
+
+      const swalPromptText = async ({
+        title = "Please confirm",
+        label = "",
+        placeholder = "",
+        validator = null,
+        confirmButtonText = "Confirm",
+      } = {}) => {
+        const { value, isConfirmed } = await Swal.fire({
+          title,
+          input: "text",
+          inputLabel: label,
+          inputPlaceholder: placeholder,
+          showCancelButton: true,
+          confirmButtonText,
+          cancelButtonText: "Cancel",
+          reverseButtons: true,
+          allowOutsideClick: false,
+          inputValidator: (v) => {
+            if (validator) return validator(v);
+            return !v ? "This field is required." : undefined;
+          },
+          width: "34em",
+        });
+        return isConfirmed ? value : null;
+      };
+
+      /* ===== Loading state gate (skeleton vs app-main) ===== */
+      function setLoading(flag) {
+        document.body.classList.toggle("is-loading", !!flag);
+      }
+
+      async function urlFor(path) {
+        if (!path) return null;
+        const clean = String(path).trim();
+        const { data, error } = await supabase.storage
+          .from(STORAGE_BUCKET)
+          .createSignedUrl(clean, 600);
+        if (!error && data?.signedUrl) return data.signedUrl;
+        const pub = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(clean);
+        return pub.data?.publicUrl || null;
+      }
+
+      async function urlForJobPicture(rawPath) {
+        if (!rawPath) return null;
+        const raw = String(rawPath).trim();
+        if (/^https?:\/\//i.test(raw)) return raw;
+        let bucket = JOBS_BUCKET;
+        let path = raw;
+        const m = raw.match(/^([a-z0-9_\-]+):(.+)$/i);
+        if (m) {
+          bucket = m[1];
+          path = m[2];
+        }
+        const { data, error } = await supabase.storage
+          .from(bucket)
+          .createSignedUrl(path, 600);
+        if (!error && data?.signedUrl) return data.signedUrl;
+        const pub = supabase.storage.from(bucket).getPublicUrl(path);
+        return pub.data?.publicUrl || null;
+      }
+
+      function parseProfileRef(ref, ownerId) {
+        if (!ref) return null;
+        const s = String(ref).trim();
+        if (/^https?:\/\//i.test(s))
+          return { bucket: null, key: null, https: s };
+
+        let bucket = INSTALLER_PROFILE_BUCKET;
+        let key = "";
+
+        const m1 = s.match(/^storage:\/\/([^/]+)\/(.+)$/i);
+        if (m1) {
+          bucket = m1[1];
+          key = m1[2];
+        } else {
+          const m2 = s.match(/^([^:]+)::(.+)$/);
+          if (m2) {
+            bucket = m2[1];
+            key = m2[2];
+          } else {
+            key = s;
+          }
+        }
+
+        key = key.replace(/^\/+/, "");
+        if (ownerId && !key.startsWith(ownerId + "/"))
+          key = `${ownerId}/${key}`;
+        return { bucket, key, https: null };
+      }
+
+      async function signFromBucket(bucket, key, expires = 900) {
+        try {
+          const { data, error } = await supabase.storage
+            .from(bucket)
+            .createSignedUrl(key, expires, { download: false });
+          if (!error && data?.signedUrl) return data.signedUrl;
+          const { data: pub } = await supabase.storage
+            .from(bucket)
+            .getPublicUrl(key);
+          return pub?.publicUrl || "";
+        } catch {
+          const { data: pub } = await supabase.storage
+            .from(bucket)
+            .getPublicUrl(key);
+          return pub?.publicUrl || "";
+        }
+      }
+
+      async function resolveInstallerAvatar(profilePicUrl, ownerId) {
+        if (!profilePicUrl) return null;
+        const parsed = parseProfileRef(profilePicUrl, ownerId);
+        if (!parsed) return null;
+        if (parsed.https) return parsed.https;
+        return await signFromBucket(parsed.bucket, parsed.key);
+      }
+
+      function normalizeLessonPayload(row, index = 0) {
+        const payload = row?.content || row?.body || row?.lesson || row || {};
+        return {
+          id: payload.id || row?.id || `lesson-${index + 1}`,
+          title: payload.title || row?.title || `Lesson ${index + 1}`,
+          questions: payload.questions || row?.questions || [],
+          assessments: payload.assessments || row?.assessments || [],
+        };
+      }
+
+      function parseStructuredSectionLessons(row) {
+        const candidates = [row?.content, row?.body, row?.lessons, row?.lesson_data];
+        for (const candidate of candidates) {
+          try {
+            const parsed = typeof candidate === "string" ? JSON.parse(candidate) : candidate;
+            if (Array.isArray(parsed)) return parsed.map((l, idx) => normalizeLessonPayload(l, idx));
+            if (Array.isArray(parsed?.lessons)) return parsed.lessons.map((l, idx) => normalizeLessonPayload(l, idx));
+          } catch (e) {}
+        }
+        return null;
+      }
+
+      async function ensureCourseCatalog() {
+        if (courseCatalogCache) return courseCatalogCache;
+
+        const { data: courses, error: errC } = await supabase
+          .schema("course")
+          .from("courses")
+          .select("*");
+        if (errC) throw errC;
+
+        const { data: sections, error: errS } = await supabase
+          .schema("course")
+          .from("sections")
+          .select("*")
+          .order("position", { ascending: true });
+        if (errS) throw errS;
+
+        const { data: contents, error: errL } = await supabase
+          .schema("course")
+          .from("section_contents")
+          .select("*")
+          .order("position", { ascending: true });
+        if (errL) throw errL;
+
+        const contentsBySection = new Map();
+        for (const row of contents || []) {
+          const arr = contentsBySection.get(row.section_id) || [];
+          arr.push(row);
+          contentsBySection.set(row.section_id, arr);
+        }
+
+        const sectionsByCourse = new Map();
+        for (const row of sections || []) {
+          const arr = sectionsByCourse.get(row.course_id) || [];
+          const sectionContents = contentsBySection.get(row.id) || [];
+          const lessons = [];
+          if (sectionContents.length) {
+            const bundled = parseStructuredSectionLessons(sectionContents[0]);
+            if (bundled) lessons.push(...bundled);
+            else sectionContents.forEach((cnt, idx) => lessons.push(normalizeLessonPayload(cnt, idx)));
+          }
+          arr.push({
+            id: row.id,
+            title: row.title || "Level",
+            lessons: lessons.filter(Boolean),
+          });
+          sectionsByCourse.set(row.course_id, arr);
+        }
+
+        courseCatalogCache = (courses || []).map((course) => ({
+          id: course.id,
+          title: course.title || "Course",
+          description: course.description || "",
+          levels: sectionsByCourse.get(course.id) || [],
+        }));
+        return courseCatalogCache;
+      }
+
+      function buildCourseBadges(state = { library: [], certificates: {} }, catalog = []) {
+        const library = Array.isArray(state.library) ? state.library : [];
+        const certificates = state.certificates || {};
+        const badges = [];
+
+        for (const course of catalog) {
+          const courseLevels = course.levels || [];
+
+          let totalLessons = 0;
+          let completedLessons = 0;
+          const completedLessonBadges = [];
+          for (const level of courseLevels) {
+            for (const lesson of level.lessons || []) {
+              totalLessons += 1;
+              const done = library.some(
+                (x) =>
+                  String(x.courseId) === String(course.id) &&
+                  String(x.levelId) === String(level.id) &&
+                  String(x.lessonId) === String(lesson.id) &&
+                  x.isCompleted
+              );
+              if (done) {
+                completedLessons += 1;
+                completedLessonBadges.push({
+                  title: `${course.title} - ${lesson.title || "Lesson"}`,
+                  meta: `${level.title || "Level"} lesson completed`,
+                  status: "earned",
+                  certificatePath: "",
+                });
+              }
+            }
+          }
+
+          const allDone = totalLessons > 0 && completedLessons === totalLessons;
+          const cert = certificates[String(course.id)] || certificates[course.id] || null;
+          if (allDone) {
+            badges.push({
+              title: `${course.title} - Professional Certification`,
+              meta: "Course completed",
+              status: "earned",
+              certificatePath: cert?.path || "",
+            });
+          } else {
+            badges.push(...completedLessonBadges);
+          }
+        }
+
+        return badges;
+      }
+
+      async function loadCredentialData(installerIds) {
+        courseStateMap = new Map();
+        completedJobsMap = new Map();
+        if (!installerIds.length) return;
+
+        try {
+          const ownerKeys = installerIds.map((id) => `user:${id}`);
+          const { data: states, error } = await supabase
+            .from("simp_course_state")
+            .select("owner_key, state_key, state_value")
+            .in("owner_key", ownerKeys)
+            .in("state_key", ["myStudyRoomLibrary", "myStudyRoomCertificates"]);
+          if (error) throw error;
+
+          for (const row of states || []) {
+            const installerId = String(row.owner_key || "").replace(/^user:/, "");
+            const current = courseStateMap.get(installerId) || { library: [], certificates: {} };
+            try {
+              if (row.state_key === "myStudyRoomLibrary") current.library = JSON.parse(row.state_value || "[]");
+              if (row.state_key === "myStudyRoomCertificates") current.certificates = JSON.parse(row.state_value || "{}");
+            } catch (e) {}
+            courseStateMap.set(installerId, current);
+          }
+        } catch (error) {
+          console.warn("Course accomplishments could not load:", error);
+        }
+
+        try {
+          const { data: doneApps, error: doneErr } = await supabase
+            .schema("jobs")
+            .from("job_application")
+            .select("application_id, job_id, installer_id, status, updated_at, applied_at")
+            .in("installer_id", installerIds)
+            .in("status", ["done", "completed"]);
+          if (doneErr) throw doneErr;
+
+          const doneJobIds = [...new Set((doneApps || []).map((a) => a.job_id).filter(Boolean))];
+          let doneJobRows = [];
+          if (doneJobIds.length) {
+            const { data: jobsDone, error: jobsErr } = await supabase
+              .schema("jobs")
+              .from("job")
+              .select("job_id, job_title, job_category, job_status, job_date")
+              .in("job_id", doneJobIds);
+            if (jobsErr) throw jobsErr;
+            doneJobRows = jobsDone || [];
+          }
+          const doneJobById = new Map(doneJobRows.map((j) => [j.job_id, j]));
+
+          for (const app of doneApps || []) {
+            const job = doneJobById.get(app.job_id) || {};
+            const arr = completedJobsMap.get(app.installer_id) || [];
+            arr.push({
+              title: job.job_title || "Completed job",
+              meta: job.job_category || "Job accomplishment",
+              date: job.job_date || app.updated_at || app.applied_at || "",
+            });
+            completedJobsMap.set(app.installer_id, arr);
+          }
+        } catch (error) {
+          console.warn("Completed jobs could not load:", error);
+        }
+      }
+
+      function parseDescriptionJson(desc) {
+        if (desc && typeof desc === "string" && desc.trim().startsWith("{")) {
+          try {
+            return JSON.parse(desc);
+          } catch (e) {}
+        }
+        return null;
+      }
+
+      function isJobPosted(job) {
+        if (!job) return false;
+        const data = parseDescriptionJson(job.job_description);
+        return data ? !!data.is_posted : false;
+      }
+
+      function isVisibleApplicationJob(job) {
+        const status = String(job?.job_status || "").toLowerCase();
+        return status === "active" || (status === "approved" && isJobPosted(job));
+      }
+
+      async function loadFromApplications() {
+        try {
+          setLoading(true);
+
+          const { data: appRows, error: appErr } = await supabase
+            .schema("jobs")
+            .from("job_application")
+            .select(
+              "application_id, job_id, installer_id, status, applied_at, updated_at, admin_recommended, admin_recommended_at, admin_recommended_by"
+            )
+            .order("applied_at", { ascending: true });
+
+          if (appErr) {
+            console.error(appErr);
+            $(
+              "#jobList"
+            ).innerHTML = `<div class="empty">We couldn't load applications right now.</div>`;
+            swalError(
+              "Unable to load applications",
+              appErr.message || "Please refresh and try again."
+            );
+            return;
+          }
+
+          applications = (appRows || []).filter(
+            (a) =>
+              !["overdue", "invalidated", "terminated"].includes(
+                String(a.status).toLowerCase()
+              )
+          );
+
+          const jobIds = [...new Set(applications.map((a) => a.job_id))];
+          const installerIds = [
+            ...new Set(applications.map((a) => a.installer_id)),
+          ];
+
+          let jobQuery = supabase
+            .schema("jobs")
+            .from("job")
+            .select(
+              "job_id, job_title, job_category, job_difficulty, job_location, job_date, job_time, job_picture_url, job_status, job_description"
+            );
+
+          if (jobIds.length) {
+            jobQuery = jobQuery.or(`job_status.eq.active,job_status.eq.approved,job_id.in.(${jobIds.join(",")})`);
+          } else {
+            jobQuery = jobQuery.in("job_status", ["active", "approved"]);
+          }
+
+          const { data: jobRows, error: jobErr } = await jobQuery;
+          if (jobErr) {
+            console.error(jobErr);
+            $(
+              "#jobList"
+            ).innerHTML = `<div class="empty">Can't display jobs right now.</div>`;
+            swalError(
+              "Failed to load jobs",
+              jobErr.message || "Please refresh and try again."
+            );
+            return;
+          }
+          jobs = jobRows || [];
+
+          if (!jobs.length) {
+            $(
+              "#jobList"
+            ).innerHTML = `<div class="empty">No active jobs yet.</div>`;
+            $(
+              "#jobDetails"
+            ).innerHTML = `<div class="empty">No jobs to show.</div>`;
+            $(
+              "#applicantsWrap"
+            ).innerHTML = `<div class="empty">Select a job to see applicants here.</div>`;
+            $("#globalActions").style.display = "none";
+            return;
+          }
+          let instRows = [];
+          if (installerIds.length) {
+            const { data: instData, error: instErr } = await supabase
+              .from("installer")
+              .select(
+                'id, name, email, phone, profession, employer, "highestQualification", "employmentStatus", levelstatus, profile_pic_url'
+              )
+              .in("id", installerIds);
+            if (instErr) {
+              console.error(instErr);
+            } else {
+              instRows = instData || [];
+            }
+          }
+
+          jobMap = new Map();
+          jobs.forEach((j) => jobMap.set(j.job_id, j));
+
+          installerMap = new Map();
+          instRows.forEach((i) => installerMap.set(i.id, i));
+
+          installerAvatarMap = new Map();
+          await Promise.all(
+            instRows.map(async (ins) => {
+              try {
+                const url = await resolveInstallerAvatar(
+                  ins.profile_pic_url,
+                  ins.id
+                );
+                installerAvatarMap.set(ins.id, url || null);
+              } catch {
+                installerAvatarMap.set(ins.id, null);
+              }
+            })
+          );
+
+          let docRows = [];
+          if (installerIds.length) {
+            const { data: _docs, error: docsErr } = await supabase
+              .from("installer_documents")
+              .select("installer_id, resume, resume_status, certificates, certificates_status")
+              .in("installer_id", installerIds);
+            if (docsErr) {
+              console.error(docsErr);
+              swalToast(
+                "warning",
+                "Some resumes couldn't load",
+                "You can still open available ones."
+              );
+            }
+            docRows = _docs || [];
+          }
+          installerDocs = docRows;
+          docsMap = new Map(installerDocs.map((d) => [d.installer_id, d]));
+
+          await loadCredentialData(installerIds);
+
+          appsByJob = applications.reduce((m, a) => {
+            if (!m.has(a.job_id)) m.set(a.job_id, []);
+            m.get(a.job_id).push(a);
+            return m;
+          }, new Map());
+
+          filteredJobs = jobs
+            .filter(
+              (j) =>
+                isVisibleApplicationJob(j)
+            )
+            .sort(
+              (a, b) =>
+                new Date(`${a.job_date}T${a.job_time}`) -
+                new Date(`${b.job_date}T${b.job_time}`)
+            );
+
+          renderJobList();
+          if (filteredJobs.length) selectJob(filteredJobs[0].job_id);
+        } catch (error) {
+          console.error("CRITICAL ERROR in loadFromApplications:", error);
+          $(
+            "#jobList"
+          ).innerHTML = `<div class="empty" style="color:red; font-weight:bold;">Error loading job applications: ${error.message || error}</div>`;
+          swalError("Critical Error", error.message || "An unexpected error occurred.");
+        } finally {
+          // Flip off the skeleton after first load pass
+          setLoading(false);
+        }
+      }
+
+      function renderJobList() {
+        const list = $("#jobList");
+        if (!filteredJobs.length) {
+          list.innerHTML = `<div class="empty">No matching jobs. Try a different search.</div>`;
+          return;
+        }
+        list.innerHTML = "";
+        filteredJobs.forEach((j) => {
+          const diffVal = j.job_difficulty ?? 0;
+          const isActive = activeJobId === j.job_id;
+          const item = el("div", {
+            class: `job-item diff-${diffVal}${isActive ? " active" : ""}`,
+          });
+          item.addEventListener("click", () => selectJob(j.job_id));
+
+          // Tags row
+          const tags = el("div", { class: "job-tags" });
+          const catBadge = el("span", { class: "badge badge-category", text: j.job_category || "General" });
+          const diffBadge = el("span", { class: `badge badge-difficulty-${diffVal}`, text: difficultyLabel(diffVal) });
+          tags.append(catBadge, diffBadge);
+
+          // Job Title
+          const h4 = el("h4", { text: j.job_title || "Untitled job" });
+
+          // Meta list with beautiful icons
+          const meta = el("div", { class: "job-meta-new" });
+          meta.innerHTML = `
+            <div class="meta-row">
+              <span class="material-icons-sharp icon">location_on</span>
+              <span class="text">${j.job_location || "—"}</span>
+            </div>
+            <div class="meta-row">
+              <span class="material-icons-sharp icon">schedule</span>
+              <span class="text">${fmtDateTime(j.job_date, j.job_time)}</span>
+            </div>
+          `;
+
+          item.append(tags, h4, meta);
+          list.appendChild(item);
+        });
+      }
+
+      $("#jobSearchInput").addEventListener("input", (e) => {
+        const q = e.target.value.toLowerCase().trim();
+        const base = jobs.filter(
+          (j) =>
+            isVisibleApplicationJob(j)
+        );
+        filteredJobs = !q
+          ? base.slice()
+          : base.filter((j) =>
+              [
+                j.job_title,
+                j.job_category,
+                difficultyLabel(j.job_difficulty),
+                j.job_location,
+              ]
+                .filter(Boolean)
+                .some((v) => String(v).toLowerCase().includes(q))
+            );
+        renderJobList();
+      });
+
+      async function markApplicationsViewed(jobId) {
+        const { error } = await supabase
+          .schema("jobs")
+          .from("job_application")
+          .update({ status: "viewed" })
+          .eq("job_id", jobId)
+          .eq("status", "pending");
+        if (error) {
+          console.error("Failed to mark applications viewed:", error);
+          swalToast(
+            "warning",
+            "Couldn't mark as viewed",
+            "You can still continue."
+          );
+        }
+
+        let touched = false;
+        applications.forEach((a) => {
+          if (
+            a.job_id === jobId &&
+            String(a.status).toLowerCase() === "pending"
+          ) {
+            a.status = "viewed";
+            touched = true;
+          }
+        });
+        if (touched) {
+          appsByJob = applications.reduce((m, a) => {
+            if (!m.has(a.job_id)) m.set(a.job_id, []);
+            m.get(a.job_id).push(a);
+            return m;
+          }, new Map());
+        }
+      }
+
+      async function selectJob(jobId) {
+        activeJobId = jobId;
+        selectedApplicationId = null;
+        renderJobList();
+
+        const job = jobMap.get(jobId);
+        if (!job) {
+          $(
+            "#jobDetails"
+          ).innerHTML = `<div class="empty">We couldn't find this job.</div>`;
+          $(
+            "#applicantsWrap"
+          ).innerHTML = `<div class="empty">Applicants will appear here.</div>`;
+          $("#globalActions").style.display = "none";
+          swalError(
+            "Job unavailable",
+            "This job may have been removed or updated."
+          );
+          return;
+        }
+
+        await markApplicationsViewed(jobId);
+
+        renderJobDetails(job);
+        renderApplicants(job.job_id);
+
+        if (isMobile()) {
+          openJobModal(job);
+        }
+      }
+
+      async function toggleRecommendation(appRow) {
+        if (!appRow?.application_id) return;
+
+        const nextValue = !Boolean(appRow.admin_recommended);
+        let adminId = null;
+        try {
+          const {
+            data: { user },
+          } = await supabase.auth.getUser();
+          adminId = user?.id || null;
+        } catch (error) {
+          console.warn("Admin lookup failed", error);
+        }
+
+        const payload = nextValue
+          ? {
+              admin_recommended: true,
+              admin_recommended_at: new Date().toISOString(),
+              admin_recommended_by: adminId,
+            }
+          : {
+              admin_recommended: false,
+              admin_recommended_at: null,
+              admin_recommended_by: null,
+            };
+
+        const { error } = await supabase
+          .schema("jobs")
+          .from("job_application")
+          .update(payload)
+          .eq("application_id", appRow.application_id);
+
+        if (error) {
+          console.error(error);
+          swalToast(
+            "error",
+            "Recommendation failed",
+            error.message || "Please run the application flow SQL and try again."
+          );
+          return;
+        }
+
+        Object.assign(appRow, payload);
+        const idx = applications.findIndex(
+          (a) => String(a.application_id) === String(appRow.application_id)
+        );
+        if (idx >= 0) applications[idx] = { ...applications[idx], ...payload };
+        appsByJob = applications.reduce((m, a) => {
+          if (!m.has(a.job_id)) m.set(a.job_id, []);
+          m.get(a.job_id).push(a);
+          return m;
+        }, new Map());
+
+        renderApplicants(appRow.job_id);
+        swalToast(
+          "success",
+          nextValue ? "Applicant recommended" : "Recommendation removed",
+          nextValue
+            ? "The customer will see this applicant as admin recommended."
+            : "The recommendation marker was removed."
+        );
+      }
+
+      function renderJobDetails(job) {
+        $("#jobDetails").innerHTML = `
+          <div class="detail-header">
+            <img class="job-photo" src="" alt="Job photo" />
+            <h3 style="margin:4px 0 0; color: var(--ink);">${
+              job.job_title || "Untitled job"
+            }</h3>
+          </div>
+          <div class="detail-grid">
+            <div class="kv"><label>Category</label><span>${
+              job.job_category || "—"
+            }</span></div>
+            <div class="kv"><label>Difficulty</label><span>${difficultyLabel(
+              job.job_difficulty
+            )}</span></div>
+            <div class="kv"><label>Date & Time</label><span>${fmtDateTime(
+              job.job_date,
+              job.job_time
+            )}</span></div>
+            <div class="kv"><label>Location</label><span>${
+              job.job_location || "—"
+            }</span></div>
+          </div>
+        `;
+        (async () => {
+          try {
+            const resolved = await urlForJobPicture(job.job_picture_url || "");
+            const imgEl = $(".job-photo");
+            if (imgEl) imgEl.src = resolved || "";
+          } catch (e) {
+            console.error("Failed to resolve job picture URL:", e);
+            swalToast(
+              "info",
+              "No job photo",
+              "This job has no image attached."
+            );
+          }
+        })();
+      }
+
+      function renderApplicants(jobId) {
+        const wrap = $("#applicantsWrap");
+        const actionsBar = $("#globalActions");
+        $("#hireBtn").disabled = true;
+
+        const apps = appsByJob.get(jobId) || [];
+        if (!apps.length) {
+          wrap.innerHTML = `<div class="empty">No applicants yet for this job.</div>`;
+          actionsBar.style.display = "none";
+          return;
+        }
+
+        const alreadyApproved = apps.some(
+          (a) => String(a.status).toLowerCase() === "approved"
+        );
+
+        wrap.innerHTML = `
+          <table>
+            <thead>
+              <tr>
+                <th>Applicant</th>
+                <th>Profession</th>
+                <th>Qualification</th>
+                <th>Applied</th>
+                <th style="width:120px">Admin Vouch</th>
+                <th style="width:80px">More</th>
+              </tr>
+            </thead>
+            <tbody id="appsTbody"></tbody>
+          </table>
+        `;
+        actionsBar.style.display = "flex";
+
+        const tbody = $("#appsTbody");
+        tbody.innerHTML = "";
+
+        apps.forEach((a) => {
+          const inst = installerMap.get(a.installer_id) || {};
+          const avatarUrl = installerAvatarMap.get(a.installer_id) || null;
+
+          const tr = document.createElement("tr");
+          if (isMobile()) tr.classList.add("clickable");
+
+          const statusLower = String(a.status).toLowerCase();
+          if (statusLower === "viewed") tr.classList.add("is-viewed");
+
+          tr.innerHTML = `
+            <td>
+              <div class="cell-user">
+                ${
+                  avatarUrl
+                    ? `<img class="cell-avatar" style="width:28px;height:28px" src="${avatarUrl}" alt="${
+                        inst.name || "User"
+                      }" />`
+                    : `<span class="cell-initials">${initials(
+                        inst.name
+                      )}</span>`
+                }
+                <span>${inst.name || "—"} ${
+            statusLower === "approved"
+              ? '<span style="color:#147a35; font-size:12px;">(Approved)</span>'
+              : ""
+          }</span>
+              </div>
+            </td>
+            <td>${inst.profession || "—"}</td>
+            <td>${inst.highestQualification || "—"}</td>
+            <td>${new Date(a.applied_at).toLocaleString()}</td>
+            <td>
+              <button class="btn" type="button" data-vouch="${
+                a.application_id
+              }" title="${
+            a.admin_recommended ? "Remove recommendation" : "Recommend applicant"
+          }">
+                <span class="material-icons-sharp">${
+                  a.admin_recommended ? "favorite" : "favorite_border"
+                }</span>
+                <span class="btn-text">${
+                  a.admin_recommended ? "Recommended" : "Vouch"
+                }</span>
+              </button>
+            </td>
+            <td>
+              <button class="btn" type="button" data-more="${
+                a.application_id
+              }" title="View applicant">
+                <span class="material-icons-sharp">visibility</span>
+                <span class="btn-text">View</span>
+              </button>
+            </td>
+          `;
+
+          tbody.appendChild(tr);
+
+          tr.querySelector(
+            `[data-vouch="${a.application_id}"]`
+          )?.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            const btn = e.currentTarget;
+            btn.disabled = true;
+            try {
+              await toggleRecommendation(a);
+            } finally {
+              btn.disabled = false;
+            }
+          });
+
+          tr.querySelector(
+            `[data-more="${a.application_id}"]`
+          )?.addEventListener("click", async (e) => {
+            e.stopPropagation();
+            await showApplicantProfile(a);
+          });
+
+          if (isMobile()) {
+            tr.addEventListener("click", async (evt) => {
+              if (evt.target.closest("input,button,a")) return;
+              await showApplicantProfile(a);
+            });
+          }
+        });
+
+        if (alreadyApproved) {
+          $("#hireBtn").disabled = true;
+          const hint = document.createElement("div");
+          hint.className = "empty";
+          hint.textContent =
+            "An applicant has already been approved for this job.";
+          wrap.appendChild(hint);
+          swalInfo(
+            "Approval locked",
+            "One applicant is already approved for this job."
+          );
+        }
+      }
+
+      /* ===== Desktop Applicant Modal (uses scrollable iframe) ===== */
+      async function showApplicantProfile(appRow) {
+        await openApplicantProfileCard(appRow);
+        return;
+        const body = $("#moreBody");
+        const inst = installerMap.get(appRow.installer_id) || {};
+        const docs = docsMap.get(appRow.installer_id);
+        const resumePath = (docs?.resume || "").trim();
+        const avatarUrl = installerAvatarMap.get(appRow.installer_id) || null;
+
+        $("#moreTitle").textContent = "Applicant";
+
+        const top = `
+          <div class="cell-user" style="margin-bottom:8px">
+            ${
+              avatarUrl
+                ? `<img class="cell-avatar" style="width:36px;height:36px" src="${avatarUrl}" alt="${
+                    inst.name || "User"
+                  }" />`
+                : `<span class="cell-initials" style="width:36px;height:36px;font-size:13px">${initials(
+                    inst.name
+                  )}</span>`
+            }
+            <div style="display:grid">
+              <strong>${inst.name || "—"}</strong>
+              <small style="color:var(--muted)">${
+                inst.profession || "—"
+              }</small>
+            </div>
+          </div>
+        `;
+
+        let resumeBlock = `
+          <div class="preview-pane"><div class="preview-empty">No resume uploaded.</div></div>
+        `;
+        if (resumePath) {
+          const url = await urlFor(resumePath);
+          if (url && (isImageUrl(resumePath) || isPdfUrl(resumePath))) {
+            resumeBlock = `
+              <div class="preview-pane">
+                ${
+                  isImageUrl(resumePath)
+                    ? `<img class="preview-img" alt="Resume" src="${url}">`
+                    : `<iframe class="preview-frame" title="Resume" src="${url}" scrolling="yes"></iframe>`
+                }
+              </div>
+            `;
+          } else if (url) {
+            resumeBlock = `
+              <div class="preview-pane">
+                <div class="preview-empty">
+                  We can't preview this file here.
+                  <div style="margin-top:8px">
+                    <a class="btn" href="${url}" target="_blank" rel="noopener">
+                      <span class="material-icons-sharp">open_in_new</span>
+                      <span class="btn-text" style="font-size:13px">Open in new tab</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+        }
+
+        body.innerHTML = `${top}${resumeBlock}`;
+        $("#moreModal").classList.add("open");
+        $("#moreModal").setAttribute("aria-hidden", "false");
+      }
+
+      window.closeMore = function closeMore() {
+        $("#moreModal").classList.remove("open");
+        $("#moreModal").setAttribute("aria-hidden", "true");
+      };
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeMore();
+          if ($("#resumeTopModal").classList.contains("open"))
+            closeResumeTopModal();
+          if ($("#applTopModal").classList.contains("open"))
+            closeApplicantTopModal();
+          if ($("#jobModal").classList.contains("open")) closeJobModal();
+        }
+      });
+      document.getElementById("moreModal").addEventListener("click", (e) => {
+        if (e.target.id === "moreModal") closeMore();
+      });
+
+      /* ===== Mobile Job Modal ===== */
+      const jobModal = $("#jobModal");
+      const jobModalBody = $("#jobModalBody");
+      const jobModalTitle = $("#jobModalTitle");
+      const jobModalHireBtn = $("#jobModalHireBtn");
+      const jobModalClose = $("#jobModalClose");
+
+      function buildJobDetailsSection(job, photoUrl) {
+        return `
+          <div class="detail-header">
+            <img class="job-photo" src="${photoUrl || ""}" alt="Job photo" />
+            <h3 style="margin:4px 0 0; color: var(--ink);">${
+              job.job_title || "Untitled job"
+            }</h3>
+          </div>
+          <div class="detail-grid">
+            <div class="kv"><label>Category</label><span>${
+              job.job_category || "—"
+            }</span></div>
+            <div class="kv"><label>Difficulty</label><span>${difficultyLabel(
+              job.job_difficulty
+            )}</span></div>
+            <div class="kv"><label>Date & Time</label><span>${fmtDateTime(
+              job.job_date,
+              job.job_time
+            )}</span></div>
+            <div class="kv"><label>Location</label><span>${
+              job.job_location || "—"
+            }</span></div>
+          </div>
+          <div class="divider"></div>
+        `;
+      }
+
+      function buildApplicantsListMobile(jobId) {
+        const apps = appsByJob.get(jobId) || [];
+        if (!apps.length) return `<div class="empty">No applicants yet.</div>`;
+
+        const rows = apps
+          .map((a) => {
+            const ins = installerMap.get(a.installer_id) || {};
+            const avatar = installerAvatarMap.get(a.installer_id) || null;
+            const id = String(a.application_id);
+            const approved = String(a.status).toLowerCase() === "approved";
+            const statusLower = String(a.status || "pending").toLowerCase();
+            return `
+            <div class="app-row" data-app="${id}" data-inst="${
+              a.installer_id
+            }" role="button" tabindex="0" aria-label="View applicant ${
+              ins.name || ""
+            }">
+              <div class="left">
+                <div class="avatar">
+                  ${
+                    avatar
+                      ? `<img src="${avatar}" alt="${ins.name || "User"}" />`
+                      : `<span class="material-icons-sharp">person</span>`
+                  }
+                </div>
+                <div class="name">${ins.name || "—"} ${
+              approved ? '<span class="badge-approved">(Approved)</span>' : ""
+            }</div>
+              </div>
+              <div class="right">
+                <span class="app-status-badge ${statusLower}">${escapeHtml(statusLower)}</span>
+              </div>
+            </div>`;
+          })
+          .join("");
+
+        return `
+          <div>
+            <h4 style="margin:0 0 6px;font-size:.95rem;color:var(--ink);">Applicants</h4>
+            <div class="app-table" id="appTable">
+              <div class="app-thead">
+                <span>Applicant</span>
+                <span>Status</span>
+              </div>
+              <div class="app-rows" id="appRows">
+                ${rows}
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      async function openJobModal(job) {
+        jobModalTitle.textContent = job.job_title || "Job";
+        jobModalBody.innerHTML = `<div class="empty">Loading…</div>`;
+        jobModal.classList.add("open");
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+
+        const photoUrl = await urlForJobPicture(job.job_picture_url || "");
+        jobModalBody.innerHTML = `
+          ${buildJobDetailsSection(job, photoUrl)}
+          ${buildApplicantsListMobile(job.job_id)}
+        `;
+
+        const rowsWrap = $("#appRows");
+        const apps = appsByJob.get(job.job_id) || [];
+        const alreadyApproved = apps.some(
+          (a) => String(a.status).toLowerCase() === "approved"
+        );
+        jobModalHireBtn.disabled = alreadyApproved || !selectedApplicationId;
+
+        rowsWrap?.addEventListener("click", async (evt) => {
+          const row = evt.target.closest(".app-row");
+          if (!row) return;
+          const appId = row.getAttribute("data-app");
+          const appRow = apps.find((a) => String(a.application_id) === appId);
+          if (!appRow) return;
+
+          await openApplicantProfileCard(appRow);
+        });
+
+        rowsWrap?.addEventListener("keydown", async (evt) => {
+          if (evt.key !== "Enter" && evt.key !== " ") return;
+          const row = evt.target.closest(".app-row");
+          if (!row) return;
+          evt.preventDefault();
+          const appId = row.getAttribute("data-app");
+          const appRow = apps.find((a) => String(a.application_id) === appId);
+          if (appRow) await openApplicantProfileCard(appRow);
+        });
+      }
+
+      function closeJobModal() {
+        jobModal.classList.remove("open");
+        jobModalBody.innerHTML = "";
+        document.documentElement.style.overflow = "";
+        document.body.style.overflow = "";
+      }
+      $("#jobModalClose").addEventListener("click", closeJobModal);
+      jobModal.addEventListener("click", (e) => {
+        if (e.target === jobModal) closeJobModal();
+      });
+      $("#jobModalHireBtn").addEventListener("click", () => approveSelected());
+
+      /* ===== TOP-LAYER Applicant Modal (mobile) ===== */
+      const applTopModal = $("#applTopModal");
+      const applTopBody = $("#applTopBody");
+      const applTopTitle = $("#applTopTitle");
+      const applTopClose = $("#applTopClose");
+
+      async function openApplicantTopModal(appRow) {
+        const ins = installerMap.get(appRow.installer_id) || {};
+        const avatar = installerAvatarMap.get(appRow.installer_id) || null;
+
+        applTopTitle.textContent = "Applicant";
+
+        applTopBody.innerHTML = `
+          <div class="inline-profile">
+            <div class="profile-top">
+              ${
+                avatar
+                  ? `<img class="profile-avatar" src="${avatar}" alt="${
+                      ins.name || "User"
+                    }" />`
+                  : `<div class="profile-initials">${initials(ins.name)}</div>`
+              }
+              <div>
+                <div style="font-weight:700; line-height:1.1">${
+                  ins.name || "—"
+                }</div>
+                <div style="color:var(--muted); font-size:12px">${
+                  ins.profession || "—"
+                }</div>
+              </div>
+            </div>
+            <div class="profile-grid">
+              <div class="pitem"><label>Qualification</label><span>${
+                ins.highestQualification || "—"
+              }</span></div>
+              <div class="pitem"><label>Employment Status</label><span>${
+                ins.employmentStatus || "N/A"
+              }</span></div>
+              <div class="pitem"><label>Contact Number</label><span>${
+                ins.phone ? `<a href="tel:${ins.phone}">${ins.phone}</a>` : "N/A"
+              }</span></div>
+              <div class="pitem"><label>Email / Gmail</label><span>${
+                ins.email ? `<a href="mailto:${ins.email}">${ins.email}</a>` : "N/A"
+              }</span></div>
+            </div>
+          </div>
+        `;
+
+        applTopModal.classList.add("open");
+        applTopModal.setAttribute("aria-hidden", "false");
+      }
+
+      async function openApplicantProfileCard(appRow) {
+        const ins = installerMap.get(appRow.installer_id) || {};
+        const avatar = installerAvatarMap.get(appRow.installer_id) || null;
+        const docs = docsMap.get(appRow.installer_id) || {};
+        const resumePath = (docs.resume || "").trim();
+        const certPaths = Array.isArray(docs.certificates) ? docs.certificates.filter(Boolean) : [];
+        const certStatuses = Array.isArray(docs.certificates_status) ? docs.certificates_status : [];
+        let catalog = [];
+        try {
+          catalog = await ensureCourseCatalog();
+        } catch (error) {
+          console.warn("Course catalog could not load:", error);
+        }
+        const courseBadges = buildCourseBadges(
+          courseStateMap.get(appRow.installer_id) || { library: [], certificates: {} },
+          catalog
+        );
+        const completedJobs = completedJobsMap.get(appRow.installer_id) || [];
+
+        const certificateCards = certPaths.length
+          ? certPaths.map((path, idx) => {
+              const status = certStatuses[idx] || "uploaded";
+              return `
+                <div class="credential-card">
+                  <div class="credential-title">${escapeHtml(fileNameFromPath(path, `Certificate ${idx + 1}`))}</div>
+                  <span class="credential-status ${statusClass(status)}">${escapeHtml(status)}</span>
+                  <button class="credential-action" type="button" data-cert-path="${escapeHtml(path)}">
+                    <span class="material-icons-sharp" style="font-size:16px">open_in_new</span>
+                    Open Certificate
+                  </button>
+                </div>
+              `;
+            }).join("")
+          : `<div class="empty-mini">No certificates uploaded yet.</div>`;
+
+        const courseCards = courseBadges.length
+          ? courseBadges.map((badge) => `
+              <div class="credential-card">
+                <div class="credential-title">${escapeHtml(badge.title)}</div>
+                <div class="credential-meta">${escapeHtml(badge.meta)}</div>
+                <span class="credential-status ${badge.status === "earned" ? "approved" : "pending"}">${escapeHtml(badge.status)}</span>
+                ${
+                  badge.certificatePath
+                    ? `<button class="credential-action" type="button" data-cert-path="${escapeHtml(badge.certificatePath)}">
+                        <span class="material-icons-sharp" style="font-size:16px">workspace_premium</span>
+                        View Course Certificate
+                      </button>`
+                    : ""
+                }
+              </div>
+            `).join("")
+          : `<div class="empty-mini">No course accomplishments yet.</div>`;
+
+        const jobCards = completedJobs.length
+          ? completedJobs.map((job) => `
+              <div class="credential-card">
+                <div class="credential-title">${escapeHtml(job.title)}</div>
+                <div class="credential-meta">${escapeHtml(job.meta || "Completed job")}</div>
+                <span class="credential-status approved">completed</span>
+              </div>
+            `).join("")
+          : `<div class="empty-mini">No completed jobs recorded yet.</div>`;
+
+        applTopTitle.textContent = "Applicant";
+
+        applTopBody.innerHTML = `
+          <div class="inline-profile">
+            <div class="profile-top">
+              ${
+                avatar
+                  ? `<img class="profile-avatar" src="${avatar}" alt="${escapeHtml(ins.name || "User")}" />`
+                  : `<div class="profile-initials">${initials(ins.name)}</div>`
+              }
+              <div>
+                <div style="font-weight:700; line-height:1.1">${escapeHtml(ins.name || "N/A")}</div>
+                <div style="color:var(--muted); font-size:12px">${escapeHtml(ins.profession || "N/A")}</div>
+                <div class="profile-summary">
+                  <span class="profile-pill"><span class="material-icons-sharp" style="font-size:14px">military_tech</span>Level ${escapeHtml(ins.levelstatus ?? 0)}</span>
+                  <span class="profile-pill"><span class="material-icons-sharp" style="font-size:14px">school</span>${courseBadges.length} Course Badge${courseBadges.length === 1 ? "" : "s"}</span>
+                  <span class="profile-pill"><span class="material-icons-sharp" style="font-size:14px">task_alt</span>${completedJobs.length} Job${completedJobs.length === 1 ? "" : "s"} Done</span>
+                  <span class="profile-pill"><span class="material-icons-sharp" style="font-size:14px">verified</span>${certPaths.length} Certificate${certPaths.length === 1 ? "" : "s"}</span>
+                </div>
+              </div>
+            </div>
+            <div class="profile-grid">
+              <div class="pitem"><label>Qualification</label><span>${escapeHtml(ins.highestQualification || "N/A")}</span></div>
+              <div class="pitem"><label>Employment Status</label><span>${escapeHtml(ins.employmentStatus || "N/A")}</span></div>
+              <div class="pitem"><label>Contact Number</label><span>${
+                ins.phone
+                  ? `<a href="tel:${escapeHtml(ins.phone)}">${escapeHtml(ins.phone)}</a>`
+                  : "N/A"
+              }</span></div>
+              <div class="pitem"><label>Email / Gmail</label><span>${
+                ins.email
+                  ? `<a href="mailto:${escapeHtml(ins.email)}">${escapeHtml(ins.email)}</a>`
+                  : "N/A"
+              }</span></div>
+            </div>
+            <div class="profile-section-pair">
+              <div class="profile-section">
+                <h5>Resume</h5>
+                <div class="credential-grid">
+                  <div class="credential-card">
+                    <div class="credential-title">${resumePath ? escapeHtml(fileNameFromPath(resumePath, "Resume")) : "No resume uploaded"}</div>
+                    <span class="credential-status ${statusClass(docs.resume_status)}">${escapeHtml(docs.resume_status || "not uploaded")}</span>
+                    ${
+                      resumePath
+                        ? `<button class="credential-action" type="button" data-profile-action="resume">
+                            <span class="material-icons-sharp" style="font-size:16px">description</span>
+                            Preview Resume
+                          </button>`
+                        : ""
+                    }
+                  </div>
+                </div>
+              </div>
+              <div class="profile-section">
+                <h5>Certificates</h5>
+                <div class="credential-grid">${certificateCards}</div>
+              </div>
+            </div>
+            <div class="profile-section-pair">
+              <div class="profile-section">
+                <h5>Course Accomplished Badges</h5>
+                <div class="credential-grid">${courseCards}</div>
+              </div>
+              <div class="profile-section">
+                <h5>Jobs Accomplished</h5>
+                <div class="credential-grid">${jobCards}</div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        applTopBody.querySelector('[data-profile-action="resume"]')?.addEventListener("click", async () => {
+          await openResumeTopModal(appRow);
+        });
+
+        applTopBody.querySelectorAll("[data-cert-path]").forEach((btn) => {
+          btn.addEventListener("click", async () => {
+            const path = btn.getAttribute("data-cert-path");
+            const url = await urlFor(path);
+            if (url) window.open(url, "_blank", "noopener");
+            else swalToast("warning", "Certificate unavailable", "We couldn't open this certificate right now.");
+          });
+        });
+
+        applTopModal.classList.add("open");
+        applTopModal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeApplicantTopModal() {
+        applTopModal.classList.remove("open");
+        applTopModal.setAttribute("aria-hidden", "true");
+        applTopBody.innerHTML = "";
+      }
+      applTopClose.addEventListener("click", closeApplicantTopModal);
+      applTopModal.addEventListener("click", (e) => {
+        if (e.target === applTopModal) closeApplicantTopModal();
+      });
+
+      /* ===== TOP-LAYER Resume Modal (mobile) ===== */
+      const resumeTopModal = $("#resumeTopModal");
+      const resumeTopBody = $("#resumeTopBody");
+      const resumeTopTitle = $("#resumeTopTitle");
+      const resumeTopClose = $("#resumeTopClose");
+
+      async function openResumeTopModal(appRow) {
+        const ins = installerMap.get(appRow.installer_id) || {};
+        const docs = docsMap.get(appRow.installer_id);
+        const resumePath = (docs?.resume || "").trim();
+
+        resumeTopTitle.textContent = `Resume — ${ins.name || "—"}`;
+
+        let resumeSection = `
+          <div class="preview-pane"><div class="preview-empty">No resume uploaded.</div></div>
+        `;
+        if (resumePath) {
+          const url = await urlFor(resumePath);
+          if (url && (isImageUrl(resumePath) || isPdfUrl(resumePath))) {
+            resumeSection = `
+              <div class="preview-pane">
+                ${
+                  isImageUrl(resumePath)
+                    ? `<img class="preview-img" alt="Resume of ${
+                        ins.name || "applicant"
+                      }" src="${url}">`
+                    : `<iframe class="preview-frame" title="Resume of ${
+                        ins.name || "applicant"
+                      }" src="${url}" scrolling="yes"></iframe>`
+                }
+              </div>
+            `;
+          } else if (url) {
+            resumeSection = `
+              <div class="preview-pane">
+                <div class="preview-empty">
+                  We can't preview this file here.
+                  <div style="margin-top:8px">
+                    <a class="btn" href="${url}" target="_blank" rel="noopener">
+                      <span class="material-icons-sharp">open_in_new</span>
+                      <span class="btn-text" style="font-size:13px">Open in new tab</span>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+        }
+
+        resumeTopBody.innerHTML = resumeSection;
+        resumeTopModal.classList.add("open");
+        resumeTopModal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeResumeTopModal() {
+        resumeTopModal.classList.remove("open");
+        resumeTopModal.setAttribute("aria-hidden", "true");
+        resumeTopBody.innerHTML = "";
+      }
+      resumeTopClose.addEventListener("click", closeResumeTopModal);
+      resumeTopModal.addEventListener("click", (e) => {
+        if (e.target === resumeTopModal) closeResumeTopModal();
+      });
+
+      /* ===== Approve flow (kept but upgraded to SweetAlert2) ===== */
+      document
+        .getElementById("hireBtn")
+        .addEventListener("click", approveSelected);
+
+      async function approveSelected() {
+        await swalError(
+          "Customer approval required",
+          "Applicants are now selected by the customer after submitting the matching payment. Approve the payment in Payments Request > Matching Payment to finalize the assignment."
+        );
+        return;
+
+        if (!activeJobId || !selectedApplicationId) {
+          swalToast(
+            "info",
+            "No applicant selected",
+            "Pick an applicant before approving."
+          );
+          return;
+        }
+
+        const job = jobMap.get(activeJobId);
+        const confirmed = await swalConfirm(
+          "Approve this applicant?",
+          "Other pending/viewed applicants for this job will be set to Rejected.",
+          "Approve"
+        );
+        if (!confirmed) return;
+
+        const typed = await swalPromptText({
+          title: `Type "HIRE" to confirm`,
+          label: `Confirm approving for "${job?.job_title || "this job"}".`,
+          placeholder: "HIRE",
+          confirmButtonText: "Confirm",
+          validator: (v) =>
+            String(v).trim().toUpperCase() === "HIRE"
+              ? undefined
+              : 'Please type exactly "HIRE".',
+        });
+        if (typed === null) {
+          swalToast("info", "Approval cancelled", "No changes were made.");
+          return;
+        }
+
+        const { error: approveErr } = await supabase
+          .schema("jobs")
+          .from("job_application")
+          .update({ status: "approved" })
+          .eq("application_id", selectedApplicationId);
+        if (approveErr) {
+          await swalError(
+            "Approval failed",
+            approveErr.message || "Please try again."
+          );
+          return;
+        }
+
+        const selectedAppRow = applications.find(
+          (a) => String(a.application_id) === String(selectedApplicationId)
+        );
+        const installerIdToAssign = selectedAppRow?.installer_id;
+
+        if (installerIdToAssign) {
+          const { error: assignErr } = await supabase
+            .schema("jobs")
+            .from("job")
+            .update({ installer_id_assigned: installerIdToAssign })
+            .eq("job_id", activeJobId);
+          if (assignErr) {
+            swalToast(
+              "warning",
+              "Approved, but assignment failed",
+              assignErr.message || "You may try assigning again."
+            );
+          }
+        }
+
+        const { error: rejErr } = await supabase
+          .schema("jobs")
+          .from("job_application")
+          .update({ status: "rejected" })
+          .eq("job_id", activeJobId)
+          .neq("application_id", selectedApplicationId)
+          .in("status", ["pending", "viewed"]);
+        if (rejErr) {
+          swalToast(
+            "warning",
+            "Approved, but others not updated",
+            rejErr.message || "You can review their status later."
+          );
+        } else {
+          await swalSuccess(
+            "Applicant approved",
+            "We’ve notified the system and updated other applicants."
+          );
+        }
+
+        await loadFromApplications();
+        selectedApplicationId = null;
+        if (jobMap.has(activeJobId)) selectJob(activeJobId);
+        if ($("#resumeTopModal").classList.contains("open"))
+          closeResumeTopModal();
+        if ($("#applTopModal").classList.contains("open"))
+          closeApplicantTopModal();
+        if ($("#jobModal").classList.contains("open")) closeJobModal();
+      }
+
+      document.addEventListener("DOMContentLoaded", async () => {
+        await loadFromApplications();
+        swalToast("success", "Ready", "Applications loaded.");
+      });
+    </script>
+  </body>
+</html>

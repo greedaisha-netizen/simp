@@ -1,0 +1,4200 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../img/simpHappyMascotLogo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css_files/sideBar.css" />
+    <title>myJobPosts</title>
+
+    <!-- SweetAlert2 (added) -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --card-border: #e7edf3;
+        --muted: #6b7280;
+        --ink: #1c2430;
+        --bg-soft: #f8f9fb;
+        --success: #20a44c;
+        --warn: #f59e0b;
+        --primary: #1c2430;
+        --chip: #eef2f7;
+        --modal-bg: rgba(17, 24, 39, 0.6);
+        --modal-card: #ffffff;
+        --line: #e5e7eb;
+      }
+      main {
+        margin-top: 1.4rem;
+        padding: 1rem;
+      }
+      .dashboard-header {
+        align-items: center;
+        margin-bottom: 1rem;
+      }
+      .dashboard-header h1 {
+        margin: 0;
+        color: var(--ink);
+      }
+
+      /* Filters row */
+      .filters {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.6rem;
+      }
+      .filters input {
+        width: 42ch;
+        max-width: 100%;
+      }
+      .filters input,
+      .filters select {
+        padding: 0.55rem 0.7rem;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      /* Cards grid */
+      .cards-grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      @media (max-width: 1200px) {
+        .cards-grid {
+          grid-template-columns: repeat(8, 1fr);
+        }
+      }
+      @media (max-width: 1024px) {
+        .cards-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      .job-card {
+        grid-column: span 4 / span 4;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 14px;
+        padding: 14px;
+        transition: transform 0.15s ease, box-shadow 0.15s ease;
+        position: relative;
+        overflow: hidden;
+      }
+      .job-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      }
+      @media (max-width: 1200px) {
+        .job-card {
+          grid-column: span 8 / span 8;
+        }
+      }
+      @media (max-width: 1024px) {
+        .job-card {
+          grid-column: span 4 / span 4;
+        }
+      }
+
+      .job-head {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.6rem;
+      }
+      .job-title {
+        font-weight: 700;
+        color: var(--ink);
+        font-size: 1.05rem;
+        line-height: 1.25;
+        margin: 0;
+        max-width: 34ch;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.28rem 0.55rem;
+        border-radius: 9999px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        background: var(--bg-soft);
+        color: var(--ink);
+        border: 1px solid var(--card-border);
+        white-space: nowrap;
+      }
+      .status-pending {
+        background: #fff8e6;
+        color: #9a6700;
+        border-color: #f6d88a;
+      }
+      .status-approved {
+        background: #e8fff1;
+        color: #0c7a3d;
+        border-color: #9ee2bd;
+      }
+      .status-overdue {
+        background: #fff0f0;
+        color: #b91c1c;
+        border-color: #f6b1b1;
+      }
+      .status-done {
+        background: #eafff6;
+        color: #0f766e;
+        border-color: #99f6e4;
+      }
+      .status-rejected {
+        background: #ffe8e8;
+        color: #b91c1c;
+        border-color: #f6b1b1;
+      }
+      .status-viewed {
+        background: #eef5ff;
+        color: #1d4ed8;
+        border-color: #c7daff;
+      }
+
+      .chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin: 0.6rem 0 0.2rem;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        background: var(--chip);
+        color: #334155;
+        border: 1px solid var(--card-border);
+        padding: 0.24rem 0.5rem;
+        border-radius: 9999px;
+        font-size: 0.78rem;
+      }
+
+      .meta {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem;
+        margin: 0.6rem 0 0.2rem;
+      }
+      .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+        color: #334155;
+        font-size: 0.9rem;
+        background: #fff;
+        border: 1px dashed var(--card-border);
+        border-radius: 10px;
+        padding: 0.45rem 0.6rem;
+      }
+
+      .installer {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-top: 0.6rem;
+        background: #fff;
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        padding: 0.5rem 0.6rem;
+      }
+      .avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background: #111827;
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-size: 0.8rem;
+        font-weight: 700;
+        overflow: hidden;
+      }
+      .avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: none;
+      }
+      .installer .name {
+        font-weight: 600;
+        color: #111827;
+      }
+      .installer .muted {
+        color: var(--muted);
+        font-size: 0.86rem;
+      }
+
+      .actions {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+      }
+      .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 0.5rem 0.75rem;
+        cursor: pointer;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .btn-ghost {
+        background: #fff;
+        border: 1px solid var(--card-border);
+        color: #111827;
+      }
+      .btn-primary {
+        background: var(--primary);
+        color: #fff;
+      }
+      .btn-danger {
+        background: #ef4444;
+        color: #fff;
+      }
+      .btn:hover {
+        filter: brightness(0.96);
+      }
+
+      .empty {
+        margin-top: 1.2rem;
+        border: 2px dashed var(--card-border);
+        border-radius: 14px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        color: var(--muted);
+        background: #fff;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      /* ===== MODALS ===== */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: var(--modal-bg);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        z-index: 50;
+      }
+      .modal {
+        width: min(980px, 100%);
+        background: var(--modal-card);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 48px rgba(0, 0, 0, 0.18);
+        /* SHORTER so the screen doesn't resize much */
+        max-height: 84vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .modal-hero {
+        position: relative;
+        height: 180px;
+        background: #f3f4f6;
+        overflow: hidden; /* reduced from 220px */
+      }
+      .modal-hero .hero-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: saturate(1.05);
+      }
+      .modal-hero::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(0, 0, 0, 0.35) 0%,
+          rgba(0, 0, 0, 0.15) 40%,
+          rgba(0, 0, 0, 0) 100%
+        );
+        pointer-events: none;
+      }
+
+      /* NEW: hero content overlay for job title & location */
+      .modal-hero-content {
+        position: absolute;
+        left: 16px;
+        right: 80px;
+        bottom: 16px;
+        z-index: 1;
+        color: #ffffff;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .modal-hero-content h2 {
+        margin: 0;
+        font-size: 1.2rem;
+        font-weight: 800;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      }
+      .modal-hero-location {
+        margin: 0;
+        font-size: 0.85rem;
+        opacity: 0.9;
+      }
+
+      .modal-header {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #fff;
+        z-index: 2; /* ensure badge/close is above hero content */
+      }
+      .modal-header .badge {
+        background: rgba(255, 255, 255, 0.18);
+        border: 1px solid rgba(255, 255, 255, 0.35);
+        padding: 0.25rem 0.6rem;
+        border-radius: 9999px;
+        font-weight: 700;
+        font-size: 0.82rem;
+        display: inline-flex;
+        gap: 0.35rem;
+        align-items: center;
+      }
+      .modal-header .close-btn {
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        background: rgba(0, 0, 0, 0.3);
+        color: #fff;
+        width: 36px;
+        height: 36px;
+        border-radius: 9999px;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+      }
+      .modal-body {
+        padding: 16px;
+        overflow: auto;
+      }
+      .modal-title {
+        margin: -32px 0 8px 0;
+        color: #fff;
+        font-weight: 800;
+        font-size: 1.25rem;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+        padding: 0 16px;
+      }
+      .modal-section {
+        display: grid;
+        grid-template-columns: 1.3fr 0.7fr;
+        gap: 16px;
+      }
+      @media (max-width: 900px) {
+        .modal-section {
+          grid-template-columns: 1fr;
+        }
+      }
+      .modal-card {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        background: #fff;
+      }
+      .row {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0.35rem 0;
+        color: #111827;
+      }
+      .row .label {
+        width: 140px;
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
+      .divider {
+        height: 1px;
+        background: var(--line);
+        margin: 10px 0;
+      }
+      .modal-actions {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+        margin-top: 10px;
+      }
+      .btn-warning {
+        background: #f59e0b;
+        color: #111827;
+      }
+
+      /* Installer modal */
+      .inst-top {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .inst-avatar {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: #111827;
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        overflow: hidden;
+        position: relative;
+      }
+      .inst-avatar-img {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        object-fit: cover;
+        display: none;
+      }
+      .inst-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      @media (max-width: 700px) {
+        .inst-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .applicant-profile {
+        text-align: left;
+        display: grid;
+        gap: 10px;
+        font-family: inherit;
+      }
+      .applicant-profile-top {
+        display: grid;
+        grid-template-columns: 56px 1fr;
+        gap: 12px;
+        align-items: center;
+      }
+      .applicant-profile-avatar,
+      .applicant-profile-initials {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        border: 1px solid var(--card-border);
+        background: #f6fafc;
+        object-fit: cover;
+        display: grid;
+        place-items: center;
+        color: #475569;
+        font-weight: 800;
+      }
+      .applicant-profile-summary {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .applicant-profile-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        border: 1px solid #dbeafe;
+        background: #eff6ff;
+        color: #1d4ed8;
+        border-radius: 999px;
+        padding: 5px 8px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .applicant-profile-grid,
+      .applicant-section-pair {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .applicant-profile-item,
+      .applicant-section,
+      .applicant-credential-card {
+        border: 1px solid var(--card-border);
+        border-radius: 12px;
+        background: #fff;
+      }
+      .applicant-profile-item {
+        padding: 8px 10px;
+      }
+      .applicant-profile-item label {
+        display: block;
+        font-size: 11px;
+        color: var(--muted);
+      }
+      .applicant-profile-item span,
+      .applicant-profile-item a {
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        word-break: break-word;
+      }
+      .applicant-profile-item a:hover {
+        text-decoration: underline;
+      }
+      .applicant-section {
+        padding: 10px;
+        background: #fbfdff;
+        display: grid;
+        gap: 8px;
+      }
+      .applicant-section h5 {
+        margin: 0;
+        color: var(--ink);
+        font-size: 0.86rem;
+      }
+      .applicant-credential-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+      .applicant-credential-card {
+        padding: 10px;
+        display: grid;
+        gap: 7px;
+        min-width: 0;
+      }
+      .applicant-credential-title {
+        color: var(--ink);
+        font-size: 13px;
+        font-weight: 800;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .applicant-credential-meta {
+        color: var(--muted);
+        font-size: 11px;
+      }
+      .applicant-credential-status {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        border-radius: 999px;
+        padding: 3px 7px;
+        background: #eef2f7;
+        color: #475569;
+        font-size: 10px;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+      .applicant-credential-status.approved,
+      .applicant-credential-status.verified {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .applicant-credential-status.pending {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .applicant-credential-action {
+        justify-self: start;
+        border: 1px solid #d6e3ee;
+        background: #fff;
+        color: #164e63;
+        border-radius: 999px;
+        padding: 6px 10px;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        font-weight: 800;
+        cursor: pointer;
+      }
+      .applicant-empty-mini {
+        color: var(--muted);
+        font-size: 12px;
+        border: 1px dashed #d6e3ee;
+        border-radius: 10px;
+        padding: 10px;
+        background: #fff;
+      }
+      @media (max-width: 700px) {
+        .applicant-profile-grid,
+        .applicant-section-pair {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Hide the card-level Edit button (kept in DOM) */
+      .actions .btn-edit {
+        display: none !important;
+      }
+
+      /* =============================== */
+      /* SKELETON LOADER (PC & MOBILE)  */
+      /* =============================== */
+      /* Hide the old text loader-card but keep it in DOM */
+      #loader-card {
+        display: none !important;
+      }
+
+      .skeleton-grid {
+        /* match the same grid as .cards-grid for perfect responsiveness */
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+      @media (max-width: 1200px) {
+        .skeleton-grid {
+          grid-template-columns: repeat(8, 1fr);
+        }
+      }
+      @media (max-width: 1024px) {
+        .skeleton-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      .sk-card {
+        grid-column: span 4 / span 4;
+        background: #fff;
+        border: 1px solid var(--card-border);
+        border-radius: 14px;
+        padding: 14px;
+        overflow: hidden;
+      }
+      @media (max-width: 1200px) {
+        .sk-card {
+          grid-column: span 8 / span 8;
+        }
+      }
+      @media (max-width: 1024px) {
+        .sk-card {
+          grid-column: span 4 / span 4;
+        }
+      }
+
+      .sk-line,
+      .sk-chip,
+      .sk-meta,
+      .sk-avatar,
+      .sk-btn {
+        position: relative;
+        overflow: hidden;
+        background: #eef1f5;
+        border-radius: 8px;
+      }
+      .sk-line {
+        height: 14px;
+      }
+      .sk-line.sm {
+        height: 10px;
+        border-radius: 6px;
+      }
+      .sk-line.lg {
+        height: 18px;
+      }
+
+      .sk-row {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+      }
+      .sk-space {
+        height: 10px;
+      }
+      .sk-chip {
+        height: 22px;
+        width: 80px;
+        border-radius: 9999px;
+      }
+      .sk-chip.wide {
+        width: 120px;
+      }
+      .sk-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin: 0.6rem 0 0.2rem;
+      }
+
+      .sk-meta-wrap {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.6rem;
+        margin: 0.6rem 0 0.2rem;
+      }
+      .sk-meta {
+        height: 36px;
+        border: 1px dashed var(--card-border);
+        background: #f8fafc;
+      }
+
+      .sk-installer {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-top: 0.6rem;
+      }
+      .sk-avatar {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+      }
+
+      .sk-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+      }
+      .sk-btn {
+        height: 36px;
+        width: 88px;
+      }
+
+      /* shimmer */
+      @keyframes shimmer {
+        0% {
+          transform: translateX(-100%);
+        }
+        100% {
+          transform: translateX(100%);
+        }
+      }
+      .sk-shimmer::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        animation: shimmer 1.4s infinite;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.7) 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+      }
+
+      /* During loading: hide real content area (we toggle via JS) */
+      .is-loading #cardsContainer,
+      .is-loading #emptyState {
+        display: none !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- Sidebar Section -->
+      <aside>
+        <div class="toggle">
+          <div class="logo">
+            <img src="../../../img/simpHappyMascotLogo.png" alt="logo" />
+            <h2>SIMP<span class="danger">Project</span></h2>
+          </div>
+          <div class="close" id="close-btn">
+            <span class="material-icons-sharp">close</span>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <a href="myJobPosts.html" class="active">
+            <span class="material-icons-sharp">cases</span>
+            <h3>My Job Posts</h3>
+          </a>
+          <a href="createPost.html" id="nav-create">
+            <span class="material-icons-sharp">add</span>
+            <h3>Create a post</h3>
+          </a>
+          <a href="settings.html" id="nav-create">
+            <span class="material-icons-sharp">settings</span>
+            <h3>Settings</h3>
+          </a>
+
+          <a href="#" id="logout-btn">
+            <span class="material-icons-sharp">logout</span>
+            <h3>Logout</h3>
+          </a>
+        </div>
+      </aside>
+      <!-- End of Sidebar Section -->
+
+      <!--MAIN CONTENT-->
+      <main>
+        <div class="dashboard-header">
+          <h1>My Job Posts</h1>
+          <div class="filters">
+            <input type="text" id="searchInput" placeholder="Search jobs..." />
+            <select id="statusFilter">
+              <option value="">All Status</option>
+              <option value="pending_review">Pending Review</option>
+              <option value="suggestion_sent">Suggestion Sent</option>
+              <option value="customer_accepted">Customer Accepted</option>
+              <option value="appeal_submitted">Appeal Submitted</option>
+              <option value="approved">Approved</option>
+              <option value="active">Active</option>
+              <option value="cancellation_pending">Cancellation Pending</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="rejected">Rejected</option>
+              <option value="done">Done</option>
+            </select>
+            <select id="sortSelect" title="Sort">
+              <option value="created_desc">Newest first</option>
+              <option value="created_asc">Oldest first</option>
+              <option value="date_desc">Job date (newest)</option>
+              <option value="date_asc">Job date (oldest)</option>
+              <option value="pay_desc">Pay (highest)</option>
+              <option value="pay_asc">Pay (lowest)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- ====== SKELETONS (shown only while loading) ====== -->
+        <div id="skeletonContainer" class="skeleton-grid" aria-hidden="true">
+          <!-- 6 skeleton cards (responsive: same spans as real cards) -->
+          <div class="sk-card">
+            <div class="sk-row" style="justify-content: space-between">
+              <div class="sk-line lg sk-shimmer" style="width: 60%"></div>
+              <div
+                class="sk-line sm sk-shimmer"
+                style="width: 28%; border-radius: 9999px"
+              ></div>
+            </div>
+            <div class="sk-chips">
+              <div class="sk-chip sk-shimmer"></div>
+              <div class="sk-chip wide sk-shimmer"></div>
+              <div class="sk-chip sk-shimmer"></div>
+            </div>
+            <div class="sk-meta-wrap">
+              <div class="sk-meta sk-shimmer"></div>
+              <div class="sk-meta sk-shimmer"></div>
+            </div>
+            <div class="sk-installer">
+              <div class="sk-avatar sk-shimmer"></div>
+              <div class="sk-line sk-shimmer" style="flex: 1"></div>
+            </div>
+            <div class="sk-actions">
+              <div class="sk-btn sk-shimmer"></div>
+              <div class="sk-btn sk-shimmer" style="width: 100px"></div>
+            </div>
+          </div>
+
+          <div class="sk-card">
+            <div class="sk-row" style="justify-content: space-between">
+              <div class="sk-line lg sk-shimmer" style="width: 55%"></div>
+              <div
+                class="sk-line sm sk-shimmer"
+                style="width: 32%; border-radius: 9999px"
+              ></div>
+            </div>
+            <div class="sk-chips">
+              <div class="sk-chip wide sk-shimmer"></div>
+              <div class="sk-chip sk-shimmer"></div>
+              <div class="sk-chip sk-shimmer"></div>
+            </div>
+            <div class="sk-meta-wrap">
+              <div class="sk-meta sk-shimmer"></div>
+              <div class="sk-meta sk-shimmer"></div>
+            </div>
+            <div class="sk-installer">
+              <div class="sk-avatar sk-shimmer"></div>
+              <div class="sk-line sk-shimmer" style="flex: 1"></div>
+            </div>
+            <div class="sk-actions">
+              <div class="sk-btn sk-shimmer"></div>
+              <div class="sk-btn sk-shimmer" style="width: 100px"></div>
+            </div>
+          </div>
+
+          <div class="sk-card">
+            <div class="sk-row" style="justify-content: space-between">
+              <div class="sk-line lg sk-shimmer" style="width: 70%"></div>
+              <div
+                class="sk-line sm sk-shimmer"
+                style="width: 24%; border-radius: 9999px"
+              ></div>
+            </div>
+            <div class="sk-chips">
+              <div class="sk-chip sk-shimmer"></div>
+              <div class="sk-chip sk-shimmer"></div>
+            </div>
+            <div class="sk-meta-wrap">
+              <div class="sk-meta sk-shimmer"></div>
+              <div class="sk-meta sk-shimmer"></div>
+            </div>
+            <div class="sk-installer">
+              <div class="sk-avatar sk-shimmer"></div>
+              <div class="sk-line sk-shimmer" style="flex: 1"></div>
+            </div>
+            <div class="sk-actions">
+              <div class="sk-btn sk-shimmer"></div>
+              <div class="sk-btn sk-shimmer" style="width: 100px"></div>
+            </div>
+          </div>
+
+          <div class="sk-card">
+            <div class="sk-row" style="justify-content: space-between">
+              <div class="sk-line lg sk-shimmer" style="width: 58%"></div>
+              <div
+                class="sk-line sm sk-shimmer"
+                style="width: 30%; border-radius: 9999px"
+              ></div>
+            </div>
+            <div class="sk-chips">
+              <div class="sk-chip wide sk-shimmer"></div>
+              <div class="sk-chip sk-shimmer"></div>
+            </div>
+            <div class="sk-meta-wrap">
+              <div class="sk-meta sk-shimmer"></div>
+              <div class="sk-meta sk-shimmer"></div>
+            </div>
+            <div class="sk-installer">
+              <div class="sk-avatar sk-shimmer"></div>
+              <div class="sk-line sk-shimmer" style="flex: 1"></div>
+            </div>
+            <div class="sk-actions">
+              <div class="sk-btn sk-shimmer"></div>
+              <div class="sk-btn sk-shimmer" style="width: 100px"></div>
+            </div>
+          </div>
+
+          <div class="sk-card">
+            <div class="sk-row" style="justify-content: space-between">
+              <div class="sk-line lg sk-shimmer" style="width: 66%"></div>
+              <div
+                class="sk-line sm sk-shimmer"
+                style="width: 22%; border-radius: 9999px"
+              ></div>
+            </div>
+            <div class="sk-chips">
+              <div class="sk-chip sk-shimmer"></div>
+              <div class="sk-chip wide sk-shimmer"></div>
+              <div class="sk-chip sk-shimmer"></div>
+            </div>
+            <div class="sk-meta-wrap">
+              <div class="sk-meta sk-shimmer"></div>
+              <div class="sk-meta sk-shimmer"></div>
+            </div>
+            <div class="sk-installer">
+              <div class="sk-avatar sk-shimmer"></div>
+              <div class="sk-line sk-shimmer" style="flex: 1"></div>
+            </div>
+            <div class="sk-actions">
+              <div class="sk-btn sk-shimmer"></div>
+              <div class="sk-btn sk-shimmer" style="width: 100px"></div>
+            </div>
+          </div>
+
+          <div class="sk-card">
+            <div class="sk-row" style="justify-content: space-between">
+              <div class="sk-line lg sk-shimmer" style="width: 62%"></div>
+              <div
+                class="sk-line sm sk-shimmer"
+                style="width: 26%; border-radius: 9999px"
+              ></div>
+            </div>
+            <div class="sk-chips">
+              <div class="sk-chip sk-shimmer"></div>
+              <div class="sk-chip sk-shimmer"></div>
+            </div>
+            <div class="sk-meta-wrap">
+              <div class="sk-meta sk-shimmer"></div>
+              <div class="sk-meta sk-shimmer"></div>
+            </div>
+            <div class="sk-installer">
+              <div class="sk-avatar sk-shimmer"></div>
+              <div class="sk-line sk-shimmer" style="flex: 1"></div>
+            </div>
+            <div class="sk-actions">
+              <div class="sk-btn sk-shimmer"></div>
+              <div class="sk-btn sk-shimmer" style="width: 100px"></div>
+            </div>
+          </div>
+        </div>
+        <!-- ====== /SKELETONS ====== -->
+
+        <!-- Cards container -->
+        <div id="cardsContainer" class="cards-grid">
+          <!-- Loading placeholder (kept, but hidden by CSS) -->
+          <div class="job-card" id="loader-card">
+            <div class="job-head">
+              <h3 class="job-title muted">Loading your jobs…</h3>
+              <span class="status-badge"
+                ><span class="material-icons-sharp" style="font-size: 1rem"
+                  >pending</span
+                >
+                Please wait</span
+              >
+            </div>
+            <div class="chips">
+              <span class="chip">—</span>
+              <span class="chip">—</span>
+            </div>
+            <div class="meta">
+              <div class="meta-item">
+                <span class="material-icons-sharp">payments</span> —
+              </div>
+              <div class="meta-item">
+                <span class="material-icons-sharp">event</span> —
+              </div>
+            </div>
+            <div class="installer">
+              <div class="avatar">—</div>
+              <div class="muted">Fetching installer…</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="emptyState" class="empty" style="display: none">
+          <span class="material-icons-sharp">work</span>
+          <span>No jobs yet. Create one to get started!</span>
+          <a
+            href="createPost.html"
+            class="btn btn-primary"
+            style="text-decoration: none"
+          >
+            <span class="material-icons-sharp">add</span> New Job
+          </a>
+        </div>
+      </main>
+    </div>
+
+    <!-- ====== JOB DETAILS MODAL ====== -->
+    <div id="jobModal" class="modal-overlay" aria-hidden="true">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="jobModalTitle"
+      >
+        <div class="modal-hero">
+          <img id="jobHero" class="hero-img" alt="Job photo" />
+          <div class="modal-header">
+            <span id="jobStatusBadge" class="badge"
+              ><span class="material-icons-sharp" style="font-size: 1rem"
+                >info</span
+              ><span id="jobStatusText">Status</span></span
+            >
+            <button id="jobCloseBtn" class="close-btn" title="Close">
+              <span class="material-icons-sharp">close</span>
+            </button>
+          </div>
+
+          <!-- NEW: hero overlay for job title & location -->
+          <div class="modal-hero-content">
+            <h2 id="jobModalTitleHero">Job Title</h2>
+            <p
+              id="jobModalLocationHero"
+              class="modal-hero-location"
+            ></p>
+          </div>
+        </div>
+        <div class="modal-body">
+          <h2 id="jobModalTitle" class="modal-title">Job Title</h2>
+          <div class="modal-section">
+            <!-- Left: job info -->
+            <div class="modal-card">
+              <div class="row">
+                <span class="label">Category</span><span id="mCategory">—</span>
+              </div>
+              <div class="row">
+                <span class="label">Difficulty</span><span id="mDiff">—</span>
+              </div>
+              <div class="row">
+                <span class="label">Pay</span><span id="mPay">—</span>
+              </div>
+              <div class="row">
+                <span class="label">Date & Time</span><span id="mWhen">—</span>
+              </div>
+              <div class="row">
+                <span class="label">Duration</span><span id="mDuration">—</span>
+              </div>
+              <div class="row">
+                <span class="label">Location</span><span id="mLocation">—</span>
+              </div>
+              <div class="divider"></div>
+              <div class="row" style="align-items: flex-start">
+                <span class="label">Description</span><span id="mDesc">—</span>
+              </div>
+            </div>
+
+            <!-- Right: installer & actions -->
+            <div class="modal-card">
+              <div class="row" id="instRow">
+                <span class="label">Installer</span>
+                <span id="mInstaller">Unassigned</span>
+              </div>
+
+              <!-- Re-edit Date (for overdue) -->
+              <div
+                id="reschedWrap"
+                class="modal-card"
+                style="border-style: dashed; margin-top: 10px; display: none"
+              >
+                <div class="row" id="reschedTitleRow" style="font-weight: 700">
+                  <span class="material-icons-sharp">schedule</span>Reschedule
+                </div>
+                <div class="row">
+                  <span class="label">New date</span>
+                  <input id="reschedDate" type="date" />
+                </div>
+                <div class="row" id="reschedTimeRow">
+                  <span class="label">New time</span>
+                  <input id="reschedTime" type="time" />
+                </div>
+                <div class="modal-actions">
+                  <button id="reschedSubmit" class="btn btn-warning">
+                    <span class="material-icons-sharp">update</span> Apply
+                  </button>
+                </div>
+              </div>
+
+              <div class="modal-actions" id="modalBtns">
+                <!-- buttons injected -->
+              </div>
+            </div>
+          </div>
+          
+          <!-- Applicants Section for approved jobs -->
+          <div id="modalApplicantsSection" class="modal-card" style="margin-top: 16px; display: none;">
+            <h3 style="margin-top: 0; font-weight: 700; color: var(--ink); border-bottom: 1px solid var(--line); padding-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+              <span class="material-icons-sharp">groups</span> Installers Applied
+            </h3>
+            <div id="modalApplicantsList" style="display: grid; gap: 12px; margin-top: 12px;">
+              <!-- dynamic applicants list -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== INSTALLER PROFILE MODAL ====== -->
+    <div id="installerModal" class="modal-overlay" aria-hidden="true">
+      <div
+        class="modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="installerTitle"
+      >
+        <div class="modal-body">
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            "
+          >
+            <h2 id="installerTitle" style="margin: 0">Installer Profile</h2>
+            <button id="instCloseBtn" class="btn btn-ghost" title="Close">
+              <span class="material-icons-sharp">close</span>
+            </button>
+          </div>
+          <div class="divider"></div>
+          <div class="inst-top">
+            <div id="instAvatar" class="inst-avatar">IN</div>
+            <img
+              id="instAvatarImg"
+              class="inst-avatar-img"
+              alt="Installer photo"
+            />
+            <div>
+              <div id="instName" style="font-weight: 800; font-size: 1.15rem">
+                —
+              </div>
+              <div id="instEmail" class="muted">—</div>
+            </div>
+          </div>
+          <div class="divider"></div>
+          <div class="inst-grid">
+            <div class="modal-card">
+              <div class="row">
+                <span class="label">Phone</span><span id="instPhone">—</span>
+              </div>
+              <div class="row">
+                <span class="label">Profession</span
+                ><span id="instProfession">—</span>
+              </div>
+              <div class="row">
+                <span class="label">Employer</span
+                ><span id="instEmployer">—</span>
+              </div>
+            </div>
+            <div class="modal-card">
+              <div class="row">
+                <span class="label">Qualification</span
+                ><span id="instQual">—</span>
+              </div>
+              <div class="row">
+                <span class="label">Employment</span
+                ><span id="instEmpStatus">—</span>
+              </div>
+              <div class="row">
+                <span class="label">Level</span><span id="instLevel">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Supabase CDN (v2) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module" src="../../general_files/index.js"></script>
+    <script type="module" src="../../general_files/session.js"></script>
+    <!-- SweetAlert2 (added) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script type="module">
+      // ---------- CONFIG: defaults ----------
+      const DEFAULT_JOB_PICS_BUCKET = "jobs";
+      const DEFAULT_INSTALLER_PICS_BUCKET = "installer_profile";
+      const MATCHING_PAYMENT_STATE_KEY = "matchingPaymentRequests";
+      const MATCHING_PAYMENT_SETTINGS_OWNER = "global:payment-settings";
+      const MATCHING_PAYMENT_SETTINGS_KEY = "credentials";
+
+      // ---------- NEW: SweetAlert helpers ----------
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 2200,
+        timerProgressBar: true,
+      });
+      function notifySuccess(msg) {
+        Toast.fire({ icon: "success", title: msg });
+      }
+      function notifyInfo(msg) {
+        Toast.fire({ icon: "info", title: msg });
+      }
+      function notifyWarn(msg) {
+        Toast.fire({ icon: "warning", title: msg });
+      }
+      function notifyError(msg, title = "Something went wrong") {
+        Swal.fire({ icon: "error", title, text: msg, confirmButtonText: "OK" });
+      }
+      async function confirmDialog({
+        title = "Are you sure?",
+        text = "This action cannot be undone.",
+        confirmText = "Yes",
+        icon = "warning",
+      } = {}) {
+        const res = await Swal.fire({
+          icon,
+          title,
+          text,
+          showCancelButton: true,
+          confirmButtonText: confirmText,
+          cancelButtonText: "Cancel",
+          reverseButtons: true,
+          focusCancel: true,
+        });
+        return res.isConfirmed;
+      }
+
+      // ---------- NEW: simple loading toggler ----------
+      const rootEl = document.documentElement; // for a global class
+      const skeletonContainer = document.getElementById("skeletonContainer");
+      const cardsContainer = document.getElementById("cardsContainer");
+      const emptyState = document.getElementById("emptyState");
+      function showSkeleton(isLoading) {
+        if (isLoading) {
+          rootEl.classList.add("is-loading");
+          skeletonContainer.style.display = "grid";
+        } else {
+          rootEl.classList.remove("is-loading");
+          skeletonContainer.style.display = "none";
+        }
+      }
+
+      // ---------- Supabase helpers ----------
+      async function ensureSupabaseClient() {
+        if (
+          window.supabaseClient &&
+          typeof window.supabaseClient.from === "function"
+        )
+          return window.supabaseClient;
+        if (window.supabase && typeof window.supabase.from === "function") {
+          window.supabaseClient = window.supabase;
+          return window.supabaseClient;
+        }
+        const ns = window.supabase;
+        if (!ns || typeof ns.createClient !== "function") {
+          console.error("Supabase not loaded");
+          return null;
+        }
+
+        let url, key;
+        try {
+          const mod = await import("../../../supabase.js");
+          url = mod.SUPABASE_URL;
+          key = mod.SUPABASE_ANON_KEY;
+        } catch (_) {}
+        if (!url) url = window.SUPABASE_URL;
+        if (!key) key = window.SUPABASE_ANON_KEY;
+
+        if (!url || !key) {
+          console.error("Missing SUPABASE_URL / SUPABASE_ANON KEY");
+          return null;
+        }
+        window.supabaseClient = ns.createClient(url, key);
+        return window.supabaseClient;
+      }
+      function fromInSchema(client, schema, table) {
+        if (client.schema && typeof client.schema === "function")
+          return client.schema(schema).from(table);
+        return client.from(`${schema}.${table}`);
+      }
+
+      // ---------- Formatting helpers ----------
+      function parseDescriptionJson(desc) {
+        if (desc && typeof desc === "string" && desc.trim().startsWith("{")) {
+          try {
+            return JSON.parse(desc);
+          } catch (e) {}
+        }
+        return null;
+      }
+
+      function isJobPosted(job) {
+        if (!job) return false;
+        if (normalizeJobStatus(job.job_status) === "active") return true;
+        const data = parseDescriptionJson(job.job_description);
+        if (data?.is_negotiation && data.customer_decision !== "agreed") {
+          return false;
+        }
+        return data ? !!data.is_posted : false;
+      }
+
+      function parseNegotiation(desc) {
+        const data = parseDescriptionJson(desc);
+        if (data && data.is_negotiation) {
+          return data;
+        }
+        return null;
+      }
+
+      function normalizeJobStatus(status) {
+        const s = String(status || "").toLowerCase();
+        if (!s || s === "pending" || s === "viewed") return "pending_review";
+        return s;
+      }
+
+      function statusLabel(status) {
+        const labels = {
+          pending_review: "Pending Review",
+          suggestion_sent: "Suggestion Sent",
+          customer_accepted: "Customer Accepted",
+          appeal_submitted: "Appeal Submitted",
+          approved: "Approved",
+          active: "Active",
+          cancellation_pending: "Cancellation Pending",
+          cancelled: "Cancelled",
+          rejected: "Rejected",
+          archived: "Archived",
+          done: "Done",
+          completed: "Completed",
+        };
+        const s = normalizeJobStatus(status);
+        return labels[s] || s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+      }
+
+      function getReviewData(job) {
+        const data = parseDescriptionJson(job?.job_description) || {};
+        const neg = parseNegotiation(job?.job_description);
+        if (neg && !data.is_review_workflow) {
+          return {
+            is_review_workflow: true,
+            is_posted: !!neg.is_posted,
+            description: neg.proposed_description || neg.original_description || "",
+            current_description: neg.proposed_description || "",
+            original_customer_version: {
+              pay: neg.original_pay,
+              difficulty: neg.original_difficulty,
+              description: neg.original_description || "",
+            },
+            admin_suggested_version: {
+              pay: neg.proposed_pay,
+              difficulty: neg.proposed_difficulty,
+              description: neg.proposed_description || "",
+            },
+            history: [],
+          };
+        }
+        return data;
+      }
+
+      function currentDescription(job) {
+        const data = getReviewData(job);
+        if (data?.current_description != null) return data.current_description;
+        if (data?.description != null) return data.description;
+        if (data?.admin_suggested_version?.description != null) {
+          return data.admin_suggested_version.description;
+        }
+        return job?.job_description || "";
+      }
+
+      function displayReviewValues(job) {
+        const status = normalizeJobStatus(job?.job_status);
+        const data = getReviewData(job);
+        if (status === "suggestion_sent" && data?.admin_suggested_version) {
+          return {
+            pay: data.admin_suggested_version.pay ?? job.job_pay,
+            difficulty: data.admin_suggested_version.difficulty ?? job.job_difficulty,
+            description:
+              data.admin_suggested_version.description ??
+              data.current_description ??
+              data.description ??
+              job.job_description,
+          };
+        }
+        return {
+          pay: job.job_pay,
+          difficulty: job.job_difficulty,
+          description: currentDescription(job),
+        };
+      }
+
+      function isNegotiationPending(job) {
+        return normalizeJobStatus(job?.job_status) === "suggestion_sent";
+      }
+
+      function escapeHtml(str) {
+        return String(str ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+      function fileNameFromPath(path = "", fallback = "Document") {
+        const clean = String(path || "").split("?")[0].replace(/\\/g, "/");
+        try {
+          return decodeURIComponent(clean.split("/").pop() || fallback);
+        } catch {
+          return clean.split("/").pop() || fallback;
+        }
+      }
+      function safeStorageFileName(name = "receipt") {
+        return String(name || "receipt")
+          .trim()
+          .replace(/[^\w.\-]+/g, "_")
+          .replace(/^_+|_+$/g, "")
+          .slice(0, 120) || "receipt";
+      }
+      function credentialStatusClass(status = "") {
+        const clean = String(status || "pending").toLowerCase();
+        if (["verified", "approved", "accepted", "earned"].includes(clean))
+          return "approved";
+        if (["pending", "review", "for_review"].includes(clean))
+          return "pending";
+        return "";
+      }
+      function formatPeso(n) {
+        const num = Number(n ?? 0);
+        return `₱${num.toLocaleString("en-PH", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`;
+      }
+      function difficultyToText(level) {
+        const n = Number(level);
+        if (n === 0) return "Easy";
+        if (n === 1) return "Intermediate";
+        if (n === 2) return "Hard";
+        return `Level ${isFinite(n) ? n : 0}`;
+      }
+      function statusClass(status) {
+        const s = normalizeJobStatus(status);
+        if (["pending_review", "suggestion_sent", "customer_accepted", "appeal_submitted", "cancellation_pending"].includes(s)) return "status-pending";
+        if (s === "approved" || s === "active") return "status-approved";
+        if (s === "overdue" || s === "cancelled") return "status-overdue";
+        if (s === "done" || s === "completed") return "status-done";
+        if (s === "rejected") return "status-rejected";
+        return "";
+      }
+      function initials(name) {
+        const n = (name || "").trim();
+        if (!n) return "NA";
+        const parts = n.split(/\s+/).slice(0, 2);
+        return parts.map((p) => p[0]?.toUpperCase() || "").join("") || "NA";
+      }
+      function fmtDate(d) {
+        if (!d) return "—";
+        const dt = new Date(d);
+        if (Number.isNaN(dt.getTime())) return String(d);
+        return dt.toLocaleDateString(undefined, {
+          year: "numeric",
+          month: "short",
+          day: "2-digit",
+        });
+      }
+      function fmtTime(t) {
+        if (!t) return "—";
+        try {
+          const [H, M] = String(t).split(":");
+          const d = new Date();
+          d.setHours(+H || 0, +M || 0, 0, 0);
+          return d.toLocaleTimeString(undefined, {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        } catch {
+          return String(t);
+        }
+      }
+
+      // Convert Postgres interval -> whole hours
+      function intervalToHours(v) {
+        if (v == null) return null;
+        if (typeof v === "number" && isFinite(v))
+          return Math.max(0, Math.round(v));
+        const s = String(v).trim();
+
+        let m = /^(\d{1,2}):([0-5]?\d)(?::([0-5]?\d))?$/.exec(s);
+        if (m) {
+          const h = parseInt(m[1] || "0", 10),
+            min = parseInt(m[2] || "0", 10);
+          return Math.max(0, Math.round(h + min / 60));
+        }
+        m = /(?:(\d+)\s+day[s]?\s*)?(\d{1,2}):([0-5]?\d)(?::([0-5]?\d))?/i.exec(
+          s
+        );
+        if (m) {
+          const d = parseInt(m[1] || "0", 10),
+            h = parseInt(m[2] || "0", 10),
+            min = parseInt(m[3] || "0", 10);
+          return Math.max(0, Math.round(d * 24 + h + min / 60));
+        }
+        m = /^P(T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?)$/i.exec(s);
+        if (m) {
+          const h = parseInt(m[2] || "0", 10),
+            min = parseInt(m[3] || "0", 10);
+          return Math.max(0, Math.round(h + min / 60));
+        }
+        if (/^\d+$/.test(s)) return Math.max(0, parseInt(s, 10));
+        return null;
+      }
+      // Convert whole hours -> interval string Postgres accepts
+      function hoursToInterval(hours) {
+        const h = Math.max(0, parseInt(hours, 10) || 0);
+        return `${String(h).padStart(2, "0")}:00:00`;
+      }
+
+      // ---------- Storage helpers (Signed URL) ----------
+      function parsePublicBucketAndPath(publicUrl) {
+        try {
+          const marker = "/storage/v1/object/public/";
+          const i = publicUrl.indexOf(marker);
+          if (i === -1) return null;
+          const rest = publicUrl.substring(i + marker.length);
+          const slash = rest.indexOf("/");
+          if (slash === -1) return null;
+          const bucket = rest.substring(0, slash);
+          let path = rest.substring(slash + 1);
+          try {
+            path = decodeURIComponent(path);
+          } catch {}
+          path = path.replace(/^\/+/, "");
+          return { bucket, path };
+        } catch {
+          return null;
+        }
+      }
+
+      // Keep original parseStorageRef intact. Add a variant with a default bucket argument.
+      function parseStorageRefWithDefault(ref, defaultBucket) {
+        if (!ref) return null;
+        const s = String(ref).trim();
+        if (/^https?:\/\//i.test(s)) {
+          const parsed = parsePublicBucketAndPath(s);
+          return parsed || null;
+        }
+        const bi = s.indexOf("::");
+        if (bi > 0) {
+          let path = s.slice(bi + 2);
+          try {
+            path = decodeURIComponent(path);
+          } catch {}
+          path = path.replace(/^\/+/, "");
+          return { bucket: s.slice(0, bi), path };
+        }
+        let path = s;
+        try {
+          path = decodeURIComponent(path);
+        } catch {}
+        path = path.replace(/^\/+/, "");
+        return { bucket: defaultBucket, path };
+      }
+
+      async function createSignedUrl(bucket, path, expires = 3600) {
+        const client = await ensureSupabaseClient();
+        const { data, error } = await client.storage
+          .from(bucket)
+          .createSignedUrl(path, expires);
+        if (error) throw error;
+        return data.signedUrl;
+      }
+
+      async function resolveJobPictureSignedUrl(job_picture_url) {
+        if (!job_picture_url) return null;
+        if (
+          /^https?:\/\//i.test(job_picture_url) &&
+          !job_picture_url.includes("/storage/v1/object/")
+        ) {
+          return job_picture_url;
+        }
+        // Use job default bucket
+        const ref = parseStorageRefWithDefault(
+          job_picture_url,
+          DEFAULT_JOB_PICS_BUCKET
+        );
+        if (!ref) return null;
+        try {
+          return await createSignedUrl(ref.bucket, ref.path, 3600);
+        } catch (e) {
+          console.warn(
+            "Signing job image failed:",
+            e.message,
+            "bucket=",
+            ref.bucket,
+            "path=",
+            ref.path
+          );
+          if (/^https?:\/\//i.test(job_picture_url)) return job_picture_url;
+          return null;
+        }
+      }
+
+      async function resolveInstallerPictureSignedUrl(profile_pic_url) {
+        if (!profile_pic_url) return null;
+        if (
+          /^https?:\/\//i.test(profile_pic_url) &&
+          !profile_pic_url.includes("/storage/v1/object/")
+        ) {
+          return profile_pic_url;
+        }
+        const ref = parseStorageRefWithDefault(
+          profile_pic_url,
+          DEFAULT_INSTALLER_PICS_BUCKET
+        );
+        if (!ref) return null;
+        try {
+          return await createSignedUrl(ref.bucket, ref.path, 3600);
+        } catch (e) {
+          console.warn(
+            "Signing installer image failed:",
+            e.message,
+            "bucket=",
+            ref.bucket,
+            "path=",
+            ref.path
+          );
+          if (/^https?:\/\//i.test(profile_pic_url)) return profile_pic_url;
+          return null;
+        }
+      }
+
+      // ---------- DOM refs ----------
+      const searchInput = document.getElementById("searchInput");
+      const statusFilter = document.getElementById("statusFilter");
+      const sortSelect = document.getElementById("sortSelect");
+
+      // Modals
+      const jobModal = document.getElementById("jobModal");
+      const jobHero = document.getElementById("jobHero");
+      const jobStatusBadge = document.getElementById("jobStatusBadge");
+      const jobStatusText = document.getElementById("jobStatusText");
+      const jobCloseBtn = document.getElementById("jobCloseBtn");
+      const jobTitleEl = document.getElementById("jobModalTitle");
+
+      // NEW: hero title + location in modal hero overlay
+      const jobTitleHeroEl = document.getElementById("jobModalTitleHero");
+      const jobLocationHeroEl =
+        document.getElementById("jobModalLocationHero");
+
+      const mCategory = document.getElementById("mCategory");
+      const mDiff = document.getElementById("mDiff");
+      const mPay = document.getElementById("mPay");
+      const mWhen = document.getElementById("mWhen");
+      const mDuration = document.getElementById("mDuration");
+      const mLocation = document.getElementById("mLocation");
+      const mDesc = document.getElementById("mDesc");
+      const mInstaller = document.getElementById("mInstaller");
+      const modalBtns = document.getElementById("modalBtns");
+      const reschedWrap = document.getElementById("reschedWrap");
+      const reschedDate = document.getElementById("reschedDate");
+      const reschedTime = document.getElementById("reschedTime");
+      const reschedSubmit = document.getElementById("reschedSubmit");
+      const modalApplicantsSection = document.getElementById("modalApplicantsSection");
+      const modalApplicantsList = document.getElementById("modalApplicantsList");
+      const reschedTitleRow = document.getElementById("reschedTitleRow");
+      const reschedTimeRow = document.getElementById("reschedTimeRow");
+
+      const installerModal = document.getElementById("installerModal");
+      const instCloseBtn = document.getElementById("instCloseBtn");
+      const instAvatar = document.getElementById("instAvatar");
+      const instAvatarImg = document.getElementById("instAvatarImg");
+      const instName = document.getElementById("instName");
+      const instEmail = document.getElementById("instEmail");
+      const instPhone = document.getElementById("instPhone");
+      const instProfession = document.getElementById("instProfession");
+      const instEmployer = document.getElementById("instEmployer");
+      const instQual = document.getElementById("instQual");
+      const instEmpStatus = document.getElementById("instEmpStatus");
+      const instLevel = document.getElementById("instLevel");
+
+      // Keep jobs in memory for client-side sort/filter
+      let JOBS = [];
+      let INSTALLER_BY_ID = new Map();
+      let CURRENT_JOB = null;
+      let APPS_BY_JOB_ID = new Map();
+      const ACTIVE_APPLICATION_STATUSES = ["pending", "viewed", "approved"];
+      const APPLICATION_INVALIDATION_STATUSES = ["invalidated", "terminated"];
+
+      // ---------- Rendering ----------
+      function cardHtml(job) {
+        const title = escapeHtml(job.job_title);
+        const category = escapeHtml(job.job_category || "Uncategorized");
+        const status = normalizeJobStatus(job.job_status);
+        
+        const displayValues = displayReviewValues(job);
+        const displayPay = displayValues.pay;
+        const displayDifficulty = displayValues.difficulty;
+        
+        const diffText = difficultyToText(displayDifficulty);
+        const pay = formatPeso(displayPay);
+        const date = fmtDate(job.job_date);
+        const time = fmtTime(job.job_time);
+        
+        let statusCls = statusClass(status);
+        const statusNorm = status === "completed" ? "done" : status;
+
+        // Installer block
+        let installerName = "Unassigned";
+        let installerId = null;
+        let hasInstaller = false;
+        if (
+          job.installer_id_assigned &&
+          INSTALLER_BY_ID.has(job.installer_id_assigned)
+        ) {
+          const inst = INSTALLER_BY_ID.get(job.installer_id_assigned);
+          installerName = inst?.name || "Assigned";
+          installerId = inst?.id || job.installer_id_assigned;
+          hasInstaller = true;
+        }
+        const avatarText = initials(installerName);
+
+        // Status label: if approved + assigned, show assignment
+        let statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+        const posted = isJobPosted(job);
+        if (status.toLowerCase() === "approved") {
+          if (posted) {
+            statusLabel = "Active / Posted";
+          } else {
+            statusLabel = "Approved (Ready to Post)";
+          }
+        }
+
+        if (
+          (status.toLowerCase() === "approved" ||
+            status.toLowerCase() === "active") &&
+          hasInstaller
+        ) {
+          statusLabel = `Approved • Assigned to ${escapeHtml(installerName)}`;
+        }
+
+        // status icon
+        let statusIcon =
+          status.toLowerCase() === "approved" ||
+          status.toLowerCase() === "active"
+            ? "verified"
+            : status.toLowerCase() === "pending"
+            ? "hourglass_empty"
+            : status.toLowerCase() === "overdue"
+            ? "warning"
+            : status.toLowerCase() === "done" ||
+              status.toLowerCase() === "completed"
+            ? "check_circle"
+            : status.toLowerCase() === "rejected"
+            ? "block"
+            : status.toLowerCase() === "viewed"
+            ? "visibility"
+            : "info";
+
+        if (neg) {
+          if (isNegotiationPending(job)) {
+            statusLabel = "Pending";
+            statusCls = "status-pending"; // yellow theme
+            statusIcon = "swap_horiz";
+          } else if (status.toLowerCase() === "pending" && neg.customer_decision === "agreed") {
+            statusLabel = "Agreed";
+            statusCls = "status-approved"; // green theme
+            statusIcon = "done";
+          } else if (status.toLowerCase() === "rejected" && neg.customer_decision === "rejected") {
+            statusLabel = "Rejected Proposal";
+            statusCls = "status-rejected"; // red theme
+            statusIcon = "block";
+          }
+        }
+
+        const durHrs = job._duration_hours;
+        const durChip =
+          durHrs != null && !Number.isNaN(durHrs)
+            ? `
+        <span class="chip" title="Estimated duration">
+          <span class="material-icons-sharp" style="font-size:1rem;">schedule</span>${durHrs}h
+        </span>`
+            : "";
+
+        const alertBanner = isNegotiationPending(job)
+          ? `<div style="background:#fffcf0; border:1px solid #f6d88a; color:#b45309; border-radius:10px; padding:10px; font-size:0.88rem; margin:10px 0; display:flex; align-items:center; gap:8px;">
+               <span class="material-icons-sharp" style="color:#d97706; font-size:1.15rem;">info</span>
+               <div style="flex:1;">
+                 <strong>Admin Proposed Changes</strong><br/>
+                 Review side-by-side edits to your job post.
+               </div>
+               <button class="btn btn-warning btn-review-neg-banner" style="padding:0.4rem 0.6rem; font-size:0.8rem; height:auto; background:#f59e0b; color:#fff;" data-job-id="${job.job_id}">Review</button>
+             </div>`
+          : "";
+
+        const canShowApplicants =
+          (status.toLowerCase() === "approved" || status.toLowerCase() === "active") &&
+          posted &&
+          !isNegotiationPending(job);
+        const apps = canShowApplicants ? APPS_BY_JOB_ID.get(job.job_id) || [] : [];
+        const appCount = apps.length;
+        const appText = appCount > 0 ? `${appCount} applicant(s)` : "No applicants yet";
+
+        let subMutedHtml = `<div class="muted">${hasInstaller ? "Assigned" : "Unassigned"}</div>`;
+        if (!hasInstaller) {
+          subMutedHtml = `
+            <div class="muted" style="display:flex; align-items:center; gap:4px; font-weight:600; color: ${appCount > 0 ? '#10b981' : 'var(--muted)'}; margin-top:2px;">
+              ${appCount > 0 ? '<span class="material-icons-sharp" style="font-size:14px; vertical-align:middle;">groups</span>' : ''}
+              ${appText}
+            </div>
+          `;
+        }
+
+        return `
+        <div class="job-card"
+             data-job-id="${job.job_id}"
+             data-title="${title.toLowerCase()}"
+             data-status="${status.toLowerCase()}"
+             data-status-norm="${statusNorm}"
+             ${installerId ? `data-installer-id="${installerId}"` : ``}
+         >
+          <div class="job-head">
+            <h3 class="job-title" title="${title}">${title}</h3>
+            <span class="status-badge ${statusCls}">
+              <span class="material-icons-sharp" style="font-size:1rem;">${statusIcon}</span>
+              ${statusLabel}
+            </span>
+          </div>
+
+          ${alertBanner}
+
+          <div class="chips">
+            <span class="chip" title="Category">
+              <span class="material-icons-sharp" style="font-size:1rem;">category</span>${category}
+            </span>
+            <span class="chip" title="Difficulty"><span class="material-icons-sharp" style="font-size:1rem;">military_tech</span>${diffText}</span>
+            ${durChip}
+          </div>
+
+          <div class="meta">
+            <div class="meta-item" title="Pay"><span class="material-icons-sharp">payments</span>${pay}</div>
+            <div class="meta-item" title="When"><span class="material-icons-sharp">event</span>${date} • ${time}</div>
+          </div>
+
+          <div class="installer" title="${
+            hasInstaller ? "Assigned installer" : "No installer assigned"
+          }">
+            <div class="avatar">
+              <img alt="Installer photo" />
+              <span class="avatar-initials">${avatarText}</span>
+            </div>
+            <div>
+              <div class="name">${escapeHtml(installerName)}</div>
+              ${subMutedHtml}
+            </div>
+          </div>
+
+          <div class="actions">
+            ${isNegotiationPending(job)
+              ? `<a class="btn btn-warning btn-review-neg-action" href="#" style="background:#f59e0b; color:#fff;">
+                   <span class="material-icons-sharp">gavel</span> Review Proposal
+                 </a>`
+              : (status.toLowerCase() === "approved" && !posted
+                ? `<button class="btn btn-primary btn-post" style="background:#20a44c; color:#fff; border:none; border-radius:10px; padding:0.5rem 0.75rem; font-weight:600; cursor:pointer;">
+                     <span class="material-icons-sharp">publish</span> Post Job
+                   </button>
+                   <a class="btn btn-ghost btn-details" href="#">
+                     <span class="material-icons-sharp">visibility</span> Details
+                   </a>`
+                : `<a class="btn btn-ghost btn-details" href="#">
+                     <span class="material-icons-sharp">visibility</span> Details
+                   </a>`)
+            }
+            <a class="btn btn-primary btn-edit" href="createPost.html?job_id=${encodeURIComponent(
+              job.job_id
+            )}">
+              <span class="material-icons-sharp">edit</span> Edit
+            </a>
+          </div>
+        </div>
+      `;
+      }
+
+      function lifecycleCardHtml(job) {
+        const title = escapeHtml(job.job_title);
+        const category = escapeHtml(job.job_category || "Uncategorized");
+        const status = normalizeJobStatus(job.job_status);
+        const displayValues = displayReviewValues(job);
+        const displayPay = displayValues.pay;
+        const displayDifficulty = displayValues.difficulty;
+        const diffText = difficultyToText(displayDifficulty);
+        const pay = formatPeso(displayPay);
+        const date = fmtDate(job.job_date);
+        const time = fmtTime(job.job_time);
+        const posted = isJobPosted(job);
+        const apps = status === "active" ? APPS_BY_JOB_ID.get(job.job_id) || [] : [];
+        const appText = apps.length ? `${apps.length} applicant(s)` : "No applicants yet";
+        const statusIconMap = {
+          pending_review: "hourglass_empty",
+          suggestion_sent: "rate_review",
+          customer_accepted: "done",
+          appeal_submitted: "reply",
+          approved: "verified",
+          active: "public",
+          cancellation_pending: "pending_actions",
+          cancelled: "cancel",
+          rejected: "block",
+          done: "check_circle",
+          completed: "check_circle",
+        };
+        const statusIcon = statusIconMap[status] || "info";
+        const canEdit = status === "pending_review";
+        const canReviewSuggestion = status === "suggestion_sent";
+        const canPost = status === "approved" && !posted;
+        const canReapply = status === "cancelled";
+
+        const alertBanner = canReviewSuggestion
+          ? `<div style="background:#fffcf0; border:1px solid #f6d88a; color:#b45309; border-radius:10px; padding:10px; font-size:0.88rem; margin:10px 0; display:flex; align-items:center; gap:8px;">
+               <span class="material-icons-sharp" style="color:#d97706; font-size:1.15rem;">info</span>
+               <div style="flex:1;"><strong>Admin Suggestion Ready</strong><br/>Compare both versions before you accept or revise.</div>
+               <button class="btn btn-warning btn-review-neg-banner" style="padding:0.4rem 0.6rem; font-size:0.8rem; height:auto; background:#f59e0b; color:#fff;" data-job-id="${job.job_id}">Review</button>
+             </div>`
+          : "";
+
+        const primaryAction = canReviewSuggestion
+          ? `<a class="btn btn-warning btn-review-neg-action" href="#" style="background:#f59e0b; color:#fff;"><span class="material-icons-sharp">rate_review</span> Review Suggestion</a>`
+          : canPost
+          ? `<button class="btn btn-primary btn-post" style="background:#20a44c; color:#fff; border:none; border-radius:10px; padding:0.5rem 0.75rem; font-weight:600; cursor:pointer;"><span class="material-icons-sharp">publish</span> Post Job</button>`
+          : canReapply
+          ? `<button class="btn btn-primary btn-reapply" style="background:#20a44c; color:#fff; border:none; border-radius:10px; padding:0.5rem 0.75rem; font-weight:600; cursor:pointer;"><span class="material-icons-sharp">restart_alt</span> Reapply</button>`
+          : "";
+
+        const editAction = canEdit
+          ? `<a class="btn btn-primary btn-edit-visible" href="createPost.html?job_id=${encodeURIComponent(job.job_id)}"><span class="material-icons-sharp">edit</span> Edit</a>`
+          : "";
+
+        return `
+        <div class="job-card"
+             data-job-id="${job.job_id}"
+             data-title="${title.toLowerCase()}"
+             data-status="${status}"
+             data-status-norm="${status}">
+          <div class="job-head">
+            <h3 class="job-title" title="${title}">${title}</h3>
+            <span class="status-badge ${statusClass(status)}">
+              <span class="material-icons-sharp" style="font-size:1rem;">${statusIcon}</span>
+              ${status === "approved" ? "Approved (Ready to Post)" : statusLabel(status)}
+            </span>
+          </div>
+          ${alertBanner}
+          <div class="chips">
+            <span class="chip" title="Category"><span class="material-icons-sharp" style="font-size:1rem;">category</span>${category}</span>
+            <span class="chip" title="Difficulty"><span class="material-icons-sharp" style="font-size:1rem;">military_tech</span>${diffText}</span>
+            ${job._duration_hours != null ? `<span class="chip" title="Estimated duration"><span class="material-icons-sharp" style="font-size:1rem;">schedule</span>${job._duration_hours}h</span>` : ""}
+          </div>
+          <div class="meta">
+            <div class="meta-item" title="Pay"><span class="material-icons-sharp">payments</span>${pay}</div>
+            <div class="meta-item" title="When"><span class="material-icons-sharp">event</span>${date} - ${time}</div>
+          </div>
+          <div class="installer" title="${status === "active" ? "Applicants" : "Review status"}">
+            <div class="avatar"><span class="avatar-initials">${status === "active" ? apps.length : "R"}</span></div>
+            <div>
+              <div class="name">${status === "active" ? "Applicants" : "Review Process"}</div>
+              <div class="muted" style="font-weight:600; color:${apps.length ? "#10b981" : "var(--muted)"};">${status === "active" ? appText : statusLabel(status)}</div>
+            </div>
+          </div>
+          <div class="actions">
+            ${primaryAction}
+            <a class="btn btn-ghost btn-details" href="#"><span class="material-icons-sharp">visibility</span> Details</a>
+            ${editAction}
+          </div>
+        </div>`;
+      }
+
+      function render() {
+        if (!JOBS.length) {
+          cardsContainer.innerHTML = "";
+          emptyState.style.display = "flex";
+          showSkeleton(false);
+          return;
+        }
+        emptyState.style.display = "none";
+        cardsContainer.innerHTML = JOBS.map(lifecycleCardHtml).join("");
+        applyClientFilters();
+        showSkeleton(false);
+        hydrateInstallerAvatars().catch(console.warn);
+      }
+
+      // Fetch & attach profile images to cards
+      async function hydrateInstallerAvatars() {
+        const cards = Array.from(
+          cardsContainer.querySelectorAll(".job-card[data-installer-id]")
+        );
+        if (!cards.length) return;
+
+        await Promise.all(
+          cards.map(async (card) => {
+            const instId = card.getAttribute("data-installer-id");
+            const inst = INSTALLER_BY_ID.get(instId);
+            if (!inst) return;
+
+            const url = inst.profile_pic_url;
+            if (!url) return;
+
+            try {
+              const signed = await resolveInstallerPictureSignedUrl(url);
+              if (!signed) return;
+              const av = card.querySelector(".avatar");
+              const img = av?.querySelector("img");
+              const initialsEl = av?.querySelector(".avatar-initials");
+              if (img) {
+                img.src = signed;
+                img.style.display = "block";
+                if (initialsEl) initialsEl.style.display = "none";
+              }
+            } catch (err) {
+              console.warn("Avatar hydrate fail:", err?.message || err);
+            }
+          })
+        );
+      }
+
+      // ---------- Data loader (original) ----------
+      async function loadMyJobs() {
+        showSkeleton(true);
+        const client = await ensureSupabaseClient();
+        if (!client) {
+          showSkeleton(false);
+          return;
+        }
+
+        const { data: u, error: uErr } = await client.auth.getUser();
+        if (uErr || !u?.user?.id) {
+          console.error("auth.getUser error:", uErr);
+          cardsContainer.innerHTML = `<div class="empty"><span class="material-icons-sharp">person_off</span><span>Please log in to see your jobs.</span></div>`;
+          notifyWarn("Please sign in to view your job posts.");
+          showSkeleton(false);
+          return;
+        }
+        const userId = u.user.id;
+
+        const { data: jobs, error } = await fromInSchema(client, "jobs", "job")
+          .select(
+            "job_id, job_title, job_category, job_difficulty, job_pay, job_date, job_time, job_status, created_at, updated_at, installer_id_assigned, job_duration, job_picture_url, job_location, job_description, scheduled_ts"
+          )
+          .eq("posted_by", userId)
+          .order("created_at", { ascending: false })
+          .limit(300);
+
+        if (error) {
+          console.error("jobs fetch error:", error);
+          cardsContainer.innerHTML = `<div class="empty"><span class="material-icons-sharp">error_outline</span><span>Unable to load your jobs.</span></div>`;
+          notifyError(
+            "We couldn’t load your jobs right now. Please try again in a moment."
+          );
+          showSkeleton(false);
+          return;
+        }
+
+        JOBS = (jobs || []).map((j) => ({
+          ...j,
+          _duration_hours: intervalToHours(j.job_duration),
+        }));
+
+        const installerIds = Array.from(
+          new Set(JOBS.map((j) => j.installer_id_assigned).filter(Boolean))
+        );
+        INSTALLER_BY_ID = new Map();
+        if (installerIds.length) {
+          const { data: installers, error: insErr } = await fromInSchema(
+            client,
+            "public",
+            "installer"
+          )
+            .select("id, name, email, profile_pic_url")
+            .in("id", installerIds)
+            .limit(1000);
+          if (insErr) {
+            console.error("installer fetch error:", insErr);
+            notifyWarn(
+              "Some installer profiles failed to load. You can still view your jobs."
+            );
+          } else {
+            (installers || []).forEach((i) => INSTALLER_BY_ID.set(i.id, i));
+          }
+        }
+
+        // Fetch applications for these jobs to count them (ADDED)
+        APPS_BY_JOB_ID = new Map();
+        if (JOBS.length) {
+          const jobIds = JOBS.map(j => j.job_id);
+          const { data: allApps, error: allAppsErr } = await fromInSchema(client, "jobs", "job_application")
+            .select("job_id, application_id")
+            .in("job_id", jobIds)
+            .in("status", ACTIVE_APPLICATION_STATUSES);
+          console.log("DEBUG: loadMyJobs allApps =", allApps, "error =", allAppsErr);
+          if (!allAppsErr && allApps) {
+            allApps.forEach(a => {
+              if (!APPS_BY_JOB_ID.has(a.job_id)) APPS_BY_JOB_ID.set(a.job_id, []);
+              APPS_BY_JOB_ID.get(a.job_id).push(a);
+            });
+          }
+        }
+
+        render();
+        notifyInfo("Your job posts are up to date.");
+      }
+
+      // ---------- Server-side filtered & sorted loader ----------
+      function mapSort(mode) {
+        switch (mode) {
+          case "created_asc":
+            return [{ column: "created_at", ascending: true }];
+          case "created_desc":
+            return [{ column: "created_at", ascending: false }];
+          case "date_asc":
+            return [{ column: "scheduled_ts", ascending: true }];
+          case "date_desc":
+            return [{ column: "scheduled_ts", ascending: false }];
+          case "pay_asc":
+            return [{ column: "job_pay", ascending: true }];
+          case "pay_desc":
+            return [{ column: "job_pay", ascending: false }];
+          default:
+            return [{ column: "created_at", ascending: false }];
+        }
+      }
+
+      function expandStatusFilter(value) {
+        const v = String(value || "").toLowerCase();
+        if (!v) return null;
+        if (v === "done") return ["done", "completed"];
+        return [v];
+      }
+
+      async function loadMyJobsWithFilters() {
+        showSkeleton(true);
+        const client = await ensureSupabaseClient();
+        if (!client) {
+          showSkeleton(false);
+          return;
+        }
+
+        const { data: u, error: uErr } = await client.auth.getUser();
+        if (uErr || !u?.user?.id) {
+          console.error("auth.getUser error:", uErr);
+          cardsContainer.innerHTML = `<div class="empty"><span class="material-icons-sharp">person_off</span><span>Please log in to see your jobs.</span></div>`;
+          notifyWarn("Please sign in to view your job posts.");
+          showSkeleton(false);
+          return;
+        }
+        const userId = u.user.id;
+
+        const statusVal = statusFilter.value;
+        const sortVal = sortSelect.value;
+        const searchVal = (searchInput.value || "").trim();
+
+        let q = fromInSchema(client, "jobs", "job")
+          .select(
+            "job_id, job_title, job_category, job_difficulty, job_pay, job_date, job_time, job_status, created_at, updated_at, installer_id_assigned, job_duration, job_picture_url, job_location, job_description, scheduled_ts"
+          )
+          .eq("posted_by", userId);
+
+        const statusList = expandStatusFilter(statusVal);
+        if (statusList) {
+          if (statusList.length === 1) {
+            q = q.eq("job_status", statusList[0]);
+          } else {
+            q = q.in("job_status", statusList);
+          }
+        }
+
+        if (searchVal.length >= 2) {
+          const term = `%${searchVal.replace(/%/g, "").replace(/_/g, "")}%`;
+          q = q.or(
+            [
+              `job_title.ilike.${term}`,
+              `job_description.ilike.${term}`,
+              `job_category.ilike.${term}`,
+              `job_location.ilike.${term}`,
+            ].join(",")
+          );
+        }
+
+        const sortSpec = mapSort(sortVal);
+        for (const s of sortSpec) {
+          q = q.order(s.column, { ascending: s.ascending, nullsFirst: false });
+        }
+
+        q = q.limit(300);
+
+        const { data: jobs, error } = await q;
+        if (error) {
+          console.error("jobs fetch error (filtered):", error);
+          notifyError("We couldn’t apply your filters. Showing default list.");
+          await loadMyJobs(); // fallback handles its own skeleton toggle
+          return;
+        }
+
+        JOBS = (jobs || []).map((j) => ({
+          ...j,
+          _duration_hours: intervalToHours(j.job_duration),
+        }));
+
+        // Installers (include profile_pic_url)
+        const installerIds = Array.from(
+          new Set(JOBS.map((j) => j.installer_id_assigned).filter(Boolean))
+        );
+        INSTALLER_BY_ID = new Map();
+        if (installerIds.length) {
+          const { data: installers, error: insErr } = await fromInSchema(
+            client,
+            "public",
+            "installer"
+          )
+            .select("id, name, email, profile_pic_url")
+            .in("id", installerIds)
+            .limit(1000);
+          if (insErr) {
+            console.error("installer fetch error:", insErr);
+            notifyWarn("Some installer profiles failed to load.");
+          } else {
+            (installers || []).forEach((i) => INSTALLER_BY_ID.set(i.id, i));
+          }
+        }
+
+        // Fetch applications for these jobs to count them (ADDED)
+        APPS_BY_JOB_ID = new Map();
+        if (JOBS.length) {
+          const jobIds = JOBS.map(j => j.job_id);
+          const { data: allApps, error: allAppsErr } = await fromInSchema(client, "jobs", "job_application")
+            .select("job_id, application_id")
+            .in("job_id", jobIds)
+            .in("status", ACTIVE_APPLICATION_STATUSES);
+          console.log("DEBUG: loadMyJobsWithFilters allApps =", allApps, "error =", allAppsErr);
+          if (!allAppsErr && allApps) {
+            allApps.forEach(a => {
+              if (!APPS_BY_JOB_ID.has(a.job_id)) APPS_BY_JOB_ID.set(a.job_id, []);
+              APPS_BY_JOB_ID.get(a.job_id).push(a);
+            });
+          }
+        }
+
+        render();
+      }
+
+      // ---------- Client filters ----------
+      function applyClientFilters() {
+        const searchValue = (searchInput.value || "").toLowerCase().trim();
+        const statusValue = (statusFilter.value || "").toLowerCase().trim();
+
+        const cards = Array.from(cardsContainer.querySelectorAll(".job-card"));
+        for (const card of cards) {
+          const title = card.getAttribute("data-title") || "";
+          const jobId = card.getAttribute("data-job-id");
+          const job = JOBS.find((j) => j.job_id === jobId);
+          if (!job) continue;
+
+          const posted = isJobPosted(job);
+          let matchesStatus = true;
+          if (statusValue) {
+            const st = normalizeJobStatus(job.job_status);
+            if (statusValue === "done" || statusValue === "completed") {
+              matchesStatus = (st === "done" || st === "completed");
+            } else {
+              matchesStatus = (st === statusValue);
+            }
+          }
+
+          const matchesSearch = !searchValue || title.includes(searchValue);
+
+          card.style.display = matchesSearch && matchesStatus ? "" : "none";
+        }
+      }
+
+      // ---------- Modal helpers ----------
+      function showJobModal() {
+        jobModal.style.display = "flex";
+        jobModal.setAttribute("aria-hidden", "false");
+      }
+      function hideJobModal() {
+        jobModal.style.display = "none";
+        jobModal.setAttribute("aria-hidden", "true");
+        CURRENT_JOB = null;
+        reschedWrap.style.display = "none";
+      }
+      function showInstModal() {
+        installerModal.style.display = "flex";
+        installerModal.setAttribute("aria-hidden", "false");
+      }
+      function hideInstModal() {
+        installerModal.style.display = "none";
+        installerModal.setAttribute("aria-hidden", "true");
+      }
+
+      function setBadge(status) {
+        const cls = statusClass(status);
+        jobStatusBadge.className = `badge ${cls}`;
+        jobStatusText.textContent = statusLabel(status);
+      }
+
+      function formatHistoryDate(value) {
+        if (!value) return "-";
+        const dt = new Date(value);
+        return Number.isNaN(dt.getTime()) ? String(value) : dt.toLocaleString();
+      }
+
+      function fieldCompareHtml(label, original, suggested) {
+        const a = original == null || original === "" ? "-" : String(original);
+        const b = suggested == null || suggested === "" ? "-" : String(suggested);
+        const same = a === b;
+        return `
+          <div style="border:1px solid #e5e7eb; border-radius:8px; padding:8px; background:#fff;">
+            <div style="font-size:0.75rem; color:#64748b; font-weight:800; text-transform:uppercase;">${escapeHtml(label)}</div>
+            ${same
+              ? `<div style="margin-top:4px;">${escapeHtml(b)}</div>`
+              : `<div style="display:grid; gap:6px; margin-top:6px;">
+                   <div style="background:#fff1f2; color:#991b1b; border:1px solid #fecdd3; border-radius:6px; padding:6px;"><strong>Removed:</strong> ${escapeHtml(a)}</div>
+                   <div style="background:#ecfdf5; color:#166534; border:1px solid #bbf7d0; border-radius:6px; padding:6px;"><strong>Added/Modified:</strong> ${escapeHtml(b)}</div>
+                 </div>`}
+          </div>`;
+      }
+
+      function renderReviewPanel(job) {
+        document.getElementById("jobReviewPanel")?.remove();
+        const data = getReviewData(job);
+        const history = Array.isArray(data?.history) ? data.history : [];
+        const original = data?.original_customer_version || data?.customer_version || {};
+        const suggested = data?.admin_suggested_version || null;
+        const currentStatus = normalizeJobStatus(job.job_status);
+
+        const steps = [
+          ["pending_review", "Requested"],
+          ["suggestion_sent", "Admin Review"],
+          ["suggestion_sent", "Suggestion Sent"],
+          ["customer_accepted", "Customer Accepted"],
+          ["approved", "Approved"],
+          ["active", "Active"],
+        ];
+        const activeIndex = currentStatus === "active"
+          ? 5
+          : currentStatus === "approved"
+          ? 4
+          : currentStatus === "customer_accepted"
+          ? 3
+          : currentStatus === "suggestion_sent"
+          ? 2
+          : currentStatus === "appeal_submitted"
+          ? 1
+          : 0;
+
+        const panel = document.createElement("div");
+        panel.id = "jobReviewPanel";
+        panel.className = "modal-card";
+        panel.style.marginTop = "16px";
+        panel.innerHTML = `
+          <h3 style="margin:0 0 10px; display:flex; align-items:center; gap:8px; color:var(--ink);">
+            <span class="material-icons-sharp">timeline</span> Review Timeline
+          </h3>
+          <div style="display:grid; grid-template-columns:repeat(6,minmax(0,1fr)); gap:6px; margin-bottom:14px;">
+            ${steps.map((step, index) => `
+              <div style="border:1px solid ${index <= activeIndex ? "#9ee2bd" : "#e5e7eb"}; background:${index <= activeIndex ? "#ecfdf5" : "#f8fafc"}; color:${index <= activeIndex ? "#166534" : "#64748b"}; border-radius:8px; padding:8px; text-align:center; font-size:0.78rem; font-weight:800;">
+                ${escapeHtml(step[1])}
+              </div>`).join("")}
+          </div>
+          ${suggested ? `
+            <h3 style="margin:0 0 10px; display:flex; align-items:center; gap:8px; color:var(--ink);">
+              <span class="material-icons-sharp">compare_arrows</span> Version Comparison
+            </h3>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px;">
+              <div style="background:#f8fafc; border:1px solid #e5e7eb; border-radius:10px; padding:10px;">
+                <strong>Customer Version</strong>
+                <div style="display:grid; gap:8px; margin-top:8px;">
+                  ${fieldCompareHtml("Budget", original.pay, original.pay)}
+                  ${fieldCompareHtml("Level", difficultyToText(original.difficulty), difficultyToText(original.difficulty))}
+                  ${fieldCompareHtml("Description", original.description, original.description)}
+                </div>
+              </div>
+              <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:10px;">
+                <strong>Admin Version</strong>
+                <div style="display:grid; gap:8px; margin-top:8px;">
+                  ${fieldCompareHtml("Budget", original.pay, suggested.pay)}
+                  ${fieldCompareHtml("Level", difficultyToText(original.difficulty), difficultyToText(suggested.difficulty))}
+                  ${fieldCompareHtml("Description", original.description, suggested.description)}
+                </div>
+              </div>
+            </div>` : ""}
+          <h3 style="margin:0 0 10px; display:flex; align-items:center; gap:8px; color:var(--ink);">
+            <span class="material-icons-sharp">history</span> Activity History
+          </h3>
+          <div style="display:grid; gap:6px;">
+            ${(history.length ? history : [{ at: job.created_at, by: "Customer", action: "Customer created request", status: "pending_review" }]).map((h) => `
+              <div style="display:grid; grid-template-columns:1.2fr 1fr 1.5fr; gap:8px; border:1px solid #e5e7eb; border-radius:8px; padding:8px; font-size:0.85rem;">
+                <span>${escapeHtml(formatHistoryDate(h.at))}</span>
+                <span>${escapeHtml(h.role || h.by || "User")}</span>
+                <strong>${escapeHtml(h.action || statusLabel(h.status))}</strong>
+              </div>`).join("")}
+          </div>`;
+        modalApplicantsSection.before(panel);
+      }
+
+      async function setJobHeroImage(job) {
+        const ref = job.job_picture_url && String(job.job_picture_url).trim();
+        if (!ref) {
+          jobHero.style.display = "none";
+          jobHero.removeAttribute("src");
+          return;
+        }
+        const signed = await resolveJobPictureSignedUrl(ref);
+        if (signed) {
+          jobHero.src = signed;
+          jobHero.style.display = "block";
+        } else {
+          if (/^https?:\/\//i.test(ref)) {
+            jobHero.src = ref;
+            jobHero.style.display = "block";
+          } else {
+            jobHero.style.display = "none";
+            jobHero.removeAttribute("src");
+          }
+        }
+      }
+
+      async function fillJobModal(job) {
+        CURRENT_JOB = job;
+        const status = normalizeJobStatus(job.job_status);
+        
+        const displayValues = displayReviewValues(job);
+        const displayPay = displayValues.pay;
+        const displayDifficulty = displayValues.difficulty;
+        const displayDesc = displayValues.description;
+
+        jobTitleEl.textContent = job.job_title || "—";
+        
+        // Custom badge for lifecycle status
+        if (
+          job.installer_id_assigned &&
+          status === "active"
+        ) {
+          jobStatusBadge.className = "badge status-approved";
+          jobStatusText.textContent = "Settled";
+        } else {
+          setBadge(status);
+        }
+
+        await setJobHeroImage(job);
+
+        // NEW: fill hero overlay with job title + location
+        if (jobTitleHeroEl) {
+          jobTitleHeroEl.textContent = job.job_title || "—";
+        }
+        if (jobLocationHeroEl) {
+          jobLocationHeroEl.textContent = job.job_location || "";
+        }
+
+        mCategory.textContent = job.job_category || "—";
+        mDiff.textContent = difficultyToText(displayDifficulty);
+        mPay.textContent = formatPeso(displayPay);
+        mWhen.textContent = `${fmtDate(job.job_date)} • ${fmtTime(
+          job.job_time
+        )}`;
+        mDuration.textContent =
+          job._duration_hours != null ? `${job._duration_hours} hour(s)` : "—";
+        mLocation.textContent = job.job_location || "—";
+        mDesc.textContent = displayDesc || "—";
+
+        renderReviewPanel(job);
+
+        // Hide applicants section by default
+        modalApplicantsSection.style.display = "none";
+        modalApplicantsList.innerHTML = "";
+
+        if (status === "active") {
+          // Fetch applicants
+          const client = await ensureSupabaseClient();
+          const { data: apps, error: appErr } = await fromInSchema(client, "jobs", "job_application")
+            .select("application_id, installer_id, status, applied_at, admin_recommended, admin_recommended_at")
+            .eq("job_id", job.job_id)
+            .in("status", ACTIVE_APPLICATION_STATUSES);
+          console.log("DEBUG: fillJobModal apps =", apps, "error =", appErr);
+
+          if (!appErr && apps && apps.length > 0) {
+            modalApplicantsSection.style.display = "block";
+            modalApplicantsList.innerHTML = "<div class='muted'>Loading profiles...</div>";
+
+            const installerIds = apps.map(a => a.installer_id);
+            const { data: installers, error: instErr } = await fromInSchema(client, "public", "installer")
+              .select("id, name, profession, highestQualification, employmentStatus, profile_pic_url, email, phone, employer, levelstatus")
+              .in("id", installerIds);
+
+            if (!instErr && installers) {
+              modalApplicantsList.innerHTML = "";
+              const instMap = new Map(installers.map(i => [i.id, i]));
+              const matchingRequest = await getMatchingPaymentRequestForJob(client, job.job_id);
+              
+              apps.forEach(app => {
+                const installer = instMap.get(app.installer_id);
+                if (!installer) return;
+                const isThisRequested =
+                  matchingRequest &&
+                  String(matchingRequest.applicationId) === String(app.application_id);
+                const hasAnyRequest =
+                  matchingRequest &&
+                  ["pending", "approved"].includes(String(matchingRequest.status || "").toLowerCase());
+                const chooseLabel = isThisRequested
+                  ? String(matchingRequest.status || "pending").toLowerCase() === "approved"
+                    ? "Selected"
+                    : "Payment Pending"
+                  : hasAnyRequest
+                  ? "Selection Pending"
+                  : "Choose Applicant";
+                const chooseDisabled = hasAnyRequest;
+                
+                const initialStr = initials(installer.name);
+                const recommendedBadge = app.admin_recommended
+                  ? `<span style="display:inline-flex;align-items:center;gap:4px;margin-top:4px;color:#b91c1c;font-size:0.76rem;font-weight:700;">
+                      <span class="material-icons-sharp" style="font-size:1rem;">favorite</span>
+                      Admin recommended
+                    </span>`
+                  : "";
+                const itemDiv = document.createElement("div");
+                itemDiv.style.display = "flex";
+                itemDiv.style.alignItems = "center";
+                itemDiv.style.justifyContent = "space-between";
+                itemDiv.style.padding = "10px";
+                itemDiv.style.border = "1px solid var(--card-border)";
+                itemDiv.style.borderRadius = "10px";
+                itemDiv.style.background = "#fafcff";
+
+                itemDiv.innerHTML = `
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <div class="avatar" style="width:36px; height:36px; font-weight:700;">${initialStr}</div>
+                    <div>
+                      <strong style="color:var(--ink);">${escapeHtml(installer.name)}</strong><br/>
+                      <small class="muted" style="font-size:0.8rem;">${escapeHtml(installer.profession || 'Installer')}</small>
+                      <div>${recommendedBadge}</div>
+                    </div>
+                  </div>
+                  <div>
+                    <button class="btn btn-ghost btn-view-profile" style="padding:0.4rem 0.6rem; font-size:0.8rem; height:auto;">
+                      <span class="material-icons-sharp" style="font-size:1.1rem;">visibility</span> Review Profile
+                    </button>
+                    <button class="btn btn-primary btn-choose-applicant" ${chooseDisabled ? "disabled" : ""} style="padding:0.4rem 0.6rem; font-size:0.8rem; height:auto; margin-left:6px;">
+                      <span class="material-icons-sharp" style="font-size:1.1rem;">how_to_reg</span> ${chooseLabel}
+                    </button>
+                  </div>
+                `;
+
+                // Add event listener to View Profile button
+                itemDiv.querySelector(".btn-view-profile").addEventListener("click", () => {
+                  openCustomerApplicantProfileDetail(installer);
+                });
+                itemDiv.querySelector(".btn-choose-applicant")?.addEventListener("click", () => {
+                  openMatchingPaymentRequest(job, app, installer);
+                });
+
+                modalApplicantsList.appendChild(itemDiv);
+              });
+            } else {
+              modalApplicantsList.innerHTML = "<div class='muted'>Failed to load profiles.</div>";
+            }
+          }
+        }
+
+        // Installer label + photo (if available)
+        let instLabel = "Unassigned";
+        let profileUrl = null;
+        if (
+          job.installer_id_assigned &&
+          INSTALLER_BY_ID.has(job.installer_id_assigned)
+        ) {
+          const i = INSTALLER_BY_ID.get(job.installer_id_assigned);
+          instLabel = i?.name || "Assigned";
+          profileUrl = i?.profile_pic_url || null;
+        }
+        mInstaller.textContent = instLabel;
+
+        // Try to show installer profile photo in modal header block
+        instAvatar.style.display = "grid";
+        instAvatar.textContent = initials(instLabel);
+        instAvatarImg.style.display = "none";
+        instAvatarImg.removeAttribute("src");
+        if (profileUrl) {
+          try {
+            const signed = await resolveInstallerPictureSignedUrl(profileUrl);
+            if (signed) {
+              instAvatar.textContent = "";
+              instAvatarImg.src = signed;
+              instAvatarImg.style.display = "block";
+            }
+          } catch (e) {
+            console.warn(
+              "Installer modal avatar signing failed:",
+              e?.message || e
+            );
+          }
+        }
+
+        // Actions
+        reschedWrap.style.display = "none";
+        renderCustomerLifecycleActions(job, status, !!job.installer_id_assigned);
+      }
+
+      function cacheJobBeforeNav(job) {
+        return () => {
+          try {
+            sessionStorage.setItem("edit_job_cache", JSON.stringify(job));
+          } catch {}
+        };
+      }
+
+      function addHistoryToDescription(job, action, status, extra = {}) {
+        const now = new Date().toISOString();
+        const data = getReviewData(job);
+        const history = Array.isArray(data.history) ? data.history : [];
+        return JSON.stringify({
+          ...data,
+          ...extra,
+          is_review_workflow: true,
+          version: Number(data.version || 0) + 1,
+          updated_at: now,
+          history: [
+            ...history,
+            { at: now, by: "customer", role: "customer", action, status },
+          ],
+        });
+      }
+
+      function addButton(label, icon, className, onClick) {
+        const btn = document.createElement("button");
+        btn.className = className;
+        btn.innerHTML = `<span class="material-icons-sharp">${icon}</span> ${label}`;
+        btn.addEventListener("click", async () => {
+          btn.disabled = true;
+          try {
+            await onClick(btn);
+          } finally {
+            btn.disabled = false;
+          }
+        });
+        return btn;
+      }
+
+      function addLink(label, icon, className, href, onClick) {
+        const link = document.createElement("a");
+        link.className = className;
+        link.href = href;
+        link.innerHTML = `<span class="material-icons-sharp">${icon}</span> ${label}`;
+        if (onClick) link.addEventListener("click", onClick);
+        return link;
+      }
+
+      function renderCustomerLifecycleActions(job, status, assigned) {
+        modalBtns.innerHTML = "";
+
+        if (assigned && status === "active") {
+          modalBtns.appendChild(
+            addButton("View Installer", "badge", "btn btn-ghost", () =>
+              openInstallerProfile(job.installer_id_assigned)
+            )
+          );
+        }
+
+        if (status === "pending_review") {
+          modalBtns.append(
+            addLink(
+              "Edit",
+              "edit",
+              "btn btn-primary",
+              `createPost.html?job_id=${encodeURIComponent(job.job_id)}`,
+              cacheJobBeforeNav(job)
+            ),
+            addButton("Withdraw", "cancel", "btn btn-danger", async () => {
+              const ok = await confirmDialog({
+                title: "Withdraw this request?",
+                text: "This will stop the review and mark the request as cancelled.",
+                confirmText: "Withdraw",
+              });
+              if (!ok) return;
+              await updateJob(
+                job.job_id,
+                {
+                  job_status: "cancelled",
+                  job_description: addHistoryToDescription(
+                    job,
+                    "Customer withdrew request",
+                    "cancelled"
+                  ),
+                },
+                "Request withdrawn."
+              );
+              hideJobModal();
+              await loadMyJobsWithFilters();
+            })
+          );
+          return;
+        }
+
+        if (status === "suggestion_sent") {
+          modalBtns.append(
+            addButton("Accept Suggestion", "done", "btn btn-primary", async () => {
+              await acceptSuggestion(job);
+            }),
+            addLink(
+              "Edit & Resubmit",
+              "edit",
+              "btn btn-warning",
+              `createPost.html?job_id=${encodeURIComponent(job.job_id)}`,
+              cacheJobBeforeNav(job)
+            )
+          );
+          return;
+        }
+
+        if (status === "approved") {
+          modalBtns.appendChild(
+            addButton("Post Job", "publish", "btn btn-primary", async () => {
+              await postApprovedJob(job);
+            })
+          );
+          return;
+        }
+
+        if (status === "active") {
+          modalBtns.appendChild(
+            addButton("Request Cancellation", "pending_actions", "btn btn-danger", async () => {
+              await requestCancellation(job);
+            })
+          );
+          return;
+        }
+
+        if (status === "cancelled") {
+          modalBtns.appendChild(
+            addButton("Reapply", "restart_alt", "btn btn-primary", async () => {
+              await updateJob(
+                job.job_id,
+                {
+                  job_status: "pending_review",
+                  job_description: addHistoryToDescription(
+                    job,
+                    "Customer reapplied cancelled job",
+                    "pending_review",
+                    { is_posted: false }
+                  ),
+                },
+                "Job returned to Pending Review."
+              );
+              hideJobModal();
+              await loadMyJobsWithFilters();
+            })
+          );
+        }
+      }
+
+      async function acceptSuggestion(job) {
+        const data = getReviewData(job);
+        const suggested = data.admin_suggested_version;
+        if (!suggested) {
+          notifyWarn("There is no admin suggestion to accept.");
+          return;
+        }
+
+        const acceptedDescription = JSON.stringify({
+          ...data,
+          is_review_workflow: true,
+          is_posted: false,
+          current_description: suggested.description || data.current_description || "",
+          description: suggested.description || data.description || "",
+          customer_version: {
+            ...(data.customer_version || {}),
+            pay: suggested.pay ?? job.job_pay,
+            difficulty: suggested.difficulty ?? job.job_difficulty,
+            description: suggested.description || "",
+          },
+          version: Number(data.version || 0) + 1,
+          updated_at: new Date().toISOString(),
+          history: [
+            ...(Array.isArray(data.history) ? data.history : []),
+            {
+              at: new Date().toISOString(),
+              by: "customer",
+              role: "customer",
+              action: "Customer accepted suggestion",
+              status: "customer_accepted",
+            },
+          ],
+        });
+
+        const ok = await updateJob(
+          job.job_id,
+          {
+            job_pay: suggested.pay ?? job.job_pay,
+            job_difficulty: suggested.difficulty ?? job.job_difficulty,
+            job_description: acceptedDescription,
+            job_status: "customer_accepted",
+          },
+          "Suggestion accepted and sent to admin."
+        );
+        if (ok) {
+          hideJobModal();
+          await loadMyJobsWithFilters();
+        }
+      }
+
+      async function postApprovedJob(job) {
+        const okConfirm = await confirmDialog({
+          title: "Post this job?",
+          text: "Once active, job details, requirements, pricing, and scope can no longer be edited.",
+          confirmText: "Post Job",
+          icon: "info",
+        });
+        if (!okConfirm) return;
+
+        const ok = await updateJob(
+          job.job_id,
+          {
+            job_status: "active",
+            job_description: addHistoryToDescription(
+              job,
+              "Customer posted job",
+              "active",
+              { is_posted: true }
+            ),
+          },
+          "Your job post is now active and open to installers!"
+        );
+        if (ok) {
+          hideJobModal();
+          await loadMyJobsWithFilters();
+        }
+      }
+
+      async function requestCancellation(job) {
+        const result = await Swal.fire({
+          title: "Request cancellation",
+          input: "textarea",
+          inputLabel: "Cancellation reason",
+          inputPlaceholder: "Explain why this active job should be cancelled.",
+          inputValidator: (value) => {
+            if (!value || !value.trim()) return "Please provide a cancellation reason.";
+            return null;
+          },
+          showCancelButton: true,
+          confirmButtonText: "Submit Request",
+          confirmButtonColor: "#20a44c",
+        });
+        if (!result.isConfirmed) return;
+
+        const ok = await updateJob(
+          job.job_id,
+          {
+            job_status: "cancellation_pending",
+            job_description: addHistoryToDescription(
+              job,
+              "Customer requested cancellation",
+              "cancellation_pending",
+              { cancellation_reason: result.value.trim() }
+            ),
+          },
+          "Cancellation request sent to admin."
+        );
+        if (ok) {
+          hideJobModal();
+          await loadMyJobsWithFilters();
+        }
+      }
+
+      // Update job helper (SweetAlert messages)
+      async function updateJob(job_id, updates, successMsg = "Updated.") {
+        const client = await ensureSupabaseClient();
+        const previousJob = JOBS.find((j) => j.job_id === job_id);
+        const payload = { ...updates, updated_at: new Date().toISOString() };
+        let query = fromInSchema(client, "jobs", "job")
+          .update(payload)
+          .eq("job_id", job_id);
+        if (previousJob?.updated_at) {
+          query = query.eq("updated_at", previousJob.updated_at);
+        }
+        const { data: updatedRows, error } = await query
+          .select("job_id, updated_at");
+        if (error) {
+          console.error(error);
+          notifyError(error.message || "Please try again.");
+          return false;
+        }
+        if (!updatedRows || updatedRows.length === 0) {
+          notifyWarn("This job was updated by another user. Please refresh.");
+          return false;
+        }
+        if (
+          previousJob &&
+          isJobPosted(previousJob) &&
+          String(previousJob.job_status || "").toLowerCase() === "approved" &&
+          String(updates.job_status || "").toLowerCase() === "pending"
+        ) {
+          try {
+            const invalidatedCount = await invalidateApplicationsForEditedJob(client, job_id);
+            if (invalidatedCount > 0) {
+              APPS_BY_JOB_ID.delete(job_id);
+              successMsg = `${successMsg} ${invalidatedCount} active application(s) were invalidated.`;
+            }
+          } catch (appError) {
+            console.error(appError);
+            notifyError(appError.message || "Applications could not be invalidated.");
+            return false;
+          }
+        }
+        const idx = JOBS.findIndex((j) => j.job_id === job_id);
+        if (idx >= 0) {
+          JOBS[idx] = { ...JOBS[idx], ...payload, updated_at: updatedRows[0].updated_at };
+          if (updates.job_duration)
+            JOBS[idx]._duration_hours = intervalToHours(updates.job_duration);
+        }
+        render();
+        notifySuccess(successMsg);
+        return true;
+      }
+
+      async function invalidateApplicationsForEditedJob(client, jobIdToInvalidate) {
+        const { data: activeApps, error: fetchErr } = await fromInSchema(client, "jobs", "job_application")
+          .select("application_id")
+          .eq("job_id", jobIdToInvalidate)
+          .in("status", ACTIVE_APPLICATION_STATUSES);
+
+        if (fetchErr) throw fetchErr;
+        if (!activeApps?.length) return 0;
+
+        let lastError = null;
+        for (const status of APPLICATION_INVALIDATION_STATUSES) {
+          const { error } = await fromInSchema(client, "jobs", "job_application")
+            .update({
+              status,
+              updated_at: new Date().toISOString(),
+            })
+            .eq("job_id", jobIdToInvalidate)
+            .in("status", ACTIVE_APPLICATION_STATUSES);
+
+          if (!error) return activeApps.length;
+          lastError = error;
+          if (!/enum|invalid input value/i.test(error.message || "")) break;
+        }
+        throw lastError;
+      }
+
+      async function deleteJob(job) {
+        if (job.installer_id_assigned) {
+          notifyWarn(
+            "This job already has an assigned installer and cannot be deleted."
+          );
+          return;
+        }
+        const ok = await confirmDialog({
+          title: "Delete this job?",
+          text: "This will permanently remove the post.",
+          confirmText: "Delete",
+          icon: "warning",
+        });
+        if (!ok) return;
+
+        const client = await ensureSupabaseClient();
+        const { error } = await fromInSchema(client, "jobs", "job")
+          .delete()
+          .eq("job_id", job.job_id);
+        if (error) {
+          console.error(error);
+          notifyError(error.message || "Delete failed. Please try again.");
+          return;
+        }
+        JOBS = JOBS.filter((j) => j.job_id !== job.job_id);
+        render();
+        hideJobModal();
+        notifySuccess("Job was deleted.");
+      }
+
+      async function openInstallerProfile(installerId) {
+        const client = await ensureSupabaseClient();
+        let inst = INSTALLER_BY_ID.get(installerId);
+        if (
+          !inst ||
+          !inst.email ||
+          !("phone" in inst) ||
+          !("profile_pic_url" in inst)
+        ) {
+          const { data, error } = await fromInSchema(
+            client,
+            "public",
+            "installer"
+          )
+            .select(
+              'id, name, email, phone, profession, employer, "highestQualification", "employmentStatus", levelstatus, profile_pic_url'
+            )
+            .eq("id", installerId)
+            .maybeSingle();
+          if (error) {
+            console.error(error);
+            notifyWarn("We couldn’t load full installer details.");
+          }
+          if (data) {
+            inst = data;
+            INSTALLER_BY_ID.set(installerId, data);
+          }
+        }
+
+        const name = inst?.name || "—";
+        instAvatar.textContent = initials(name);
+        instAvatar.style.display = "grid";
+        instAvatarImg.style.display = "none";
+        instAvatarImg.removeAttribute("src");
+
+        // Try photo
+        if (inst?.profile_pic_url) {
+          try {
+            const signed = await resolveInstallerPictureSignedUrl(
+              inst.profile_pic_url
+            );
+            if (signed) {
+              instAvatar.textContent = "";
+              instAvatarImg.src = signed;
+              instAvatarImg.style.display = "block";
+            }
+          } catch (e) {
+            console.warn(
+              "Installer profile modal photo failed:",
+              e?.message || e
+            );
+          }
+        }
+
+        instName.textContent = name;
+        instEmail.textContent = inst?.email || "—";
+        instPhone.textContent = inst?.phone || "—";
+        instProfession.textContent = inst?.profession || "—";
+        instEmployer.textContent = inst?.employer || "—";
+        instQual.textContent = inst?.highestQualification || "—";
+        instEmpStatus.textContent = inst?.employmentStatus || "—";
+        instLevel.textContent = Number.isFinite(inst?.levelstatus)
+          ? String(inst.levelstatus)
+          : "—";
+
+        showInstModal();
+      }
+
+      async function resolveResumeSignedUrl(resumePath) {
+        if (!resumePath) return null;
+        if (/^https?:\/\//i.test(resumePath)) return resumePath;
+        try {
+          const ref = parseStorageRefWithDefault(resumePath, "documents_review");
+          return await createSignedUrl(ref.bucket, ref.path, 3600);
+        } catch (e) {
+          console.warn("Failed to resolve resume URL:", e);
+          return null;
+        }
+      }
+
+      let customerCourseCatalogCache = null;
+
+      function normalizeLessonPayload(row, index = 0) {
+        const payload = row?.content || row?.body || row?.lesson || row || {};
+        return {
+          id: payload.id || row?.id || `lesson-${index + 1}`,
+          title: payload.title || row?.title || `Lesson ${index + 1}`,
+          questions: payload.questions || row?.questions || [],
+          assessments: payload.assessments || row?.assessments || [],
+        };
+      }
+
+      function parseStructuredSectionLessons(row) {
+        const candidates = [row?.content, row?.body, row?.lessons, row?.lesson_data];
+        for (const candidate of candidates) {
+          try {
+            const parsed = typeof candidate === "string" ? JSON.parse(candidate) : candidate;
+            if (Array.isArray(parsed)) return parsed.map((l, idx) => normalizeLessonPayload(l, idx));
+            if (Array.isArray(parsed?.lessons)) return parsed.lessons.map((l, idx) => normalizeLessonPayload(l, idx));
+          } catch (e) {}
+        }
+        return null;
+      }
+
+      async function ensureCustomerCourseCatalog(client) {
+        if (customerCourseCatalogCache) return customerCourseCatalogCache;
+
+        const { data: courses, error: errC } = await fromInSchema(client, "course", "courses").select("*");
+        if (errC) throw errC;
+
+        const { data: sections, error: errS } = await fromInSchema(client, "course", "sections")
+          .select("*")
+          .order("position", { ascending: true });
+        if (errS) throw errS;
+
+        const { data: contents, error: errL } = await fromInSchema(client, "course", "section_contents")
+          .select("*")
+          .order("position", { ascending: true });
+        if (errL) throw errL;
+
+        const contentsBySection = new Map();
+        for (const row of contents || []) {
+          const arr = contentsBySection.get(row.section_id) || [];
+          arr.push(row);
+          contentsBySection.set(row.section_id, arr);
+        }
+
+        const sectionsByCourse = new Map();
+        for (const row of sections || []) {
+          const arr = sectionsByCourse.get(row.course_id) || [];
+          const sectionContents = contentsBySection.get(row.id) || [];
+          const lessons = [];
+          if (sectionContents.length) {
+            const bundled = parseStructuredSectionLessons(sectionContents[0]);
+            if (bundled) lessons.push(...bundled);
+            else sectionContents.forEach((cnt, idx) => lessons.push(normalizeLessonPayload(cnt, idx)));
+          }
+          arr.push({
+            id: row.id,
+            title: row.title || "Level",
+            lessons: lessons.filter(Boolean),
+          });
+          sectionsByCourse.set(row.course_id, arr);
+        }
+
+        customerCourseCatalogCache = (courses || []).map((course) => ({
+          id: course.id,
+          title: course.title || "Course",
+          description: course.description || "",
+          levels: sectionsByCourse.get(course.id) || [],
+        }));
+        return customerCourseCatalogCache;
+      }
+
+      function buildCustomerCourseBadges(state = { library: [], certificates: {} }, catalog = []) {
+        const library = Array.isArray(state.library) ? state.library : [];
+        const certificates = state.certificates || {};
+        const badges = [];
+
+        for (const course of catalog) {
+          let totalLessons = 0;
+          let completedLessons = 0;
+          const completedLessonBadges = [];
+
+          for (const level of course.levels || []) {
+            for (const lesson of level.lessons || []) {
+              totalLessons += 1;
+              const done = library.some(
+                (x) =>
+                  String(x.courseId) === String(course.id) &&
+                  String(x.levelId) === String(level.id) &&
+                  String(x.lessonId) === String(lesson.id) &&
+                  x.isCompleted
+              );
+              if (done) {
+                completedLessons += 1;
+                completedLessonBadges.push({
+                  title: `${course.title} - ${lesson.title || "Lesson"}`,
+                  meta: `${level.title || "Level"} lesson completed`,
+                  status: "earned",
+                  certificatePath: "",
+                });
+              }
+            }
+          }
+
+          const allDone = totalLessons > 0 && completedLessons === totalLessons;
+          const cert = certificates[String(course.id)] || certificates[course.id] || null;
+          if (allDone) {
+            badges.push({
+              title: `${course.title} - Professional Certification`,
+              meta: "Course completed",
+              status: "earned",
+              certificatePath: cert?.path || "",
+            });
+          } else {
+            badges.push(...completedLessonBadges);
+          }
+        }
+
+        return badges;
+      }
+
+      async function loadCustomerApplicantCredentials(client, installerId) {
+        const result = {
+          docs: {},
+          courseBadges: [],
+          completedJobs: [],
+        };
+
+        try {
+          const { data: docs, error } = await fromInSchema(client, "public", "installer_documents")
+            .select("resume, resume_status, certificates, certificates_status")
+            .eq("installer_id", installerId)
+            .maybeSingle();
+          if (error) throw error;
+          result.docs = docs || {};
+        } catch (error) {
+          console.warn("Full applicant documents could not load, trying fallbacks:", error);
+          try {
+            const { data: resumeDoc, error: resumeErr } = await fromInSchema(client, "public", "installer_documents")
+              .select("resume")
+              .eq("installer_id", installerId)
+              .maybeSingle();
+            if (resumeErr) throw resumeErr;
+            result.docs = { ...result.docs, ...(resumeDoc || {}) };
+          } catch (resumeError) {
+            console.warn("Applicant resume fallback could not load:", resumeError);
+          }
+          try {
+            const { data: certDoc, error: certErr } = await fromInSchema(client, "public", "installer_documents")
+              .select("certificates, certificates_status")
+              .eq("installer_id", installerId)
+              .maybeSingle();
+            if (certErr) throw certErr;
+            result.docs = { ...result.docs, ...(certDoc || {}) };
+          } catch (certError) {
+            console.warn("Applicant certificate fallback could not load:", certError);
+          }
+        }
+
+        try {
+          const { data: states, error } = await fromInSchema(client, "public", "simp_course_state")
+            .select("state_key, state_value")
+            .eq("owner_key", `user:${installerId}`)
+            .in("state_key", ["myStudyRoomLibrary", "myStudyRoomCertificates"]);
+          if (error) throw error;
+          const state = { library: [], certificates: {} };
+          for (const row of states || []) {
+            try {
+              if (row.state_key === "myStudyRoomLibrary") state.library = JSON.parse(row.state_value || "[]");
+              if (row.state_key === "myStudyRoomCertificates") state.certificates = JSON.parse(row.state_value || "{}");
+            } catch (e) {}
+          }
+          const catalog = await ensureCustomerCourseCatalog(client);
+          result.courseBadges = buildCustomerCourseBadges(state, catalog);
+        } catch (error) {
+          console.warn("Applicant course accomplishments could not load:", error);
+        }
+
+        try {
+          const { data: doneApps, error: doneErr } = await fromInSchema(client, "jobs", "job_application")
+            .select("application_id, job_id, installer_id, status, updated_at, applied_at")
+            .eq("installer_id", installerId)
+            .in("status", ["done", "completed"]);
+          if (doneErr) throw doneErr;
+
+          const doneJobIds = [...new Set((doneApps || []).map((a) => a.job_id).filter(Boolean))];
+          if (doneJobIds.length) {
+            const { data: doneJobs, error: jobsErr } = await fromInSchema(client, "jobs", "job")
+              .select("job_id, job_title, job_category, job_status, job_date")
+              .in("job_id", doneJobIds);
+            if (jobsErr) throw jobsErr;
+            const doneJobById = new Map((doneJobs || []).map((j) => [j.job_id, j]));
+            result.completedJobs = (doneApps || []).map((app) => {
+              const job = doneJobById.get(app.job_id) || {};
+              return {
+                title: job.job_title || "Completed job",
+                meta: job.job_category || "Job accomplishment",
+                date: job.job_date || app.updated_at || app.applied_at || "",
+              };
+            });
+          }
+        } catch (error) {
+          console.warn("Applicant completed jobs could not load:", error);
+        }
+
+        return result;
+      }
+
+      async function getCurrentCustomerId(client) {
+        const { data, error } = await client.auth.getUser();
+        if (error) throw error;
+        return data?.user?.id || null;
+      }
+
+      async function getMatchingPaymentSettings(client) {
+        const { data, error } = await fromInSchema(client, "public", "simp_course_state")
+          .select("state_value")
+          .eq("owner_key", MATCHING_PAYMENT_SETTINGS_OWNER)
+          .eq("state_key", MATCHING_PAYMENT_SETTINGS_KEY)
+          .maybeSingle();
+        if (error) {
+          console.warn("Matching payment settings could not load:", error);
+          return { matchingAmount: 0 };
+        }
+        try {
+          return JSON.parse(data?.state_value || "{}") || { matchingAmount: 0 };
+        } catch {
+          return { matchingAmount: 0 };
+        }
+      }
+
+      async function getCustomerMatchingPaymentRequests(client, customerId) {
+        if (!customerId) return [];
+        const { data, error } = await fromInSchema(client, "public", "simp_course_state")
+          .select("state_value")
+          .eq("owner_key", `user:${customerId}`)
+          .eq("state_key", MATCHING_PAYMENT_STATE_KEY)
+          .maybeSingle();
+        if (error) throw error;
+        try {
+          const parsed = JSON.parse(data?.state_value || "[]");
+          return Array.isArray(parsed) ? parsed : [];
+        } catch {
+          return [];
+        }
+      }
+
+      async function saveCustomerMatchingPaymentRequests(client, customerId, requests) {
+        const { error } = await fromInSchema(client, "public", "simp_course_state")
+          .upsert({
+            owner_key: `user:${customerId}`,
+            state_key: MATCHING_PAYMENT_STATE_KEY,
+            state_value: JSON.stringify(requests),
+            updated_at: new Date().toISOString(),
+          }, { onConflict: "owner_key,state_key" });
+        if (error) throw error;
+      }
+
+      async function getMatchingPaymentRequestForJob(client, jobId) {
+        try {
+          const customerId = await getCurrentCustomerId(client);
+          const requests = await getCustomerMatchingPaymentRequests(client, customerId);
+          return requests.find((req) =>
+            String(req.jobId) === String(jobId) &&
+            ["pending", "approved"].includes(String(req.status || "").toLowerCase())
+          ) || null;
+        } catch (error) {
+          console.warn("Matching payment request lookup failed:", error);
+          return null;
+        }
+      }
+
+      async function uploadMatchingPaymentReceipt(client, customerId, jobId, applicationId, file) {
+        if (!file) return "";
+        const ext = (file.name.split(".").pop() || "png").toLowerCase();
+        const fileName = safeStorageFileName(`${jobId}_${applicationId}_receipt`) + "." + ext;
+        const filePath = `${customerId}/matching_receipts/${fileName}`;
+        const { data, error } = await client.storage
+          .from("documents_review")
+          .upload(filePath, file, { upsert: true });
+        if (error) throw error;
+        return data?.path || filePath;
+      }
+
+      async function openMatchingPaymentRequest(job, app, installer) {
+        const client = await ensureSupabaseClient();
+        const customerId = await getCurrentCustomerId(client);
+        if (!customerId) {
+          notifyWarn("Please sign in again before choosing an applicant.");
+          return;
+        }
+
+        const settings = await getMatchingPaymentSettings(client);
+        const amount = Number(settings.matchingAmount || settings.amount || 0);
+        if (!Number.isFinite(amount) || amount <= 0) {
+          notifyWarn("The admin has not set the matching payment amount yet.");
+          return;
+        }
+
+        const existing = await getMatchingPaymentRequestForJob(client, job.job_id);
+        if (existing) {
+          notifyInfo("A matching payment request is already pending for this job.");
+          return;
+        }
+
+        let matchingCheckoutPayload = null;
+        await Swal.fire({
+          title: "",
+          width: 560,
+          padding: 0,
+          showConfirmButton: false,
+          showCancelButton: false,
+          customClass: {
+            popup: "matching-checkout-popup",
+          },
+          html: `
+            <style>
+              .matching-checkout-popup { border-radius:24px !important; overflow:hidden !important; }
+              .match-checkout { text-align:left; font-family:inherit; }
+              .match-checkout-header { background:linear-gradient(135deg,#1e3f2c 0%,#2f9855 100%); color:#fff; padding:1.25rem 1.75rem; display:flex; align-items:center; justify-content:space-between; }
+              .match-checkout-title { display:flex; align-items:center; gap:10px; font-size:1.05rem; font-weight:800; letter-spacing:.08em; text-transform:uppercase; }
+              .match-checkout-close { width:32px; height:32px; border-radius:50%; border:0; background:rgba(255,255,255,.14); color:#fff; cursor:pointer; display:grid; place-items:center; }
+              .match-checkout-body { max-height:72vh; overflow:auto; padding:1.75rem; }
+              .match-summary { background:linear-gradient(180deg,#f4fbf6 0%,#fbfefb 100%); border:1px dashed rgba(99,167,121,.32); border-radius:16px; padding:1.2rem 1.4rem; margin-bottom:1.5rem; }
+              .match-summary-label { font-size:.74rem; font-weight:800; text-transform:uppercase; letter-spacing:.06em; color:#567062; margin-bottom:4px; }
+              .match-summary-title { font-size:1.08rem; font-weight:800; color:#0f172a; margin-bottom:8px; line-height:1.35; }
+              .match-summary-sub { font-size:.94rem; color:#475569; margin-bottom:12px; }
+              .match-divider { border-top:1px solid rgba(99,167,121,.16); margin:8px 0; }
+              .match-price-row { display:flex; justify-content:space-between; align-items:center; padding-top:4px; gap:12px; }
+              .match-price-label { font-size:.9rem; font-weight:800; color:#0f172a; }
+              .match-price { font-size:1.35rem; font-weight:900; color:#2f9855; white-space:nowrap; }
+              .match-method-header { font-size:.88rem; font-weight:900; text-transform:uppercase; letter-spacing:.05em; color:#334155; margin-bottom:10px; }
+              .match-tabs { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:1.5rem; }
+              .match-tab { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:86px; padding:12px 6px; border:2px solid #e2e8f0; border-radius:16px; background:#fff; cursor:pointer; transition:all .2s ease; }
+              .match-tab.active { border-color:#2f9855; background:rgba(47,152,85,.05); box-shadow:0 8px 20px rgba(47,152,85,.12); }
+              .match-tab-icon { width:38px; height:38px; border-radius:10px; display:grid; place-items:center; margin-bottom:6px; font-size:1.25rem; }
+              .match-tab[data-method="gcash"] .match-tab-icon { background:#f0f7ff; color:#005aff; }
+              .match-tab[data-method="card"] .match-tab-icon { background:#fbf0ff; color:#9333ea; }
+              .match-tab[data-method="bank"] .match-tab-icon { background:#fffbeb; color:#d97706; }
+              .match-tab-label { font-size:.78rem; font-weight:800; color:#475569; }
+              .match-panel { display:none; animation:matchFade .22s ease; }
+              .match-panel.active { display:block; }
+              @keyframes matchFade { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+              .match-info-box { background:#f8fafc; border:1px solid #e2e8f0; border-radius:14px; padding:1.1rem; margin-bottom:1.25rem; }
+              .match-info-box.gcash { background:#eff6ff; border-color:#bfdbfe; }
+              .match-info-heading { font-size:.8rem; font-weight:900; text-transform:uppercase; letter-spacing:.05em; margin-bottom:8px; border-bottom:1px solid rgba(15,23,42,.08); padding-bottom:4px; color:#214833; }
+              .match-info-box.gcash .match-info-heading { color:#1d4ed8; }
+              .match-detail { display:flex; justify-content:space-between; gap:12px; font-size:.88rem; color:#475569; margin-bottom:6px; }
+              .match-detail:last-child { margin-bottom:0; }
+              .match-detail strong { color:#0f172a; text-align:right; overflow-wrap:anywhere; }
+              .match-note { font-size:.8rem; color:#64748b; line-height:1.5; margin-bottom:1.25rem; }
+              .match-field { display:flex; flex-direction:column; gap:6px; margin-bottom:1.15rem; }
+              .match-field label { font-size:.82rem; font-weight:800; color:#334155; }
+              .match-input { width:100%; border:1.5px solid #cbd5e1; border-radius:12px; padding:11px 14px; font:inherit; color:#0f172a; background:#fff; }
+              .match-input:focus { outline:0; border-color:#2f9855; box-shadow:0 0 0 3px rgba(47,152,85,.14); }
+              .match-row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+              .match-file { border:1.5px dashed #cbd5e1; border-radius:14px; padding:16px; text-align:center; cursor:pointer; color:#475569; background:#f8fafc; }
+              .match-file.has-file { border-color:#2f9855; background:#f4fbf6; color:#157347; }
+              .match-file input { display:none; }
+              .match-submit { width:100%; padding:12px 18px; border-radius:999px; border:0; background:linear-gradient(135deg,#237543 0%,#2f9855 100%); color:#fff; font:inherit; font-weight:800; cursor:pointer; box-shadow:0 10px 22px rgba(47,152,85,.22); }
+              .match-submit.blue { background:#1d4ed8; }
+              .match-secure-footer { display:flex; align-items:center; justify-content:center; gap:8px; font-size:.8rem; color:#64748b; margin-top:1.5rem; padding-top:1rem; border-top:1px solid #e2e8f0; }
+              @media (max-width:520px) { .match-checkout-body { padding:1rem; } .match-tabs { gap:8px; } .match-row { grid-template-columns:1fr; } .match-detail { flex-direction:column; gap:2px; } .match-detail strong { text-align:left; } }
+            </style>
+            <div class="match-checkout">
+              <div class="match-checkout-header">
+                <div class="match-checkout-title"><span class="material-icons-sharp">verified_user</span> SIMP Secure Checkout</div>
+                <button type="button" class="match-checkout-close" id="matchingCheckoutClose" aria-label="Close checkout"><span class="material-icons-sharp">close</span></button>
+              </div>
+              <div class="match-checkout-body">
+                <div class="match-summary">
+                  <div class="match-summary-label">Installer Matching Payment</div>
+                  <div class="match-summary-title">${escapeHtml(job.job_title || "Job Matching")}</div>
+                  <div class="match-summary-sub">Applicant: ${escapeHtml(installer.name || "Selected installer")}</div>
+                  <div class="match-divider"></div>
+                  <div class="match-price-row">
+                    <span class="match-price-label">Total to Pay:</span>
+                    <span class="match-price">${formatPeso(amount)}</span>
+                  </div>
+                </div>
+
+                <div class="match-method-header">Select Payment Method</div>
+                <div class="match-tabs" id="matchingCheckoutTabs">
+                  <button type="button" class="match-tab active" data-method="gcash">
+                    <span class="match-tab-icon"><span class="material-icons-sharp">account_balance_wallet</span></span>
+                    <span class="match-tab-label">GCash</span>
+                  </button>
+                  <button type="button" class="match-tab" data-method="card">
+                    <span class="match-tab-icon"><span class="material-icons-sharp">credit_card</span></span>
+                    <span class="match-tab-label">Card</span>
+                  </button>
+                  <button type="button" class="match-tab" data-method="bank">
+                    <span class="match-tab-icon"><span class="material-icons-sharp">account_balance</span></span>
+                    <span class="match-tab-label">Bank</span>
+                  </button>
+                </div>
+
+                <div class="match-panel active" id="matchingPanel-gcash">
+                  <div class="match-info-box gcash">
+                    <div class="match-info-heading">SIMP GCash Account Details</div>
+                    <div class="match-detail"><span>Account Name:</span><strong>${escapeHtml(settings.gcashName || "GCash Transfer")}</strong></div>
+                    <div class="match-detail"><span>Account Number:</span><strong>${escapeHtml(settings.gcashNum || "Not set")}</strong></div>
+                  </div>
+                  <p class="match-note">Please transfer the exact matching fee using your GCash app. Once sent, provide the reference number and upload your payment receipt below.</p>
+                  <div class="match-field">
+                    <label for="matchingGcashReference">GCash Reference Number</label>
+                    <input id="matchingGcashReference" class="match-input" placeholder="Ref No. (e.g. 2883 482 184918)">
+                  </div>
+                  <div class="match-field">
+                    <label>Upload Proof of Payment</label>
+                    <label class="match-file" id="matchingGcashFileBox">
+                      <span class="material-icons-sharp">cloud_upload</span>
+                      <div id="matchingGcashFileText">Click to select GCash receipt screenshot</div>
+                      <input id="matchingGcashReceiptFile" type="file" accept="image/*,application/pdf">
+                    </label>
+                  </div>
+                  <button type="button" class="match-submit blue" data-submit-method="gcash">Submit GCash Payment</button>
+                </div>
+
+                <div class="match-panel" id="matchingPanel-card">
+                  <div class="match-info-box">
+                    <div class="match-info-heading">Card Payment Display</div>
+                    <div class="match-detail"><span>Merchant:</span><strong>${escapeHtml(settings.cardMerchantName || "SIMP Secure Checkout")}</strong></div>
+                    <div class="match-detail"><span>Note:</span><strong>${escapeHtml(settings.cardInstructions || "Card payments are submitted for admin verification.")}</strong></div>
+                  </div>
+                  <div class="match-field">
+                    <label for="matchingCardName">Cardholder Name</label>
+                    <input id="matchingCardName" class="match-input" placeholder="Juan dela Cruz">
+                  </div>
+                  <div class="match-field">
+                    <label for="matchingCardNumber">Card Number</label>
+                    <input id="matchingCardNumber" class="match-input" placeholder="4111 2222 3333 4444" maxlength="19">
+                  </div>
+                  <div class="match-row">
+                    <div class="match-field">
+                      <label for="matchingCardExpiry">Expiration Date</label>
+                      <input id="matchingCardExpiry" class="match-input" placeholder="MM/YY" maxlength="5">
+                    </div>
+                    <div class="match-field">
+                      <label for="matchingCardCvv">CVV / Security Code</label>
+                      <input id="matchingCardCvv" type="password" class="match-input" placeholder="123" maxlength="4">
+                    </div>
+                  </div>
+                  <button type="button" class="match-submit" data-submit-method="card">Pay Securely ${formatPeso(amount)}</button>
+                </div>
+
+                <div class="match-panel" id="matchingPanel-bank">
+                  <div class="match-info-box">
+                    <div class="match-info-heading">SIMP Company Account Details</div>
+                    <div class="match-detail"><span>Bank:</span><strong>${escapeHtml(settings.bankName || "Bank Transfer")}</strong></div>
+                    <div class="match-detail"><span>Account Name:</span><strong>${escapeHtml(settings.bankAccName || "Not set")}</strong></div>
+                    <div class="match-detail"><span>Account Number:</span><strong>${escapeHtml(settings.bankAccNum || "Not set")}</strong></div>
+                  </div>
+                  <p class="match-note">Please transfer the exact matching fee using your banking app. Once sent, provide the reference number and upload your payment receipt below.</p>
+                  <div class="match-field">
+                    <label for="matchingBankReference">Transaction Reference Number</label>
+                    <input id="matchingBankReference" class="match-input" placeholder="Bank reference number">
+                  </div>
+                  <div class="match-field">
+                    <label>Upload Proof of Payment</label>
+                    <label class="match-file" id="matchingBankFileBox">
+                      <span class="material-icons-sharp">cloud_upload</span>
+                      <div id="matchingBankFileText">Click to select bank receipt screenshot</div>
+                      <input id="matchingBankReceiptFile" type="file" accept="image/*,application/pdf">
+                    </label>
+                  </div>
+                  <button type="button" class="match-submit" data-submit-method="bank">Submit Payment Verification</button>
+                </div>
+
+                <div class="match-secure-footer">
+                  <span class="material-icons-sharp" style="font-size:16px; color:#22c55e;">lock</span>
+                  Payment request is sent to admin for verification before matching is activated.
+                </div>
+              </div>
+            </div>
+          `,
+          didOpen: () => {
+            const switchMethod = (method) => {
+              document.querySelectorAll("#matchingCheckoutTabs .match-tab").forEach((tab) => {
+                tab.classList.toggle("active", tab.dataset.method === method);
+              });
+              document.querySelectorAll(".match-panel").forEach((panel) => {
+                panel.classList.toggle("active", panel.id === `matchingPanel-${method}`);
+              });
+            };
+            document.getElementById("matchingCheckoutClose")?.addEventListener("click", () => Swal.close());
+            document.querySelectorAll("#matchingCheckoutTabs .match-tab").forEach((tab) => {
+              tab.addEventListener("click", () => switchMethod(tab.dataset.method));
+            });
+            const wireFile = (inputId, boxId, textId) => {
+              const input = document.getElementById(inputId);
+              const box = document.getElementById(boxId);
+              const text = document.getElementById(textId);
+              input?.addEventListener("change", () => {
+                const file = input.files?.[0];
+                if (!file) return;
+                box?.classList.add("has-file");
+                if (text) text.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+              });
+            };
+            wireFile("matchingGcashReceiptFile", "matchingGcashFileBox", "matchingGcashFileText");
+            wireFile("matchingBankReceiptFile", "matchingBankFileBox", "matchingBankFileText");
+            const cardNumber = document.getElementById("matchingCardNumber");
+            cardNumber?.addEventListener("input", (event) => {
+              const digits = event.target.value.replace(/\D/g, "").slice(0, 16);
+              event.target.value = digits.replace(/(.{4})/g, "$1 ").trim();
+            });
+            const cardExpiry = document.getElementById("matchingCardExpiry");
+            cardExpiry?.addEventListener("input", (event) => {
+              const digits = event.target.value.replace(/\D/g, "").slice(0, 4);
+              event.target.value = digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits;
+            });
+            document.querySelectorAll("[data-submit-method]").forEach((button) => {
+              button.addEventListener("click", () => {
+                const method = button.dataset.submitMethod;
+                let payload = null;
+                if (method === "gcash") {
+                  const referenceNumber = document.getElementById("matchingGcashReference")?.value?.trim() || "";
+                  const receiptFile = document.getElementById("matchingGcashReceiptFile")?.files?.[0] || null;
+                  if (referenceNumber.length < 5) {
+                    Swal.showValidationMessage("Please enter a valid GCash reference number.");
+                    return;
+                  }
+                  if (!receiptFile) {
+                    Swal.showValidationMessage("Please upload your GCash proof of payment.");
+                    return;
+                  }
+                  payload = { paymentMethod: "GCash e-Wallet", referenceNumber, receiptFile };
+                } else if (method === "bank") {
+                  const referenceNumber = document.getElementById("matchingBankReference")?.value?.trim() || "";
+                  const receiptFile = document.getElementById("matchingBankReceiptFile")?.files?.[0] || null;
+                  if (referenceNumber.length < 5) {
+                    Swal.showValidationMessage("Please enter a valid bank reference number.");
+                    return;
+                  }
+                  if (!receiptFile) {
+                    Swal.showValidationMessage("Please upload your bank proof of payment.");
+                    return;
+                  }
+                  payload = { paymentMethod: `Bank Transfer (${settings.bankName || "Bank"})`, referenceNumber, receiptFile };
+                } else {
+                  const name = document.getElementById("matchingCardName")?.value?.trim() || "";
+                  const number = document.getElementById("matchingCardNumber")?.value?.replace(/\D/g, "") || "";
+                  const expiry = document.getElementById("matchingCardExpiry")?.value?.trim() || "";
+                  const cvv = document.getElementById("matchingCardCvv")?.value?.trim() || "";
+                  if (name.length < 3) {
+                    Swal.showValidationMessage("Please enter the full name on the card.");
+                    return;
+                  }
+                  if (number.length !== 16) {
+                    Swal.showValidationMessage("Card number must be exactly 16 digits.");
+                    return;
+                  }
+                  if (!/^\d{2}\/\d{2}$/.test(expiry)) {
+                    Swal.showValidationMessage("Expiry must be in MM/YY format.");
+                    return;
+                  }
+                  if (cvv.length < 3 || cvv.length > 4) {
+                    Swal.showValidationMessage("CVV must be 3 or 4 digits.");
+                    return;
+                  }
+                  const last4 = number.slice(-4);
+                  payload = {
+                    paymentMethod: "Debit/Credit Card",
+                    referenceNumber: `CARD-${Date.now()}-${last4}`,
+                    receiptFile: null,
+                  };
+                }
+                matchingCheckoutPayload = payload;
+                Swal.close();
+              });
+            });
+          },
+        });
+        if (!matchingCheckoutPayload) return;
+
+        Swal.fire({
+          title: "Submitting request...",
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading(),
+        });
+
+        try {
+          const receiptUrl = await uploadMatchingPaymentReceipt(
+            client,
+            customerId,
+            job.job_id,
+            app.application_id,
+            matchingCheckoutPayload.receiptFile
+          );
+          const requests = await getCustomerMatchingPaymentRequests(client, customerId);
+          const now = Date.now();
+          const request = {
+            requestId: `match-${job.job_id}-${app.application_id}-${now}`,
+            customerId,
+            jobId: job.job_id,
+            jobTitle: job.job_title || "Job",
+            applicationId: app.application_id,
+            installerId: app.installer_id,
+            installerName: installer.name || "Installer",
+            amount,
+            paymentMethod: matchingCheckoutPayload.paymentMethod,
+            referenceNumber: matchingCheckoutPayload.referenceNumber,
+            receiptUrl,
+            status: "pending",
+            submittedAt: now,
+            updatedAt: now,
+          };
+          requests.push(request);
+          await saveCustomerMatchingPaymentRequests(client, customerId, requests);
+          Swal.close();
+          notifySuccess("Matching payment submitted for admin approval.");
+          await fillJobModal(job);
+        } catch (error) {
+          console.error(error);
+          Swal.close();
+          notifyError(error.message || "Could not submit matching payment.");
+        }
+      }
+
+      async function openInstallerProfileDetail(installer) {
+        let avatarSection = `<div class="inst-avatar" style="width:56px; height:56px; line-height:56px; border-radius:50%; background:#111827; color:#fff; display:grid; place-items:center; font-weight:800; font-size:1.4rem;">${initials(installer.name)}</div>`;
+        
+        if (installer.profile_pic_url) {
+          try {
+            const signed = await resolveInstallerPictureSignedUrl(installer.profile_pic_url);
+            if (signed) {
+              avatarSection = `<img src="${signed}" alt="${escapeHtml(installer.name)}" style="width:56px; height:56px; border-radius:50%; object-fit:cover; border:1px solid var(--card-border);" />`;
+            }
+          } catch(e) {}
+        }
+
+        // Fetch installer's resume dynamically
+        let resumeUrl = null;
+        let hasResume = false;
+        try {
+          const client = await ensureSupabaseClient();
+          const { data: docData, error: docErr } = await fromInSchema(client, "public", "installer_documents")
+            .select("resume")
+            .eq("installer_id", installer.id)
+            .maybeSingle();
+          if (!docErr && docData && docData.resume) {
+            resumeUrl = await resolveResumeSignedUrl(docData.resume);
+            if (resumeUrl) hasResume = true;
+          }
+        } catch (e) {
+          console.warn("Failed to load installer resume:", e);
+        }
+
+        Swal.fire({
+          title: 'Installer Profile',
+          width: '600px',
+          html: `
+            <div style="text-align:left; font-family: inherit;">
+              <div style="display:flex; gap:16px; align-items:center; margin-bottom:16px;">
+                ${avatarSection}
+                <div>
+                  <h4 style="margin:0; font-weight:800; font-size:1.2rem; color:var(--ink);">${escapeHtml(installer.name)}</h4>
+                  <div style="color:var(--muted); font-size:0.9rem;">${escapeHtml(installer.profession || '—')}</div>
+                </div>
+              </div>
+              
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom: 14px;">
+                <div class="modal-card" style="padding:10px; border:1px solid #e5e7eb; border-radius:8px;">
+                  <div style="margin-bottom:8px;">
+                    <span style="font-size:0.75rem; color:#9ca3af; text-transform:uppercase; font-weight:700;">Email</span><br/>
+                    <span style="color:#1f2937; font-size:0.9rem;">${escapeHtml(installer.email || '—')}</span>
+                  </div>
+                  <div style="margin-bottom:8px;">
+                    <span style="font-size:0.75rem; color:#9ca3af; text-transform:uppercase; font-weight:700;">Phone</span><br/>
+                    <span style="color:#1f2937; font-size:0.9rem;">${escapeHtml(installer.phone || '—')}</span>
+                  </div>
+                  <div>
+                    <span style="font-size:0.75rem; color:#9ca3af; text-transform:uppercase; font-weight:700;">Employer</span><br/>
+                    <span style="color:#1f2937; font-size:0.9rem;">${escapeHtml(installer.employer || '—')}</span>
+                  </div>
+                </div>
+                
+                <div class="modal-card" style="padding:10px; border:1px solid #e5e7eb; border-radius:8px;">
+                  <div style="margin-bottom:8px;">
+                    <span style="font-size:0.75rem; color:#9ca3af; text-transform:uppercase; font-weight:700;">Qualification</span><br/>
+                    <span style="color:#1f2937; font-size:0.9rem;">${escapeHtml(installer.highestQualification || '—')}</span>
+                  </div>
+                  <div style="margin-bottom:8px;">
+                    <span style="font-size:0.75rem; color:#9ca3af; text-transform:uppercase; font-weight:700;">Employment Status</span><br/>
+                    <span style="color:#1f2937; font-size:0.9rem;">${escapeHtml(installer.employmentStatus || '—')}</span>
+                  </div>
+                  <div>
+                    <span style="font-size:0.75rem; color:#9ca3af; text-transform:uppercase; font-weight:700;">Installer Level</span><br/>
+                    <strong style="color:#1f2937; font-size:1rem;">Level ${installer.levelstatus ?? '0'}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal-card" style="padding:12px; border:1px solid #e5e7eb; border-radius:8px;">
+                <span style="font-size:0.75rem; color:#9ca3af; text-transform:uppercase; font-weight:700; display:block; margin-bottom:4px;">Resume / CV Document</span>
+                ${hasResume 
+                  ? `<a href="${resumeUrl}" target="_blank" class="btn btn-ghost" style="display:inline-flex; align-items:center; gap:6px; margin-top:4px; background:#eef2f7; padding:0.5rem 0.8rem; border-radius:8px; text-decoration:none; color:var(--ink); font-weight:600; border: 1px solid var(--card-border);">
+                      <span class="material-icons-sharp" style="font-size:1.2rem;">description</span> View Resume / CV
+                     </a>` 
+                  : `<span style="color:#ef4444; font-size:0.9rem; font-weight:600; display:inline-block; margin-top:4px;">No resume uploaded by installer</span>`
+                }
+              </div>
+            </div>
+          `,
+          confirmButtonText: 'Close',
+          confirmButtonColor: '#1c2430'
+        });
+      }
+
+      async function openCustomerApplicantProfileDetail(installer) {
+        const client = await ensureSupabaseClient();
+        const installerId = installer?.id || installer?.installer_id;
+        let avatarSection = `<div class="applicant-profile-initials">${initials(installer.name)}</div>`;
+
+        if (installer.profile_pic_url) {
+          try {
+            const signed = await resolveInstallerPictureSignedUrl(installer.profile_pic_url);
+            if (signed) {
+              avatarSection = `<img class="applicant-profile-avatar" src="${signed}" alt="${escapeHtml(installer.name)}" />`;
+            }
+          } catch (e) {}
+        }
+
+        const credentials = await loadCustomerApplicantCredentials(client, installerId);
+        const docs = credentials.docs || {};
+        const resumePath = (docs.resume || "").trim();
+        const certPaths = Array.isArray(docs.certificates) ? docs.certificates.filter(Boolean) : [];
+        const certStatuses = Array.isArray(docs.certificates_status) ? docs.certificates_status : [];
+        const courseBadges = credentials.courseBadges || [];
+        const completedJobs = credentials.completedJobs || [];
+
+        const certificateCards = certPaths.length
+          ? certPaths.map((path, idx) => {
+              const status = certStatuses[idx] || "uploaded";
+              return `
+                <div class="applicant-credential-card">
+                  <div class="applicant-credential-title">${escapeHtml(fileNameFromPath(path, `Certificate ${idx + 1}`))}</div>
+                  <span class="applicant-credential-status ${credentialStatusClass(status)}">${escapeHtml(status)}</span>
+                  <button class="applicant-credential-action" type="button" data-cert-path="${escapeHtml(path)}">
+                    <span class="material-icons-sharp" style="font-size:16px">open_in_new</span>
+                    Open Certificate
+                  </button>
+                </div>
+              `;
+            }).join("")
+          : `<div class="applicant-empty-mini">No certificates uploaded yet.</div>`;
+
+        const courseCards = courseBadges.length
+          ? courseBadges.map((badge) => `
+              <div class="applicant-credential-card">
+                <div class="applicant-credential-title">${escapeHtml(badge.title)}</div>
+                <div class="applicant-credential-meta">${escapeHtml(badge.meta)}</div>
+                <span class="applicant-credential-status ${badge.status === "earned" ? "approved" : "pending"}">${escapeHtml(badge.status)}</span>
+                ${
+                  badge.certificatePath
+                    ? `<button class="applicant-credential-action" type="button" data-cert-path="${escapeHtml(badge.certificatePath)}">
+                        <span class="material-icons-sharp" style="font-size:16px">workspace_premium</span>
+                        View Course Certificate
+                      </button>`
+                    : ""
+                }
+              </div>
+            `).join("")
+          : `<div class="applicant-empty-mini">No course accomplishments yet.</div>`;
+
+        const jobCards = completedJobs.length
+          ? completedJobs.map((job) => `
+              <div class="applicant-credential-card">
+                <div class="applicant-credential-title">${escapeHtml(job.title)}</div>
+                <div class="applicant-credential-meta">${escapeHtml(job.meta || "Completed job")}</div>
+                <span class="applicant-credential-status approved">completed</span>
+              </div>
+            `).join("")
+          : `<div class="applicant-empty-mini">No completed jobs recorded yet.</div>`;
+
+        Swal.fire({
+          title: "Applicant",
+          width: "880px",
+          html: `
+            <div class="applicant-profile">
+              <div class="applicant-profile-top">
+                ${avatarSection}
+                <div>
+                  <div style="font-weight:800; line-height:1.1; color:var(--ink);">${escapeHtml(installer.name || "N/A")}</div>
+                  <div style="color:var(--muted); font-size:12px">${escapeHtml(installer.profession || "N/A")}</div>
+                  <div class="applicant-profile-summary">
+                    <span class="applicant-profile-pill"><span class="material-icons-sharp" style="font-size:14px">military_tech</span>Level ${escapeHtml(installer.levelstatus ?? 0)}</span>
+                    <span class="applicant-profile-pill"><span class="material-icons-sharp" style="font-size:14px">school</span>${courseBadges.length} Course Badge${courseBadges.length === 1 ? "" : "s"}</span>
+                    <span class="applicant-profile-pill"><span class="material-icons-sharp" style="font-size:14px">task_alt</span>${completedJobs.length} Job${completedJobs.length === 1 ? "" : "s"} Done</span>
+                    <span class="applicant-profile-pill"><span class="material-icons-sharp" style="font-size:14px">verified</span>${certPaths.length} Certificate${certPaths.length === 1 ? "" : "s"}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="applicant-profile-grid">
+                <div class="applicant-profile-item"><label>Qualification</label><span>${escapeHtml(installer.highestQualification || "N/A")}</span></div>
+                <div class="applicant-profile-item"><label>Employment Status</label><span>${escapeHtml(installer.employmentStatus || "N/A")}</span></div>
+                <div class="applicant-profile-item"><label>Contact Number</label><span>${installer.phone ? `<a href="tel:${escapeHtml(installer.phone)}">${escapeHtml(installer.phone)}</a>` : "N/A"}</span></div>
+                <div class="applicant-profile-item"><label>Email / Gmail</label><span>${installer.email ? `<a href="mailto:${escapeHtml(installer.email)}">${escapeHtml(installer.email)}</a>` : "N/A"}</span></div>
+              </div>
+              <div class="applicant-section-pair">
+                <div class="applicant-section">
+                  <h5>Resume</h5>
+                  <div class="applicant-credential-grid">
+                    <div class="applicant-credential-card">
+                      <div class="applicant-credential-title">${resumePath ? escapeHtml(fileNameFromPath(resumePath, "Resume")) : "No resume uploaded"}</div>
+                      <span class="applicant-credential-status ${credentialStatusClass(docs.resume_status)}">${escapeHtml(docs.resume_status || "not uploaded")}</span>
+                      ${resumePath ? `<button class="applicant-credential-action" type="button" data-resume-path="${escapeHtml(resumePath)}"><span class="material-icons-sharp" style="font-size:16px">description</span>Preview Resume</button>` : ""}
+                    </div>
+                  </div>
+                </div>
+                <div class="applicant-section">
+                  <h5>Certificates</h5>
+                  <div class="applicant-credential-grid">${certificateCards}</div>
+                </div>
+              </div>
+              <div class="applicant-section-pair">
+                <div class="applicant-section">
+                  <h5>Course Accomplished Badges</h5>
+                  <div class="applicant-credential-grid">${courseCards}</div>
+                </div>
+                <div class="applicant-section">
+                  <h5>Jobs Accomplished</h5>
+                  <div class="applicant-credential-grid">${jobCards}</div>
+                </div>
+              </div>
+            </div>
+          `,
+          confirmButtonText: "Close",
+          confirmButtonColor: "#1c2430",
+          didOpen: () => {
+            const popup = Swal.getPopup();
+            popup?.querySelector("[data-resume-path]")?.addEventListener("click", async (event) => {
+              const path = event.currentTarget.getAttribute("data-resume-path");
+              const url = await resolveResumeSignedUrl(path);
+              if (url) window.open(url, "_blank", "noopener");
+              else notifyWarn("We couldn't open this resume right now.");
+            });
+            popup?.querySelectorAll("[data-cert-path]").forEach((btn) => {
+              btn.addEventListener("click", async () => {
+                const path = btn.getAttribute("data-cert-path");
+                const url = await resolveResumeSignedUrl(path);
+                if (url) window.open(url, "_blank", "noopener");
+                else notifyWarn("We couldn't open this certificate right now.");
+              });
+            });
+          },
+        });
+      }
+
+      async function openReviewNegotiation(job) {
+        const data = getReviewData(job);
+        const original = data.original_customer_version || data.customer_version || {};
+        const suggested = data.admin_suggested_version;
+        if (!suggested || normalizeJobStatus(job.job_status) !== "suggestion_sent") {
+          notifyWarn("There is no pending admin suggestion for this job.");
+          return;
+        }
+
+        const originalLevel = original.difficulty;
+        const proposedLevel = suggested.difficulty;
+        const originalPay = original.pay;
+        const proposedPay = suggested.pay;
+        const originalDesc = original.description;
+        const proposedDesc = suggested.description;
+
+        Swal.fire({
+          title: 'Review Admin Suggestion',
+          width: '800px',
+          html: `
+            <div style="text-align:left; font-family: inherit; margin-top:8px;">
+              <p style="margin-top:0; color:#555; font-size:0.95rem;">Compare your original request with the admin suggested version. You can accept it or edit and resubmit.</p>
+              
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
+                <!-- Original Column -->
+                <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:12px;">
+                  <h4 style="margin:0 0 10px 0; color:#4b5563; border-bottom:1px solid #e5e7eb; padding-bottom:6px; display:flex; align-items:center; gap:6px;">
+                    <span class="material-icons-sharp" style="font-size:1.1rem;">history</span> Your Original Post
+                  </h4>
+                  <div style="margin-bottom:8px;">
+                    <span style="font-size:0.75rem; color:#9ca3af; text-transform:uppercase; font-weight:700;">Budget</span><br/>
+                    <strong style="font-size:1.1rem; color:#1f2937;">${formatPeso(originalPay)}</strong>
+                  </div>
+                  <div style="margin-bottom:8px;">
+                    <span style="font-size:0.75rem; color:#9ca3af; text-transform:uppercase; font-weight:700;">Installer Level Filter</span><br/>
+                    <strong style="color:#1f2937;">${difficultyToText(originalLevel)}</strong>
+                  </div>
+                  <div>
+                    <span style="font-size:0.75rem; color:#9ca3af; text-transform:uppercase; font-weight:700;">Instructions / Description</span><br/>
+                    <div style="font-size:0.9rem; color:#4b5563; max-height:120px; overflow-y:auto; white-space:pre-wrap; background:#fff; border:1px solid #e5e7eb; border-radius:6px; padding:6px; margin-top:4px;">${escapeHtml(originalDesc || "—")}</div>
+                  </div>
+                </div>
+
+                <!-- Proposed Column -->
+                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:12px;">
+                  <h4 style="margin:0 0 10px 0; color:#166534; border-bottom:1px solid #bbf7d0; padding-bottom:6px; display:flex; align-items:center; gap:6px;">
+                    <span class="material-icons-sharp" style="font-size:1.1rem;">auto_awesome</span> Admin's Proposal
+                  </h4>
+                  <div style="margin-bottom:8px;">
+                    <span style="font-size:0.75rem; color:#15803d; text-transform:uppercase; font-weight:700;">Proposed Budget</span><br/>
+                    <strong style="font-size:1.1rem; color:#14532d;">${formatPeso(proposedPay)}</strong>
+                    ${proposedPay !== originalPay ? `<span style="font-size:0.8rem; color:#16a34a; font-weight:700; margin-left:6px;">(Updated)</span>` : ''}
+                  </div>
+                  <div style="margin-bottom:8px;">
+                    <span style="font-size:0.75rem; color:#15803d; text-transform:uppercase; font-weight:700;">Proposed Level Filter</span><br/>
+                    <strong style="color:#14532d;">${difficultyToText(proposedLevel)}</strong>
+                    ${proposedLevel !== originalLevel ? `<span style="font-size:0.8rem; color:#16a34a; font-weight:700; margin-left:6px;">(Updated)</span>` : ''}
+                  </div>
+                  <div>
+                    <span style="font-size:0.75rem; color:#15803d; text-transform:uppercase; font-weight:700;">Proposed Instructions</span><br/>
+                    <div style="font-size:0.9rem; color:#14532d; max-height:120px; overflow-y:auto; white-space:pre-wrap; background:#fff; border:1px solid #bbf7d0; border-radius:6px; padding:6px; margin-top:4px;">${escapeHtml(proposedDesc || "—")}</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `,
+          showCancelButton: true,
+          showDenyButton: true,
+          confirmButtonText: 'Accept Suggestion',
+          denyButtonText: 'Edit & Resubmit',
+          cancelButtonText: 'Decide Later',
+          confirmButtonColor: '#20a44c',
+          denyButtonColor: '#f59e0b',
+        }).then(async (result) => {
+          if (result.isConfirmed) {
+            showSkeleton(true);
+            await acceptSuggestion(job);
+          } else if (result.isDenied) {
+            try {
+              sessionStorage.setItem("edit_job_cache", JSON.stringify(job));
+            } catch {}
+            window.location.href = `createPost.html?job_id=${encodeURIComponent(job.job_id)}`;
+          }
+        });
+      }
+
+      // ---------- Events ----------
+      searchInput.addEventListener("input", () => {
+        applyClientFilters();
+        const q = (searchInput.value || "").trim();
+        if (q.length >= 2 || q.length === 0) {
+          loadMyJobsWithFilters();
+        }
+      });
+
+      statusFilter.addEventListener("change", () => {
+        loadMyJobsWithFilters();
+      });
+
+      sortSelect.addEventListener("change", () => {
+        loadMyJobsWithFilters();
+      });
+
+      // Card clicks (details/edit)
+      cardsContainer.addEventListener("click", (e) => {
+        const card = e.target.closest(".job-card");
+        if (!card) return;
+        const jobId = card.dataset.jobId;
+        const job = JOBS.find((j) => j.job_id === jobId);
+        if (!job) return;
+
+        // Review buttons/banner
+        const reviewBannerBtn = e.target.closest(".btn-review-neg-banner");
+        const reviewActionBtn = e.target.closest(".btn-review-neg-action");
+        if (reviewBannerBtn || reviewActionBtn) {
+          e.preventDefault();
+          openReviewNegotiation(job);
+          return;
+        }
+
+        const postBtn = e.target.closest(".btn-post");
+        if (postBtn) {
+          e.preventDefault();
+          (async () => {
+            await postApprovedJob(job);
+          })();
+          return;
+        }
+
+        const reapplyBtn = e.target.closest(".btn-reapply");
+        if (reapplyBtn) {
+          e.preventDefault();
+          (async () => {
+            const ok = await updateJob(
+              job.job_id,
+              {
+                job_status: "pending_review",
+                job_description: addHistoryToDescription(
+                  job,
+                  "Customer reapplied cancelled job",
+                  "pending_review",
+                  { is_posted: false }
+                ),
+              },
+              "Job returned to Pending Review."
+            );
+            if (ok) await loadMyJobsWithFilters();
+          })();
+          return;
+        }
+
+        const detailsLink = e.target.closest("a.btn-details");
+        if (detailsLink) {
+          e.preventDefault();
+          (async () => {
+            await fillJobModal(job);
+            showJobModal();
+          })();
+          return;
+        }
+
+        const editLink = e.target.closest("a.btn-edit, a.btn-edit-visible");
+        if (editLink) {
+          try {
+            sessionStorage.setItem("edit_job_cache", JSON.stringify(job));
+          } catch {}
+        }
+      });
+
+      // Modal close handlers
+      jobCloseBtn.addEventListener("click", hideJobModal);
+      jobModal.addEventListener("click", (e) => {
+        if (e.target === jobModal) hideJobModal();
+      });
+      installerModal.addEventListener("click", (e) => {
+        if (e.target === installerModal) hideInstModal();
+      });
+      instCloseBtn.addEventListener("click", hideInstModal);
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          hideJobModal();
+          hideInstModal();
+        }
+      });
+
+      // ---------- Init ----------
+      showSkeleton(true);
+      loadMyJobs().then(() => {
+        loadMyJobsWithFilters();
+      });
+    </script>
+  </body>
+</html>

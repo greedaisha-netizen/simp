@@ -1,0 +1,1990 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../img/simpHappyMascotLogo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css_files/sideBar.css" />
+    <title>My Application</title>
+    <style>
+      /* ====== DO NOT CHANGE ANYTHING ====== */
+      /* Title */
+      .titlePageDiv h1 {
+        line-height: 1.2;
+        margin-bottom: 0.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .titlePageDiv h1 .material-icons-sharp {
+        font-size: 26px;
+        color: #20647c;
+      }
+
+      .titlePageDiv p {
+        font-size: 0.9rem;
+      }
+
+      .cancel-flow-debug {
+        display: none;
+        align-items: center;
+        gap: 0.35rem;
+        width: fit-content;
+        margin-top: 0.45rem;
+        padding: 0.35rem 0.65rem;
+        border-radius: 999px;
+        border: 1px solid #bfdbfe;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-size: 0.72rem;
+        font-weight: 700;
+      }
+
+      .cancel-flow-debug .material-icons {
+        font-size: 15px;
+      }
+
+      .application-confirm-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 10050;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background: rgba(15, 23, 42, 0.48);
+      }
+
+      .application-confirm-overlay.show {
+        display: flex;
+      }
+
+      .application-confirm-card {
+        width: min(420px, 100%);
+        border-radius: 14px;
+        background: #ffffff;
+        box-shadow: 0 24px 80px rgba(15, 23, 42, 0.22);
+        border: 1px solid #e5e7eb;
+        padding: 1.25rem;
+      }
+
+      .application-confirm-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fee2e2;
+        color: #b91c1c;
+        margin-bottom: 0.9rem;
+      }
+
+      .application-confirm-icon .material-icons {
+        font-size: 26px;
+      }
+
+      .application-confirm-title {
+        margin: 0 0 0.45rem;
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #111827;
+      }
+
+      .application-confirm-text {
+        margin: 0;
+        color: #4b5563;
+        line-height: 1.5;
+        font-size: 0.9rem;
+      }
+
+      .application-confirm-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.65rem;
+        margin-top: 1.2rem;
+      }
+
+      .application-confirm-actions button {
+        border: 0;
+        border-radius: 999px;
+        padding: 0.68rem 1rem;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .application-confirm-cancel {
+        background: #eef2f7;
+        color: #334155;
+      }
+
+      .application-confirm-submit {
+        background: #b91c1c;
+        color: #ffffff;
+      }
+
+      .cards {
+        margin-top: 1.4rem;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1.4rem;
+      }
+
+      .applicationsDiv {
+        background: var(--color-white);
+        border-radius: 20px;
+        box-shadow: var(--box-shadow);
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        border: 1px solid #e5e7eb;
+      }
+
+      .thumb img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+
+      .applicationsDiv .content {
+        padding: 1rem 1.2rem;
+        flex: 1;
+      }
+
+      .applicationsDiv .title {
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+
+      .applicationsDiv .title .material-icons-sharp {
+        font-size: 20px;
+        color: #20647c;
+      }
+
+      .meta-row {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin: 0.6rem 0 0.2rem;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.72rem;
+        line-height: 1;
+        padding: 0.42rem 0.8rem;
+        border-radius: 999px;
+        background: #eef2f7;
+        color: #374151;
+        border: 1px solid #e5e7eb;
+      }
+
+      .pill .material-icons,
+      .pill .material-icons-sharp {
+        font-size: 16px;
+        color: #20647c;
+      }
+
+      .info-grid {
+        display: grid;
+        gap: 0.6rem;
+        margin: 0.6rem 0 0.8rem;
+      }
+
+      .info-grid .label {
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: #0f172a;
+      }
+
+      .info-grid .label .material-icons,
+      .info-grid .label .material-icons-sharp {
+        font-size: 18px;
+        color: #20647c;
+      }
+
+      .desc {
+        font-size: 0.86rem;
+        margin: 0.4rem 0 1rem;
+        text-align: justify;
+      }
+
+      .apply {
+        margin: 0 1.2rem 1.2rem;
+        border-radius: 999px;
+        background: #cd201f;
+        color: #fff;
+        font-weight: 600;
+        padding: 0.8rem 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        gap: 0.5rem;
+      }
+
+      .apply .material-icons {
+        font-size: 20px;
+      }
+
+      .contentFirstRow {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      /* Search/filter row */
+      .searchBarDiv {
+        margin-top: 1rem;
+        display: grid;
+        grid-template-columns: 1.5fr auto;
+        gap: 0.6rem;
+        align-items: center;
+      }
+
+      .searchDiv {
+        background: var(--color-white);
+        border-radius: 999px;
+        box-shadow: var(--box-shadow);
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.8rem 1.2rem;
+      }
+
+      .searchDiv input {
+        flex: 1;
+        background: transparent;
+        font: inherit;
+        color: var(--color-dark);
+        border: none;
+        outline: none;
+      }
+
+      .searchDiv .material-icons-sharp {
+        font-size: 1.2rem;
+        color: #20647c;
+      }
+
+      .dropdown {
+        position: relative;
+      }
+
+      .dropbtn {
+        padding: 0.7rem 1rem;
+        border-radius: 999px;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+        box-shadow: var(--box-shadow);
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .dropbtn .current {
+        color: #6b7280;
+        font-weight: 500;
+        margin-left: 0.3rem;
+      }
+
+      .dropdown-content {
+        position: absolute;
+        top: 110%;
+        right: 0;
+        min-width: 220px;
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        box-shadow: var(--box-shadow);
+        display: none;
+        z-index: 10;
+        padding: 0.4rem;
+      }
+
+      .dropdown.open .dropdown-content {
+        display: block;
+      }
+
+      .dropdown-content a {
+        display: block;
+        padding: 0.6rem 0.8rem;
+        border-radius: 10px;
+        color: #1f2937;
+        text-decoration: none;
+        font-size: 0.92rem;
+      }
+
+      .dropdown-content a:hover {
+        background: #f3f4f6;
+      }
+
+      .scrollDownText {
+        text-align: center;
+        color: #6b7280;
+        font-size: 0.85rem;
+        margin-top: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+      }
+
+      .scrollDownText .material-icons {
+        font-size: 18px;
+      }
+
+      @media (max-width: 1200px) {
+        .cards {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 700px) {
+        .cards {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Status chips */
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.72rem;
+        line-height: 1;
+        padding: 0.42rem 0.8rem;
+        border-radius: 999px;
+        font-weight: 600;
+        border: 1px solid transparent;
+        white-space: nowrap;
+      }
+
+      .status .material-icons {
+        font-size: 16px;
+      }
+
+      .status-viewed {
+        background: #fff7ed;
+        color: #c2410c;
+        border-color: #ffedd5;
+      }
+
+      .status-accepted {
+        background: rgba(27, 156, 133, 0.12);
+        color: var(--color-success);
+        border-color: rgba(27, 156, 133, 0.25);
+      }
+
+      .status-rejected {
+        background: rgba(255, 0, 96, 0.1);
+        color: var(--color-danger);
+        border-color: rgba(255, 0, 96, 0.25);
+      }
+
+      .status-invalidated {
+        background: #fff7ed;
+        color: #c2410c;
+        border-color: #fed7aa;
+      }
+
+      .status-pending {
+        background: #f1f5f9;
+        color: #334155;
+        border-color: #e2e8f0;
+      }
+
+      .status-overdue {
+        background: #fff1f2;
+        color: #be123c;
+        border-color: #ffe4e6;
+      }
+
+      .status-done {
+        background: #ecfdf5;
+        color: #065f46;
+        border-color: #a7f3d0;
+      }
+
+      /* Animations & micro-interactions */
+      main {
+        --brand: #20a44c;
+        --accent: #20647c;
+        scroll-behavior: smooth;
+      }
+
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      main .titlePageDiv h1 {
+        animation: fadeUp 0.28s ease both;
+      }
+
+      main .titlePageDiv p {
+        animation: fadeUp 0.28s ease 0.06s both;
+      }
+
+      @keyframes cardIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+
+      main .cards > .applicationsDiv {
+        animation: cardIn 0.34s ease both;
+      }
+
+      main .cards > .applicationsDiv:nth-child(2) {
+        animation-delay: 0.05s;
+      }
+
+      main .cards > .applicationsDiv:nth-child(3) {
+        animation-delay: 0.1s;
+      }
+
+      main .cards > .applicationsDiv:nth-child(4) {
+        animation-delay: 0.15s;
+      }
+
+      main .applicationsDiv {
+        transition: transform 0.12s ease, box-shadow 0.22s ease,
+          border-color 0.2s ease;
+      }
+
+      main .applicationsDiv:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.08);
+      }
+
+      main .applicationsDiv::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 4px;
+        width: 25%;
+        background: linear-gradient(90deg, var(--accent), var(--brand));
+        transition: width 0.35s ease, background 0.25s ease;
+      }
+
+      main .applicationsDiv:has(.status-viewed)::before {
+        width: 50%;
+      }
+
+      main .applicationsDiv:has(.status-accepted)::before {
+        width: 100%;
+      }
+
+      main .applicationsDiv:has(.status-rejected)::before {
+        width: 100%;
+        background: linear-gradient(90deg, #e11d48, #f97316);
+      }
+
+      @keyframes shine {
+        to {
+          transform: translateX(250%) rotate(25deg);
+        }
+      }
+
+      main .thumb {
+        position: relative;
+        overflow: hidden;
+      }
+
+      main .thumb img {
+        transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+
+      main .applicationsDiv:hover .thumb img {
+        transform: scale(1.04);
+      }
+
+      main .thumb::after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -60%;
+        width: 60%;
+        height: 200%;
+        background: linear-gradient(
+          120deg,
+          rgba(255, 255, 255, 0) 0,
+          rgba(255, 255, 255, 0.45) 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        transform: translateX(-150%) rotate(25deg);
+        pointer-events: none;
+      }
+
+      main .applicationsDiv:hover .thumb::after {
+        animation: shine 0.9s ease;
+      }
+
+      @keyframes acceptPulse {
+        0%,
+        100% {
+          box-shadow: 0 0 0 0 rgba(32, 164, 76, 0);
+        }
+
+        50% {
+          box-shadow: 0 0 0 6px rgba(32, 164, 76, 0.16);
+        }
+      }
+
+      main .status {
+        transition: transform 0.12s ease, box-shadow 0.2s ease;
+      }
+
+      main .status:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.07);
+      }
+
+      main .status-accepted {
+        animation: acceptPulse 2.2s ease-in-out infinite;
+      }
+
+      .dropdown-content a .material-icons {
+        font-size: 18px;
+        vertical-align: middle;
+        margin-right: 0.35rem;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        main * {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
+
+      /* =========================
+         SKELETON LOADER (ADDED)
+         ========================= */
+      :root {
+        --sk-bg: #eef2f7;
+        --sk-shine: rgba(255, 255, 255, 0.55);
+      }
+
+      /* Hide real content while loading; show skeletons */
+      body.is-loading main .titlePageDiv,
+      body.is-loading main .searchBarDiv,
+      body.is-loading main #applicationsContainer,
+      body.is-loading main .scrollDownText {
+        display: none !important;
+      }
+
+      body.is-loading main #skeletonContainer {
+        display: grid !important;
+      }
+
+      /* Skeleton grid uses the same breakpoints as .cards */
+      #skeletonContainer.cards {
+        margin-top: 1.4rem;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 1.4rem;
+      }
+
+      @media (max-width: 1200px) {
+        #skeletonContainer.cards {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 700px) {
+        #skeletonContainer.cards {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .sk-card {
+        border-radius: 20px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: var(--box-shadow);
+      }
+
+      .sk-thumb {
+        height: 200px;
+        background: linear-gradient(
+          100deg,
+          var(--sk-bg) 20%,
+          #f5f7fb 40%,
+          var(--sk-bg) 60%
+        );
+        background-size: 200% 100%;
+        animation: sk-shimmer 1.1s linear infinite;
+      }
+
+      .sk-content {
+        padding: 1rem 1.2rem;
+      }
+
+      .sk-line {
+        height: 12px;
+        border-radius: 8px;
+        margin: 10px 0;
+        background: linear-gradient(
+          100deg,
+          var(--sk-bg) 20%,
+          #f5f7fb 40%,
+          var(--sk-bg) 60%
+        );
+        background-size: 200% 100%;
+        animation: sk-shimmer 1.1s linear infinite;
+      }
+
+      .sk-line.lg {
+        height: 16px;
+      }
+
+      .sk-line.sm {
+        height: 10px;
+        width: 60%;
+      }
+
+      .sk-chip-row {
+        display: flex;
+        gap: 8px;
+        margin: 12px 0 6px;
+      }
+
+      .sk-chip {
+        height: 22px;
+        width: 90px;
+        border-radius: 999px;
+        background: linear-gradient(
+          100deg,
+          var(--sk-bg) 20%,
+          #f5f7fb 40%,
+          var(--sk-bg) 60%
+        );
+        background-size: 200% 100%;
+        animation: sk-shimmer 1.1s linear infinite;
+      }
+
+      .sk-info {
+        display: grid;
+        gap: 10px;
+        margin: 10px 0 12px;
+      }
+
+      .sk-info .sk-line {
+        width: 80%;
+      }
+
+      .sk-btn {
+        height: 42px;
+        margin: 0 1.2rem 1.2rem;
+        border-radius: 999px;
+        background: linear-gradient(
+          100deg,
+          var(--sk-bg) 20%,
+          #f5f7fb 40%,
+          var(--sk-bg) 60%
+        );
+        background-size: 200% 100%;
+        animation: sk-shimmer 1.1s linear infinite;
+      }
+
+      @keyframes sk-shimmer {
+        0% {
+          background-position: 200% 0;
+        }
+
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      /* ====== SweetAlert2 compact styling (ADDED) ====== */
+      .swal2-popup.swal-compact {
+        border-radius: 16px !important;
+        max-width: 28rem !important; /* keep it short/narrow so layout doesn't jump */
+        padding: 1rem 1rem !important;
+        font-family: "Raleway", system-ui, -apple-system, Segoe UI, Roboto,
+          "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji",
+          "Segoe UI Emoji", "Segoe UI Symbol" !important;
+      }
+
+      .swal2-title {
+        font-size: 1.1rem !important;
+        line-height: 1.2 !important;
+        font-weight: 700 !important;
+      }
+
+      .swal2-html-container {
+        font-size: 0.92rem !important;
+        color: #374151 !important;
+        margin: 0.5rem 0 0 !important;
+      }
+
+      .swal2-actions .swal2-styled {
+        border-radius: 999px !important;
+        padding: 0.55rem 1rem !important;
+        font-weight: 700 !important;
+      }
+
+      .swal2-actions {
+        gap: 0.5rem !important;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- Sidebar -->
+      <aside>
+        <div class="toggle">
+          <div class="logo">
+            <img src="../../../img/simpHappyMascotLogo.png" alt="logo" />
+            <h2>SIMP<span class="danger">Project</span></h2>
+          </div>
+          <div class="close" id="close-btn">
+            <span class="material-icons-sharp">close</span>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <a href="dashboard.html"
+            ><span class="material-icons-sharp">dashboard</span>
+            <h3>Dashboard</h3>
+          </a>
+          <a href="job.html"
+            ><span class="material-icons-sharp">work</span>
+            <h3>Jobs</h3>
+          </a>
+          <a href="myApplication.html" class="active"
+            ><span class="material-icons-sharp">receipt</span>
+            <h3>My Application</h3>
+          </a>
+          <a href="courses.html"
+            ><span class="material-icons-sharp">school</span>
+            <h3>Courses</h3>
+          </a>
+          <a href="shop.html"
+            ><span class="material-icons-sharp">shopping_cart</span>
+            <h3>Shop</h3>
+          </a>
+          <a href="earnings.html"
+            ><span class="material-icons-sharp">account_balance</span>
+            <h3>Earnings</h3>
+          </a>
+          <a href="documents.html"
+            ><span class="material-icons-sharp">file_copy</span>
+            <h3>Documents</h3>
+          </a>
+          <a href="settings.html"
+            ><span class="material-icons-sharp">settings</span>
+            <h3>Settings</h3>
+          </a>
+          <a href="#" id="logout-btn"
+            ><span class="material-icons-sharp">logout</span>
+            <h3>Logout</h3>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <main>
+        <div class="titlePageDiv">
+          <h1>Manage your applications easily.</h1>
+          <p>All your applications, organized and accessible anytime.</p>
+          <p class="cancel-flow-debug" id="cancelFlowDebug">
+            <span class="material-icons" aria-hidden="true">verified</span>
+            Cancel flow loading
+          </p>
+        </div>
+
+        <div class="searchBarDiv">
+          <div class="searchDiv">
+            <span class="material-icons-sharp" aria-hidden="true">search</span>
+            <input
+              id="searchInput"
+              type="text"
+              placeholder="Search by title, description, or location"
+            />
+          </div>
+
+          <div class="dropdown" id="statusDropdown">
+            <button class="dropbtn" id="statusBtn">
+              <span
+                class="material-icons"
+                aria-hidden="true"
+                style="
+                  vertical-align: middle;
+                  font-size: 18px;
+                  margin-right: 0.35rem;
+                  color: #20647c;
+                "
+                >filter_list</span
+              >
+              Status <span class="current" id="statusLabel"></span>
+            </button>
+            <div class="dropdown-content" id="statusMenu">
+              <a href="#" data-status=""
+                ><span class="material-icons" aria-hidden="true">apps</span
+                >All</a
+              >
+              <a href="#" data-status="viewed"
+                ><span class="material-icons" aria-hidden="true"
+                  >visibility</span
+                >Viewed</a
+              >
+              <a href="#" data-status="approved"
+                ><span class="material-icons" aria-hidden="true">task_alt</span
+                >Approved</a
+              >
+              <a href="#" data-status="rejected"
+                ><span class="material-icons" aria-hidden="true">close</span
+                >Rejected</a
+              >
+              <a href="#" data-status="invalidated"
+                ><span class="material-icons" aria-hidden="true">warning</span
+                >Invalidated</a
+              >
+              <a href="#" data-status="pending"
+                ><span class="material-icons" aria-hidden="true">pending</span
+                >Pending</a
+              >
+              <a href="#" data-status="overdue"
+                ><span class="material-icons" aria-hidden="true"
+                  >event_busy</span
+                >Overdue</a
+              >
+              <a href="#" data-status="done"
+                ><span class="material-icons" aria-hidden="true"
+                  >check_circle</span
+                >Done</a
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- SKELETON CONTAINER (ADDED) -->
+        <section
+          class="cards"
+          id="skeletonContainer"
+          hidden
+          aria-hidden="true"
+        ></section>
+
+        <section class="cards" id="applicationsContainer"></section>
+
+        <p class="scrollDownText">
+          <span class="material-icons" aria-hidden="true">south</span> Scroll
+          down for more
+        </p>
+      </main>
+    </div>
+
+    <div
+      class="application-confirm-overlay"
+      id="applicationConfirmOverlay"
+      aria-hidden="true"
+    >
+      <div
+        class="application-confirm-card"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="applicationConfirmTitle"
+      >
+        <div class="application-confirm-icon">
+          <span class="material-icons" aria-hidden="true">cancel</span>
+        </div>
+        <h2 class="application-confirm-title" id="applicationConfirmTitle">
+          Cancel application?
+        </h2>
+        <p class="application-confirm-text" id="applicationConfirmText">
+          This will remove it from your application list.
+        </p>
+        <div class="application-confirm-actions">
+          <button
+            type="button"
+            class="application-confirm-cancel"
+            id="applicationConfirmCancel"
+          >
+            Keep
+          </button>
+          <button
+            type="button"
+            class="application-confirm-submit"
+            id="applicationConfirmSubmit"
+          >
+            Cancel Application
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="../../general_files/index.js"></script>
+    <script type="module" src="../../general_files/session.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <!-- SweetAlert2 (ADDED) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script type="module">
+      const { createClient } = supabase;
+
+      // Supabase credentials
+      import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../../../supabase.js";
+      const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const CANCEL_FLOW_VERSION = "native-cancel-status-v2026-06-08-04";
+
+      const container = document.getElementById("applicationsContainer");
+      const skeletonContainer = document.getElementById("skeletonContainer"); // ADDED
+      const statusDropdown = document.getElementById("statusDropdown");
+      const statusMenu = document.getElementById("statusMenu");
+      const statusLabel = document.getElementById("statusLabel");
+      const searchInput = document.getElementById("searchInput");
+      const cancelFlowDebug = document.getElementById("cancelFlowDebug");
+      const applicationConfirmOverlay = document.getElementById(
+        "applicationConfirmOverlay"
+      );
+      const applicationConfirmTitle = document.getElementById(
+        "applicationConfirmTitle"
+      );
+      const applicationConfirmText = document.getElementById(
+        "applicationConfirmText"
+      );
+      const applicationConfirmCancel = document.getElementById(
+        "applicationConfirmCancel"
+      );
+      const applicationConfirmSubmit = document.getElementById(
+        "applicationConfirmSubmit"
+      );
+
+      function setCancelDebug(message) {
+        const text = String(message || "").trim();
+        const safeText = text.replace(
+          /[&<>"']/g,
+          (s) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            }[s])
+        );
+        if (cancelFlowDebug) {
+          cancelFlowDebug.innerHTML = `<span class="material-icons" aria-hidden="true">verified</span> ${safeText}`;
+        }
+        console.log(`[MyApplication:${CANCEL_FLOW_VERSION}] ${text}`);
+      }
+
+      // ===== SweetAlert2 helpers (ADDED) =====
+      const swal = Swal.mixin({
+        width: 420,
+        padding: "1rem",
+        customClass: {
+          popup: "swal-compact",
+        },
+        confirmButtonColor: "#20647c",
+        cancelButtonColor: "#9ca3af",
+        buttonsStyling: true,
+        focusConfirm: false,
+        allowEscapeKey: true,
+        allowOutsideClick: false,
+        showClass: { popup: "swal2-noanimation" }, // snappy open/close
+        hideClass: { popup: "swal2-noanimation" },
+        scrollbarPadding: false, // avoid layout nudge
+        heightAuto: false, // keep viewport height stable
+      });
+
+      const showToast = (title = "", icon = "success", timer = 1800) =>
+        swal.fire({
+          title,
+          icon,
+          timer,
+          toast: true,
+          position: "top",
+          showConfirmButton: false,
+        });
+
+      const showNotice = (title = "Notice", text = "", icon = "info") =>
+        swal.fire({
+          icon,
+          title,
+          html: text || undefined,
+          confirmButtonText: "Okay",
+        });
+
+      const showError = (title = "Something went wrong", text = "") =>
+        swal.fire({
+          icon: "error",
+          title,
+          html: text || "Please try again.",
+          confirmButtonText: "Okay",
+        });
+
+      const showConfirm = async (
+        title = "Are you sure?",
+        text = "This action cannot be undone.",
+        confirmText = "Yes, continue"
+      ) => {
+        const plainText = String(text || "")
+          .replace(/<br\s*\/?>/gi, "\n")
+          .replace(/<[^>]*>/g, "")
+          .replace(/\s+\n/g, "\n")
+          .trim();
+        return showApplicationConfirm({
+          title,
+          text: plainText || confirmText,
+          confirmText,
+        });
+      };
+
+      // Status presentation map
+      const STATUS_MAP = Object.freeze({
+        pending: {
+          class: "status-pending",
+          label: "Pending",
+          icon: "hourglass_top",
+        },
+        viewed: { class: "status-viewed", label: "Viewed", icon: "visibility" },
+        approved: {
+          class: "status-accepted",
+          label: "Approved",
+          icon: "task_alt",
+        },
+        rejected: {
+          class: "status-rejected",
+          label: "Rejected",
+          icon: "close",
+        },
+        invalidated: {
+          class: "status-invalidated",
+          label: "Invalidated",
+          icon: "warning",
+        },
+        terminated: {
+          class: "status-invalidated",
+          label: "Terminated",
+          icon: "warning",
+        },
+        cancelled: {
+          class: "status-invalidated",
+          label: "Cancelled",
+          icon: "cancel",
+        },
+        overdue: {
+          class: "status-overdue",
+          label: "Overdue",
+          icon: "event_busy",
+        },
+        done: { class: "status-done", label: "Done", icon: "check_circle" },
+      });
+
+      // Local state
+      let ALL_APPS = [];
+      let CURRENT_INSTALLER_ID = null;
+      const DELETING_APPLICATION_IDS = new Set();
+      const FILTERS = { q: "", status: "" };
+      let APPLICATIONS_RENDER_TOKEN = 0;
+      let pendingConfirmResolve = null;
+
+      // Utils
+      const esc = (str) =>
+        String(str ?? "").replace(
+          /[&<>"']/g,
+          (s) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            }[s])
+        );
+      const fmtPeso = (n) => {
+        const v = typeof n === "string" ? parseFloat(n) : n;
+        return isNaN(v)
+          ? "0.00"
+          : v.toLocaleString("en-PH", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+      };
+      const fmtDate = (d) =>
+        d ? new Date(d + "T00:00:00").toLocaleDateString() : "";
+      const fmtTime = (t) => (t ? String(t).slice(0, 5) : "");
+
+      setCancelDebug(`${CANCEL_FLOW_VERSION} loaded`);
+
+      function closeApplicationConfirm(result = false) {
+        applicationConfirmOverlay?.classList.remove("show");
+        applicationConfirmOverlay?.setAttribute("aria-hidden", "true");
+        const resolve = pendingConfirmResolve;
+        pendingConfirmResolve = null;
+        if (resolve) resolve(result);
+      }
+
+      function showApplicationConfirm({
+        title = "Cancel application?",
+        text = "This will remove it from your application list.",
+        confirmText = "Cancel Application",
+      } = {}) {
+        if (!applicationConfirmOverlay) return Promise.resolve(false);
+        applicationConfirmTitle.textContent = title;
+        applicationConfirmText.textContent = text;
+        applicationConfirmSubmit.textContent = confirmText;
+        applicationConfirmOverlay.classList.add("show");
+        applicationConfirmOverlay.setAttribute("aria-hidden", "false");
+        applicationConfirmSubmit.focus();
+
+        return new Promise((resolve) => {
+          pendingConfirmResolve = resolve;
+        });
+      }
+
+      applicationConfirmCancel?.addEventListener("click", () =>
+        closeApplicationConfirm(false)
+      );
+      applicationConfirmSubmit?.addEventListener("click", () =>
+        closeApplicationConfirm(true)
+      );
+      applicationConfirmOverlay?.addEventListener("click", (event) => {
+        if (event.target === applicationConfirmOverlay) {
+          closeApplicationConfirm(false);
+        }
+      });
+      document.addEventListener("keydown", (event) => {
+        if (
+          event.key === "Escape" &&
+          applicationConfirmOverlay?.classList.contains("show")
+        ) {
+          closeApplicationConfirm(false);
+        }
+      });
+
+      function parseJsonObject(value) {
+        if (!value || typeof value !== "string") return null;
+        const text = value.trim();
+        if (!text.startsWith("{")) return null;
+        try {
+          return JSON.parse(text);
+        } catch {
+          return null;
+        }
+      }
+
+      function getDisplayJobDescription(value) {
+        const parsed = parseJsonObject(value);
+        if (!parsed) return String(value || "").trim();
+        const candidates = [
+          parsed.description,
+          parsed.proposed_description,
+          parsed.original_description,
+        ];
+        for (const candidate of candidates) {
+          const text = getDisplayJobDescription(candidate);
+          if (text) return text;
+        }
+        return "";
+      }
+
+      /* ===== Signed URL helpers for job images ===== */
+      const DEFAULT_JOB_PICS_BUCKET = "jobs"; // adjust if needed
+
+      function parsePublicBucketAndPath(publicUrl) {
+        try {
+          const marker = "/storage/v1/object/public/";
+          const i = publicUrl.indexOf(marker);
+          if (i === -1) return null;
+          const rest = publicUrl.substring(i + marker.length);
+          const slash = rest.indexOf("/");
+          if (slash === -1) return null;
+          const bucket = rest.substring(0, slash);
+          let path = rest.substring(slash + 1);
+          try {
+            path = decodeURIComponent(path);
+          } catch {}
+          return { bucket, path: path.replace(/^\/+/, "") };
+        } catch {
+          return null;
+        }
+      }
+
+      // Accepts: full public Storage URL, "bucket::path", or "plain/path" (assumes DEFAULT_JOB_PICS_BUCKET)
+      function parseStorageRef(ref) {
+        if (!ref) return null;
+        const s = String(ref).trim();
+        if (/^https?:\/\//i.test(s)) {
+          // supabase public URL -> parse; external http(s) (non-supabase) -> passthrough later
+          const parsed = parsePublicBucketAndPath(s);
+          return parsed || null;
+        }
+        const bi = s.indexOf("::");
+        if (bi > 0) {
+          let path = s.slice(bi + 2);
+          try {
+            path = decodeURIComponent(path);
+          } catch {}
+          return { bucket: s.slice(0, bi), path: path.replace(/^\/+/, "") };
+        }
+        let path = s;
+        try {
+          path = decodeURIComponent(path);
+        } catch {}
+        return {
+          bucket: DEFAULT_JOB_PICS_BUCKET,
+          path: path.replace(/^\/+/, ""),
+        };
+      }
+
+      async function createSignedUrl(bucket, path, expires = 3600) {
+        const { data, error } = await sb.storage
+          .from(bucket)
+          .createSignedUrl(path, expires);
+        if (error) throw error;
+        return data.signedUrl;
+      }
+
+      async function resolveJobPictureSignedUrl(job_picture_url) {
+        if (!job_picture_url) return null;
+        // Non-supabase absolute URL (e.g., CDN or external) -> passthrough
+        if (
+          /^https?:\/\//i.test(job_picture_url) &&
+          !job_picture_url.includes("/storage/v1/object/")
+        ) {
+          return job_picture_url;
+        }
+        const ref = parseStorageRef(job_picture_url);
+        if (!ref) return null;
+        try {
+          return await createSignedUrl(ref.bucket, ref.path, 3600);
+        } catch (e) {
+          console.warn("Signing job image failed:", e?.message || e);
+          return null;
+        }
+      }
+
+      function updateStatusButtonLabel() {
+        statusLabel.textContent = FILTERS.status
+          ? ` (${FILTERS.status[0].toUpperCase() + FILTERS.status.slice(1)})`
+          : "";
+      }
+
+      function applyFiltersAndRender() {
+        let list = [...ALL_APPS];
+
+        // Filter by status
+        const st = (FILTERS.status || "").trim().toLowerCase();
+        if (st)
+          list = list.filter(
+            (a) => getEffectiveApplicationStatus(a) === st
+          );
+
+        // Search across title, description, location
+        const q = (FILTERS.q || "").trim().toLowerCase();
+        if (q) {
+          list = list.filter((a) => {
+            const j = a.job || {};
+            const hay = [
+              j.job_title,
+              getDisplayJobDescription(j.job_description),
+              j.job_location,
+            ]
+              .map((x) => String(x ?? "").toLowerCase())
+              .join(" | ");
+            return hay.includes(q);
+          });
+        }
+
+        renderApplications(list, ++APPLICATIONS_RENDER_TOKEN);
+      }
+
+      function isJobPastDue(job) {
+        if (!job?.job_date) return false;
+        const dateText = String(job.job_date || "").slice(0, 10);
+        const timeText = String(job.job_time || "23:59").slice(0, 5) || "23:59";
+        const dueAt = new Date(`${dateText}T${timeText}`);
+        return Number.isFinite(dueAt.getTime()) && dueAt < new Date();
+      }
+
+      function getEffectiveApplicationStatus(app) {
+        const appStatus = String(app?.status || "").toLowerCase();
+        const jobStatus = String(app?.job?.job_status || "").toLowerCase();
+        const finishedAppStatuses = ["done", "completed", "rejected", "invalidated", "terminated", "cancelled"];
+        const unavailableJobStatuses = [
+          "cancelled",
+          "cancellation_pending",
+          "rejected",
+          "pending_review",
+          "suggestion_sent",
+          "customer_accepted",
+          "appeal_submitted",
+          "done",
+          "completed",
+          "archived",
+        ];
+
+        if (!app?.job && !finishedAppStatuses.includes(appStatus)) {
+          return "invalidated";
+        }
+
+        if (
+          unavailableJobStatuses.includes(jobStatus) &&
+          !finishedAppStatuses.includes(appStatus)
+        ) {
+          return "invalidated";
+        }
+
+        if (
+          (jobStatus === "overdue" || isJobPastDue(app?.job)) &&
+          !finishedAppStatuses.includes(appStatus)
+        ) {
+          return "overdue";
+        }
+        return appStatus || "pending";
+      }
+
+      async function renderApplications(rows, renderToken = ++APPLICATIONS_RENDER_TOKEN) {
+        container.innerHTML = "";
+        if (!rows || rows.length === 0) {
+          container.innerHTML = `<p>No applications found${
+            FILTERS.status || FILTERS.q ? " for current filters." : "."
+          }</p>`;
+          return;
+        }
+
+        // sign all images in parallel for smoother render
+        const signedUrls = await Promise.all(
+          rows.map((r) => resolveJobPictureSignedUrl(r.job?.job_picture_url))
+        );
+        if (renderToken !== APPLICATIONS_RENDER_TOKEN) return;
+
+        container.innerHTML = "";
+        rows.forEach((app, idx) => {
+          const job = app.job || {};
+          const st = getEffectiveApplicationStatus(app);
+          const statusInfo = STATUS_MAP[st] || STATUS_MAP["pending"];
+          const imgUrl = signedUrls[idx] || "../images/profile-4.jpg";
+          const displayDescription =
+            getDisplayJobDescription(job.job_description) ||
+            "No description provided.";
+          const isDeleting = DELETING_APPLICATION_IDS.has(
+            String(app.application_id)
+          );
+
+          // Decide button label/visibility
+          let actionLabel = null;
+          let actionIcon = null;
+          if (st === "approved") {
+            actionLabel = "Mark as Done";
+            actionIcon = "done_all";
+          } else if (st === "overdue") {
+            actionLabel = "Delete";
+            actionIcon = "delete";
+          } else if (st === "rejected") {
+            actionLabel = "Delete Application";
+            actionIcon = "delete";
+          } else if (st === "invalidated" || st === "terminated") {
+            actionLabel = "Delete Application";
+            actionIcon = "delete";
+          } else if (st === "viewed" || st === "pending") {
+            actionLabel = "Cancel Application";
+            actionIcon = "cancel";
+          } else if (st === "done") {
+            actionLabel = null;
+          }
+
+          const card = document.createElement("article");
+          card.className = "applicationsDiv";
+          card.setAttribute("data-app-id", app.application_id);
+          card.setAttribute("data-status", st);
+          const invalidationNotice =
+            st === "invalidated" || st === "terminated"
+              ? `<div class="desc" style="border-left:3px solid #f97316; padding-left:10px; color:#9a3412;">
+                  This job post has been removed or updated by the customer/admin. Your application was automatically terminated. You may apply again if the customer reapplies and the job is approved and posted again.
+                </div>`
+              : "";
+          const overdueNotice =
+            st === "overdue"
+              ? `<div class="desc" style="border-left:3px solid #e11d48; padding-left:10px; color:#9f1239;">
+                  This job is overdue and is no longer available. Delete it to remove it from your application list.
+                </div>`
+              : "";
+
+          card.innerHTML = `
+            <div class="thumb">
+              <img src="${imgUrl}" alt="Job image" onerror="this.onerror=null;this.src='../images/profile-4.jpg';" />
+            </div>
+            <div class="content">
+              <div class="contentFirstRow">
+                <div class="title">
+                  <span class="material-icons-sharp" aria-hidden="true">work_outline</span>
+                  ${esc(job.job_title || "Untitled Job")}
+                </div>
+              </div>
+
+              <div class="meta-status-row">
+                <div class="meta-row">
+                  <span class="pill">
+                    <span class="material-icons" aria-hidden="true">category</span>
+                    ${esc(job.job_category || "Uncategorized")}
+                  </span>
+                  <span class="pill">
+                    <span class="material-icons" aria-hidden="true">speed</span>
+                    ${esc(job.job_difficulty ?? "N/A")}
+                  </span>
+                  <span class="status ${statusInfo.class}">
+                  <span class="material-icons" aria-hidden="true">${
+                    statusInfo.icon
+                  }</span>
+                  ${statusInfo.label}
+                  </span>
+                </div>
+                
+              </div>
+
+              <div class="info-grid">
+                <div>
+                  <div class="label">
+                    <span class="material-icons" aria-hidden="true">payments</span>
+                    ₱${fmtPeso(job.job_pay ?? 0)}
+                  </div>
+                </div>
+                <div>
+                  <div class="label">
+                    <span class="material-icons" aria-hidden="true">event</span>
+                    ${esc(fmtDate(job.job_date))} ${esc(fmtTime(job.job_time))}
+                  </div>
+                </div>
+                <div>
+                  <div class="label">
+                    <span class="material-icons" aria-hidden="true">place</span>
+                    ${esc(job.job_location || "Not specified")}
+                  </div>
+                </div>
+              </div>
+
+              <div class="desc">${esc(
+                displayDescription
+              )}</div>
+              ${invalidationNotice}
+              ${overdueNotice}
+            </div>
+            ${
+              actionLabel
+                ? `<button class="apply" ${isDeleting ? "disabled" : ""}>
+                     <span class="material-icons" aria-hidden="true">${actionIcon}</span>
+                     ${isDeleting ? "Deleting..." : actionLabel}
+                   </button>`
+                : ``
+            }
+          `;
+
+          container.appendChild(card);
+
+          if (actionLabel) {
+            const btn = card.querySelector(".apply");
+            btn?.addEventListener("click", async () => {
+              if (DELETING_APPLICATION_IDS.has(String(app.application_id))) return;
+              await handleAction(app, st, btn);
+            });
+          }
+        });
+      }
+
+      // === Helper: current logged-in installer id ===
+      async function getCurrentUserId() {
+        const { data, error } = await sb.auth.getUser();
+        if (error) return null;
+        return data?.user?.id ?? null;
+      }
+
+      async function resolveCurrentInstallerId() {
+        if (CURRENT_INSTALLER_ID) return CURRENT_INSTALLER_ID;
+
+        const {
+          data: { user },
+          error: authError,
+        } = await sb.auth.getUser();
+        if (authError || !user?.email) return null;
+
+        const { data, error } = await sb
+          .from("installer")
+          .select("id, email")
+          .eq("email", user.email)
+          .limit(1)
+          .maybeSingle();
+
+        if (error) {
+          console.warn("installer profile lookup failed", error);
+          return null;
+        }
+
+        CURRENT_INSTALLER_ID = data?.id || user.id || null;
+        return CURRENT_INSTALLER_ID;
+      }
+
+      function withTimeout(promise, ms, message) {
+        let timer;
+        const timeout = new Promise((_, reject) => {
+          timer = setTimeout(() => reject(new Error(message)), ms);
+        });
+        return Promise.race([promise, timeout]).finally(() =>
+          clearTimeout(timer)
+        );
+      }
+
+      async function cancelOwnApplicationRecord(applicationId) {
+        const installerId = await resolveCurrentInstallerId();
+        if (!installerId) {
+          throw new Error(
+            "We could not identify your installer profile. Please sign in again."
+          );
+        }
+
+        setCancelDebug(`Cancelling ${applicationId} as installer ${installerId}`);
+        const rpcResult = await withTimeout(
+          sb.rpc("cancel_own_job_application", {
+            application_id_to_cancel: String(applicationId),
+          }),
+          12000,
+          "Cancellation request timed out. Trying a direct status update..."
+        ).catch((error) => ({ error }));
+
+        if (!rpcResult.error && Number(rpcResult.data || 0) > 0) {
+          setCancelDebug(`RPC cancelled ${applicationId}`);
+          return Number(rpcResult.data || 0);
+        }
+
+        console.warn("cancel_own_job_application fallback:", rpcResult.error);
+        setCancelDebug(
+          `RPC fallback for ${applicationId}: ${
+            rpcResult.error?.message || "no rows changed"
+          }`
+        );
+
+        const directResult = await withTimeout(
+          sb
+            .schema("jobs")
+            .from("job_application")
+            .update({
+              status: "cancelled",
+              updated_at: new Date().toISOString(),
+            })
+            .eq("application_id", applicationId)
+            .eq("installer_id", installerId)
+            .select("application_id"),
+          12000,
+          "Direct cancellation timed out. Please refresh and try again."
+        );
+
+        if (directResult.error) throw directResult.error;
+        if (!directResult.data || directResult.data.length < 1) {
+          throw new Error(
+            "Cancellation was not applied. This application is not owned by your installer profile or is no longer cancellable."
+          );
+        }
+        setCancelDebug(`Direct update cancelled ${applicationId}`);
+        return directResult.data.length;
+      }
+
+      // === Centralized handler for card actions ===
+      async function handleAction(app, status, actionButton = null) {
+        let rollbackApps = null;
+        try {
+          const id = app.application_id;
+          if (!id) return;
+
+          if (status === "approved") {
+            const ok = await showConfirm(
+              "Mark this application as done?",
+              "This will set the application status to <b>Done</b>, mark the job as <b>Done</b>, and create a payment record.",
+              "Mark as Done"
+            );
+            if (!ok) return;
+
+            // 1) Update application status -> done
+            {
+              const { error } = await sb
+                .schema("jobs")
+                .from("job_application")
+                .update({ status: "done" })
+                .eq("application_id", id);
+              if (error) throw error;
+            }
+
+            // 2) Update job status -> done  (also refresh updated_at)
+            if (app.job_id) {
+              const { error: jobErr } = await sb
+                .schema("jobs")
+                .from("job")
+                .update({
+                  job_status: "done",
+                  updated_at: new Date().toISOString(),
+                })
+                .eq("job_id", app.job_id);
+              if (jobErr) throw jobErr;
+            }
+
+            // 3) Upsert payment record
+            const installerId = await getCurrentUserId();
+            if (!installerId) {
+              await showNotice(
+                "Saved as done",
+                "We couldn’t identify your user for the payment record. Please refresh and try again.",
+                "warning"
+              );
+            } else if (!app.job_id) {
+              await showNotice(
+                "Saved as done",
+                "No related job ID was found to create the payment record.",
+                "warning"
+              );
+            } else {
+              const payload = { installer_id: installerId, job_id: app.job_id };
+              const { error: payErr } = await sb
+                .schema("earnings")
+                .from("payments")
+                .upsert([payload], {
+                  onConflict: "installer_id,job_id",
+                  ignoreDuplicates: false,
+                });
+              if (payErr) {
+                console.error("payments upsert error:", payErr);
+                const msg =
+                  payErr.code === "42501"
+                    ? "Payment record couldn’t be created due to permissions. Please contact an administrator."
+                    : `Payment record couldn’t be created: ${esc(
+                        payErr.message
+                      )}`;
+                await showNotice("Done with a note", msg, "warning");
+              } else {
+                await showToast("Marked as done");
+              }
+            }
+          } else if (status === "pending" || status === "viewed") {
+            const ok = await showApplicationConfirm({
+              title: "Cancel application?",
+              text: "This will remove it from your application list.",
+              confirmText: "Cancel Application",
+            });
+            if (!ok) return;
+
+            rollbackApps = [...ALL_APPS];
+            ALL_APPS = ALL_APPS.filter(
+              (a) => String(a.application_id) !== String(id)
+            );
+            console.log("[MyApplication] cancelling application", {
+              applicationId: id,
+              status,
+              installerId: CURRENT_INSTALLER_ID,
+            });
+            setCancelDebug(`Cancel clicked for ${id}`);
+            applyFiltersAndRender();
+
+            const changedRows = await cancelOwnApplicationRecord(id);
+            console.log("[MyApplication] cancellation result", {
+              applicationId: id,
+              changedRows,
+            });
+            setCancelDebug(`Cancelled ${id}; removed from list`);
+            await showToast("Application cancelled");
+            return;
+          } else if (status === "overdue") {
+            const ok = await showApplicationConfirm({
+              title: "Remove unavailable application?",
+              text: "This job is no longer available. The application will be removed from your list.",
+              confirmText: "Remove",
+            });
+            if (!ok) return;
+            rollbackApps = [...ALL_APPS];
+            ALL_APPS = ALL_APPS.filter(
+              (a) => String(a.application_id) !== String(id)
+            );
+            setCancelDebug(`Deleting overdue application ${id}`);
+            applyFiltersAndRender();
+            await cancelOwnApplicationRecord(id);
+            await showToast("Overdue application deleted");
+            return;
+          } else if (status === "rejected" || status === "invalidated" || status === "terminated" || status === "cancelled") {
+            const ok = await showApplicationConfirm({
+              title:
+                status === "rejected"
+                  ? "Remove rejected application?"
+                  : "Remove inactive application?",
+              text: "This will remove it from your application list.",
+              confirmText: "Remove",
+            });
+            if (!ok) return;
+
+            rollbackApps = [...ALL_APPS];
+            ALL_APPS = ALL_APPS.filter(
+              (a) => String(a.application_id) !== String(id)
+            );
+            setCancelDebug(`Deleting inactive application ${id}`);
+            applyFiltersAndRender();
+
+            await cancelOwnApplicationRecord(id);
+            await showToast(
+              status === "rejected"
+                ? "Rejected application deleted"
+                : "Invalidated application deleted"
+            );
+            return;
+          } else if (status === "done") {
+            await showNotice(
+              "Already completed",
+              "This application is already marked as <b>Done</b>.",
+              "info"
+            );
+            return;
+          }
+
+          // Refresh list
+          await loadApplications();
+        } catch (err) {
+          if (app?.application_id) {
+            DELETING_APPLICATION_IDS.delete(String(app.application_id));
+            if (rollbackApps) {
+              ALL_APPS = rollbackApps;
+            }
+            applyFiltersAndRender();
+          }
+          console.error(err);
+          setCancelDebug(`Action failed: ${err?.message || "Unknown error"}`);
+          await showError(
+            "Operation failed",
+            esc(err?.message || "Unknown error")
+          );
+        }
+      }
+
+      /* =========
+       SKELETON (ADDED)
+       ========= */
+      const getSkeletonCount = () => {
+        if (window.matchMedia("(max-width:700px)").matches) return 4;
+        if (window.matchMedia("(max-width:1200px)").matches) return 6;
+        return 9;
+      };
+
+      function renderSkeleton(count = getSkeletonCount()) {
+        skeletonContainer.innerHTML = "";
+        for (let i = 0; i < count; i++) {
+          const sk = document.createElement("article");
+          sk.className = "sk-card";
+          sk.innerHTML = `
+            <div class="sk-thumb"></div>
+            <div class="sk-content">
+              <div class="sk-line lg" style="width:70%"></div>
+
+              <div class="sk-chip-row">
+                <div class="sk-chip"></div>
+                <div class="sk-chip" style="width:110px"></div>
+              </div>
+
+              <div class="sk-info">
+                <div class="sk-line" style="width:55%"></div>
+                <div class="sk-line" style="width:65%"></div>
+                <div class="sk-line" style="width:45%"></div>
+              </div>
+
+              <div class="sk-line" style="width:90%"></div>
+              <div class="sk-line sm"></div>
+            </div>
+            <div class="sk-btn"></div>
+          `;
+          skeletonContainer.appendChild(sk);
+        }
+      }
+
+      function setLoading(isLoading) {
+        if (isLoading) {
+          document.body.classList.add("is-loading");
+          skeletonContainer.hidden = false;
+          renderSkeleton();
+        } else {
+          document.body.classList.remove("is-loading");
+          skeletonContainer.hidden = true;
+          skeletonContainer.innerHTML = "";
+        }
+      }
+
+      // Re-render skeleton count on resize (optional nicety)
+      let skResizeTO;
+      window.addEventListener("resize", () => {
+        if (!document.body.classList.contains("is-loading")) return;
+        clearTimeout(skResizeTO);
+        skResizeTO = setTimeout(() => renderSkeleton(), 120);
+      });
+
+      async function loadApplications() {
+        // SHOW SKELETON (instead of text)
+        setLoading(true);
+        setCancelDebug("Loading installer applications");
+
+        const installerId = await resolveCurrentInstallerId();
+        if (!installerId) {
+          setLoading(false);
+          container.innerHTML = `<p>We could not identify your installer profile. Please sign in again.</p>`;
+          await showError(
+            "Installer profile not found",
+            "Please sign in with your installer account and try again."
+          );
+          return;
+        }
+        setCancelDebug(`Loaded installer profile ${installerId}`);
+
+        // 1) Load applications (from jobs schema)
+        const { data: apps, error: appErr } = await sb
+          .schema("jobs")
+          .from("job_application")
+          .select("application_id, status, applied_at, job_id, installer_id")
+          .eq("installer_id", installerId)
+          .order("applied_at", { ascending: false });
+
+        if (appErr) {
+          console.error("Error fetching applications:", appErr);
+          setLoading(false);
+          container.innerHTML = `<p>Error loading applications: ${esc(
+            appErr.message
+          )}</p>`;
+          await showError("Can’t load applications", esc(appErr.message));
+          return;
+        }
+
+        // 2) Load the jobs those apps reference
+        const jobIds = [
+          ...new Set((apps || []).map((a) => a.job_id).filter(Boolean)),
+        ];
+
+        let jobsById = {};
+        if (jobIds.length) {
+          const { data: jobs, error: jobErr } = await sb
+            .schema("jobs")
+            .from("job")
+            .select(
+              `
+              job_id,
+              job_title,
+              job_category,
+              job_difficulty,
+              job_location,
+              job_date,
+              job_time,
+              job_pay,
+              job_description,
+              job_picture_url,
+              job_status
+            `
+            )
+            .in("job_id", jobIds);
+
+          if (jobErr) {
+            console.error("Error fetching jobs:", jobErr);
+            setLoading(false);
+            container.innerHTML = `<p>Error loading jobs: ${esc(
+              jobErr.message
+            )}</p>`;
+            await showError("Can’t load related jobs", esc(jobErr.message));
+            return;
+          }
+
+          jobsById = Object.fromEntries((jobs || []).map((j) => [j.job_id, j]));
+        }
+
+        // 3) Stitch
+        const visibleApps = (apps || []).filter(
+          (a) => String(a.status || "").toLowerCase() !== "cancelled"
+        );
+
+        ALL_APPS = visibleApps.map((a) => ({
+          ...a,
+          job: jobsById[a.job_id] || null,
+        }));
+        setCancelDebug(
+          `Showing ${ALL_APPS.length} applications; hidden ${
+            (apps || []).length - visibleApps.length
+          } cancelled`
+        );
+
+        // HIDE SKELETON, SHOW REAL
+        setLoading(false);
+        applyFiltersAndRender();
+      }
+
+      // --- UI wiring: dropdown open/close ---
+      document.addEventListener("click", (e) => {
+        const dd = e.target.closest(".dropdown");
+        document
+          .querySelectorAll(".dropdown")
+          .forEach((d) => d.classList.remove("open"));
+        if (dd && dd.id === "statusDropdown") dd.classList.add("open");
+      });
+
+      // --- Status menu click -> set filter ---
+      statusMenu.addEventListener("click", (e) => {
+        const a = e.target.closest("a[data-status]");
+        if (!a) return;
+        e.preventDefault();
+        FILTERS.status = (a.getAttribute("data-status") || "").toLowerCase();
+        updateStatusButtonLabel();
+        applyFiltersAndRender();
+        statusDropdown.classList.remove("open");
+      });
+
+      // --- Search (debounced) ---
+      let tId;
+      searchInput.addEventListener("input", (e) => {
+        clearTimeout(tId);
+        const val = e.target.value || "";
+        tId = setTimeout(() => {
+          FILTERS.q = val;
+          applyFiltersAndRender();
+        }, 220);
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        updateStatusButtonLabel();
+        // Start with skeleton on initial load
+        setLoading(true);
+        loadApplications();
+      });
+    </script>
+  </body>
+</html>

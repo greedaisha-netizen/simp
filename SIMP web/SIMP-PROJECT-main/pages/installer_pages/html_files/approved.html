@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Documents Approved – SIMP Project</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../img/simpHappyMascotLogo.png"
+    />
+    <style>
+      :root {
+        --brand: #16a34a; /* green theme for verified */
+        --muted: #6b7280;
+        --bg: #f8fafc;
+        --card: #ffffff;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          sans-serif;
+        background: radial-gradient(
+          1200px 800px at 20% 10%,
+          #dcfce7 0%,
+          #ffffff 45%,
+          #ffffff 100%
+        );
+        color: #111827;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+      .card {
+        width: 100%;
+        max-width: 560px;
+        background: var(--card);
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        padding: 28px;
+        text-align: center;
+      }
+      .hero {
+        display: grid;
+        place-items: center;
+        margin-bottom: 20px;
+      }
+
+      /* Animated icon (folder + check badge + green pulses) */
+      .icon-wrap {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        display: grid;
+        place-items: center;
+      }
+      .pulse {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: rgba(22, 163, 74, 0.12);
+        animation: pulse 2.4s ease-out infinite;
+      }
+      .pulse:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .pulse:nth-child(2) {
+        animation-delay: 0.6s;
+      }
+      .pulse:nth-child(3) {
+        animation-delay: 1.2s;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(0.6);
+          opacity: 0.9;
+        }
+        70% {
+          transform: scale(1);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 0;
+        }
+      }
+      .folder {
+        position: relative;
+        width: 78px;
+        height: 62px;
+        border-radius: 8px;
+        background: #bbf7d0;
+        border: 2px solid #86efac;
+        box-shadow: 0 6px 16px rgba(22, 163, 74, 0.15);
+      }
+      .folder:before {
+        content: "";
+        position: absolute;
+        top: -12px;
+        left: 6px;
+        width: 38px;
+        height: 18px;
+        border-radius: 6px 6px 0 0;
+        background: #86efac;
+        border: 2px solid #4ade80;
+        border-bottom: none;
+      }
+      /* Check badge */
+      .badge-check {
+        position: absolute;
+        right: -14px;
+        bottom: -10px;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: #fff;
+        border: 4px solid var(--brand);
+        display: grid;
+        place-items: center;
+        box-shadow: 0 6px 12px rgba(22, 163, 74, 0.25);
+        animation: bob 2.2s ease-in-out infinite;
+      }
+      .badge-check:before {
+        content: "";
+        position: absolute;
+        width: 22px;
+        height: 4px;
+        background: var(--brand);
+        border-radius: 4px;
+        transform: rotate(-45deg) translate(1px, 6px);
+      }
+      .badge-check:after {
+        content: "";
+        position: absolute;
+        width: 12px;
+        height: 4px;
+        background: var(--brand);
+        border-radius: 4px;
+        transform: rotate(45deg) translate(8px, 0px);
+      }
+      @keyframes bob {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-6px);
+        }
+      }
+
+      h1 {
+        font-size: 22px;
+        margin: 8px 0 10px;
+      }
+      p {
+        color: var(--muted);
+        margin: 0 0 12px;
+        line-height: 1.5;
+      }
+
+      .tips {
+        background: #ecfdf5;
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+        border-radius: 12px;
+        padding: 12px 14px;
+        text-align: left;
+        font-size: 14px;
+        margin-top: 10px;
+      }
+      .tips ul {
+        margin: 8px 0 0 18px;
+        padding: 0;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 18px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        padding: 10px 16px;
+        border-radius: 10px;
+        border: 0;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .btn-primary {
+        background: var(--brand);
+        color: #fff;
+      }
+      .btn-ghost {
+        background: #dcfce7;
+        color: #065f46;
+      }
+      .small {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 8px;
+      }
+      a {
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card" role="status" aria-live="polite">
+      <div class="hero" aria-hidden="true">
+        <div class="icon-wrap">
+          <span class="pulse"></span>
+          <span class="pulse"></span>
+          <span class="pulse"></span>
+          <div class="folder"></div>
+          <div class="badge-check" title="Verified"></div>
+        </div>
+      </div>
+
+      <h1>Your documents are approved 🎉</h1>
+      <p>Great news! Your account has been <strong>Approved</strong>.</p>
+      <p>You can now access your installer dashboard and start taking jobs.</p>
+
+      <div class="tips">
+        <strong>Next steps</strong>
+        <ul>
+          <li>Complete any remaining profile details in your dashboard.</li>
+          <li>Turn on notifications to get new job alerts quickly.</li>
+        </ul>
+      </div>
+
+      <div class="actions">
+        <!-- Go to Installer Dashboard -->
+        <a class="btn btn-primary" href="dashboard.html"> Go to Dashboard </a>
+      </div>
+
+      <div class="small">
+        Need help? Contact support at
+        <a href="mailto:simpProject@email.com">simpProject@email.com</a>
+      </div>
+    </div>
+  </body>
+</html>

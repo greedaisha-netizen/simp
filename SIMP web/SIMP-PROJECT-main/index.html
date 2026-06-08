@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>SIMP Project</title>
+    <style>
+      /* ---------- FIRST PAGE: hero & CTA ---------- */
+      .section_container button {
+        padding: 1rem 3rem;
+        border-radius: 100px;
+      }
+
+      /* Admin FAB (reuses .socials element) */
+      .socials.admin-fab {
+        position: fixed;
+        right: 20px;
+        bottom: 20px;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        transition: transform 0.28s ease, opacity 0.28s ease;
+        will-change: transform, opacity;
+      }
+
+      .socials.admin-fab.fab-out {
+        transform: translateX(120%);
+        opacity: 0.2;
+        pointer-events: none;
+      }
+
+      .socials.admin-fab a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 52px;
+        height: 52px;
+        border-radius: 999px;
+        background: #1c2430;
+        color: #fff;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+        transition: transform 0.2s ease, box-shadow 0.2s ease,
+          background 0.2s ease;
+      }
+
+      .socials.admin-fab a:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 26px rgba(0, 0, 0, 0.3);
+        background: #111820;
+      }
+
+      .socials.admin-fab i {
+        font-size: 22px;
+        line-height: 1;
+      }
+
+      /* Make job cards clickable */
+      .job-card {
+        cursor: pointer;
+      }
+
+      /* ---------- Job Detail Modal ---------- */
+      .job-modal {
+        position: fixed;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1200;
+      }
+
+      .job-modal.open {
+        display: flex;
+      }
+
+      .job-modal-backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.55);
+        backdrop-filter: blur(3px);
+      }
+
+      .job-modal-dialog {
+        position: relative;
+        z-index: 1;
+        max-width: 560px;
+        width: min(92vw, 560px);
+        max-height: 80vh;
+        background: #ffffff;
+        border-radius: 18px;
+        box-shadow: 0 24px 60px rgba(15, 23, 42, 0.45);
+        padding: 1.6rem 1.8rem 1.4rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.9rem;
+      }
+
+      /* HERO-style top section inside modal */
+      .job-modal-hero {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        margin: -0.4rem -0.4rem 1rem;
+        min-height: 170px;
+        background: linear-gradient(135deg, #20a44c, #20647c);
+        color: #ffffff;
+      }
+
+      .job-modal-hero-img {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        filter: brightness(0.6);
+        transform: scale(1.03);
+        transform-origin: center;
+      }
+
+      .job-modal-hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+            circle at top left,
+            rgba(255, 255, 255, 0.18),
+            transparent 55%
+          ),
+          linear-gradient(
+            135deg,
+            rgba(32, 164, 76, 0.85),
+            rgba(32, 100, 124, 0.9)
+          );
+        mix-blend-mode: multiply;
+      }
+
+      .job-modal-hero-content {
+        position: relative;
+        z-index: 1;
+        padding: 1.4rem 1.6rem 1.3rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+
+      .job-modal-hero-kicker {
+        font-size: 0.78rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        opacity: 0.9;
+      }
+
+      .job-modal-hero h2 {
+        margin: 0;
+        font-size: 1.4rem;
+      }
+
+      .job-modal-hero .job-modal-city {
+        color: #e5f4ff;
+        font-size: 0.9rem;
+      }
+
+      .job-modal-header {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .job-modal-header h2 {
+        font-size: 1.35rem;
+        margin: 0;
+      }
+
+      .job-modal-city {
+        font-size: 0.9rem;
+        color: #6b7280;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .job-modal-city i {
+        font-size: 1rem;
+      }
+
+      .job-modal-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+        font-size: 0.88rem;
+        color: #4b5563;
+      }
+
+      .job-modal-meta span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+      }
+
+      .job-modal-description {
+        font-size: 0.95rem;
+        color: #374151;
+        line-height: 1.5;
+        margin-top: 0.25rem;
+        white-space: pre-wrap;
+      }
+
+      .job-modal-actions {
+        margin-top: 0.6rem;
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.6rem;
+      }
+
+      .job-modal-cta {
+        border-radius: 999px;
+        padding: 0.7rem 1.4rem;
+        border: none;
+        background: linear-gradient(135deg, #20a44c, #20647c);
+        color: #fff;
+        font-weight: 700;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.95rem;
+      }
+
+      .job-modal-cta i {
+        font-size: 1.1rem;
+      }
+
+      .job-modal-cta:hover {
+        filter: brightness(1.05);
+      }
+
+      .job-modal-cta:active {
+        transform: translateY(1px);
+      }
+
+      .job-modal-close {
+        position: absolute;
+        top: 0.9rem;
+        right: 0.9rem;
+        width: 32px;
+        height: 32px;
+        border-radius: 999px;
+        border: none;
+        background: #e5e7eb;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        z-index: 2;
+      }
+
+      .job-modal-close i {
+        font-size: 1.1rem;
+      }
+
+      .job-modal-close:hover {
+        background: #d1d5db;
+      }
+
+      @media (max-width: 480px) {
+        .job-modal-dialog {
+          padding: 1.2rem 1.1rem 1.1rem;
+          max-height: 85vh;
+        }
+
+        .job-modal-hero {
+          margin: -0.2rem -0.2rem 0.8rem;
+          min-height: 150px;
+        }
+
+        .job-modal-hero-content {
+          padding: 1.1rem 1rem 1rem;
+        }
+
+        .job-modal-hero h2 {
+          font-size: 1.2rem;
+        }
+      }
+
+      /* ---------- RESPONSIVE BREAKPOINTS (match section order) ---------- */
+
+      /* How It Works: 4 → 2 columns */
+      @media (max-width: 1024px) {
+        .hiw-steps.container2 {
+          grid-template-columns: repeat(2, minmax(220px, 1fr));
+        }
+      }
+
+      /* How It Works: 1 column */
+      @media (max-width: 640px) {
+        .hiw-steps.container2 {
+          grid-template-columns: 1fr;
+        }
+
+        .hiw-step {
+          max-width: 100%;
+        }
+      }
+
+      /* FAB safe-area on tiny phones */
+      @media (max-width: 480px) {
+        .socials.admin-fab {
+          right: 14px;
+          bottom: 14px;
+        }
+
+        .socials.admin-fab a {
+          width: 48px;
+          height: 48px;
+        }
+      }
+
+      @media (max-width: 420px) {
+        .socials.admin-fab {
+          bottom: max(14px, env(safe-area-inset-bottom));
+          right: 14px;
+        }
+      }
+
+      /* Job meta tighter on very small screens */
+      @media (max-width: 480px) {
+        .job-meta {
+          justify-content: flex-start;
+        }
+
+        .job-city,
+        .posted-time,
+        .price {
+          margin-right: 8px;
+        }
+      }
+
+      /* Reduce motion (global) */
+      @media (prefers-reduced-motion: reduce) {
+        * {
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- First Page -->
+    <div class="firstPage">
+      <nav class="navDivFirstPage">
+        <ul class="nav_links">
+          <div>
+            <li><img src="img/logo2.png" alt="simp-logo" /></li>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#jobs">Jobs</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+          </div>
+          <div class="navButtons">
+            <li><a href="login.html">Log in</a></li>
+            <li><a href="signup.html">Sign up</a></li>
+          </div>
+        </ul>
+      </nav>
+      <section class="section_container">
+        <h3>Post your project. Get the best people. Done.</h3>
+        <h2>
+          Connect with Expert Technicians & Installers Across the Philippines!
+        </h2>
+        <button
+          onclick="document.getElementById('jobs').scrollIntoView({behavior:'smooth'})"
+        >
+          View Job Postings
+        </button>
+        <div class="scroll_bottom">
+          <a href="#how-it-works">
+            <span><i class="ri-mouse-fill"></i></span>
+            SCROLL
+          </a>
+        </div>
+        <!-- Added 'fab-out' so it's hidden by default -->
+        <div class="socials admin-fab fab-out">
+          <a href="adminLogin.html" aria-label="Admin"
+            ><i class="ri-user-settings-line"></i
+          ></a>
+        </div>
+      </section>
+    </div>
+
+    <!-- Second Page -->
+    <div class="secondPage hiw" id="how-it-works">
+      <div class="secondPageTitle">
+        <h1>How It Works</h1>
+        <p class="hiw-subtitle">
+          Mobile hiring made simple—post, learn, apply, and get hired with a
+          seamless workflow.
+        </p>
+      </div>
+      <div class="hiw-steps container2">
+        <div class="hiw-step">
+          <h4>Create Your Profile</h4>
+          <p>Sign up and build your professional portfolio.</p>
+        </div>
+        <div class="hiw-step">
+          <h4>Level Up with Courses</h4>
+          <p>Take specialized courses to sharpen your expertise.</p>
+        </div>
+        <div class="hiw-step">
+          <h4>Find &amp; Apply for Jobs</h4>
+          <p>Browse nationwide roles and apply to the ones that fit.</p>
+        </div>
+        <div class="hiw-step">
+          <h4>Get Hired &amp; Succeed</h4>
+          <p>Deliver great work, earn reviews, and grow your reputation.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Third Page -->
+    <div class="thirdPage" id="jobs">
+      <div class="thirdPageTitle">
+        <h1>Recent Job Postings</h1>
+        <p class="thirdpage-subtitle">
+          Discover the latest opportunities waiting for skilled technicians and
+          installers.
+        </p>
+      </div>
+      <div class="container3" id="recentJobs">
+        <div class="empty-jobs" id="jobsEmpty" style="display: none">
+          No recent job postings yet. Please check back soon.
+        </div>
+      </div>
+    </div>
+
+    <!-- Fourth Page -->
+    <div class="fourthPage">
+      <div class="container4">
+        <p class="p1">Ready to Start Your Journey?</p>
+        <p class="p2">
+          Join our community of elite technicians and take control of your
+          career today.
+        </p>
+        <a href="signup.html" class="btn">Sign up now</a>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div><img src="img/logo2.png" class="footerBrandLogo" /></div>
+          <div>
+            <strong>Powered by: </strong>STEQ Technological Solutions and
+            Services Inc.
+          </div>
+          <div class="footer-tagline">
+            Connecting clients with verified installers across the Philippines.
+          </div>
+          <div class="footer-copy">
+            SIMP (<strong>STSSI Installers Management Platform</strong>)
+          </div>
+          <div>
+            © <span id="year"></span> All rights reserved.
+          </div>
+        </div>
+
+        <div class="footer-meta">
+          <nav class="footer-links">
+            <ul>
+              <li><a href="#how-it-works">How It Works</a></li>
+              <li><a href="#jobs">Recent Jobs</a></li>
+              <li><a href="login.html">Log In</a></li>
+              <li><a href="signup.html">Sign Up</a></li>
+            </ul>
+          </nav>
+        </div>
+
+        <address class="footer-contact" id="contact">
+          <span
+            ><i class="ri-map-pin-line"></i> 1103 Don Pedro St.,
+            Valenzuela</span
+          >
+          <a
+            href="mailto:sales@steq.online"
+            aria-label="Email sales@steq.online"
+          >
+            <i class="ri-mail-line"></i> sales@steq.online
+          </a>
+          <a href="tel:+639177812111" aria-label="Call +63 917 781 2111">
+            <i class="ri-phone-line"></i> +63 917 781 2111
+          </a>
+          <a
+            href="https://facebook.com/"
+            target="_blank"
+            rel="noopener"
+            aria-label="Facebook"
+          >
+            <i class="ri-facebook-fill"></i> Facebook
+          </a>
+          <a
+            href="https://www.linkedin.com/"
+            target="_blank"
+            rel="noopener"
+            aria-label="LinkedIn"
+          >
+            <i class="ri-linkedin-fill"></i> LinkedIn
+          </a>
+          <a
+            href="https://youtube.com/"
+            target="_blank"
+            rel="noopener"
+            aria-label="YouTube"
+          >
+            <i class="ri-youtube-fill"></i> YouTube
+          </a>
+        </address>
+      </div>
+    </footer>
+
+    <!-- Job Detail Modal (hero-style, shows picture) -->
+    <div id="jobModal" class="job-modal" aria-hidden="true">
+      <div class="job-modal-backdrop"></div>
+      <div
+        class="job-modal-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="jobModalTitle"
+      >
+        <button class="job-modal-close" type="button" aria-label="Close">
+          <i class="ri-close-line"></i>
+        </button>
+
+        <!-- HERO section -->
+        <div class="job-modal-hero">
+          <div id="jobModalHeroImg" class="job-modal-hero-img"></div>
+          <div class="job-modal-hero-overlay"></div>
+          <div class="job-modal-hero-content">
+            <span class="job-modal-hero-kicker">Job opportunity</span>
+            <h2 id="jobModalTitle">Job Details</h2>
+            <span id="jobModalCity" class="job-modal-city"></span>
+          </div>
+        </div>
+
+        <!-- Body -->
+        <div class="job-modal-header">
+          <!-- kept for layout; title/city now live in hero -->
+        </div>
+        <div id="jobModalMeta" class="job-modal-meta"></div>
+        <p id="jobModalDescription" class="job-modal-description"></p>
+        <div class="job-modal-actions">
+          <button
+            id="jobModalSignupBtn"
+            type="button"
+            class="job-modal-cta"
+          >
+            <i class="ri-user-follow-line"></i>
+            Sign up as installer to apply
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ScrollReveal -->
+    <script src="https://unpkg.com/scrollreveal"></script>
+    <script>
+      const scrollRevealOption = {
+        distance: "50px",
+        origin: "bottom",
+        duration: 1000,
+      };
+      ScrollReveal().reveal(
+        ".section_container h3",
+        Object.assign({}, scrollRevealOption)
+      );
+      ScrollReveal().reveal(
+        ".section_container h2",
+        Object.assign({}, scrollRevealOption, { origin: "right", delay: 200 })
+      );
+      ScrollReveal().reveal(
+        ".section_container button",
+        Object.assign({}, scrollRevealOption, { delay: 400 })
+      );
+      ScrollReveal().reveal(
+        ".nav_links li",
+        Object.assign({}, scrollRevealOption, { origin: "top", interval: 100 })
+      );
+      ScrollReveal().reveal(
+        ".container2 > div",
+        Object.assign({}, scrollRevealOption, { interval: 200 })
+      );
+      ScrollReveal().reveal(
+        ".container3 > div",
+        Object.assign({}, scrollRevealOption, { origin: "left", interval: 150 })
+      );
+      ScrollReveal().reveal(
+        ".fourthPage",
+        Object.assign({}, scrollRevealOption, { origin: "bottom" })
+      );
+    </script>
+
+    <!-- Fetch jobs + modal logic -->
+    <script type="module">
+      import { SUPABASE_URL, SUPABASE_ANON_KEY } from "./supabase.js";
+
+      const jobsWrap = document.getElementById("recentJobs");
+      const emptyState = document.getElementById("jobsEmpty");
+      let jobRows = [];
+
+      function peso(n) {
+        return (
+          "₱" +
+          Number(n || 0).toLocaleString("en-PH", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          })
+        );
+      }
+      function truncate(text, max = 160) {
+        if (!text) return "";
+        const s = String(text);
+        return s.length > max ? s.slice(0, max - 1) + "…" : s;
+      }
+      function cityOnly(locationValue) {
+        if (!locationValue) return "";
+        const s = String(locationValue);
+        return s.split(",")[0].trim();
+      }
+
+      /* relative time helper */
+      function timeAgo(iso) {
+        if (!iso) return "";
+        const d = new Date(iso);
+        const now = new Date();
+        const diff = Math.max(0, now - d); // ms
+        const sec = Math.floor(diff / 1000);
+        if (sec < 5) return "just now";
+        if (sec < 60) return `${sec}s ago`;
+        const min = Math.floor(sec / 60);
+        if (min < 60) return `${min}m ago`;
+        const hrs = Math.floor(min / 60);
+        if (hrs < 24) return `${hrs}h ago`;
+        const days = Math.floor(hrs / 24);
+        if (days < 7) return `${days}d ago`;
+        // Fallback to date for older posts
+        return d.toLocaleDateString("en-PH", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      }
+
+      let supa = null;
+      async function getClient() {
+        if (supa) return supa;
+        const { createClient } = await import(
+          "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm"
+        );
+        supa = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        return supa;
+      }
+
+      async function resolveImageUrl(job_picture_url) {
+        try {
+          if (!job_picture_url) return null;
+          const path = String(job_picture_url).replace(/^\/+/, "");
+          if (/^https?:\/\//i.test(path)) return path;
+
+          const client = await getClient();
+          const { data: signed } = await client.storage
+            .from("jobs")
+            .createSignedUrl(path, 3600);
+          if (signed?.signedUrl) return signed.signedUrl;
+
+          const { data: pub } = client.storage.from("jobs").getPublicUrl(path);
+          return pub?.publicUrl || null;
+        } catch {
+          return null;
+        }
+      }
+
+      async function jobCard(job, index) {
+        const title = job.job_title || "Untitled Job";
+        const desc = job.job_description || "";
+        const city = cityOnly(job.job_location);
+        const pay = job.job_pay != null ? peso(job.job_pay) : "—";
+        const posted = timeAgo(job.created_at);
+
+        const card = document.createElement("div");
+        card.className = "job-card";
+        card.dataset.index = String(index);
+        card.setAttribute("tabindex", "0");
+        card.setAttribute("role", "button");
+        card.setAttribute("aria-label", `View details for job: ${title}`);
+
+        card.innerHTML = `
+				<div class="job-cover"></div>
+				<div class="job-overlay"></div>
+				<div class="job-body">
+					<h3>${title}</h3>
+					<p>${truncate(desc)}</p>
+					<div class="job-meta">
+						<span class="job-city" title="${
+              job.job_location || ""
+            }"><i class="ri-map-pin-line"></i>${city || "—"}</span>
+						<span class="posted-time" title="${
+              job.created_at
+                ? new Date(job.created_at).toLocaleString("en-PH")
+                : ""
+            }">
+							<i class="ri-time-line"></i>${posted || ""}
+						</span>
+						<span class="price">${pay}</span>
+					</div>
+				</div>
+			`;
+
+        const cover = card.querySelector(".job-cover");
+        resolveImageUrl(job.job_picture_url).then((url) => {
+          if (url) cover.style.backgroundImage = `url("${url}")`;
+        });
+
+        return card;
+      }
+
+      function openJobModal(job) {
+        const modal = document.getElementById("jobModal");
+        if (!modal) return;
+
+        const titleEl = document.getElementById("jobModalTitle");
+        const cityEl = document.getElementById("jobModalCity");
+        const metaEl = document.getElementById("jobModalMeta");
+        const descEl = document.getElementById("jobModalDescription");
+        const heroImgEl = document.getElementById("jobModalHeroImg");
+
+        const title = job.job_title || "Job Details";
+        const fullLocation = job.job_location || "";
+        const city = cityOnly(fullLocation) || "Location not specified";
+        const payText =
+          job.job_pay != null ? peso(job.job_pay) : "Not specified";
+        const posted = job.created_at ? timeAgo(job.created_at) : "";
+        const postedExact = job.created_at
+          ? new Date(job.created_at).toLocaleString("en-PH")
+          : "";
+
+        if (titleEl) titleEl.textContent = title;
+        if (cityEl) {
+          cityEl.innerHTML = `<i class="ri-map-pin-line"></i>${city}`;
+          cityEl.title = fullLocation;
+        }
+        if (metaEl) {
+          metaEl.innerHTML = `
+            <span${
+              postedExact ? ` title="${postedExact}"` : ""
+            }><i class="ri-time-line"></i>${posted || "Recently posted"}</span>
+            <span><i class="ri-money-dollar-circle-line"></i>${payText}</span>
+          `;
+        }
+        if (descEl) {
+          descEl.textContent =
+            job.job_description || "No description provided for this job.";
+        }
+
+        // HERO image: use job picture if available
+        if (heroImgEl) {
+          heroImgEl.style.backgroundImage = "";
+          resolveImageUrl(job.job_picture_url).then((url) => {
+            if (url) {
+              heroImgEl.style.backgroundImage = `url("${url}")`;
+            } else {
+              heroImgEl.style.backgroundImage =
+                "linear-gradient(135deg, #20a44c, #20647c)";
+            }
+          });
+        }
+
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeJobModal() {
+        const modal = document.getElementById("jobModal");
+        if (!modal) return;
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+      }
+
+      function setupJobModalEvents() {
+        const modal = document.getElementById("jobModal");
+        if (!modal) return;
+        const closeBtn = modal.querySelector(".job-modal-close");
+        const backdrop = modal.querySelector(".job-modal-backdrop");
+        const signupBtn = document.getElementById("jobModalSignupBtn");
+
+        closeBtn?.addEventListener("click", closeJobModal);
+        backdrop?.addEventListener("click", closeJobModal);
+
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") closeJobModal();
+        });
+
+        if (signupBtn) {
+          signupBtn.addEventListener("click", () => {
+            // you can change to "signup.html?installer" if you later handle this query in signup page
+            window.location.href = "signup.html";
+          });
+        }
+
+        // Event delegation for all job cards
+        jobsWrap.addEventListener("click", (e) => {
+          const card = e.target.closest(".job-card");
+          if (!card) return;
+          const idx = Number(card.dataset.index ?? -1);
+          if (Number.isNaN(idx) || idx < 0 || idx >= jobRows.length) return;
+          openJobModal(jobRows[idx]);
+        });
+
+        // Keyboard access: Enter/Space on focused job card
+        jobsWrap.addEventListener("keydown", (e) => {
+          if (e.key !== "Enter" && e.key !== " ") return;
+          const card = e.target.closest(".job-card");
+          if (!card) return;
+          e.preventDefault();
+          const idx = Number(card.dataset.index ?? -1);
+          if (Number.isNaN(idx) || idx < 0 || idx >= jobRows.length) return;
+          openJobModal(jobRows[idx]);
+        });
+      }
+
+      async function loadRecentJobs() {
+        try {
+          /* keeps your existing API usage; already limited to 6 newest */
+          const url = `${SUPABASE_URL}/rest/v1/public_recent_jobs?select=*&order=created_at.desc&limit=6`;
+          const res = await fetch(url, {
+            headers: {
+              apikey: SUPABASE_ANON_KEY,
+              Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+            },
+          });
+          if (!res.ok) throw new Error(await res.text());
+          let rows = await res.json();
+
+          // Extra safety: in case the view ignores limit, enforce top 6 here.
+          rows = Array.isArray(rows)
+            ? rows
+                .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+                .slice(0, 6)
+            : [];
+
+          jobRows = rows;
+
+          jobsWrap.innerHTML = "";
+          if (!rows?.length) {
+            emptyState.style.display = "";
+            jobsWrap.appendChild(emptyState);
+            return;
+          }
+          emptyState.style.display = "none";
+
+          for (let i = 0; i < rows.length; i++) {
+            jobsWrap.appendChild(await jobCard(rows[i], i));
+          }
+
+          // Optional: keep the "x minutes ago" fresh
+          setInterval(() => {
+            document.querySelectorAll(".posted-time").forEach((el, idx) => {
+              const r = rows[idx];
+              if (!r?.created_at) return;
+              el.innerHTML = `<i class="ri-time-line"></i>${timeAgo(
+                r.created_at
+              )}`;
+              el.title = new Date(r.created_at).toLocaleString("en-PH");
+            });
+          }, 60_000);
+        } catch (e) {
+          console.error(e);
+          emptyState.textContent = "Could not load jobs.";
+          emptyState.style.display = "";
+          jobsWrap.appendChild(emptyState);
+        }
+      }
+
+      setupJobModalEvents();
+      loadRecentJobs();
+    </script>
+
+    <!-- Scroll direction detector for FAB slide (down -> hide, up -> show) + keyboard unlock -->
+    <script>
+      (function () {
+        const fab = document.querySelector(".socials.admin-fab");
+        if (!fab) return;
+
+        let lastY = window.scrollY || window.pageYOffset;
+        let ticking = false;
+
+        // NEW: only allow scroll behavior after keyboard shortcut unlocks the FAB
+        let fabUnlocked = false;
+
+        // Start hidden (fab-out is already on the element in HTML)
+        fab.classList.add("fab-out");
+
+        function onScroll() {
+          // If not unlocked yet, ignore scroll events
+          if (!fabUnlocked) return;
+
+          const y = window.scrollY || window.pageYOffset;
+          const goingDown = y > lastY;
+          lastY = y;
+          if (goingDown) {
+            fab.classList.add("fab-out");
+          } else {
+            fab.classList.remove("fab-out");
+          }
+        }
+
+        window.addEventListener(
+          "scroll",
+          () => {
+            if (!ticking) {
+              window.requestAnimationFrame(() => {
+                onScroll();
+                ticking = false;
+              });
+              ticking = true;
+            }
+          },
+          { passive: true }
+        );
+
+        // NEW: keyboard shortcut to show/unlock the FAB
+        // Using Alt + A (Alt + Tab cannot be captured in browser)
+        document.addEventListener("keydown", (e) => {
+          if (
+            e.altKey &&
+            !e.shiftKey &&
+            (e.key === "a" || e.key === "A")
+          ) {
+            fabUnlocked = true;
+            fab.classList.remove("fab-out");
+          }
+        });
+      })();
+    </script>
+  </body>
+</html>

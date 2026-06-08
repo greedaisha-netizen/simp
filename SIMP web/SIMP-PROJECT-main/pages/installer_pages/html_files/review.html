@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Documents Under Review – SIMP Project</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../img/simpHappyMascotLogo.png"
+    />
+    <style>
+      :root {
+        --brand: #4f46e5;
+        --muted: #6b7280;
+        --bg: #f8fafc;
+        --card: #ffffff;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial,
+          sans-serif;
+        background: radial-gradient(
+          1200px 800px at 20% 10%,
+          #eef2ff 0%,
+          #ffffff 45%,
+          #ffffff 100%
+        );
+        color: #111827;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+      .card {
+        width: 100%;
+        max-width: 560px;
+        background: var(--card);
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+        padding: 28px;
+        text-align: center;
+      }
+      .hero {
+        display: grid;
+        place-items: center;
+        margin-bottom: 20px;
+      }
+      /* Animated “review” icon (folder + pulse) */
+      .icon-wrap {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        display: grid;
+        place-items: center;
+      }
+      .pulse {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: rgba(79, 70, 229, 0.12);
+        animation: pulse 2.4s ease-out infinite;
+      }
+      .pulse:nth-child(1) {
+        animation-delay: 0s;
+      }
+      .pulse:nth-child(2) {
+        animation-delay: 0.6s;
+      }
+      .pulse:nth-child(3) {
+        animation-delay: 1.2s;
+      }
+      @keyframes pulse {
+        0% {
+          transform: scale(0.6);
+          opacity: 0.9;
+        }
+        70% {
+          transform: scale(1);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1);
+          opacity: 0;
+        }
+      }
+      .folder {
+        position: relative;
+        width: 78px;
+        height: 62px;
+        border-radius: 8px;
+        background: #c7d2fe;
+        border: 2px solid #a5b4fc;
+        box-shadow: 0 6px 16px rgba(79, 70, 229, 0.15);
+      }
+      .folder:before {
+        content: "";
+        position: absolute;
+        top: -12px;
+        left: 6px;
+        width: 38px;
+        height: 18px;
+        border-radius: 6px 6px 0 0;
+        background: #a5b4fc;
+        border: 2px solid #818cf8;
+        border-bottom: none;
+      }
+      /* Magnifying glass scanning */
+      .glass {
+        position: absolute;
+        right: -14px;
+        bottom: -10px;
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        border: 4px solid var(--brand);
+        background: #fff;
+        animation: bob 2.2s ease-in-out infinite;
+        box-shadow: 0 6px 12px rgba(79, 70, 229, 0.25);
+      }
+      .glass:after {
+        content: "";
+        position: absolute;
+        right: -8px;
+        bottom: -10px;
+        width: 18px;
+        height: 6px;
+        background: var(--brand);
+        border-radius: 6px;
+        transform: rotate(35deg);
+      }
+      @keyframes bob {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-6px);
+        }
+      }
+
+      h1 {
+        font-size: 22px;
+        margin: 8px 0 10px;
+      }
+      p {
+        color: var(--muted);
+        margin: 0 0 12px;
+        line-height: 1.5;
+      }
+      .tips {
+        background: #f3f4f6;
+        color: #374151;
+        border-radius: 12px;
+        padding: 12px 14px;
+        text-align: left;
+        font-size: 14px;
+        margin-top: 10px;
+      }
+      .actions {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 18px;
+        flex-wrap: wrap;
+      }
+      .btn {
+        padding: 10px 16px;
+        border-radius: 10px;
+        border: 0;
+        cursor: pointer;
+        font-weight: 600;
+      }
+      .btn-primary {
+        background: var(--brand);
+        color: #fff;
+      }
+      .btn-ghost {
+        background: #eef2ff;
+        color: #3730a3;
+      }
+      .small {
+        color: var(--muted);
+        font-size: 12px;
+        margin-top: 8px;
+      }
+      a {
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card" role="status" aria-live="polite">
+      <div class="hero">
+        <div class="icon-wrap" aria-hidden="true">
+          <span class="pulse"></span>
+          <span class="pulse"></span>
+          <span class="pulse"></span>
+          <div class="folder"></div>
+          <div class="glass"></div>
+        </div>
+      </div>
+
+      <h1>Thanks! Your documents are under review</h1>
+      <p>
+        Our admins are currently checking your submissions. This usually takes a
+        few hours.
+      </p>
+      <p>
+        We’ll email you once your account is <strong>Verified</strong>. After
+        verification, you can access your installer dashboard right away.
+      </p>
+
+      <div class="tips">
+        <strong>What’s next?</strong>
+        <ul style="margin: 8px 0 0 18px; padding: 0">
+          <li>Come back later and log in again to check your status.</li>
+          <li>Make sure emails from your configured sender aren’t in spam.</li>
+        </ul>
+      </div>
+
+      <div class="actions">
+        <!-- From pages/installer_pages back to project root -->
+        <a class="btn btn-ghost" href="../../../index.html" id="logout-btn"
+          >Return to Home</a
+        >
+      </div>
+      <div class="small">
+        Need help? Contact support at
+        <a href="mailto:simpProject@email.com">simpProject@email.com</a>
+      </div>
+    </div>
+    <script type="module" src="../../general_files/index.js"></script>
+    <script type="module" src="../../general_files/session.js"></script>
+  </body>
+</html>

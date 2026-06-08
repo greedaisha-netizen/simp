@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin Verification</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../img/simpHappyMascotLogo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../css_files/sideBar.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp"
+      rel="stylesheet"
+    />
+
+    <!-- SweetAlert2 (compact, non-intrusive modals) -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #1c2430;
+        --muted: #6c7a8a;
+        --line: #e7edf3;
+        --brand: #20a44c;
+        --danger: #e53935;
+        --card: #fff;
+        --pill: #eef6ff;
+        --radius: 14px;
+      }
+
+      main {
+        margin-top: 1.4rem;
+      }
+
+      .two-col {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 1rem;
+      }
+
+      @media (max-width: 1024px) {
+        .two-col {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 12px;
+      }
+
+      .panel h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1rem;
+        font-weight: bold;
+      }
+
+      .search {
+        position: relative;
+        margin-bottom: 0.6rem;
+      }
+
+      .search input {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px 10px 36px;
+        outline: none;
+        background: #fcfeff;
+      }
+
+      .search .material-icons-sharp {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted);
+      }
+
+      .list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 70vh;
+        overflow: auto;
+      }
+
+      .item {
+        display: grid;
+        grid-template-columns: 40px 1fr auto;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        cursor: pointer;
+        background: #fff;
+      }
+
+      .item:hover {
+        background: #f6fafc;
+      }
+
+      .item.active {
+        border-color: var(--brand);
+        box-shadow: inset 0 0 0 1px var(--brand);
+        background: #f3fdf7;
+      }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid var(--line);
+        background: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #1f2a3a;
+        overflow: hidden;
+      }
+
+      .avatar.cover {
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        color: transparent;
+        text-indent: -9999px;
+      }
+
+      .pill {
+        font-size: 0.75rem;
+        background: var(--pill);
+        padding: 4px 8px;
+        border-radius: 999px;
+        color: #2463a6;
+        border: 1px solid #d6e9ff;
+        white-space: nowrap;
+      }
+
+      .pill.you {
+        background: #e8fff4;
+        color: #0f5132;
+        border-color: #b7e4c7;
+        margin-left: 8px;
+      }
+
+      .details {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        overflow: clip;
+      }
+
+      .details .head {
+        display: flex;
+        gap: 16px;
+        padding: 16px;
+        border-bottom: 1px solid var(--line);
+        align-items: center;
+        background: linear-gradient(180deg, #f9fbff, #ffffff);
+      }
+
+      .details .name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin: 0 0 2px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .meta {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 4px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 16px;
+      }
+
+      @media (max-width: 1024px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        background: #fff;
+      }
+
+      .card h4 {
+        margin: 0 0 0.6rem 0;
+        font-size: 0.95rem;
+      }
+
+      .info-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 12px;
+      }
+
+      @media (max-width: 640px) {
+        .info-list {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .label {
+        color: var(--muted);
+        font-size: 0.85rem;
+        display: block;
+      }
+
+      .btn {
+        appearance: none;
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 10px;
+        padding: 9px 12px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+      }
+
+      .btn.primary {
+        background: var(--brand);
+        color: #fff;
+        border-color: var(--brand);
+      }
+
+      .btn.warn {
+        background: #fff8e1;
+        color: #8a6d0a;
+        border-color: #fde68a;
+      }
+
+      .btn.reject {
+        background: #fff5f5;
+        color: var(--danger);
+        border-color: #ffd7d7;
+      }
+
+      .empty-state {
+        padding: 24px;
+        border: 1px dashed var(--line);
+        border-radius: 12px;
+        background: #fbfeff;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      .not-auth {
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      .role-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 6px;
+      }
+
+      .dot-pending {
+        background: #f59e0b;
+      }
+
+      .dot-admin {
+        background: #10b981;
+      }
+
+      .dot-super {
+        background: #6366f1;
+      }
+
+      /* ========= SKELETON LOADING (ADDED) ========= */
+      @keyframes shimmer {
+        0% {
+          background-position: -200% 0;
+        }
+
+        100% {
+          background-position: 200% 0;
+        }
+      }
+
+      .skeleton {
+        position: relative;
+        overflow: hidden;
+        background: #eef2f6;
+        background-image: linear-gradient(
+          90deg,
+          #eef2f6 0px,
+          #f7f9fc 40px,
+          #eef2f6 80px
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.2s infinite linear;
+        border-radius: 10px;
+      }
+
+      .skeleton-pill {
+        height: 22px;
+        width: 74px;
+        border-radius: 999px;
+      }
+
+      .skeleton-thumb {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+      }
+
+      .skeleton-line {
+        height: 12px;
+        width: 100%;
+        margin: 6px 0;
+        border-radius: 6px;
+      }
+
+      .skeleton-title {
+        height: 16px;
+        width: 60%;
+        margin: 6px 0;
+        border-radius: 8px;
+      }
+
+      /* layout visibility toggles */
+      #contentArea.loading .real-list,
+      #contentArea.loading .real-details,
+      #contentArea.loading #emptyAdmins {
+        display: none !important;
+      }
+
+      #contentArea.loading .skeleton-list,
+      #contentArea.loading .skeleton-details {
+        display: block !important;
+      }
+
+      .skeleton-list,
+      .skeleton-details {
+        display: none;
+      }
+
+      .sk-item {
+        display: grid;
+        grid-template-columns: 48px 1fr auto;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        margin-bottom: 10px;
+      }
+
+      .sk-meta {
+        display: grid;
+        gap: 8px;
+      }
+
+      .sk-head {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 1.5rem;
+      }
+
+      .sk-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px 16px;
+      }
+
+      @media (max-width: 640px) {
+        .sk-info-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .sk-info-row {
+        background: #fcfeff;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 12px;
+        display: grid;
+        gap: 6px;
+      }
+    </style>
+  </head>
+
+  <body class="is-loading">
+    <div class="container">
+      <!-- Sidebar -->
+      <aside>
+        <div class="toggle">
+          <div class="logo">
+            <img src="../../../img/simpHappyMascotLogo.png" alt="logo" />
+            <h2>SIMP<span class="danger">Project</span></h2>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <a href="dashboard.html"
+            ><span class="material-icons-sharp">dashboard</span>
+            <h3>Dashboard</h3>
+          </a>
+          <a href="workerVerification.html"
+            ><span class="material-icons-sharp">engineering</span>
+            <h3>Workers<br />Verification</h3>
+          </a>
+          <a href="jobVerification.html"
+            ><span class="material-icons-sharp">work</span>
+            <h3>Jobs<br />Verification</h3>
+          </a>
+          <a href="jobApplicationVerification.html">
+            <span class="material-icons-sharp">approval</span>
+            <h3>Application<br />Verification</h3>
+          </a>
+          <a href="adminVerification.html" class="active"
+            ><span class="material-icons-sharp">shield</span>
+            <h3>Admin<br />Verification</h3>
+          </a>
+          <a href="manageShop.html"
+            ><span class="material-icons-sharp">shop</span>
+            <h3>Manage<br />Shop</h3>
+          </a>
+          <a href="paymentsRequest.html">
+            <span class="material-icons-sharp">payments</span>
+            <h3>Payments<br />Request</h3>
+          </a>
+          <a href="courseBuilder.html"
+            ><span class="material-icons-sharp">school</span>
+            <h3>Course<br />Publisher</h3>
+          </a>
+          <a href="settings.html"
+            ><span class="material-icons-sharp">settings</span>
+            <h3>Settings</h3>
+          </a>
+          <a href="#" id="logout-btn"
+            ><span class="material-icons-sharp">logout</span>
+            <h3>Logout</h3>
+          </a>
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <main>
+        <section>
+          <div class="two-col loading" id="contentArea" style="display: none">
+            <!-- Left: list -->
+            <div class="panel">
+              <h3>Admin Directory</h3>
+
+              <div class="search">
+                <span class="material-icons-sharp">search</span>
+                <input
+                  id="searchInput"
+                  type="text"
+                  placeholder="Search name or email…"
+                />
+              </div>
+
+              <div style="margin-bottom: 0.6rem">
+                <select
+                  id="statusFilter"
+                  style="
+                    width: 100%;
+                    border: 1px solid var(--line);
+                    border-radius: 10px;
+                    padding: 10px 12px;
+                    background: #fcfeff;
+                    outline: none;
+                  "
+                >
+                  <option value="">All statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="admin">Admin</option>
+                  <option value="superadmin">Super Administrator</option>
+                </select>
+              </div>
+
+              <!-- SKELETON LIST -->
+              <div class="skeleton-list">
+                <div class="sk-item">
+                  <div class="skeleton skeleton-thumb"></div>
+                  <div class="sk-meta" style="flex: 1">
+                    <div class="skeleton skeleton-title"></div>
+                    <div class="skeleton skeleton-line" style="width: 70%"></div>
+                  </div>
+                  <div class="skeleton skeleton-pill"></div>
+                </div>
+                <div class="sk-item">
+                  <div class="skeleton skeleton-thumb"></div>
+                  <div class="sk-meta" style="flex: 1">
+                    <div class="skeleton skeleton-title" style="width: 80%"></div>
+                    <div class="skeleton skeleton-line" style="width: 50%"></div>
+                  </div>
+                  <div class="skeleton skeleton-pill"></div>
+                </div>
+                <div class="sk-item">
+                  <div class="skeleton skeleton-thumb"></div>
+                  <div class="sk-meta" style="flex: 1">
+                    <div class="skeleton skeleton-title" style="width: 55%"></div>
+                    <div class="skeleton skeleton-line" style="width: 65%"></div>
+                  </div>
+                  <div class="skeleton skeleton-pill"></div>
+                </div>
+              </div>
+
+              <div class="real-list">
+                <div id="adminList" class="list"></div>
+                <div id="emptyAdmins" class="empty-state" style="display: none">
+                  No admin profiles found.
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: details -->
+            <div class="details" id="detailsPane">
+              <!-- SKELETON DETAILS -->
+              <div class="skeleton-details">
+                <div class="sk-head">
+                  <div class="skeleton skeleton-thumb" style="width: 72px; height: 72px; border-radius: 50%"></div>
+                  <div class="sk-meta" style="flex: 1">
+                    <div class="skeleton skeleton-title" style="width: 140px; height: 20px"></div>
+                    <div class="skeleton skeleton-line" style="width: 180px"></div>
+                  </div>
+                </div>
+                <div class="sk-info-grid">
+                  <div class="sk-info-row">
+                    <div class="skeleton skeleton-line" style="width: 60px"></div>
+                    <div class="skeleton skeleton-line" style="width: 120px; height: 16px"></div>
+                  </div>
+                  <div class="sk-info-row">
+                    <div class="skeleton skeleton-line" style="width: 50px"></div>
+                    <div class="skeleton skeleton-line" style="width: 140px; height: 16px"></div>
+                  </div>
+                  <div class="sk-info-row">
+                    <div class="skeleton skeleton-line" style="width: 70px"></div>
+                    <div class="skeleton skeleton-line" style="width: 100px; height: 16px"></div>
+                  </div>
+                  <div class="sk-info-row">
+                    <div class="skeleton skeleton-line" style="width: 80px"></div>
+                    <div class="skeleton skeleton-line" style="width: 160px; height: 16px"></div>
+                  </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px">
+                  <div class="skeleton skeleton-btn" style="width: 110px; height: 38px"></div>
+                  <div class="skeleton skeleton-btn" style="width: 110px; height: 38px"></div>
+                </div>
+              </div>
+
+              <div class="real-details">
+                <div class="empty-state">
+                  Select a profile on the left to review full details.
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div id="notAuth" class="not-auth" style="display: none">
+            You don’t have access to Admin Verification. Please contact a super
+            administrator.
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="../../general_files/session.js"></script>
+    <script type="module" src="../../general_files/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script type="module">
+      import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../../../supabase.js";
+
+      // Public schema for admin directory
+      const supabase = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+        { db: { schema: "public" } }
+      );
+
+      // ===== SweetAlert2 helpers (compact & consistent) =====
+      const Modal = Swal.mixin({
+        width: 380, // shorter and compact
+        heightAuto: false, // prevent page resize/jump
+        scrollbarPadding: false, // avoid layout shift on open
+        allowOutsideClick: false,
+        backdrop: true,
+        returnFocus: false,
+        confirmButtonColor: "#20a44c",
+        cancelButtonColor: "#6c7a8a",
+        customClass: {
+          popup: "simp-compact-modal",
+        },
+      });
+
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 2200,
+        timerProgressBar: true,
+        width: 360,
+      });
+
+      function showSuccess(message, sub = "") {
+        Modal.fire({
+          icon: "success",
+          title: message,
+          text: sub || "",
+        });
+      }
+
+      function showInfo(message, sub = "") {
+        Modal.fire({
+          icon: "info",
+          title: message,
+          text: sub || "",
+        });
+      }
+
+      function showError(message, sub = "") {
+        Modal.fire({
+          icon: "error",
+          title: message,
+          text: sub || "If this keeps happening, please try again in a moment.",
+        });
+      }
+
+      async function askConfirm({
+        title,
+        text,
+        confirmText = "Confirm",
+        icon = "question",
+      }) {
+        const res = await Modal.fire({
+          icon,
+          title,
+          text,
+          showCancelButton: true,
+          confirmButtonText: confirmText,
+          cancelButtonText: "Cancel",
+        });
+        return res.isConfirmed;
+      }
+
+      function toastOk(message) {
+        Toast.fire({ icon: "success", title: message });
+      }
+
+      function toastWarn(message) {
+        Toast.fire({ icon: "warning", title: message });
+      }
+
+      function toastError(message) {
+        Toast.fire({ icon: "error", title: message });
+      }
+
+      // Elements
+      const contentArea = document.getElementById("contentArea");
+      const notAuth = document.getElementById("notAuth");
+      const adminList = document.getElementById("adminList");
+      const emptyAdmins = document.getElementById("emptyAdmins");
+      const detailsPane = document.getElementById("detailsPane");
+      const searchInput = document.getElementById("searchInput");
+      const statusFilter = document.getElementById("statusFilter");
+
+      let currentUser = null; // supabase.auth user
+      let currentRole = null; // 'pending' | 'admin' | 'superadmin' | null
+      let admins = []; // loaded admin rows
+      let activeAdminId = null;
+
+      // NEW: cache of signed avatar URLs keyed by admin id
+      const avatarCache = {};
+
+      // Helpers
+      const cap = (s) => (s ? s.charAt(0).toUpperCase() + s.slice(1) : s);
+      const roleDot = (role) => {
+        if (role === "admin") return '<span class="role-dot dot-admin"></span>';
+        if (role === "superadmin")
+          return '<span class="role-dot dot-super"></span>';
+        return '<span class="role-dot dot-pending"></span>';
+      };
+      const initials = (name = "") =>
+        name
+          .trim()
+          .split(/\s+/)
+          .map((p) => p[0] || "")
+          .join("")
+          .toUpperCase()
+          .slice(0, 2) || "?";
+
+      function applyAvatarToEl(el, url) {
+        if (!el) return;
+        if (url) {
+          el.classList.add("cover");
+          el.style.backgroundImage = `url("${url}")`;
+          el.textContent = ""; // hide initials text
+        } else {
+          el.classList.remove("cover");
+          el.style.backgroundImage = "";
+        }
+      }
+
+      async function signAvatar(path) {
+        if (!path) return null;
+        try {
+          const { data, error } = await supabase.storage
+            .from("admin_profile")
+            .createSignedUrl(path, 3600);
+          if (error) return null;
+          return data?.signedUrl || null;
+        } catch {
+          return null;
+        }
+      }
+
+      async function hydrateAvatars(rows) {
+        const jobs = rows.map(async (a) => {
+          const path = a?.admin_profile_url || null;
+          if (!path) {
+            avatarCache[a.id] = null;
+            return;
+          }
+          const url = await signAvatar(path);
+          avatarCache[a.id] = url || null;
+        });
+        await Promise.allSettled(jobs);
+      }
+
+      // Auth & load
+      document.addEventListener("DOMContentLoaded", async () => {
+        document.body.classList.add("is-loading");
+        if (contentArea) contentArea.classList.add("loading");
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (!user) {
+          document.body.classList.remove("is-loading");
+          if (contentArea) contentArea.classList.remove("loading");
+          notAuth.style.display = "block";
+          toastWarn("Please sign in to access Admin Verification.");
+          return;
+        }
+        currentUser = user;
+
+        // Load current user's admin role
+        const { data: me, error: meErr } = await supabase
+          .from("admin")
+          .select("id, role")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        if (meErr) {
+          document.body.classList.remove("is-loading");
+          if (contentArea) contentArea.classList.remove("loading");
+          console.error(meErr);
+          notAuth.style.display = "block";
+          showError(
+            "Unable to verify your access.",
+            "Please refresh the page or try again shortly."
+          );
+          return;
+        }
+        currentRole = me?.role || null;
+
+        if (!(currentRole === "admin" || currentRole === "superadmin")) {
+          document.body.classList.remove("is-loading");
+          if (contentArea) contentArea.classList.remove("loading");
+          notAuth.style.display = "block";
+          toastWarn("Your account doesn’t have access to this section.");
+          return;
+        }
+
+        contentArea.style.display = "grid";
+        await refreshAdmins();
+        wireUI();
+      });
+
+      function wireUI() {
+        searchInput.addEventListener("input", () => renderAdminList());
+        statusFilter.addEventListener("change", () => renderAdminList());
+      }
+
+      async function refreshAdmins() {
+        const { data, error } = await supabase
+          .from("admin")
+          .select("id, email, name, phone, role, created_at, admin_profile_url")
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          console.error(error);
+          adminList.innerHTML = "";
+          emptyAdmins.style.display = "block";
+          emptyAdmins.textContent =
+            "Error loading admin profiles: " + error.message;
+          showError("Couldn’t load admin profiles.", error.message || "");
+          document.body.classList.remove("is-loading");
+          if (contentArea) contentArea.classList.remove("loading");
+          return;
+        }
+        admins = data || [];
+
+        // Prefetch signed URLs for avatars
+        await hydrateAvatars(admins);
+
+        renderAdminList();
+        if (admins.length) {
+          const first = admins[0];
+          activeAdminId = first.id;
+          renderDetails(first);
+          setTimeout(() => {
+            document.querySelectorAll("#adminList .item").forEach((n) => {
+              if (n.dataset.id === activeAdminId) n.classList.add("active");
+            });
+          });
+        } else {
+          const realDetails = detailsPane.querySelector(".real-details");
+          if (realDetails) {
+            realDetails.innerHTML = '<div class="empty-state">No admin profiles found.</div>';
+          } else {
+            detailsPane.innerHTML =
+              '<div class="empty-state">No admin profiles found.</div>';
+          }
+          toastWarn("No admin profiles found.");
+        }
+        document.body.classList.remove("is-loading");
+        if (contentArea) contentArea.classList.remove("loading");
+      }
+
+      function renderAdminList() {
+        adminList.innerHTML = "";
+        const q = (searchInput.value || "").trim().toLowerCase();
+        const roleSel = (statusFilter.value || "").toLowerCase();
+
+        const filtered = (admins || []).filter((a) => {
+          const matchesQuery =
+            !q ||
+            a.name?.toLowerCase().includes(q) ||
+            a.email?.toLowerCase().includes(q);
+          const matchesRole =
+            !roleSel || (a.role || "").toLowerCase() === roleSel;
+          return matchesQuery && matchesRole;
+        });
+
+        emptyAdmins.style.display = filtered.length ? "none" : "block";
+
+        filtered.forEach((a) => {
+          const item = document.createElement("div");
+          item.className = "item";
+          item.dataset.id = a.id;
+          if (a.id === activeAdminId) item.classList.add("active");
+
+          const youBadge =
+            a.id === (currentUser?.id || "")
+              ? ' <span class="pill you">You</span>'
+              : "";
+
+          const avatar = `<div class="avatar" data-avatar-id="${
+            a.id
+          }">${initials(a.name || a.email)}</div>`;
+
+          item.innerHTML = `
+            ${avatar}
+            <div>
+              <div style="font-weight:700">${
+                a.name || "(no name)"
+              }${youBadge}</div>
+              <div style="font-size:.85rem; color:var(--muted)">${a.email}</div>
+            </div>
+            <span class="pill">${roleDot(a.role)} ${
+            a.role ? cap(a.role) : "Pending"
+          }</span>
+          `;
+
+          const avatarEl = item.querySelector(`[data-avatar-id="${a.id}"]`);
+          applyAvatarToEl(avatarEl, avatarCache[a.id]);
+
+          item.addEventListener("click", () => {
+            activeAdminId = a.id;
+            document
+              .querySelectorAll("#adminList .item")
+              .forEach((i) => i.classList.remove("active"));
+            item.classList.add("active");
+            renderDetails(a);
+          });
+
+          adminList.appendChild(item);
+        });
+
+        if (!filtered.length) {
+          toastWarn("No results match your filters.");
+        }
+      }
+
+      function renderDetails(admin) {
+        const when = new Date(admin.created_at).toLocaleString();
+        const roleLabel = admin.role ? cap(admin.role) : "Pending";
+        const roleBadge = `${roleDot(admin.role)} ${roleLabel}`;
+        const youHeaderBadge =
+          admin.id === (currentUser?.id || "")
+            ? ' <span class="pill you">This is you</span>'
+            : "";
+
+        const html = `
+          <div class="head">
+            <div class="avatar" id="detailAvatar" style="width:72px; height:72px; font-size:1.2rem;">${initials(
+              admin.name || admin.email
+            )}</div>
+            <div>
+              <div class="name">
+                ${admin.name || "(no name)"}
+                <span class="pill" id="statusPill">${roleBadge}</span>${youHeaderBadge}
+              </div>
+              <div class="meta">Created: ${when}</div>
+            </div>
+            <div style="margin-left:auto; display:flex; gap:8px;">
+              ${renderActionsFor(admin).join("") || ""}
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="card">
+              <h4>Basic Information</h4>
+              <div class="info-list">
+                <div><span class="label">Full Name</span>${
+                  admin.name || "—"
+                }</div>
+                <div><span class="label">Email</span>${admin.email || "—"}</div>
+                <div><span class="label">Phone</span>${admin.phone || "—"}</div>
+                <div><span class="label">Role</span>${roleLabel}</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <h4>Notes</h4>
+              <p style="margin:0; color:var(--muted); font-size:.95rem;">
+                Approve pending applicants carefully. Only super administrators can promote admins or demote them back to pending.
+              </p>
+            </div>
+          </div>
+        `;
+
+        const realDetails = detailsPane.querySelector(".real-details");
+        if (realDetails) {
+          realDetails.innerHTML = html;
+        } else {
+          detailsPane.innerHTML = html;
+        }
+
+        const detailAvatarEl = detailsPane.querySelector("#detailAvatar");
+        applyAvatarToEl(detailAvatarEl, avatarCache[admin.id]);
+
+        wireActionsFor(admin);
+      }
+
+      function renderActionsFor(admin) {
+        const actions = [];
+        if (currentRole === "admin") {
+          if ((admin.role || "pending") === "pending") {
+            actions.push(
+              `<button class="btn primary" id="approveBtn">Approve</button>`
+            );
+            actions.push(
+              `<button class="btn reject" id="rejectBtn">Reject</button>`
+            );
+          }
+        } else if (currentRole === "superadmin") {
+          const ar = admin.role || "pending";
+          if (ar === "pending") {
+            actions.push(
+              `<button class="btn primary" id="approveBtn">Approve (to Admin)</button>`
+            );
+            actions.push(
+              `<button class="btn reject" id="rejectBtn">Reject</button>`
+            );
+          } else if (ar === "admin") {
+            if (admin.id !== currentUser.id) {
+              actions.push(
+                `<button class="btn warn" id="demoteBtn">Demote to Pending</button>`
+              );
+              actions.push(
+                `<button class="btn primary" id="promoteBtn">Promote to Super Admin</button>`
+              );
+            }
+          } else if (ar === "superadmin") {
+            // Viewing superadmin -> no actions
+          }
+        }
+        return actions;
+      }
+
+      function wireActionsFor(admin) {
+        const approveBtn = detailsPane.querySelector("#approveBtn");
+        const rejectBtn = detailsPane.querySelector("#rejectBtn");
+        const demoteBtn = detailsPane.querySelector("#demoteBtn");
+        const promoteBtn = detailsPane.querySelector("#promoteBtn");
+
+        if (approveBtn)
+          approveBtn.addEventListener("click", async () => {
+            await setRole(admin.id, "admin");
+          });
+
+        if (rejectBtn)
+          rejectBtn.addEventListener("click", async () => {
+            const ok = await askConfirm({
+              title: "Reject this profile?",
+              text: `This will remove ${admin.email} from authentication and delete their admin profile.`,
+              confirmText: "Reject",
+            });
+            if (!ok) return;
+            await rejectProfileDeleteAuthUser(admin.id);
+          });
+
+        if (demoteBtn)
+          demoteBtn.addEventListener("click", async () => {
+            const ok = await askConfirm({
+              title: "Demote to Pending?",
+              text: `This will set ${admin.email} back to Pending.`,
+              confirmText: "Demote",
+            });
+            if (!ok) return;
+            await setRole(admin.id, "pending");
+          });
+
+        if (promoteBtn)
+          promoteBtn.addEventListener("click", async () => {
+            const ok = await askConfirm({
+              title: "Transfer Super Admin?",
+              text: "You will become ADMIN and the selected user will become SUPERADMIN.",
+              confirmText: "Transfer",
+            });
+            if (!ok) return;
+            await promoteToSuperadminSwapClientSide(admin.id);
+          });
+      }
+
+      async function setRole(id, role) {
+        try {
+          const { error } = await supabase
+            .from("admin")
+            .update({ role })
+            .eq("id", id);
+          if (error) {
+            showError("Failed to update role.", error.message || "");
+            return;
+          }
+          const keepId = activeAdminId;
+          await refreshAdmins();
+          const updated = admins.find((a) => a.id === keepId) || admins[0];
+          if (updated) {
+            activeAdminId = updated.id;
+            renderDetails(updated);
+          }
+          toastOk(`Role updated to ${role.toUpperCase()}.`);
+        } catch (e) {
+          showError(
+            "Unexpected error while updating role.",
+            e?.message || String(e)
+          );
+        }
+      }
+
+      async function reloadMyRole() {
+        const { data, error } = await supabase
+          .from("admin")
+          .select("role")
+          .eq("id", currentUser.id)
+          .maybeSingle();
+        if (!error && data) currentRole = data.role || null;
+      }
+
+      // --- Direct client-side swap ---
+      async function promoteToSuperadminSwapClientSide(targetId) {
+        // 1) Demote me (current superadmin) to admin
+        const { error: e1 } = await supabase
+          .from("admin")
+          .update({ role: "admin" })
+          .eq("id", currentUser.id);
+        if (e1) {
+          showError("Could not demote your role.", e1.message || "");
+          return;
+        }
+
+        // 2) Promote target to superadmin
+        const { error: e2 } = await supabase
+          .from("admin")
+          .update({ role: "superadmin" })
+          .eq("id", targetId);
+        if (e2) {
+          // 3) Restore me back to superadmin if step 2 failed
+          const { error: restoreErr } = await supabase
+            .from("admin")
+            .update({ role: "superadmin" })
+            .eq("id", currentUser.id);
+          if (restoreErr) {
+            showError(
+              "Promotion failed and restoration also failed.",
+              `Promotion: ${e2.message} | Restore: ${restoreErr.message}`
+            );
+          } else {
+            showError(
+              "Promotion failed.",
+              `${e2.message}. Your SUPERADMIN role was restored.`
+            );
+          }
+          await reloadMyRole();
+          await refreshAdmins();
+          return;
+        }
+
+        // Success: I am now admin, target is superadmin
+        await reloadMyRole();
+        await refreshAdmins();
+        const selected = admins.find((a) => a.id === targetId) || admins[0];
+        if (selected) {
+          activeAdminId = selected.id;
+          renderDetails(selected);
+        }
+        showSuccess("Superadmin role transferred.");
+      }
+
+      /**
+       * Reject path that deletes the user from auth via Edge Function (requires service role).
+       * Your DB FK (public.admin.id -> auth.users.id ON DELETE CASCADE) will remove the admin row.
+       */
+      async function rejectProfileDeleteAuthUser(userId) {
+        const { data, error } = await supabase.functions.invoke(
+          "admin-delete-user",
+          { body: { user_id: userId } }
+        );
+
+        if (error) {
+          showError("Failed to remove the user.", error.message || "");
+          return;
+        }
+
+        const payload = typeof data === "string" ? JSON.parse(data) : data;
+        if (payload?.ok === true) {
+          await refreshAdmins();
+          detailsPane.innerHTML =
+            '<div class="empty-state">Select a profile on the left to review full details.</div>';
+          toastOk("User rejected and removed.");
+        } else {
+          showError(
+            "Unexpected response while deleting user.",
+            JSON.stringify(payload)
+          );
+        }
+      }
+    </script>
+
+    <!-- Edge Function reference remains the same (admin-delete-user). -->
+  </body>
+</html>

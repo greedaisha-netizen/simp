@@ -1,0 +1,2207 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../img/simpHappyMascotLogo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css_files/sideBar.css" />
+    <title>Documents</title>
+
+    <style>
+      .titlePageDiv p {
+        margin-bottom: 10px;
+      }
+
+      /* === Documents UI (scoped to main) === */
+      main .docs-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        align-items: start;
+      }
+
+      main .doc-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      main .doc-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.3rem 2.5rem;
+        border: 1.5px solid #bfe8c6;
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+        transition: box-shadow 0.15s ease, transform 0.05s ease,
+          border-color 0.15s ease, background 0.12s ease;
+        cursor: pointer;
+      }
+
+      main .doc-item:hover {
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        border-color: #9fddb0;
+      }
+
+      main .doc-item:active {
+        transform: translateY(1px);
+      }
+
+      main .doc-meta {
+        display: flex;
+        align-items: center;
+        text-align: start;
+        gap: 1rem;
+      }
+
+      main .doc-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        display: grid;
+        place-items: center;
+        flex: 0 0 32px;
+        background: #eaf9ed;
+        color: #1ea44b;
+        border: 1px solid #ccefd6;
+        font-size: 20px;
+      }
+
+      /* orange for pending items */
+      main .doc-item.pending .doc-icon {
+        background: #fff4e8;
+        color: #f59e0b;
+        border-color: #fde7c8;
+      }
+
+      /* red for rejected items */
+      main .doc-item.rejected {
+        border-color: #f5c2c7;
+      }
+
+      main .doc-item.rejected .doc-icon {
+        background: #fde7eb;
+        color: #e11d48;
+        border-color: #f5c2c7;
+      }
+
+      main .doc-text h4 {
+        margin: 0;
+        font-size: 0.98rem;
+        line-height: 1.15;
+        color: #0f172a;
+      }
+
+      main .doc-text p {
+        margin: 0.15rem 0 0;
+        font-size: 0.82rem;
+        color: #6b7280;
+      }
+
+      /* Right preview pane */
+      main .doc-preview {
+        min-height: 600px;
+        border: 1.5px solid #e5e7eb;
+        border-radius: 14px;
+        background: #fff;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        padding: 0;
+        color: #6b7280;
+        text-align: left;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+        overflow: hidden;
+      }
+
+      .preview-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        padding: 10px 14px;
+        border-bottom: 1px solid #e5e7eb;
+        background: #f8fafc;
+        position: relative;
+      }
+
+      .preview-header h3 {
+        margin: 0;
+        color: #0f172a;
+        font-size: 1rem;
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .preview-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .icon-btn {
+        display: inline-grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+        color: #334155;
+        cursor: pointer;
+        transition: background 0.12s ease, transform 0.05s ease;
+        text-decoration: none;
+      }
+
+      .icon-btn:hover {
+        background: #f1f5f9;
+      }
+
+      .icon-btn:active {
+        transform: translateY(1px);
+      }
+
+      .icon-btn .material-icons-sharp {
+        font-size: 20px;
+      }
+
+      .mobile-only {
+        display: none;
+      }
+
+      .preview-body {
+        padding: 10px;
+        overflow: hidden;
+        display: grid;
+        place-items: stretch;
+        background: #fff;
+      }
+
+      .preview-body.with-toolbar {
+        grid-template-rows: auto 1fr;
+      }
+
+      .preview-body .preview-embed {
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+      }
+
+      .preview-body iframe,
+      .preview-body embed,
+      .preview-body img,
+      .preview-body object {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        border-radius: 8px;
+        max-height: none;
+      }
+
+      .preview-placeholder {
+        color: #64748b;
+        text-align: center;
+        display: grid;
+        place-items: center;
+      }
+
+      /* Dropzone (interactive) */
+      main .dropzone {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: 1.5px dashed #cbd5e1;
+        border-radius: 10px;
+        padding: 1rem 1rem;
+        color: #334155;
+        opacity: 0.9;
+        background: #f8fafc;
+        user-select: none;
+      }
+
+      main .dropzone .material-icons-sharp {
+        font-size: 20px;
+      }
+
+      .dropzone.is-over {
+        background: #eef6ff;
+        border-color: #93c5fd;
+      }
+
+      /* Modal (legacy kept; no removal) */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.5);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        padding: 16px;
+      }
+
+      .modal-overlay.show {
+        display: flex;
+      }
+
+      .modal-sheet {
+        width: 100%;
+        max-width: 520px;
+        background: #fff;
+        border-radius: 16px;
+        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        animation: pop 0.12s ease-out;
+      }
+
+      @keyframes pop {
+        from {
+          transform: scale(0.98);
+          opacity: 0.6;
+        }
+
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .modal-head {
+        padding: 14px 16px;
+        border-bottom: 1px solid #e5e7eb;
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .modal-head .material-icons-sharp {
+        color: #0ea5e9;
+      }
+
+      .modal-title {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+        color: #0f172a;
+      }
+
+      .modal-body {
+        padding: 16px;
+        color: #334155;
+      }
+
+      .modal-actions {
+        padding: 12px 16px;
+        border-top: 1px solid #e5e7eb;
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 12px;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+        color: #0f172a;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.12s ease, transform 0.05s ease;
+      }
+
+      .btn:hover {
+        background: #f1f5f9;
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      .btn.primary {
+        background: #0ea5e9;
+        border-color: #0ea5e9;
+        color: #fff;
+      }
+
+      .btn.primary:hover {
+        background: #0284c7;
+        border-color: #0284c7;
+      }
+
+      /* ===== Certificates chooser + toolbar ===== */
+      .cert-chooser {
+        width: 100%;
+        max-width: 680px;
+        margin: 4px auto 0;
+        padding: 0 6px;
+      }
+
+      .cert-chooser h4 {
+        margin: 0 0 8px;
+        color: #0f172a;
+        font-size: 0.98rem;
+      }
+
+      .cert-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+        display: grid;
+        gap: 8px;
+      }
+
+      .cert-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        background: #fff;
+        cursor: pointer;
+        transition: background 0.12s ease, border-color 0.12s ease;
+      }
+
+      .cert-item:hover {
+        background: #f8fafc;
+        border-color: #dbe7f3;
+      }
+
+      .cert-name {
+        color: #0f172a;
+        font-size: 0.92rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .cert-status {
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 999px;
+        border: 1px solid #e5e7eb;
+        color: #475569;
+        background: #f8fafc;
+        white-space: nowrap;
+      }
+
+      .cert-status.approved {
+        color: #0f5132;
+        border-color: #bcd0c7;
+        background: #e8f5ee;
+      }
+
+      .cert-status.rejected {
+        color: #842029;
+        border-color: #f1c0c5;
+        background: #fdecef;
+      }
+
+      .cert-status.pending {
+        color: #92400e;
+        border-color: #f7d9a0;
+        background: #fff7e6;
+      }
+
+      .preview-toolbar {
+        width: 100%;
+        max-width: 100%;
+        padding-bottom: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+      }
+
+      .btn.small {
+        padding: 6px 10px;
+        font-size: 0.85rem;
+        border-radius: 8px;
+      }
+
+      /* ======= Responsive adjustments ======= */
+      @media (max-width: 1100px) {
+        .titlePageDiv h1 {
+          font-size: 1.35rem;
+        }
+
+        .titlePageDiv p {
+          font-size: 0.92rem;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        main .docs-grid {
+          grid-template-columns: 1fr;
+        }
+
+        main .doc-item {
+          padding: 1rem 1rem;
+          flex-direction: column;
+          align-items: stretch;
+          gap: 0.75rem;
+        }
+
+        main .dropzone {
+          width: 100%;
+          justify-content: center;
+        }
+
+        .preview-header::before {
+          content: "";
+          display: block;
+          position: absolute;
+          left: 50%;
+          transform: translateX(-50%);
+          top: 8px;
+          width: 46px;
+          height: 4px;
+          border-radius: 999px;
+          background: #dbe2ea;
+        }
+
+        .mobile-only {
+          display: inline-grid;
+        }
+      }
+
+      /* ======= Mobile preview as a modal/bottom-sheet ======= */
+      .preview-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.35);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+        z-index: 9990;
+      }
+
+      @media (min-width: 981px) {
+        .preview-backdrop {
+          display: none;
+        }
+      }
+
+      @media (max-width: 1024px) {
+        main .doc-preview {
+          position: fixed;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          top: auto;
+          height: 82vh;
+          max-height: 90vh;
+          border-radius: 18px 18px 0 0;
+          border: 1px solid #e5e7eb;
+          transform: translateY(105%);
+          transition: transform 0.28s ease;
+          z-index: 10000;
+          box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.22);
+          background: #fff;
+        }
+
+        .preview-header {
+          position: sticky;
+          top: 0;
+          z-index: 1;
+          background: #f8fafc;
+        }
+
+        body.preview-open .preview-backdrop {
+          opacity: 1;
+          pointer-events: auto;
+        }
+
+        body.preview-open main .doc-preview {
+          transform: translateY(0);
+        }
+      }
+
+      /* =======================
+         FULL VIEW MODAL (added)
+         ======================= */
+      .fullview-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.65);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 20000;
+        padding: 16px;
+      }
+
+      .fullview-overlay.show {
+        display: flex;
+      }
+
+      .fullview-sheet {
+        width: min(1200px, 100%);
+        height: min(92vh, 900px);
+        background: #fff;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      .fullview-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 10px 12px;
+        border-bottom: 1px solid #e5e7eb;
+        background: #f8fafc;
+      }
+
+      .fullview-title {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+        color: #0f172a;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .fullview-actions {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 0 0 auto;
+      }
+
+      .fullview-body {
+        padding: 10px;
+        overflow: hidden;
+        background: #fff;
+      }
+
+      .fullview-body iframe,
+      .fullview-body embed,
+      .fullview-body img,
+      .fullview-body object {
+        width: 100%;
+        height: 100%;
+        border: 0;
+        border-radius: 10px;
+      }
+
+      /* Lock page scroll when full view open */
+      html.fullview-open,
+      body.fullview-open {
+        overflow: hidden !important;
+      }
+
+      /* =======================
+         SKELETON (added)
+         ======================= */
+      :root {
+        --sk-bg: #eef2f7;
+        --sk-shimmer: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.6) 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+      }
+
+      .skeleton-wrap {
+        display: none;
+      }
+
+      body.loading .skeleton-wrap {
+        display: block;
+      }
+
+      body.loading main {
+        display: none;
+      }
+
+      .sk-container {
+        margin-top: 1.4rem;
+      }
+
+      .sk-title {
+        height: 24px;
+        width: 260px;
+        border-radius: 8px;
+        background: var(--sk-bg);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .sk-subtitle {
+        height: 16px;
+        width: 380px;
+        margin-top: 10px;
+        border-radius: 8px;
+        background: var(--sk-bg);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .sk-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        margin-top: 18px;
+      }
+
+      .sk-card {
+        border-radius: 14px;
+        border: 1.5px solid #e5e7eb;
+        background: #fff;
+        padding: 16px;
+      }
+
+      .sk-doc-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-radius: 14px;
+        border: 1.5px solid #e5e7eb;
+        background: #fff;
+        padding: 20px;
+        margin-bottom: 12px;
+      }
+
+      .sk-doc-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .sk-circle {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--sk-bg);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .sk-line {
+        height: 12px;
+        width: 180px;
+        border-radius: 8px;
+        background: var(--sk-bg);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .sk-line.sm {
+        width: 120px;
+        height: 10px;
+        margin-top: 6px;
+      }
+
+      .sk-drop {
+        height: 40px;
+        width: 180px;
+        border-radius: 10px;
+        border: 1.5px dashed #cbd5e1;
+        background: #f8fafc;
+      }
+
+      .sk-preview {
+        border-radius: 14px;
+        border: 1.5px solid #e5e7eb;
+        background: #fff;
+        overflow: hidden;
+        min-height: 600px;
+        display: grid;
+        grid-template-rows: auto 1fr;
+      }
+
+      .sk-preview-head {
+        height: 48px;
+        background: #f8fafc;
+        border-bottom: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px;
+      }
+
+      .sk-preview-head .sk-line {
+        height: 18px;
+        width: 140px;
+      }
+
+      .sk-actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .sk-square {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+        background: #fff;
+      }
+
+      .sk-preview-body {
+        padding: 10px;
+      }
+
+      .sk-embed {
+        width: 100%;
+        height: 100%;
+        min-height: 520px;
+        border-radius: 8px;
+        background: var(--sk-bg);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .sk-shimmer::after,
+      .sk-title::after,
+      .sk-subtitle::after,
+      .sk-circle::after,
+      .sk-line::after,
+      .sk-embed::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background-image: var(--sk-shimmer);
+        animation: shimmer 1.25s infinite;
+      }
+
+      @keyframes shimmer {
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      @media (max-width: 1024px) {
+        .sk-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .sk-doc-item {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 10px;
+        }
+
+        .sk-drop {
+          width: 100%;
+        }
+      }
+
+      /* ============== SweetAlert2 compact styling (added) ============== */
+      .swal2-popup.swal-compact {
+        border-radius: 14px !important;
+        padding: 14px 16px !important;
+        width: 26rem !important; /* shorter/smaller so page doesn't resize */
+        font-family: "Raleway", system-ui, -apple-system, Segoe UI, Roboto,
+          Arial, sans-serif;
+      }
+
+      .swal2-title {
+        font-size: 1rem !important;
+        font-weight: 700 !important;
+        color: #0f172a !important;
+      }
+
+      .swal2-html-container {
+        font-size: 0.92rem !important;
+        color: #334155 !important;
+        margin-top: 6px !important;
+      }
+
+      .swal2-actions .swal2-confirm,
+      .swal2-actions .swal2-deny,
+      .swal2-actions .swal2-cancel {
+        border-radius: 10px !important;
+        padding: 6px 12px !important;
+        font-size: 0.92rem !important;
+      }
+
+      .swal2-actions .swal2-confirm {
+        background: #0ea5e9 !important;
+      }
+
+      .swal2-actions .swal2-confirm:hover {
+        background: #0284c7 !important;
+      }
+
+      .swal2-timer-progress-bar {
+        height: 3px !important;
+      }
+    </style>
+  </head>
+
+  <!-- ADD: start in loading state so only skeleton shows -->
+
+  <body class="loading">
+    <div class="container">
+      <!-- Sidebar Section -->
+      <aside>
+        <div class="toggle">
+          <div class="logo">
+            <img src="../../../img/simpHappyMascotLogo.png" alt="logo" />
+            <h2>SIMP<span class="danger">Project</span></h2>
+          </div>
+          <div class="close" id="close-btn">
+            <span class="material-icons-sharp">close</span>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <a href="dashboard.html">
+            <span class="material-icons-sharp">dashboard</span>
+            <h3>Dashboard</h3>
+          </a>
+          <a href="job.html">
+            <span class="material-icons-sharp">work</span>
+            <h3>Jobs</h3>
+          </a>
+          <a href="myApplication.html">
+            <span class="material-icons-sharp">receipt</span>
+            <h3>My Application</h3>
+          </a>
+          <a href="courses.html">
+            <span class="material-icons-sharp">school</span>
+            <h3>Courses</h3>
+          </a>
+          <a href="shop.html">
+            <span class="material-icons-sharp">shopping_cart</span>
+            <h3>Shop</h3>
+          </a>
+          <a href="earnings.html">
+            <span class="material-icons-sharp">account_balance</span>
+            <h3>Earnings</h3>
+          </a>
+          <a href="documents.html" class="active">
+            <span class="material-icons-sharp">file_copy</span>
+            <h3>Documents</h3>
+          </a>
+          <a href="settings.html">
+            <span class="material-icons-sharp">settings</span>
+            <h3>Settings</h3>
+          </a>
+          <a href="#" id="logout-btn">
+            <span class="material-icons-sharp">logout</span>
+            <h3>Logout</h3>
+          </a>
+        </div>
+      </aside>
+      <!-- End of Sidebar Section -->
+
+      <!-- ====== SKELETON (added, visible only while body.loading) ====== -->
+      <div class="skeleton-wrap" aria-hidden="true">
+        <div class="sk-container">
+          <div class="sk-title sk-shimmer"></div>
+          <div class="sk-subtitle sk-shimmer"></div>
+
+          <div class="sk-grid">
+            <!-- Left: list -->
+            <div>
+              <div class="sk-doc-item">
+                <div class="sk-doc-left">
+                  <div class="sk-circle sk-shimmer"></div>
+                  <div>
+                    <div class="sk-line sk-shimmer"></div>
+                    <div class="sk-line sm sk-shimmer"></div>
+                  </div>
+                </div>
+                <div class="sk-drop"></div>
+              </div>
+              <div class="sk-doc-item">
+                <div class="sk-doc-left">
+                  <div class="sk-circle sk-shimmer"></div>
+                  <div>
+                    <div class="sk-line sk-shimmer"></div>
+                    <div class="sk-line sm sk-shimmer"></div>
+                  </div>
+                </div>
+                <div class="sk-drop"></div>
+              </div>
+              <div class="sk-doc-item">
+                <div class="sk-doc-left">
+                  <div class="sk-circle sk-shimmer"></div>
+                  <div>
+                    <div class="sk-line sk-shimmer"></div>
+                    <div class="sk-line sm sk-shimmer"></div>
+                  </div>
+                </div>
+                <div class="sk-drop"></div>
+              </div>
+              <div class="sk-doc-item">
+                <div class="sk-doc-left">
+                  <div class="sk-circle sk-shimmer"></div>
+                  <div>
+                    <div class="sk-line sk-shimmer"></div>
+                    <div class="sk-line sm sk-shimmer"></div>
+                  </div>
+                </div>
+                <div class="sk-drop"></div>
+              </div>
+              <div class="sk-doc-item">
+                <div class="sk-doc-left">
+                  <div class="sk-circle sk-shimmer"></div>
+                  <div>
+                    <div class="sk-line sk-shimmer"></div>
+                    <div class="sk-line sm sk-shimmer"></div>
+                  </div>
+                </div>
+                <div class="sk-drop"></div>
+              </div>
+            </div>
+
+            <!-- Right: preview -->
+            <div class="sk-preview">
+              <div class="sk-preview-head">
+                <div class="sk-line sk-shimmer"></div>
+                <div class="sk-actions">
+                  <div class="sk-square"></div>
+                  <div class="sk-square"></div>
+                </div>
+              </div>
+              <div class="sk-preview-body">
+                <div class="sk-embed sk-shimmer"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- ====== END SKELETON ====== -->
+
+      <!-- MAIN CONTENT -->
+      <main>
+        <div class="titlePageDiv">
+          <h1>Upload your documents here</h1>
+          <p>Supported formats: PDF and DOCX, up to 300mb.</p>
+        </div>
+
+        <div class="docs-grid">
+          <div class="doc-list" id="docList">
+            <!-- Dynamically injected -->
+          </div>
+
+          <div class="doc-preview" aria-label="Document preview">
+            <div class="preview-header">
+              <h3 id="previewTitle">Preview</h3>
+              <div class="preview-actions">
+                <!-- Mobile-only close for the preview sheet -->
+                <button
+                  id="previewClose"
+                  class="icon-btn mobile-only"
+                  title="Close preview"
+                >
+                  <span class="material-icons-sharp">close</span>
+                </button>
+
+                <!-- FULL VIEW button (added) -->
+                <button
+                  id="previewFullView"
+                  class="icon-btn"
+                  title="Full view"
+                  style="display: none"
+                  type="button"
+                >
+                  <span class="material-icons-sharp">fullscreen</span>
+                </button>
+
+                <a
+                  id="previewOpen"
+                  class="icon-btn"
+                  href="#"
+                  target="_blank"
+                  rel="noopener"
+                  style="display: none"
+                  title="Open in new tab"
+                >
+                  <span class="material-icons-sharp">open_in_new</span>
+                </a>
+                <a
+                  id="previewDownload"
+                  class="icon-btn"
+                  href="#"
+                  download
+                  style="display: none"
+                  title="Download"
+                >
+                  <span class="material-icons-sharp">download</span>
+                </a>
+              </div>
+            </div>
+            <div class="preview-body" id="previewBody">
+              <div class="preview-placeholder">
+                <span>No file selected.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Backdrop for mobile preview (non-intrusive on desktop) -->
+    <div id="previewBackdrop" class="preview-backdrop" aria-hidden="true"></div>
+
+    <!-- FULL VIEW MODAL (added) -->
+    <div
+      id="fullViewModal"
+      class="fullview-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="fullViewTitle"
+    >
+      <div class="fullview-sheet">
+        <div class="fullview-head">
+          <h3 id="fullViewTitle" class="fullview-title">Full view</h3>
+          <div class="fullview-actions">
+            <a
+              id="fullViewOpen"
+              class="icon-btn"
+              href="#"
+              target="_blank"
+              rel="noopener"
+              style="display: none"
+              title="Open in new tab"
+            >
+              <span class="material-icons-sharp">open_in_new</span>
+            </a>
+            <a
+              id="fullViewDownload"
+              class="icon-btn"
+              href="#"
+              download
+              style="display: none"
+              title="Download"
+            >
+              <span class="material-icons-sharp">download</span>
+            </a>
+            <button id="fullViewClose" class="icon-btn" title="Close">
+              <span class="material-icons-sharp">close</span>
+            </button>
+          </div>
+        </div>
+        <div class="fullview-body" id="fullViewBody">
+          <div class="preview-placeholder"><span>No file selected.</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Approval Hold Modal (kept; no removal) -->
+    <div
+      id="reviewModal"
+      class="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="reviewTitleModal"
+      aria-describedby="reviewDesc"
+    >
+      <div class="modal-sheet">
+        <div class="modal-head">
+          <span class="material-icons-sharp" aria-hidden="true">info</span>
+          <h3 id="reviewTitleModal" class="modal-title">
+            Account on hold for review
+          </h3>
+        </div>
+        <div class="modal-body" id="reviewDesc">
+          We’ll temporarily hold your access until an admin approves your new
+          document. You’ll be redirected to the review page.
+        </div>
+        <div class="modal-actions">
+          <button id="modalClose" class="btn" type="button">
+            <span class="material-icons-sharp">close</span> Close
+          </button>
+          <a id="modalGoReview" class="btn primary" href="review.html">
+            <span class="material-icons-sharp">arrow_forward</span> Go to review
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Supabase UMD -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <!-- SweetAlert2 (added) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Your shared scripts (if any control the sidebar/menu) -->
+    <script type="module" src="../../general_files/index.js"></script>
+    <script type="module" src="../../general_files/session.js"></script>
+
+    <!-- Page logic -->
+    <script type="module">
+      const { createClient } = supabase;
+      import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../../../supabase.js";
+      const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      const BUCKET = "documents_review"; // storage bucket
+
+      const docListEl = document.getElementById("docList");
+      const previewTitleEl = document.getElementById("previewTitle");
+      const previewBodyEl = document.getElementById("previewBody");
+      const previewOpenEl = document.getElementById("previewOpen");
+      const previewDownloadEl = document.getElementById("previewDownload");
+
+      // Full view refs (added)
+      const previewFullViewBtn = document.getElementById("previewFullView");
+      const fullViewModal = document.getElementById("fullViewModal");
+      const fullViewTitleEl = document.getElementById("fullViewTitle");
+      const fullViewBodyEl = document.getElementById("fullViewBody");
+      const fullViewCloseBtn = document.getElementById("fullViewClose");
+      const fullViewOpenEl = document.getElementById("fullViewOpen");
+      const fullViewDownloadEl = document.getElementById("fullViewDownload");
+
+      const modalEl = document.getElementById("reviewModal");
+      const modalCloseEl = document.getElementById("modalClose");
+      const modalGoReviewEl = document.getElementById("modalGoReview");
+      let autoRedirectTimer = null;
+
+      /* ==== Mobile preview controls (added) ==== */
+      const previewCloseBtn = document.getElementById("previewClose");
+      const previewBackdrop = document.getElementById("previewBackdrop");
+      const isMobile = () => window.matchMedia("(max-width: 1024px)").matches;
+      const openMobilePreview = () => {
+        if (isMobile()) {
+          document.body.classList.add("preview-open");
+          previewBackdrop.setAttribute("aria-hidden", "false");
+        }
+      };
+      const closeMobilePreview = () => {
+        document.body.classList.remove("preview-open");
+        previewBackdrop.setAttribute("aria-hidden", "true");
+      };
+      previewCloseBtn.addEventListener("click", closeMobilePreview);
+      previewBackdrop.addEventListener("click", closeMobilePreview);
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+          closeMobilePreview();
+        }
+      });
+      window.addEventListener("resize", () => {
+        if (!isMobile()) {
+          closeMobilePreview();
+        }
+      });
+
+      /* ================= SweetAlert2 helpers (added) ================= */
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 2200,
+        timerProgressBar: true,
+        customClass: { popup: "swal-compact" },
+      });
+
+      function notifySuccess(title = "Done", text = "") {
+        Swal.fire({
+          icon: "success",
+          title,
+          text,
+          customClass: { popup: "swal-compact" },
+          confirmButtonText: "OK",
+          allowOutsideClick: true,
+          allowEscapeKey: true,
+        });
+      }
+
+      function notifyInfo(title = "Notice", text = "") {
+        Swal.fire({
+          icon: "info",
+          title,
+          text,
+          customClass: { popup: "swal-compact" },
+          confirmButtonText: "OK",
+        });
+      }
+
+      function notifyError(
+        title = "Something went wrong",
+        text = "Please try again."
+      ) {
+        Swal.fire({
+          icon: "error",
+          title,
+          text,
+          customClass: { popup: "swal-compact" },
+          confirmButtonText: "OK",
+        });
+      }
+
+      function toastInfo(title = "Working on it…") {
+        Toast.fire({ icon: "info", title });
+      }
+
+      function toastError(title = "Couldn’t complete that action.") {
+        Toast.fire({ icon: "error", title });
+      }
+
+      // Replaces legacy modal UI with compact SweetAlert + auto-redirect
+      function showReviewHoldModal() {
+        // Keep legacy behavior (2s redirect), but via SweetAlert
+        clearTimeout(autoRedirectTimer);
+        Swal.fire({
+          icon: "success",
+          title: "Document received",
+          html: "Thanks! Your document is now in review. Redirecting to the review page…",
+          timer: 2000,
+          timerProgressBar: true,
+          showConfirmButton: false,
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          customClass: { popup: "swal-compact" },
+        }).then(() => {
+          window.location.href = "review.html";
+        });
+      }
+      function hideReviewHoldModal() {
+        // Keep the function since the DOM exists; hide legacy modal if ever shown
+        modalEl.classList.remove("show");
+        clearTimeout(autoRedirectTimer);
+        Swal.close();
+      }
+      modalCloseEl.addEventListener("click", hideReviewHoldModal);
+      // Keep link active if legacy modal is used somewhere else
+      if (modalGoReviewEl) {
+        modalGoReviewEl.addEventListener("click", () => {
+          /* no-op */
+        });
+      }
+
+      // Utility: extract a nice filename from a path or URL
+      function friendlyName(pathOrUrl) {
+        if (!pathOrUrl) return "";
+        try {
+          const u = new URL(pathOrUrl);
+          const parts = u.pathname.split("/");
+          return decodeURIComponent(parts.pop() || parts.pop() || pathOrUrl);
+        } catch {
+          const parts = String(pathOrUrl).split("/");
+          return decodeURIComponent(parts.pop() || pathOrUrl);
+        }
+      }
+
+      function isUrl(v) {
+        return /^https?:\/\//i.test(v || "");
+      }
+
+      function extOf(v) {
+        const m = String(v || "")
+          .toLowerCase()
+          .match(/\.([a-z0-9]+)(?:\?|#|$)/i);
+        return m ? m[1] : "";
+      }
+
+      // Resolve value (URL or key) to a public URL in documents_review/<installer_id>/<file or subpath>
+      function publicDocUrl(value, installerId) {
+        if (!value) return "";
+        if (isUrl(value)) return value;
+
+        let key = String(value).replace(/^\/+/, "");
+        if (!key.startsWith(installerId + "/")) {
+          key = `${installerId}/${key}`;
+        }
+        const { data } = sb.storage.from(BUCKET).getPublicUrl(key);
+        return data?.publicUrl || "";
+      }
+
+      // === NEW: Build the storage key from a stored value and installerId
+      function buildStorageKey(value, installerId) {
+        if (!value) return "";
+        if (isUrl(value)) return ""; // already a URL
+        let key = String(value).replace(/^\/+/, "");
+        if (!key.startsWith(installerId + "/")) {
+          key = `${installerId}/${key}`;
+        }
+        return key;
+      }
+
+      // === NEW: Create signed URLs for private bucket preview/download
+      async function createSignedPreviewAndDownload(key) {
+        // 10 minute token for viewing
+        const { data: viewData, error: viewErr } = await sb.storage
+          .from(BUCKET)
+          .createSignedUrl(key, 60 * 10);
+        if (viewErr) throw viewErr;
+
+        const filename = friendlyName(key.replace(/^[^/]+\//, "")) || "file";
+
+        // 10 minute token for download (forces download filename)
+        const { data: dlData, error: dlErr } = await sb.storage
+          .from(BUCKET)
+          .createSignedUrl(key, 60 * 10, { download: filename });
+        if (dlErr) throw dlErr;
+
+        return {
+          signedViewUrl: viewData.signedUrl,
+          signedDownloadUrl: dlData.signedUrl,
+          filename,
+        };
+      }
+
+      function statusToClass(status) {
+        const s = String(status || "").toLowerCase();
+        if (["approved", "verified", "accepted"].includes(s)) return "uploaded";
+        if (["rejected", "declined"].includes(s)) return "rejected";
+        return "pending";
+      }
+
+      function statusToIcon(status) {
+        const s = String(status || "").toLowerCase();
+        if (["approved", "verified", "accepted"].includes(s)) return "check";
+        if (["rejected", "declined"].includes(s)) return "error";
+        return "pending";
+      }
+
+      // Track last preview so Full View knows what to render (added)
+      let lastPreview = {
+        label: "Preview",
+        viewUrl: "",
+        openHref: "",
+        downloadHref: "",
+        filename: "",
+      };
+
+      function clearPreview() {
+        previewTitleEl.textContent = "Preview";
+        previewBodyEl.classList.remove("with-toolbar");
+        previewBodyEl.innerHTML =
+          '<div class="preview-placeholder"><span>No file selected.</span></div>';
+        previewOpenEl.style.display = "none";
+        previewDownloadEl.style.display = "none";
+        previewOpenEl.removeAttribute("href");
+        previewDownloadEl.removeAttribute("href");
+        previewDownloadEl.removeAttribute("download");
+
+        // Full view button reset (added)
+        previewFullViewBtn.style.display = "none";
+
+        // Reset lastPreview (added)
+        lastPreview = {
+          label: "Preview",
+          viewUrl: "",
+          openHref: "",
+          downloadHref: "",
+          filename: "",
+        };
+      }
+
+      // ---------- UPDATED: robust cross-device preview ----------
+      function renderPreviewFromUrl(label, url) {
+        previewTitleEl.textContent = label;
+
+        if (!url) {
+          previewBodyEl.classList.remove("with-toolbar");
+          previewBodyEl.innerHTML =
+            '<div class="preview-placeholder"><span>No file uploaded.</span></div>';
+          previewOpenEl.style.display = "none";
+          previewDownloadEl.style.display = "none";
+
+          // Full view button hidden (added)
+          previewFullViewBtn.style.display = "none";
+
+          // lastPreview (added)
+          lastPreview = {
+            label,
+            viewUrl: "",
+            openHref: "",
+            downloadHref: "",
+            filename: "",
+          };
+          return;
+        }
+
+        const filename = friendlyName(url);
+        const ext = extOf(url);
+        const safeUrl = encodeURI(url);
+
+        const isImage = [
+          "png",
+          "jpg",
+          "jpeg",
+          "gif",
+          "webp",
+          "bmp",
+          "svg",
+        ].includes(ext);
+        const isPdf = ext === "pdf";
+        const isOffice = ["doc", "docx", "xls", "xlsx", "ppt", "pptx"].includes(
+          ext
+        );
+
+        let openHref = safeUrl;
+
+        if (isImage) {
+          previewBodyEl.innerHTML = `<img src="${safeUrl}" alt="${filename}">`;
+        } else if (isPdf) {
+          previewBodyEl.innerHTML = `<embed src="${safeUrl}#toolbar=1&navpanes=0&scrollbar=1" type="application/pdf">`;
+        } else if (isOffice) {
+          const office = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(
+            safeUrl
+          )}`;
+          openHref = office;
+          previewBodyEl.innerHTML = `<iframe src="${office}" allowfullscreen></iframe>`;
+        } else {
+          previewBodyEl.innerHTML = `
+            <div class="preview-placeholder">
+              <p style="margin:0 0 8px 0;">Cannot preview this file type.</p>
+              <a href="${safeUrl}" target="_blank" rel="noopener">Open in new tab</a>
+            </div>`;
+        }
+
+        // Action buttons
+        previewOpenEl.href = openHref;
+        previewOpenEl.style.display = "inline-grid";
+        previewDownloadEl.href = safeUrl;
+        previewDownloadEl.setAttribute("download", filename || "file");
+        previewDownloadEl.style.display = "inline-grid";
+
+        // Full view button show (added)
+        previewFullViewBtn.style.display = "inline-grid";
+
+        // lastPreview snapshot (added)
+        lastPreview = {
+          label,
+          viewUrl: safeUrl,
+          openHref,
+          downloadHref: safeUrl,
+          filename: filename || "file",
+        };
+      }
+
+      // ===== Full view modal logic (added) =====
+      function openFullView() {
+        if (!lastPreview?.viewUrl) return;
+
+        fullViewTitleEl.textContent = lastPreview.label || "Full view";
+
+        // Render same type logic, but inside full view body
+        const url = lastPreview.viewUrl;
+        const filename = lastPreview.filename || friendlyName(url);
+        const ext = extOf(url);
+        const safeUrl = encodeURI(url);
+
+        const isImage = [
+          "png",
+          "jpg",
+          "jpeg",
+          "gif",
+          "webp",
+          "bmp",
+          "svg",
+        ].includes(ext);
+        const isPdf = ext === "pdf";
+        const isOffice = ["doc", "docx", "xls", "xlsx", "ppt", "pptx"].includes(
+          ext
+        );
+
+        let openHref = lastPreview.openHref || safeUrl;
+
+        if (isImage) {
+          fullViewBodyEl.innerHTML = `<img src="${safeUrl}" alt="${filename}">`;
+        } else if (isPdf) {
+          fullViewBodyEl.innerHTML = `<embed src="${safeUrl}#toolbar=1&navpanes=0&scrollbar=1" type="application/pdf">`;
+        } else if (isOffice) {
+          // use same office viewer
+          const office = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(
+            safeUrl
+          )}`;
+          openHref = office;
+          fullViewBodyEl.innerHTML = `<iframe src="${office}" allowfullscreen></iframe>`;
+        } else {
+          fullViewBodyEl.innerHTML = `
+            <div class="preview-placeholder">
+              <p style="margin:0 0 8px 0;">Cannot preview this file type.</p>
+              <a href="${safeUrl}" target="_blank" rel="noopener">Open in new tab</a>
+            </div>`;
+        }
+
+        fullViewOpenEl.href = openHref;
+        fullViewOpenEl.style.display = "inline-grid";
+
+        fullViewDownloadEl.href = lastPreview.downloadHref || safeUrl;
+        fullViewDownloadEl.setAttribute("download", filename || "file");
+        fullViewDownloadEl.style.display = "inline-grid";
+
+        // show modal + lock page scroll
+        fullViewModal.classList.add("show");
+        document.documentElement.classList.add("fullview-open");
+        document.body.classList.add("fullview-open");
+      }
+
+      function closeFullView() {
+        fullViewModal.classList.remove("show");
+        fullViewBodyEl.innerHTML =
+          '<div class="preview-placeholder"><span>No file selected.</span></div>';
+        fullViewOpenEl.style.display = "none";
+        fullViewDownloadEl.style.display = "none";
+        fullViewOpenEl.removeAttribute("href");
+        fullViewDownloadEl.removeAttribute("href");
+        fullViewDownloadEl.removeAttribute("download");
+
+        document.documentElement.classList.remove("fullview-open");
+        document.body.classList.remove("fullview-open");
+      }
+
+      previewFullViewBtn.addEventListener("click", openFullView);
+      fullViewCloseBtn.addEventListener("click", closeFullView);
+      fullViewModal.addEventListener("click", (e) => {
+        if (e.target === fullViewModal) closeFullView();
+      });
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && fullViewModal.classList.contains("show")) {
+          closeFullView();
+        }
+      });
+
+      // === UPDATED: keep function name; internally do async resolution for private bucket
+      function setPreview({ label, value, installerId }) {
+        clearPreview();
+
+        if (isUrl(value)) {
+          renderPreviewFromUrl(label, value);
+          openMobilePreview();
+          return;
+        }
+
+        (async () => {
+          try {
+            const key = buildStorageKey(value, installerId);
+            if (!key) {
+              const url = publicDocUrl(value, installerId);
+              renderPreviewFromUrl(label, url);
+              openMobilePreview();
+              return;
+            }
+
+            const { signedViewUrl, signedDownloadUrl, filename } =
+              await createSignedPreviewAndDownload(key);
+
+            previewTitleEl.textContent = label;
+            previewOpenEl.href = signedViewUrl;
+            previewOpenEl.style.display = "inline-grid";
+            previewDownloadEl.href = signedDownloadUrl;
+            previewDownloadEl.setAttribute("download", filename);
+            previewDownloadEl.style.display = "inline-grid";
+
+            // Keep lastPreview download as signed download (added)
+            lastPreview = {
+              label,
+              viewUrl: signedViewUrl,
+              openHref: signedViewUrl,
+              downloadHref: signedDownloadUrl,
+              filename: filename || "file",
+            };
+            previewFullViewBtn.style.display = "inline-grid";
+
+            renderPreviewFromUrl(label, signedViewUrl);
+          } catch (e) {
+            console.warn(
+              "Signed URL failed, falling back to public URL:",
+              e?.message || e
+            );
+            const url = publicDocUrl(value, installerId);
+            renderPreviewFromUrl(label, url);
+          } finally {
+            openMobilePreview();
+          }
+        })();
+      }
+
+      // ---------- Upload helpers ----------
+      function uniqueName(original) {
+        const ts = Date.now();
+        const clean = original.replace(/[^\w.\-]+/g, "_");
+        return `${ts}-${clean}`;
+      }
+
+      async function ensureRow(installerId) {
+        const { data } = await sb
+          .from("installer_documents")
+          .select("installer_id")
+          .eq("installer_id", installerId)
+          .maybeSingle();
+        if (!data) {
+          await sb
+            .from("installer_documents")
+            .insert({ installer_id: installerId });
+        }
+      }
+
+      // Upload to root of installer's folder: <id>/<name>
+      async function uploadFileToBucket(installerId, file) {
+        const name = uniqueName(file.name);
+        const key = `${installerId}/${name}`;
+        const { error } = await sb.storage
+          .from(BUCKET)
+          .upload(key, file, { upsert: true });
+        if (error) throw error;
+        return name; // store filename only
+      }
+
+      // Upload to specified subdirectory: <id>/<subdir>/<name>
+      async function uploadFileToBucketAt(installerId, file, subdir = "") {
+        const name = uniqueName(file.name);
+        const cleanSub = String(subdir || "").replace(/^\/+|\/+$/g, "");
+        const key = cleanSub
+          ? `${installerId}/${cleanSub}/${name}`
+          : `${installerId}/${name}`;
+        const { error } = await sb.storage
+          .from(BUCKET)
+          .upload(key, file, { upsert: true });
+        if (error) throw error;
+        return name; // return filename; caller can store with subpath
+      }
+
+      async function upsertSingleDoc(
+        installerId,
+        fieldKey,
+        statusKey,
+        storedName
+      ) {
+        const payload = {
+          installer_id: installerId,
+          [fieldKey]: storedName,
+          [statusKey]: "pending",
+          status: "pending",
+          updated_at: new Date().toISOString(),
+        };
+        const { error } = await sb
+          .from("installer_documents")
+          .upsert(payload, { onConflict: "installer_id" });
+        if (error) throw error;
+      }
+
+      async function upsertCertificates(installerId, newNames = []) {
+        const { data: row, error: fetchErr } = await sb
+          .from("installer_documents")
+          .select("certificates, certificates_status")
+          .eq("installer_id", installerId)
+          .maybeSingle();
+        if (fetchErr) throw fetchErr;
+
+        const oldCerts = Array.isArray(row?.certificates)
+          ? row.certificates
+          : [];
+        const oldStatuses = Array.isArray(row?.certificates_status)
+          ? row.certificates_status
+          : [];
+
+        const newWithSubpath = newNames.map((nm) => `certificates/${nm}`);
+
+        const appended = [...oldCerts, ...newWithSubpath];
+        const appendedStatuses = [
+          ...oldStatuses,
+          ...newWithSubpath.map(() => "pending"),
+        ];
+
+        const { error } = await sb.from("installer_documents").upsert(
+          {
+            installer_id: installerId,
+            certificates: appended,
+            certificates_status: appendedStatuses,
+            status: "pending",
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "installer_id" }
+        );
+        if (error) throw error;
+      }
+
+      function attachUploader(dropEl, inputEl, { multiple = false, onFiles }) {
+        dropEl.addEventListener("click", (e) => {
+          e.stopPropagation();
+          inputEl.multiple = !!multiple;
+          inputEl.click();
+        });
+        inputEl.addEventListener("change", () => {
+          const files = Array.from(inputEl.files || []);
+          if (files.length) onFiles(files);
+          inputEl.value = "";
+        });
+        ["dragenter", "dragover"].forEach((evt) =>
+          dropEl.addEventListener(evt, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropEl.classList.add("is-over");
+          })
+        );
+        ["dragleave", "dragend", "drop"].forEach((evt) =>
+          dropEl.addEventListener(evt, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (evt !== "drop") dropEl.classList.remove("is-over");
+          })
+        );
+        dropEl.addEventListener("drop", (e) => {
+          dropEl.classList.remove("is-over");
+          const dt = e.dataTransfer;
+          const files = Array.from(dt?.files || []);
+          if (files.length) onFiles(multiple ? files : [files[0]]);
+        });
+      }
+
+      // ---------- Certificates preview helpers ----------
+      function showCertificatesChooser(installerId, certs, certStatuses) {
+        previewTitleEl.textContent = "Certificates";
+        previewOpenEl.style.display = "none";
+        previewDownloadEl.style.display = "none";
+
+        // Full view hidden until a specific cert is opened (added)
+        previewFullViewBtn.style.display = "none";
+
+        previewBodyEl.classList.remove("with-toolbar");
+
+        const container = document.createElement("div");
+        container.className = "cert-chooser";
+        container.innerHTML = `
+          <h4>Select a certificate to preview</h4>
+          <ul class="cert-list"></ul>
+        `;
+
+        const ul = container.querySelector(".cert-list");
+        certs.forEach((c, i) => {
+          const li = document.createElement("li");
+          const status = String(certStatuses[i] || "pending").toLowerCase();
+          li.className = "cert-item";
+          li.innerHTML = `
+            <span class="cert-name">${friendlyName(c)}</span>
+            <span class="cert-status ${status}">${
+            status[0].toUpperCase() + status.slice(1)
+          }</span>
+          `;
+          li.addEventListener("click", () =>
+            showCertificatePreview(installerId, certs, certStatuses, i)
+          );
+          ul.appendChild(li);
+        });
+
+        previewBodyEl.innerHTML = "";
+        previewBodyEl.appendChild(container);
+        openMobilePreview();
+      }
+
+      async function showCertificatePreview(
+        installerId,
+        certs,
+        certStatuses,
+        index
+      ) {
+        const total = certs.length;
+        const path = certs[index];
+        const key = buildStorageKey(path, installerId);
+        let viewUrl = "";
+        let dlUrl = "";
+
+        try {
+          if (key) {
+            const { signedViewUrl, signedDownloadUrl } =
+              await createSignedPreviewAndDownload(key);
+            viewUrl = signedViewUrl;
+            dlUrl = signedDownloadUrl;
+          } else {
+            viewUrl = publicDocUrl(path, installerId);
+            dlUrl = viewUrl;
+          }
+        } catch (e) {
+          console.warn(
+            "Signed URL (cert) failed, fallback to public:",
+            e?.message || e
+          );
+          viewUrl = publicDocUrl(path, installerId);
+          dlUrl = viewUrl;
+        }
+
+        const name = friendlyName(path);
+
+        renderPreviewFromUrl(name, viewUrl);
+
+        previewOpenEl.href =
+          document.querySelector(".preview-body iframe")?.src || viewUrl;
+        previewOpenEl.style.display = "inline-grid";
+        previewDownloadEl.href = dlUrl;
+        previewDownloadEl.setAttribute("download", name || "file");
+        previewDownloadEl.style.display = "inline-grid";
+
+        // lastPreview download = cert download (added)
+        lastPreview = {
+          label: name,
+          viewUrl: encodeURI(viewUrl),
+          openHref: previewOpenEl.href,
+          downloadHref: dlUrl,
+          filename: name || "file",
+        };
+        previewFullViewBtn.style.display = "inline-grid";
+
+        const currentEmbed = previewBodyEl.innerHTML;
+        const canPrev = index > 0;
+        const canNext = index < total - 1;
+
+        previewTitleEl.textContent = `Certificate (${index + 1}/${total})`;
+        previewBodyEl.classList.add("with-toolbar");
+        previewBodyEl.innerHTML = `
+          <div class="preview-toolbar">
+            <div class="group">
+              <button class="btn small" id="prevCertBtn" ${
+                canPrev ? "" : "disabled"
+              }>
+                <span class="material-icons-sharp">chevron_left</span> Prev
+              </button>
+              <button class="btn small" id="nextCertBtn" ${
+                canNext ? "" : "disabled"
+              }>
+                Next <span class="material-icons-sharp">chevron_right</span>
+              </button>
+            </div>
+          </div>
+          <div class="preview-embed">
+            ${currentEmbed}
+          </div>
+        `;
+
+        const prevBtn = previewBodyEl.querySelector("#prevCertBtn");
+        const nextBtn = previewBodyEl.querySelector("#nextCertBtn");
+        if (prevBtn) {
+          prevBtn.addEventListener("click", () => {
+            if (index > 0) {
+              showCertificatePreview(
+                installerId,
+                certs,
+                certStatuses,
+                index - 1
+              );
+            }
+          });
+        }
+        if (nextBtn) {
+          nextBtn.addEventListener("click", () => {
+            if (index < total - 1) {
+              showCertificatePreview(
+                installerId,
+                certs,
+                certStatuses,
+                index + 1
+              );
+            }
+          });
+        }
+
+        openMobilePreview();
+      }
+
+      // ---------- Rendering ----------
+      function makeDocButton({
+        label,
+        value,
+        status,
+        onClick,
+        onUpload,
+        multiple = false,
+      }) {
+        const cls = statusToClass(status);
+        const icon = statusToIcon(status);
+        const subtitle = value ? friendlyName(value) : "No file uploaded.";
+        const wrapper = document.createElement("div");
+        wrapper.className = `doc-item ${cls}`;
+        wrapper.setAttribute("role", "button");
+        wrapper.innerHTML = `
+        <div class="doc-meta">
+          <span class="doc-icon">
+            <span class="material-icons-sharp">${icon}</span>
+          </span>
+          <div class="doc-text">
+            <h4>${label}</h4>
+            <p>${subtitle}</p>
+          </div>
+        </div>
+        <div class="dropzone" aria-label="Upload ${label}">
+          <span class="material-icons-sharp">file_upload</span>
+          <span>Drag & drop here to upload</span>
+        </div>
+      `;
+
+        const meta = wrapper.querySelector(".doc-meta");
+        meta.addEventListener("click", () => onClick?.());
+
+        wrapper.addEventListener("click", (e) => {
+          if (!e.target.closest(".dropzone")) {
+            onClick?.();
+          }
+        });
+
+        const dz = wrapper.querySelector(".dropzone");
+        const input = document.createElement("input");
+        input.type = "file";
+        input.style.display = "none";
+        wrapper.appendChild(input);
+
+        attachUploader(dz, input, { multiple, onFiles: onUpload });
+
+        return wrapper;
+      }
+
+      async function getUserId() {
+        const {
+          data: { user },
+          error,
+        } = await sb.auth.getUser();
+        if (error) {
+          console.warn("auth.getUser error:", error);
+          toastError("Couldn’t load your session.");
+          return null;
+        }
+        return user?.id ?? null;
+      }
+
+      async function fetchInstallerDocuments(installerId) {
+        if (!installerId) return null;
+        const { data, error } = await sb
+          .from("installer_documents")
+          .select("*")
+          .eq("installer_id", installerId)
+          .maybeSingle();
+        if (error) {
+          console.warn("installer_documents fetch error:", error);
+          toastError("Couldn’t load your documents.");
+          return null;
+        }
+        return data;
+      }
+
+      function renderDocuments(row, installerId) {
+        const items = [
+          {
+            label: "Resume",
+            fieldKey: "resume",
+            statusKey: "resume_status",
+            value: row?.resume || "",
+            status: row?.resume_status || "pending",
+          },
+          {
+            label: "NBI Clearance",
+            fieldKey: "nbi",
+            statusKey: "nbi_status",
+            value: row?.nbi || "",
+            status: row?.nbi_status || "pending",
+          },
+          {
+            label: "Police Clearance",
+            fieldKey: "police",
+            statusKey: "police_status",
+            value: row?.police || "",
+            status: row?.police_status || "pending",
+          },
+          {
+            label: "Transcript of Records (TOR)",
+            fieldKey: "tor",
+            statusKey: "tor_status",
+            value: row?.tor || "",
+            status: row?.tor_status || "pending",
+          },
+          {
+            label: "Portfolio",
+            fieldKey: "portfolio",
+            statusKey: "portfolio_status",
+            value: row?.portfolio || "",
+            status: row?.portfolio_status || "pending",
+          },
+        ];
+
+        docListEl.innerHTML = "";
+
+        for (const it of items) {
+          const card = makeDocButton({
+            label: it.label,
+            value: it.value,
+            status: it.status,
+            onClick: () =>
+              setPreview({ label: it.label, value: it.value, installerId }),
+            onUpload: async (files) => {
+              try {
+                await ensureRow(installerId);
+                const file = files[0];
+                const storedName = await uploadFileToBucket(installerId, file);
+                await upsertSingleDoc(
+                  installerId,
+                  it.fieldKey,
+                  it.statusKey,
+                  storedName
+                );
+
+                const updated = await fetchInstallerDocuments(installerId);
+                renderDocuments(updated, installerId);
+                setPreview({ label: it.label, value: storedName, installerId });
+
+                // Friendly SweetAlert
+                showReviewHoldModal();
+              } catch (e) {
+                console.error("Upload failed:", e);
+                notifyError(
+                  "Upload failed",
+                  "Please check your connection and try again."
+                );
+              }
+            },
+            multiple: false,
+          });
+          docListEl.appendChild(card);
+        }
+
+        // Certificates (multiple)
+        const certs = Array.isArray(row?.certificates) ? row.certificates : [];
+        const certStatuses = Array.isArray(row?.certificates_status)
+          ? row.certificates_status
+          : [];
+        let certOverall = "pending";
+        if (certs.length) {
+          const anyRejected = certStatuses.some(
+            (s) => String(s).toLowerCase() === "rejected"
+          );
+          const allApproved =
+            certStatuses.length &&
+            certStatuses.every((s) => String(s).toLowerCase() === "approved");
+          certOverall = anyRejected
+            ? "rejected"
+            : allApproved
+            ? "approved"
+            : "pending";
+        }
+        const certSubtitle = certs.length
+          ? `${certs.length} file${
+              certs.length > 1 ? "s" : ""
+            } • ${friendlyName(certs[0])}`
+          : "No file uploaded.";
+
+        const certCard = makeDocButton({
+          label: "Certificates",
+          value: certs.length ? certs[0] : "",
+          status: certOverall,
+          onClick: () => {
+            previewTitleEl.textContent = "Certificates";
+            if (!certs.length) {
+              previewBodyEl.classList.remove("with-toolbar");
+              previewBodyEl.innerHTML = `<div class="preview-placeholder"><span>No file uploaded.</span></div>`;
+              previewOpenEl.style.display = "none";
+              previewDownloadEl.style.display = "none";
+              previewFullViewBtn.style.display = "none";
+              openMobilePreview();
+              return;
+            }
+            showCertificatesChooser(installerId, certs, certStatuses);
+          },
+          onUpload: async (files) => {
+            try {
+              await ensureRow(installerId);
+              const uploadedNames = [];
+              for (const f of files) {
+                const storedName = await uploadFileToBucketAt(
+                  installerId,
+                  f,
+                  "certificates"
+                );
+                uploadedNames.push(storedName);
+              }
+              await upsertCertificates(installerId, uploadedNames);
+
+              const updated = await fetchInstallerDocuments(installerId);
+              renderDocuments(updated, installerId);
+
+              const updatedCerts = Array.isArray(updated?.certificates)
+                ? updated.certificates
+                : [];
+              const updatedStatuses = Array.isArray(
+                updated?.certificates_status
+              )
+                ? updated.certificates_status
+                : [];
+              if (updatedCerts.length) {
+                showCertificatePreview(
+                  installerId,
+                  updatedCerts,
+                  updatedStatuses,
+                  updatedCerts.length - uploadedNames.length
+                );
+              }
+
+              showReviewHoldModal();
+            } catch (e) {
+              console.error("Upload failed:", e);
+              notifyError(
+                "Upload failed",
+                "Please check your connection and try again."
+              );
+            }
+          },
+          multiple: true,
+        });
+
+        const dzSpans = certCard.querySelectorAll(".dropzone span");
+        if (dzSpans.length >= 2) {
+          dzSpans[1].textContent = "Drag & drop here to add certificates";
+        }
+
+        certCard.querySelector(".doc-text p").textContent = certSubtitle;
+        docListEl.appendChild(certCard);
+      }
+
+      async function bootstrap() {
+        // (Keep your existing temporary "Loading…" card logic; it stays hidden while skeleton is visible)
+        docListEl.innerHTML = `
+        <div class="doc-item pending" aria-hidden="true" style="display:none">
+          <div class="doc-meta">
+            <span class="doc-icon"><span class="material-icons-sharp">pending</span></span>
+            <div class="doc-text"><h4>Loading…</h4><p>Please wait</p></div>
+          </div>
+          <div class="dropzone">
+            <span class="material-icons-sharp">file_upload</span>
+            <span>Drag & drop here to upload</span>
+          </div>
+        </div>`;
+
+        try {
+          const installerId = await getUserId();
+
+          // Render even if no installer (shows empty state)
+          const row = await fetchInstallerDocuments(installerId);
+          renderDocuments(row, installerId || "");
+
+          clearPreview();
+
+          Toast.fire({ icon: "success", title: "Documents loaded" });
+        } catch (err) {
+          console.warn("bootstrap error:", err);
+          toastError("Couldn’t load the page fully.");
+        } finally {
+          // HIDE skeleton, SHOW real content
+          document.body.classList.remove("loading");
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", bootstrap);
+    </script>
+  </body>
+</html>

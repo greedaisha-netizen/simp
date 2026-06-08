@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Admin – Courses</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../img/simpHappyMascotLogo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css_files/sideBar.css" />
+    <style>
+      :root {
+        --ink: #1c2430;
+        --muted: #6c7a8a;
+        --line: #e7edf3;
+        --brand: #20a44c;
+        --danger: #e53935;
+        --card: #ffffff;
+        --bg: #f8fbfd;
+        --radius: 14px;
+        --border: #e5e7eb;
+      }
+
+      .page-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        gap: 12px;
+      }
+
+      .page-header h1 {
+        color: var(--ink);
+        margin: 0 0 4px 0;
+      }
+
+      .page-header .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      .btn {
+        border: 1px solid var(--brand);
+        background: var(--brand);
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 999px;
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        line-height: 1;
+        white-space: nowrap;
+      }
+
+      .btn.secondary {
+        background: #fff;
+        color: #0f172a;
+        border-color: #d1e7db;
+      }
+
+      .btn.small {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+
+      .btn.danger {
+        background: #fff;
+        color: var(--danger);
+        border-color: #ffc9c7;
+      }
+
+      .btn.disabled,
+      .btn[disabled] {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      /* Base grid: sensible 2-up on tablets/smaller desktops */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      /* Large screens: 3-up if space allows (will be overridden by the
+         new desktop auto-fit rule below to maximize space) */
+      @media (min-width: 1280px) {
+        .grid {
+          grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+      }
+
+      @media (max-width: 860px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* Remove the "card-style" mobile overrides */
+      @media (max-width: 720px) {
+        .payments-table thead {
+          display: table-header-group;
+        }
+
+        .payments-table tbody tr {
+          display: table-row;
+          padding: 0;
+        }
+
+        .payments-table tbody tr td {
+          display: table-cell;
+          padding: 0.75rem;
+          border-bottom: 1px solid #eef2f7;
+        }
+
+        .payments-table tbody tr td::before {
+          content: none !important;
+        }
+
+        .payments-table {
+          overflow-x: auto;
+        }
+
+        .payments-table table {
+          width: 100%;
+          min-width: 640px;
+          display: table;
+        }
+      }
+
+      .course-card {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        border: 1px solid var(--border);
+        background: #fff;
+        border-radius: 16px;
+        padding: 14px 18px;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+        min-width: 0;
+      }
+
+      .course-image {
+        flex: 0 0 220px;
+        height: 120px;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #f2f4f7;
+      }
+
+      .course-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .course-content {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 0;
+        flex: 1 1 auto;
+      }
+
+      .course-content h3 {
+        margin: 0;
+        font-size: 18px;
+        color: #1f2937;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .course-content p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .meta {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        font-size: 12px;
+        color: #6b7280;
+      }
+
+      .pill {
+        background: #eef6ff;
+        color: #0f172a;
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid #d7e7ff;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .right {
+        margin-left: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-end;
+        min-width: 140px;
+      }
+
+      .actions-col {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .small {
+        font-size: 12px;
+        color: #7a7a7a;
+      }
+
+      .link {
+        color: var(--brand);
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      .empty {
+        border: 1px dashed #cbd5e1;
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        color: #6b7280;
+      }
+
+      .course-users {
+        font-size: 12px;
+        color: #555;
+        margin-top: 4px;
+      }
+
+      .notice {
+        display: none;
+        margin: 10px 0 0;
+        font-size: 12px;
+        color: #b45309;
+        background: #fff7ed;
+        border: 1px solid #fed7aa;
+        padding: 8px 10px;
+        border-radius: 10px;
+      }
+
+      .pill.published {
+        background: #ecfdf5;
+        border-color: #bbf7d0;
+        color: #065f46;
+      }
+
+      /* Toggle switch */
+      .toggle-wrap {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        color: #374151;
+        user-select: none;
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 40px;
+        height: 22px;
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        inset: 0;
+        background: #e5e7eb;
+        transition: 0.2s;
+        border-radius: 999px;
+        border: 1px solid #d1d5db;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 2px;
+        top: 1.5px;
+        background: #fff;
+        transition: 0.2s;
+        border-radius: 999px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      }
+
+      input:checked + .slider {
+        background: #20a44c;
+        border-color: #20a44c;
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(18px);
+      }
+
+      .toggle-hint {
+        font-size: 11px;
+        color: #6b7280;
+      }
+
+      /* =========================
+         Mobile (UNCHANGED)
+         ========================= */
+      @media (max-width: 640px) {
+        .page-header {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .page-header .actions {
+          width: 100%;
+          gap: 8px;
+        }
+
+        #addCourseBtn,
+        #refreshBtn {
+          width: 42px;
+          height: 42px;
+          padding: 0;
+          border-radius: 12px;
+          font-size: 0;
+          position: relative;
+        }
+
+        #addCourseBtn::before,
+        #refreshBtn::before {
+          font-family: "Material Icons Sharp";
+          font-weight: normal;
+          font-style: normal;
+          font-size: 22px;
+          line-height: 1;
+          display: inline-block;
+          -webkit-font-smoothing: antialiased;
+          -moz-osx-font-smoothing: grayscale;
+          position: relative;
+          top: 1px;
+          color: currentColor;
+        }
+
+        #addCourseBtn::before {
+          content: "add";
+        }
+
+        #refreshBtn::before {
+          content: "refresh";
+        }
+
+        .course-card {
+          flex-direction: column;
+          align-items: stretch;
+          padding: 12px;
+          gap: 12px;
+        }
+
+        .course-image {
+          flex: none;
+          width: 100%;
+          height: auto;
+          aspect-ratio: 16 / 9;
+          border-radius: 12px;
+        }
+
+        .course-content h3 {
+          white-space: normal;
+          line-height: 1.2;
+        }
+
+        .course-content p {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+
+        .meta {
+          gap: 6px;
+        }
+
+        .pill {
+          padding: 3px 8px;
+          font-size: 11px;
+          max-width: 100%;
+        }
+
+        .right {
+          align-items: stretch;
+          margin-left: 0;
+          min-width: 0;
+          gap: 6px;
+        }
+
+        .right .small {
+          order: 2;
+        }
+
+        .actions-col {
+          width: 100%;
+          order: 1;
+          gap: 6px;
+        }
+
+        .actions-col .btn.small {
+          flex: 1 1 0;
+          min-width: 44px;
+          padding: 10px 12px;
+        }
+
+        .actions-col a.btn.small.secondary[data-edit-link],
+        .actions-col button.btn.small.danger[data-delete-btn] {
+          position: relative;
+          font-size: 0;
+        }
+
+        .actions-col a.btn.small.secondary[data-edit-link]::before {
+          content: "edit";
+          font-family: "Material Icons Sharp";
+          font-size: 20px;
+          line-height: 1;
+          display: inline-block;
+          color: currentColor;
+        }
+
+        .actions-col button.btn.small.danger[data-delete-btn]::before {
+          content: "delete";
+          font-family: "Material Icons Sharp";
+          font-size: 20px;
+          line-height: 1;
+          display: inline-block;
+          color: var(--danger);
+        }
+      }
+
+      /* =========================
+         Desktop/PC polish (MAX SPACE)
+         ========================= */
+      @media (min-width: 1025px) {
+        .grid {
+          grid-template-columns: repeat(auto-fit, minmax(520px, 1fr));
+          gap: 20px;
+        }
+
+        .course-card {
+          align-items: stretch;
+          padding: 18px;
+          border-radius: 14px;
+          box-shadow: 0 8px 22px rgba(0, 0, 0, 0.05);
+          transition: box-shadow 0.18s ease, transform 0.18s ease;
+          min-height: 180px;
+        }
+
+        .course-card:hover {
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.07);
+          transform: translateY(-1px);
+        }
+
+        .course-image {
+          flex: 0 0 clamp(220px, 28%, 300px);
+          height: 160px;
+          border-radius: 12px;
+        }
+
+        .course-content h3 {
+          font-size: 19px;
+        }
+
+        .course-content p {
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          min-height: 2.8em;
+        }
+
+        .pill {
+          padding: 4px 10px;
+          font-size: 12px;
+          max-width: 260px;
+        }
+
+        .right {
+          min-width: 190px;
+          padding-left: 8px;
+          align-items: flex-end;
+          justify-content: space-between;
+        }
+
+        .right .small {
+          color: #64748b;
+        }
+
+        #addCourseBtn,
+        #refreshBtn {
+          font-size: 14px !important;
+          padding: 10px 14px !important;
+          border-radius: 999px !important;
+        }
+
+        #addCourseBtn::before,
+        #refreshBtn::before {
+          content: none !important;
+        }
+      }
+
+      @media (min-width: 641px) and (max-width: 1024px) {
+        .course-card {
+          gap: 14px;
+        }
+
+        .course-image {
+          flex-basis: 200px;
+          height: 112px;
+        }
+
+        .course-content h3 {
+          font-size: 17px;
+        }
+
+        .course-content p {
+          display: -webkit-box;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+        }
+      }
+
+      /* ============ SKELETON (PC + Mobile) ============ */
+      .hidden {
+        display: none !important;
+      }
+
+      .skel {
+        position: relative;
+        overflow: hidden;
+        background: #eef2f7;
+      }
+
+      .skel-round {
+        border-radius: 12px;
+      }
+
+      .skel-pill {
+        border-radius: 999px;
+      }
+
+      .shimmer::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.6) 50%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        animation: sksh 1.1s infinite;
+      }
+
+      @keyframes sksh {
+        0% {
+          transform: translateX(-100%);
+        }
+
+        100% {
+          transform: translateX(100%);
+        }
+      }
+
+      .skeleton-card {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        border: 1px solid var(--border);
+        background: #fff;
+        border-radius: 16px;
+        padding: 14px 18px;
+        min-width: 0;
+      }
+
+      .skeleton-img {
+        width: 220px;
+        height: 120px;
+      }
+
+      .skeleton-col {
+        flex: 1 1 auto;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .skeleton-line {
+        height: 14px;
+      }
+
+      .w-30 {
+        width: 30%;
+      }
+
+      .w-40 {
+        width: 40%;
+      }
+
+      .w-50 {
+        width: 50%;
+      }
+
+      .w-60 {
+        width: 60%;
+      }
+
+      .w-70 {
+        width: 70%;
+      }
+
+      .w-80 {
+        width: 80%;
+      }
+
+      .w-90 {
+        width: 90%;
+      }
+
+      .skeleton-meta {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+
+      .skeleton-pill {
+        height: 20px;
+        width: 90px;
+      }
+
+      .skeleton-right {
+        width: 160px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-end;
+      }
+
+      .skeleton-btn {
+        height: 32px;
+        width: 90px;
+      }
+
+      /* ✅ Desktop skeleton now mirrors real card layout */
+      @media (min-width: 1025px) {
+        .skeleton-card {
+          align-items: stretch;
+          /* match .course-card */
+          min-height: 180px;
+          /* same min height */
+          padding: 18px;
+          /* same padding */
+          border-radius: 14px;
+          /* same radius */
+        }
+
+        .skeleton-img {
+          width: clamp(220px, 28%, 300px);
+          /* same clamp as real image */
+          height: 160px;
+          /* match height */
+          border-radius: 12px;
+        }
+
+        .skeleton-right {
+          width: 190px;
+          padding-left: 8px;
+          align-items: flex-end;
+          justify-content: space-between;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .skeleton-card {
+          flex-direction: column;
+          align-items: stretch;
+          padding: 12px;
+          gap: 12px;
+        }
+
+        .skeleton-img {
+          width: 100%;
+          height: auto;
+          aspect-ratio: 16/9;
+        }
+
+        .skeleton-right {
+          width: 100%;
+          align-items: stretch;
+        }
+      }
+
+      /* --- SweetAlert2 minimal, compact, no jump --- */
+      .swal2-popup {
+        border-radius: 14px !important;
+        padding: 1rem !important;
+        width: 420px !important;
+        max-width: 90vw !important;
+      }
+
+      .swal2-title {
+        font-size: 1.1rem !important;
+        color: #1f2937 !important;
+      }
+
+      .swal2-html-container {
+        font-size: 0.95rem !important;
+        color: #4b5563 !important;
+        margin-top: 0.5rem !important;
+      }
+
+      .swal2-styled.swal2-confirm {
+        background: var(--brand) !important;
+        border-radius: 999px !important;
+      }
+
+      .swal2-styled.swal2-cancel {
+        background: #fff !important;
+        color: #1f2937 !important;
+        border: 1px solid #e5e7eb !important;
+        border-radius: 999px !important;
+      }
+    </style>
+  </head>
+
+  <body class="is-loading">
+    <div class="container">
+      <!-- Sidebar (untouched) -->
+      <aside>
+        <div class="toggle">
+          <div class="logo">
+            <img src="../../../img/simpHappyMascotLogo.png" alt="logo" />
+            <h2>SIMP<span class="danger">Project</span></h2>
+          </div>
+          <div class="close" id="close-btn">
+            <span class="material-icons-sharp">close</span>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <a href="dashboard.html"
+            ><span class="material-icons-sharp">dashboard</span>
+            <h3>Dashboard</h3>
+          </a>
+          <a href="workerVerification.html"
+            ><span class="material-icons-sharp">engineering</span>
+            <h3>Workers<br />Verification</h3>
+          </a>
+          <a href="jobVerification.html"
+            ><span class="material-icons-sharp">work</span>
+            <h3>Jobs<br />Verification</h3>
+          </a>
+          <a href="jobApplicationVerification.html"
+            ><span class="material-icons-sharp">approval</span>
+            <h3>Application<br />Verification</h3>
+          </a>
+          <a href="adminVerification.html"
+            ><span class="material-icons-sharp">shield</span>
+            <h3>Admin<br />Verification</h3>
+          </a>
+          <a href="manageShop.html"
+            ><span class="material-icons-sharp">shop</span>
+            <h3>Manage<br />Shop</h3>
+          </a>
+          <a href="paymentsRequest.html"
+            ><span class="material-icons-sharp">payments</span>
+            <h3>Payments<br />Request</h3>
+          </a>
+          <a href="courses.html" class="active"
+            ><span class="material-icons-sharp">school</span>
+            <h3>Course<br />Publisher</h3>
+          </a>
+          <a href="settings.html"
+            ><span class="material-icons-sharp">settings</span>
+            <h3>Settings</h3>
+          </a>
+          <a href="#" id="logout-btn"
+            ><span class="material-icons-sharp">logout</span>
+            <h3>Logout</h3>
+          </a>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <main>
+        <div class="page-header">
+          <div>
+            <h1>Courses (Admin)</h1>
+            <p class="small">Create, edit, and manage your courses.</p>
+          </div>
+          <div class="actions">
+            <button id="addCourseBtn" class="btn">+ Add Course</button>
+            <button id="refreshBtn" class="btn secondary">Refresh</button>
+          </div>
+        </div>
+
+        <!-- SKELETON: visible while loading -->
+        <div id="coursesSkeleton" class="grid">
+          <!-- 6 skeleton cards -->
+          <div class="skeleton-card">
+            <div class="skel skeleton-img skel-round shimmer"></div>
+            <div class="skeleton-col">
+              <div class="skel skeleton-line w-60 skel-round shimmer"></div>
+              <div class="skel skeleton-line w-80 skel-round shimmer"></div>
+              <div class="skeleton-meta">
+                <div class="skel skeleton-pill skel-pill shimmer"></div>
+                <div class="skel skeleton-pill skel-pill shimmer"></div>
+                <div class="skel skeleton-pill skel-pill shimmer"></div>
+              </div>
+              <div class="skel skeleton-line w-50 skel-round shimmer"></div>
+            </div>
+            <div class="skeleton-right">
+              <div class="skel skeleton-line w-60 skel-round shimmer"></div>
+              <div style="display: flex; gap: 8px; justify-content: flex-end">
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="skeleton-card">
+            <div class="skel skeleton-img skel-round shimmer"></div>
+            <div class="skeleton-col">
+              <div class="skel skeleton-line w-70 skel-round shimmer"></div>
+              <div class="skel skeleton-line w-60 skel-round shimmer"></div>
+              <div class="skeleton-meta">
+                <div class="skel skeleton-pill skel-pill shimmer"></div>
+                <div class="skel skeleton-pill skel-pill shimmer"></div>
+              </div>
+              <div class="skel skeleton-line w-80 skel-round shimmer"></div>
+            </div>
+            <div class="skeleton-right">
+              <div class="skel skeleton-line w-40 skel-round shimmer"></div>
+              <div style="display: flex; gap: 8px; justify-content: flex-end">
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="skeleton-card">
+            <div class="skel skeleton-img skel-round shimmer"></div>
+            <div class="skeleton-col">
+              <div class="skel skeleton-line w-55 skel-round shimmer"></div>
+              <div class="skel skeleton-line w-75 skel-round shimmer"></div>
+              <div class="skeleton-meta">
+                <div class="skel skeleton-pill skel-pill shimmer"></div>
+                <div class="skel skeleton-pill skel-pill shimmer"></div>
+                <div class="skel skeleton-pill skel-pill shimmer"></div>
+                <div class="skel skeleton-pill skel-pill shimmer"></div>
+              </div>
+              <div class="skel skeleton-line w-65 skel-round shimmer"></div>
+            </div>
+            <div class="skeleton-right">
+              <div class="skel skeleton-line w-50 skel-round shimmer"></div>
+              <div style="display: flex; gap: 8px; justify-content: flex-end">
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="skeleton-card">
+            <div class="skel skeleton-img skel-round shimmer"></div>
+            <div class="skeleton-col">
+              <div class="skel skeleton-line w-60 skel-round shimmer"></div>
+              <div class="skel skeleton-line w-80 skel-round shimmer"></div>
+              <div class="skeleton-meta">
+                <div class="skel skeleton-pill skel-pill shimmer"></div>
+                <div class="skel skeleton-pill skel-pill shimmer"></div>
+              </div>
+              <div class="skel skeleton-line w-40 skel-round shimmer"></div>
+            </div>
+            <div class="skeleton-right">
+              <div class="skel skeleton-line w-60 skel-round shimmer"></div>
+              <div style="display: flex; gap: 8px; justify-content: flex-end">
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="skeleton-card">
+            <div class="skel skeleton-img skel-round shimmer"></div>
+            <div class="skeleton-col">
+              <div class="skel skeleton-line w-50 skel-round shimmer"></div>
+              <div class="skel skeleton-line w-70 skel-round shimmer"></div>
+              <div class="skeleton-meta">
+                <div class="skel skeleton-pill skel-pill shimmer"></div>
+                <div class="skel skeleton-pill skel-pill shimmer"></div>
+                <div class="skel skeleton-pill skel-pill shimmer"></div>
+              </div>
+              <div class="skel skeleton-line w-55 skel-round shimmer"></div>
+            </div>
+            <div class="skeleton-right">
+              <div class="skel skeleton-line w-35 skel-round shimmer"></div>
+              <div style="display: flex; gap: 8px; justify-content: flex-end">
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="skeleton-card">
+            <div class="skel skeleton-img skel-round shimmer"></div>
+            <div class="skeleton-col">
+              <div class="skel skeleton-line w-65 skel-round shimmer"></div>
+              <div class="skel skeleton-line w-45 skel-round shimmer"></div>
+              <div class="skeleton-meta">
+                <div class="skel skeleton-pill skel-pill shimmer"></div>
+                <div class="skel skeleton-pill skel-pill shimmer"></div>
+              </div>
+              <div class="skel skeleton-line w-70 skel-round shimmer"></div>
+            </div>
+            <div class="skeleton-right">
+              <div class="skel skeleton-line w-50 skel-round shimmer"></div>
+              <div style="display: flex; gap: 8px; justify-content: flex-end">
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+                <div class="skel skeleton-btn skel-round shimmer"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- /SKELETON -->
+
+        <div id="coursesGrid" class="grid" style="display: none">
+          <!-- populated by JS -->
+        </div>
+
+        <div id="emptyState" class="empty" style="display: none">
+          No courses yet. Click <strong>+ Add Course</strong> to create your
+          first one.
+        </div>
+
+        <div id="nameNotice" class="notice">
+          Some creator/editor names couldn’t be loaded. If you’re seeing
+          “Unknown,” update RLS to allow admins to SELECT name/email from
+          <code>public.admin</code>.
+        </div>
+      </main>
+    </div>
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script type="module">
+      import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../../../supabase.js";
+
+      const supabase = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+        { db: { schema: "courses" } }
+      );
+      const supabasePublic = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+        { db: { schema: "public" } }
+      );
+
+      // -------- SweetAlert defaults (compact, no layout jump) --------
+      Swal.mixin({
+        scrollbarPadding: false,
+      });
+
+      const swalDefaults = {
+        width: 420,
+        padding: "1rem",
+        confirmButtonText: "OK",
+        confirmButtonColor: "#20a44c",
+        showClass: { popup: "", backdrop: "" },
+        hideClass: { popup: "", backdrop: "" },
+      };
+
+      const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        showCloseButton: true,
+        timer: 2400,
+        timerProgressBar: true,
+        width: 380,
+      });
+
+      function swalError(
+        title = "Something went wrong",
+        text = "Please try again."
+      ) {
+        return Swal.fire({
+          ...swalDefaults,
+          icon: "error",
+          title,
+          text,
+        });
+      }
+
+      function swalInfo(title, text) {
+        return Swal.fire({
+          ...swalDefaults,
+          icon: "info",
+          title,
+          text,
+        });
+      }
+
+      function swalSuccess(title, text) {
+        return Swal.fire({
+          ...swalDefaults,
+          icon: "success",
+          title,
+          text,
+        });
+      }
+
+      async function swalConfirmDelete(courseTitle) {
+        return Swal.fire({
+          ...swalDefaults,
+          icon: "warning",
+          title: "Delete course?",
+          html: `"<b>${escapeHtml(
+            courseTitle
+          )}</b>" and its sections/quizzes will be removed.`,
+          showCancelButton: true,
+          confirmButtonText: "Delete",
+          cancelButtonText: "Cancel",
+          confirmButtonColor: "#e53935",
+          focusCancel: true,
+        });
+      }
+
+      function toastOK(message) {
+        return Toast.fire({ icon: "success", title: message });
+      }
+
+      function toastInfo(message) {
+        return Toast.fire({ icon: "info", title: message });
+      }
+
+      function toastWarn(message) {
+        return Toast.fire({ icon: "warning", title: message });
+      }
+
+      function escapeHtml(str = "") {
+        return String(str).replace(
+          /[&<>"']/g,
+          (s) =>
+            ({
+              "&": "&amp;",
+              "<": "&lt;",
+              ">": "&gt;",
+              '"': "&quot;",
+              "'": "&#39;",
+            }[s])
+        );
+      }
+
+      const ADMIN_TABLE = "admin";
+      const addBtn = document.getElementById("addCourseBtn");
+      const refreshBtn = document.getElementById("refreshBtn");
+      const grid = document.getElementById("coursesGrid");
+      const emptyState = document.getElementById("emptyState");
+      const nameNotice = document.getElementById("nameNotice");
+      const coursesSkeleton = document.getElementById("coursesSkeleton");
+
+      const showSkeleton = () => {
+        document.body.classList.add("is-loading");
+        if (coursesSkeleton) coursesSkeleton.style.display = "";
+        if (grid) grid.style.display = "none";
+        if (emptyState) emptyState.style.display = "none";
+      };
+      const hideSkeleton = () => {
+        document.body.classList.remove("is-loading");
+        if (coursesSkeleton) coursesSkeleton.style.display = "none";
+      };
+
+      addBtn.addEventListener("click", () => {
+        window.location.href = "courseBuilder.html";
+      });
+      refreshBtn.addEventListener("click", () => {
+        toastInfo("Refreshing courses…");
+        loadCourses();
+      });
+
+      function el(tag, attrs = {}, children = []) {
+        const n = document.createElement(tag);
+        Object.entries(attrs).forEach(([k, v]) => {
+          if (k === "class") n.className = v;
+          else if (k === "html") n.innerHTML = v;
+          else if (k.startsWith("on:") && typeof v === "function")
+            n.addEventListener(k.split(":")[1], v);
+          else n.setAttribute(k, v);
+        });
+        children.forEach((c) => n.appendChild(c));
+        return n;
+      }
+
+      async function deleteCourse(id, title, btnEl) {
+        const { isConfirmed } = await swalConfirmDelete(title);
+        if (!isConfirmed) return;
+
+        const card = btnEl.closest(".course-card");
+        card?.remove();
+        checkEmptyState();
+
+        const { error } = await supabase.from("course").delete().eq("id", id);
+        if (error) {
+          await swalError(
+            "Delete failed",
+            error.message || "Could not delete the course."
+          );
+          // attempt to reload the list to restore state
+          loadCourses();
+          return;
+        }
+        toastOK("Course deleted");
+      }
+
+      async function togglePublish(courseId, checked, checkboxEl) {
+        const label = checkboxEl
+          ?.closest(".toggle-wrap")
+          ?.querySelector(".toggle-hint");
+        const card = checkboxEl?.closest(".course-card");
+        const pill = card?.querySelector("[data-published-pill]");
+        const editBtn = card?.querySelector("[data-edit-link]");
+        const delBtn = card?.querySelector("[data-delete-btn]");
+
+        checkboxEl.disabled = true;
+
+        // optimistic UI update
+        if (label) label.textContent = checked ? "Published" : "Draft";
+        if (pill) {
+          pill.textContent = checked ? "Published" : "Draft";
+          pill.classList.toggle("published", !!checked);
+        }
+        if (editBtn) {
+          if (checked) {
+            editBtn.classList.add("disabled");
+            editBtn.setAttribute("href", "#");
+          } else {
+            editBtn.classList.remove("disabled");
+            const id = editBtn.getAttribute("data-id");
+            editBtn.setAttribute(
+              "href",
+              `courseBuilder.html?course=${encodeURIComponent(id)}`
+            );
+          }
+        }
+        if (delBtn) {
+          delBtn.disabled = !!checked;
+        }
+
+        const { error } = await supabase
+          .from("course")
+          .update({ is_published: checked })
+          .eq("id", courseId);
+
+        if (error) {
+          await swalError(
+            "Update failed",
+            error.message || "Could not change publish status."
+          );
+          // revert UI
+          checkboxEl.checked = !checked;
+          const nowChecked = checkboxEl.checked;
+          if (label) label.textContent = nowChecked ? "Published" : "Draft";
+          if (pill) {
+            pill.textContent = nowChecked ? "Published" : "Draft";
+            pill.classList.toggle("published", !!nowChecked);
+          }
+          if (editBtn) {
+            if (nowChecked) {
+              editBtn.classList.add("disabled");
+              editBtn.setAttribute("href", "#");
+            } else {
+              editBtn.classList.remove("disabled");
+              const id = editBtn.getAttribute("data-id");
+              editBtn.setAttribute(
+                "href",
+                `courseBuilder.html?course=${encodeURIComponent(id)}`
+              );
+            }
+          }
+          if (delBtn) {
+            delBtn.disabled = !!nowChecked;
+          }
+        } else {
+          toastOK(checked ? "Course published" : "Course set to draft");
+        }
+
+        checkboxEl.disabled = false;
+      }
+
+      function checkEmptyState() {
+        const hasCards = grid.querySelector(".course-card");
+        emptyState.style.display = hasCards ? "none" : "";
+      }
+
+      async function resolveAdminNames(ids) {
+        const unique = Array.from(new Set(ids.filter(Boolean)));
+        if (!unique.length) return { map: {}, unresolved: [] };
+        const { data, error } = await supabasePublic
+          .from(ADMIN_TABLE)
+          .select("id,name,email")
+          .in("id", unique);
+        if (error) return { map: {}, unresolved: unique };
+        const map = {};
+        (data || []).forEach((row) => {
+          map[row.id] = row.name || row.email || row.id;
+        });
+        const unresolved = unique.filter((id) => !map[id]);
+        return { map, unresolved };
+      }
+
+      async function loadCourses() {
+        try {
+          // show skeleton, hide content while loading
+          showSkeleton();
+          grid.innerHTML = "";
+          nameNotice.style.display = "none";
+
+          const { data, error } = await supabase
+            .from("course")
+            .select(
+              "id,title,slug,description,level,tags,thumbnail_url,created_at,updated_at,created_by,last_edited_by,is_published"
+            )
+            .order("created_at", { ascending: false });
+
+          if (error) {
+            hideSkeleton();
+            grid.style.display = "";
+            grid.appendChild(
+              el("div", {
+                class: "empty",
+                html: `Error: ${escapeHtml(error.message)}`,
+              })
+            );
+            await swalError(
+              "Couldn’t load courses",
+              error.message || "Please check your connection and try again."
+            );
+            return;
+          }
+          if (!data || data.length === 0) {
+            hideSkeleton();
+            grid.style.display = "none";
+            emptyState.style.display = "";
+            toastInfo("No courses yet. Click “+ Add Course” to create one.");
+            return;
+          }
+
+          const ids = [];
+          data.forEach((c) => {
+            if (c.created_by) ids.push(c.created_by);
+            if (c.last_edited_by) ids.push(c.last_edited_by);
+          });
+          const { map: nameMap, unresolved } = await resolveAdminNames(ids);
+          if (unresolved && unresolved.length) {
+            nameNotice.style.display = "";
+            toastWarn("Some admin names could not be loaded (RLS).");
+          }
+
+          data.forEach((c) => {
+            const editLink = el(
+              "a",
+              {
+                class:
+                  "btn small secondary" + (c.is_published ? " disabled" : ""),
+                href: c.is_published
+                  ? "#"
+                  : `courseBuilder.html?course=${encodeURIComponent(c.id)}`,
+                "data-edit-link": "1",
+                "data-id": c.id,
+              },
+              [document.createTextNode("Edit")]
+            );
+
+            const delBtn = el(
+              "button",
+              {
+                class: "btn small danger",
+                type: "button",
+                "data-delete-btn": "1",
+              },
+              [document.createTextNode("Delete")]
+            );
+            if (c.is_published) delBtn.setAttribute("disabled", "true");
+            delBtn.addEventListener("click", () =>
+              deleteCourse(c.id, c.title, delBtn)
+            );
+
+            const toggleId = `pub_${c.id}`;
+            const checkbox = el("input", {
+              type: "checkbox",
+              id: toggleId,
+              ...(c.is_published ? { checked: "" } : {}),
+              "on:change": (e) =>
+                togglePublish(c.id, e.target.checked, e.target),
+            });
+            const slider = el("span", { class: "slider" });
+            const switchLabel = el(
+              "label",
+              { class: "switch", for: toggleId },
+              [checkbox, slider]
+            );
+            const toggleWrap = el("div", { class: "toggle-wrap" }, [
+              switchLabel,
+              el("span", {
+                class: "toggle-hint",
+                html: c.is_published ? "Published" : "Draft",
+              }),
+            ]);
+
+            const createdName = nameMap[c.created_by] || "Unknown";
+            const editedName = c.last_edited_by
+              ? nameMap[c.last_edited_by] || "Unknown"
+              : "—";
+
+            const publishedPill = el("span", {
+              class: "pill" + (c.is_published ? " published" : ""),
+              html: c.is_published ? "Published" : "Draft",
+              "data-published-pill": "1",
+            });
+
+            const card = el("div", { class: "course-card" }, [
+              el("div", { class: "course-image" }, [
+                el("img", {
+                  src: c.thumbnail_url || "../images/profile-4.jpg",
+                  alt: c.title,
+                }),
+              ]),
+              el("div", { class: "course-content" }, [
+                el("h3", { html: escapeHtml(c.title) }),
+                el("p", {
+                  html: escapeHtml(c.description || "No description."),
+                }),
+                el("div", { class: "meta" }, [
+                  el("span", {
+                    class: "pill",
+                    html: `Slug: ${escapeHtml(c.slug)}`,
+                  }),
+                  el("span", { class: "pill", html: `Level: ${c.level ?? 0}` }),
+                  el("span", {
+                    class: "pill",
+                    html: `Tags: ${(c.tags || []).join(", ") || "—"}`,
+                  }),
+                  publishedPill,
+                ]),
+                el("div", {
+                  class: "course-users",
+                  html: `Created by: ${escapeHtml(
+                    createdName
+                  )}<br>Last edited by: ${escapeHtml(editedName)}`,
+                }),
+              ]),
+              el("div", { class: "right" }, [
+                el("span", {
+                  class: "small",
+                  html: new Date(c.created_at).toLocaleString(),
+                }),
+                el("div", { class: "actions-col" }, [
+                  editLink,
+                  toggleWrap,
+                  delBtn,
+                ]),
+              ]),
+            ]);
+            grid.appendChild(card);
+          });
+
+          // hide skeleton and show grid when ready
+          hideSkeleton();
+          grid.style.display = "";
+          emptyState.style.display = "none";
+        } catch (e) {
+          hideSkeleton();
+          grid.style.display = "";
+          grid.appendChild(
+            el("div", {
+              class: "empty",
+              html: `Error: ${escapeHtml(e.message || e)}`,
+            })
+          );
+          await swalError(
+            "Unexpected error",
+            e?.message || "Please try again."
+          );
+        }
+      }
+
+      document.addEventListener("DOMContentLoaded", loadCourses);
+    </script>
+    <script src="../../general_files/index.js"></script>
+    <script type="module" src="../../general_files/session.js"></script>
+  </body>
+</html>

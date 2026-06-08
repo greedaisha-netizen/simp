@@ -1,0 +1,1907 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="icon"
+      type="image/png"
+      href="../../../img/simpHappyMascotLogo.png"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../css_files/sideBar.css" />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp"
+      rel="stylesheet"
+    />
+    <title>Jobs Verification</title>
+
+    <style>
+      :root {
+        --ink: #1c2430;
+        --muted: #6c7a8a;
+        --line: #e7edf3;
+        --brand: #20a44c;
+        --warn: #f59e0b;
+        --danger: #e53935;
+        --bg: #f8fbfd;
+        --card: #ffffff;
+        --pill: #eef6ff;
+        --radius: 14px;
+
+        /* modal theme */
+        --modal-bg: #ffffff;
+        --modal-head: #f7fbff;
+        --shadow-lg: 0 12px 30px rgba(16, 24, 40, 0.14);
+        --shadow-xl: 0 24px 60px rgba(16, 24, 40, 0.2);
+      }
+
+      .two-col-wrap {
+        display: grid;
+        grid-template-columns: 340px 1fr;
+        gap: 1rem;
+      }
+
+      @media (max-width: 1024px) {
+        .two-col-wrap {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 12px;
+      }
+
+      .panel h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1rem;
+        font-weight: bold;
+      }
+
+      .search {
+        position: relative;
+        margin-bottom: 0.6rem;
+      }
+
+      .search input {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px 10px 36px;
+        outline: none;
+        background: #fcfeff;
+      }
+
+      .search .material-icons-sharp {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 20px;
+        color: var(--muted);
+      }
+
+      .list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        max-height: 70vh;
+        overflow: auto;
+      }
+
+      .item {
+        display: grid;
+        grid-template-columns: 48px 1fr auto;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: background 0.15s ease, transform 0.06s ease;
+        background: #fff;
+      }
+
+      .item:hover {
+        background: #f6fafc;
+      }
+
+      .item:active {
+        transform: scale(0.997);
+      }
+
+      .item.active {
+        border-color: var(--brand);
+        box-shadow: inset 0 0 0 1px var(--brand);
+      }
+
+      .item.read {
+        background: #fff !important;
+      }
+
+      .item.pending {
+        background: #f0f4f9 !important;
+      }
+
+      .thumb {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 1px solid var(--line);
+      }
+
+      .pill {
+        font-size: 0.75rem;
+        background: var(--pill);
+        padding: 4px 8px;
+        border-radius: 999px;
+        color: #2463a6;
+        border: 1px solid #d6e9ff;
+        white-space: nowrap;
+      }
+
+      .details {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        overflow: clip;
+      }
+
+      .details .head {
+        display: flex;
+        gap: 16px;
+        padding: 16px;
+        border-bottom: 1px solid var(--line);
+        align-items: center;
+        background: linear-gradient(180deg, #f9fbff, #ffffff);
+      }
+
+      .details .head img {
+        width: 20%;
+        height: auto;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 1px solid var(--line);
+        background: #fff;
+      }
+
+      .details .head .name {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin: 0 0 2px;
+      }
+
+      .meta {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 4px;
+      }
+
+      .meta .kv {
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 16px;
+      }
+
+      @media (max-width: 1024px) {
+        .grid-2 {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        padding: 12px;
+        background: #fff;
+      }
+
+      .card h4 {
+        margin: 0 0 0.6rem 0;
+        font-size: 0.95rem;
+      }
+
+      .info-list {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px 12px;
+        font-size: 0.95rem;
+      }
+
+      @media (max-width: 640px) {
+        .info-list {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .info-list .label {
+        color: var(--muted);
+        font-size: 0.85rem;
+        display: block;
+      }
+
+      .actions-row {
+        display: flex;
+        gap: 10px;
+        padding: 12px 16px 16px;
+        border-top: 1px solid var(--line);
+        justify-content: flex-end;
+        background: #fff;
+      }
+
+      .btn {
+        appearance: none;
+        border: 1px solid var(--line);
+        background: #fff;
+        border-radius: 10px;
+        padding: 9px 12px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        transition: box-shadow 0.2s ease, transform 0.06s ease, background 0.2s;
+      }
+
+      .btn:hover {
+        box-shadow: var(--shadow-lg);
+        background: #fafcff;
+      }
+
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      .btn.primary {
+        background: var(--brand);
+        color: #fff;
+        border-color: var(--brand);
+      }
+
+      .btn.reject {
+        background: #fff5f5;
+        color: #e53935;
+        border-color: #ffd7d7;
+      }
+
+      .btn.warn {
+        background: #fff8e1;
+        color: #8a6d0a;
+        border-color: #fde68a;
+      }
+
+      .btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .empty-state {
+        padding: 24px;
+        border: 1px dashed var(--line);
+        border-radius: 12px;
+        background: #fbfeff;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      .toast {
+        position: fixed;
+        bottom: 18px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #111827;
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        display: none;
+        z-index: 1000;
+      }
+
+      .toast.show {
+        display: block;
+      }
+
+      /* ======= Aesthetic Job Details MODAL (mobile) ======= */
+      .job-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(14, 25, 42, 0.5);
+        backdrop-filter: blur(2px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        z-index: 990; /* Sits below the mobile header */
+        opacity: 0;
+        transition: opacity 0.2s ease;
+      }
+
+      .job-modal.open {
+        display: flex;
+        opacity: 1;
+      }
+
+      .job-modal-card {
+        width: min(1080px, 96vw);
+        /* shorter to avoid viewport shifts */
+        height: min(75vh, 840px);
+        background: var(--modal-bg);
+        border-radius: 16px;
+        overflow: hidden;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        border: 1px solid #eef2f7;
+        box-shadow: var(--shadow-xl);
+        animation: zoomIn 0.18s ease-out;
+      }
+
+      .job-modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 14px;
+        border-bottom: 1px solid var(--line);
+        background: var(--modal-head);
+      }
+
+      .job-modal-head h4 {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 700;
+      }
+
+      .job-modal-body {
+        overflow: auto;
+        -webkit-overflow-scrolling: touch;
+        background: #fff;
+      }
+
+      @keyframes zoomIn {
+        from {
+          transform: scale(0.98);
+          opacity: 0;
+        }
+
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      /* ======= Mobile compact tweaks ======= */
+      @media (max-width: 1024px) {
+        /* hide desktop preview; we use the modal on mobile */
+        .details {
+          display: none;
+        }
+
+        /* tighter item */
+        .item {
+          grid-template-columns: 48px 1fr 24px;
+          padding: 8px;
+        }
+
+        .item .pill {
+          justify-self: end;
+        }
+
+        /* icon-only buttons inside modal/details on mobile */
+        .btn .material-icons-sharp {
+          font-size: 20px;
+        }
+
+        .btn .btn-text {
+          display: none;
+        }
+
+        .btn {
+          padding: 10px;
+        }
+
+        .job-modal {
+          align-items: stretch;
+          justify-content: stretch;
+          padding: 0;
+        }
+
+        .job-modal-card {
+          position: fixed;
+          top: calc(4.6rem + 8px); /* Starts below the mobile header */
+          bottom: clamp(8px, 2vw, 16px);
+          left: clamp(8px, 2vw, 16px);
+          right: clamp(8px, 2vw, 16px);
+          width: auto !important;
+          height: auto !important;
+          z-index: 995; /* Above backdrop, below top mobile header */
+        }
+      }
+
+      @media (max-width: 420px) {
+        .job-modal-card {
+          width: 94vw;
+          height: 78vh;
+        }
+      }
+
+      /* ========= SKELETON LOADING (ADDED) ========= */
+      @keyframes shimmer {
+        0% {
+          background-position: -200% 0;
+        }
+
+        100% {
+          background-position: 200% 0;
+        }
+      }
+
+      .skeleton {
+        position: relative;
+        overflow: hidden;
+        background: #eef2f6;
+        background-image: linear-gradient(
+          90deg,
+          #eef2f6 0px,
+          #f7f9fc 40px,
+          #eef2f6 80px
+        );
+        background-size: 200% 100%;
+        animation: shimmer 1.2s infinite linear;
+        border-radius: 10px;
+      }
+
+      .skeleton-pill {
+        height: 22px;
+        width: 74px;
+        border-radius: 999px;
+      }
+
+      .skeleton-thumb {
+        width: 48px;
+        height: 48px;
+        border-radius: 8px;
+      }
+
+      .skeleton-line {
+        height: 12px;
+        width: 100%;
+        margin: 6px 0;
+        border-radius: 6px;
+      }
+
+      .skeleton-title {
+        height: 16px;
+        width: 60%;
+        margin: 6px 0;
+        border-radius: 8px;
+      }
+
+      /* layout visibility toggles */
+      #jobsRoot.loading .real-list,
+      #jobsRoot.loading .real-details,
+      #jobsRoot.loading #emptyJobs {
+        display: none !important;
+      }
+
+      #jobsRoot.loading .skeleton-list,
+      #jobsRoot.loading .skeleton-details {
+        display: block !important;
+      }
+
+      .skeleton-list,
+      .skeleton-details {
+        display: none;
+      }
+
+      /* skeleton containers styling */
+      .sk-item {
+        display: grid;
+        grid-template-columns: 48px 1fr auto;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+      }
+
+      .sk-meta {
+        display: grid;
+        gap: 8px;
+      }
+
+      .sk-meta .skeleton-line:first-child {
+        width: 70%;
+        height: 14px;
+      }
+
+      .sk-meta .skeleton-line:last-child {
+        width: 40%;
+      }
+
+      .skeleton-hero {
+        height: 240px;
+        border-radius: 12px 12px 0 0;
+      }
+
+      .skeleton-section {
+        padding: 16px;
+        display: grid;
+        gap: 10px;
+      }
+
+      .skeleton-kv {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      @media (max-width: 1024px) {
+        .skeleton-kv {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .skeleton-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 12px 16px 16px;
+      }
+
+      .skeleton-btn {
+        width: 100px;
+        height: 38px;
+        border-radius: 10px;
+      }
+
+      /* ===== SweetAlert2 brand tune ===== */
+      .swal2-popup {
+        font-family: "Raleway", system-ui, -apple-system, Segoe UI, Roboto,
+          Arial, sans-serif;
+        border-radius: 12px !important;
+      }
+
+      .swal2-styled.swal2-confirm {
+        background: var(--brand) !important;
+        border-radius: 10px !important;
+      }
+
+      .swal2-styled.swal2-cancel {
+        background: #e5e7eb !important;
+        color: var(--ink) !important;
+        border-radius: 10px !important;
+      }
+    </style>
+  </head>
+
+  <body class="is-loading">
+    <div class="container" id="jobsRoot">
+      <!-- ADDED id for load toggling -->
+      <aside>
+        <div class="toggle">
+          <div class="logo">
+            <img src="../../../img/simpHappyMascotLogo.png" alt="logo" />
+            <h2>SIMP<span class="danger">Project</span></h2>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <a href="dashboard.html"
+            ><span class="material-icons-sharp">dashboard</span>
+            <h3>Dashboard</h3>
+          </a>
+          <a href="workerVerification.html"
+            ><span class="material-icons-sharp">engineering</span>
+            <h3>Workers<br />Verification</h3>
+          </a>
+          <a href="jobVerification.html" class="active"
+            ><span class="material-icons-sharp">work</span>
+            <h3>Jobs<br />Verification</h3>
+          </a>
+          <a href="jobApplicationVerification.html"
+            ><span class="material-icons-sharp">approval</span>
+            <h3>Application<br />Verification</h3>
+          </a>
+          <a href="adminVerification.html"
+            ><span class="material-icons-sharp">shield</span>
+            <h3>Admin<br />Verification</h3>
+          </a>
+          <a href="manageShop.html"
+            ><span class="material-icons-sharp">shop</span>
+            <h3>Manage<br />Shop</h3>
+          </a>
+          <a href="paymentsRequest.html"
+            ><span class="material-icons-sharp">payments</span>
+            <h3>Payments<br />Request</h3>
+          </a>
+          <a href="courseBuilder.html"
+            ><span class="material-icons-sharp">school</span>
+            <h3>Course<br />Publisher</h3>
+          </a>
+          <a href="settings.html"
+            ><span class="material-icons-sharp">settings</span>
+            <h3>Settings</h3>
+          </a>
+          <a href="#" id="logout-btn"
+            ><span class="material-icons-sharp">logout</span>
+            <h3>Logout</h3>
+          </a>
+        </div>
+      </aside>
+
+      <main>
+        <section id="tab-jobs">
+          <div class="two-col-wrap">
+            <div class="panel">
+              <h3>Jobs for Verification</h3>
+              <div class="search">
+                <span class="material-icons-sharp">search</span>
+                <input
+                  id="jobSearchInput"
+                  type="text"
+                  placeholder="Search title, category, location…"
+                />
+              </div>
+              <div style="margin-bottom: 0.6rem">
+                <select
+                  id="jobStatusFilter"
+                  style="
+                    width: 100%;
+                    border: 1px solid var(--line);
+                    border-radius: 10px;
+                    padding: 10px 12px;
+                    background: #fcfeff;
+                    outline: none;
+                  "
+                >
+                  <option value="">All statuses</option>
+                  <option value="pending_review">Pending Review</option>
+                  <option value="suggestion_sent">Suggestion Sent</option>
+                  <option value="customer_accepted">Customer Accepted</option>
+                  <option value="appeal_submitted">Appeal Submitted</option>
+                  <option value="approved">Approved</option>
+                  <option value="active">Active</option>
+                  <option value="cancellation_pending">Cancellation Pending</option>
+                  <option value="cancelled">Cancelled</option>
+                  <option value="rejected">Rejected</option>
+                  <option value="done">Done</option>
+                  <option value="overdue">Overdue</option>
+                </select>
+              </div>
+
+              <!-- REAL list (unchanged) -->
+              <div class="real-list">
+                <div id="jobList" class="list"></div>
+                <div id="emptyJobs" class="empty-state" style="display: none">
+                  No jobs pending review.
+                </div>
+              </div>
+
+              <!-- SKELETON list (ADDED) -->
+              <div class="skeleton-list">
+                <div class="list">
+                  <!-- Repeat a few skeleton rows -->
+                  <div class="sk-item">
+                    <div class="skeleton skeleton-thumb"></div>
+                    <div class="sk-meta">
+                      <div class="skeleton skeleton-title"></div>
+                      <div
+                        class="skeleton skeleton-line"
+                        style="width: 50%"
+                      ></div>
+                    </div>
+                    <div class="skeleton skeleton-pill"></div>
+                  </div>
+                  <div class="sk-item">
+                    <div class="skeleton skeleton-thumb"></div>
+                    <div class="sk-meta">
+                      <div class="skeleton skeleton-title"></div>
+                      <div
+                        class="skeleton skeleton-line"
+                        style="width: 45%"
+                      ></div>
+                    </div>
+                    <div class="skeleton skeleton-pill"></div>
+                  </div>
+                  <div class="sk-item">
+                    <div class="skeleton skeleton-thumb"></div>
+                    <div class="sk-meta">
+                      <div class="skeleton skeleton-title"></div>
+                      <div
+                        class="skeleton skeleton-line"
+                        style="width: 35%"
+                      ></div>
+                    </div>
+                    <div class="skeleton skeleton-pill"></div>
+                  </div>
+                  <div class="sk-item">
+                    <div class="skeleton skeleton-thumb"></div>
+                    <div class="sk-meta">
+                      <div class="skeleton skeleton-title"></div>
+                      <div
+                        class="skeleton skeleton-line"
+                        style="width: 60%"
+                      ></div>
+                    </div>
+                    <div class="skeleton skeleton-pill"></div>
+                  </div>
+                  <div class="sk-item">
+                    <div class="skeleton skeleton-thumb"></div>
+                    <div class="sk-meta">
+                      <div class="skeleton skeleton-title"></div>
+                      <div
+                        class="skeleton skeleton-line"
+                        style="width: 50%"
+                      ></div>
+                    </div>
+                    <div class="skeleton skeleton-pill"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- REAL details (unchanged container) -->
+            <div class="details real-details" id="jobDetailsPane">
+              <div class="empty-state">
+                Select a job on the left to review its details.
+              </div>
+            </div>
+
+            <!-- SKELETON details (ADDED) -->
+            <div class="details skeleton-details">
+              <div class="skeleton skeleton-hero"></div>
+              <div class="skeleton-section">
+                <div class="skeleton skeleton-title" style="width: 40%"></div>
+                <div class="meta" style="margin-top: 8px">
+                  <div class="skeleton skeleton-line" style="width: 30%"></div>
+                  <div class="skeleton skeleton-line" style="width: 20%"></div>
+                  <div class="skeleton skeleton-line" style="width: 25%"></div>
+                </div>
+              </div>
+              <div class="grid-2" style="padding: 16px">
+                <div class="card">
+                  <div class="skeleton skeleton-title" style="width: 30%"></div>
+                  <div class="skeleton-kv">
+                    <div
+                      class="skeleton skeleton-line"
+                      style="height: 16px"
+                    ></div>
+                    <div
+                      class="skeleton skeleton-line"
+                      style="height: 16px"
+                    ></div>
+                  </div>
+                </div>
+                <div class="card">
+                  <div class="skeleton skeleton-title" style="width: 28%"></div>
+                  <div
+                    class="skeleton skeleton-line"
+                    style="height: 16px; margin-top: 8px"
+                  ></div>
+                </div>
+              </div>
+              <div class="skeleton-actions">
+                <div class="skeleton skeleton-btn"></div>
+                <div class="skeleton skeleton-btn"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- Mobile Job Details Modal -->
+    <div
+      id="jobModal"
+      class="job-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="jobModalTitle"
+    >
+      <div class="job-modal-card">
+        <div class="job-modal-head">
+          <h4 id="jobModalTitle">Job Details</h4>
+          <button id="closeJobModal" class="btn" aria-label="Close job details">
+            <span class="material-icons-sharp">close</span>
+          </button>
+        </div>
+        <div id="jobModalBody" class="job-modal-body"></div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <script type="module" src="../../general_files/session.js"></script>
+    <script type="module" src="../../general_files/index.js"></script>
+    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <!-- SweetAlert2 (added) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script type="module">
+      // ========= CONFIG =========
+      var DEFAULT_JOB_PICS_BUCKET = "jobs";
+
+      // ========= Supabase client =========
+      var createClient = supabase.createClient;
+      import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../../../supabase.js";
+      var sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      // ========= DOM refs =========
+      var jobSearchInput = document.getElementById("jobSearchInput");
+      var jobStatusFilter = document.getElementById("jobStatusFilter");
+      var jobList = document.getElementById("jobList");
+      var emptyJobs = document.getElementById("emptyJobs");
+      var jobDetailsPane = document.getElementById("jobDetailsPane");
+      var toastEl = document.getElementById("toast");
+
+      // New modal refs
+      var jobModal = document.getElementById("jobModal");
+      var jobModalBody = document.getElementById("jobModalBody");
+      var jobModalTitle = document.getElementById("jobModalTitle");
+      var closeJobModalBtn = document.getElementById("closeJobModal");
+
+      // Skeleton root (ADDED)
+      var jobsRoot = document.getElementById("jobsRoot");
+
+      // ========= State =========
+      var ALL_JOBS = [];
+      var activeJobId = null;
+
+      // ========= SweetAlert helpers (ADDED) =========
+      function humanizeError(raw) {
+        var m =
+          raw && raw.message ? raw.message : typeof raw === "string" ? raw : "";
+        if (!m) return "Something went wrong. Please try again.";
+        var s = String(m);
+
+        if (/Failed to fetch|TypeError: Failed/.test(s))
+          return "Network error. Please check your internet connection and try again.";
+        if (/permission|RLS|row level|not allowed|policy/i.test(s))
+          return "You don’t have permission to perform this action. Check your access or Row Level Security policies.";
+        if (/enum|invalid input value/i.test(s))
+          return "This status isn’t allowed by the database setting. Please use one of the valid statuses.";
+        if (/timeout/i.test(s))
+          return "The request timed out. Please try again.";
+        return s.length > 220 ? s.slice(0, 217) + "..." : s;
+      }
+
+      // Non-blocking toast (top-end)
+      function showToast(msg, type = "info", ms) {
+        Swal.fire({
+          toast: true,
+          position: "top-end",
+          icon: type,
+          title: msg,
+          showConfirmButton: false,
+          timer: typeof ms === "number" ? ms : 2200,
+          timerProgressBar: true,
+        });
+        // Keep your original DOM toast for compatibility (not shown)
+        if (toastEl) {
+          toastEl.textContent = msg;
+          toastEl.classList.add("show");
+          setTimeout(
+            function () {
+              toastEl.classList.remove("show");
+            },
+            typeof ms === "number" ? ms : 2200
+          );
+        }
+      }
+
+      // Blocking modal alert for important messages
+      function showAlert(title, text, icon = "info") {
+        return Swal.fire({
+          title: title,
+          text: text,
+          icon: icon,
+          confirmButtonText: "Got it",
+          confirmButtonColor:
+            getComputedStyle(document.documentElement).getPropertyValue(
+              "--brand"
+            ) || "#20a44c",
+        });
+      }
+
+      function esc(s) {
+        var str = s === undefined || s === null ? "" : String(s);
+        return str.replace(/[&<>"']/g, function (c) {
+          var map = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+          };
+          return map[c];
+        });
+      }
+
+      function peso(n) {
+        var v = typeof n === "string" ? parseFloat(n) : n;
+        if (isNaN(v)) return "0.00";
+        return v.toLocaleString("en-PH", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
+      }
+
+      function fmtDate(d) {
+        if (!d) return "";
+        return new Date(d + "T00:00:00").toLocaleDateString();
+      }
+
+      function fmtTime(t) {
+        return t ? String(t).slice(0, 5) : "";
+      }
+
+      function parseNegotiation(desc) {
+        if (desc && desc.trim().startsWith("{")) {
+          try {
+            var data = JSON.parse(desc);
+            if (data && data.is_negotiation) {
+              return data;
+            }
+          } catch (e) {}
+        }
+        return null;
+      }
+
+      var ACTIVE_APPLICATION_STATUSES = ["pending", "viewed", "approved"];
+      var APPLICATION_INVALIDATION_STATUSES = ["invalidated", "terminated"];
+
+      function parseDescriptionJson(desc) {
+        if (desc && typeof desc === "string" && desc.trim().startsWith("{")) {
+          try {
+            return JSON.parse(desc);
+          } catch (e) {}
+        }
+        return null;
+      }
+
+      function normalizeJobStatus(status) {
+        var s = String(status || "").toLowerCase();
+        if (!s || s === "pending" || s === "viewed") return "pending_review";
+        return s;
+      }
+
+      function statusLabel(status) {
+        var labels = {
+          pending_review: "Pending Review",
+          suggestion_sent: "Suggestion Sent",
+          customer_accepted: "Customer Accepted",
+          appeal_submitted: "Appeal Submitted",
+          approved: "Approved",
+          active: "Active",
+          cancellation_pending: "Cancellation Pending",
+          cancelled: "Cancelled",
+          rejected: "Rejected",
+          archived: "Archived",
+          done: "Done",
+          completed: "Completed",
+          overdue: "Overdue",
+        };
+        var s = normalizeJobStatus(status);
+        return labels[s] || s.replace(/_/g, " ").replace(/\b\w/g, function (c) {
+          return c.toUpperCase();
+        });
+      }
+
+      function getReviewData(job) {
+        var data = parseDescriptionJson(job && job.description) || {};
+        var neg = parseNegotiation(job && job.description);
+        if (neg && !data.is_review_workflow) {
+          return {
+            is_review_workflow: true,
+            is_posted: !!neg.is_posted,
+            description: neg.proposed_description || neg.original_description || "",
+            current_description: neg.proposed_description || "",
+            original_customer_version: {
+              pay: neg.original_pay,
+              difficulty: neg.original_difficulty,
+              description: neg.original_description || "",
+            },
+            admin_suggested_version: {
+              pay: neg.proposed_pay,
+              difficulty: neg.proposed_difficulty,
+              description: neg.proposed_description || "",
+            },
+            history: [],
+          };
+        }
+        return data;
+      }
+
+      function buildSnapshot(job, pay, difficulty, description) {
+        return {
+          title: job.title,
+          category: job.category,
+          difficulty: difficulty,
+          location: job.location,
+          pay: pay,
+          description: description || "",
+        };
+      }
+
+      function addHistoryToDescription(job, action, status, extra) {
+        var now = new Date().toISOString();
+        var data = getReviewData(job);
+        var history = Array.isArray(data.history) ? data.history : [];
+        return JSON.stringify({
+          ...data,
+          ...(extra || {}),
+          is_review_workflow: true,
+          version: Number(data.version || 0) + 1,
+          updated_at: now,
+          history: [
+            ...history,
+            { at: now, by: "admin", role: "admin", action: action, status: status },
+          ],
+        });
+      }
+
+      function makeSuggestionDescription(job, pay, difficulty, description) {
+        var data = getReviewData(job);
+        var original =
+          data.original_customer_version ||
+          data.customer_version ||
+          buildSnapshot(job, job.pay, job.difficulty, data.description || job.description);
+        var suggested = buildSnapshot(job, pay, difficulty, description);
+        return addHistoryToDescription(job, "Admin revised job details", "suggestion_sent", {
+          is_posted: false,
+          description: description || "",
+          current_description: description || "",
+          original_customer_version: original,
+          admin_suggested_version: suggested,
+        });
+      }
+
+      function currentDescription(job) {
+        var data = getReviewData(job);
+        if (data && data.current_description != null) return data.current_description;
+        if (data && data.description != null) return data.description;
+        if (data && data.admin_suggested_version && data.admin_suggested_version.description != null) {
+          return data.admin_suggested_version.description;
+        }
+        return (job && job.description) || "";
+      }
+
+      function displayReviewValues(job) {
+        var status = normalizeJobStatus(job && job.status);
+        var data = getReviewData(job);
+        if (status === "suggestion_sent" && data && data.admin_suggested_version) {
+          return {
+            pay: data.admin_suggested_version.pay ?? job.pay,
+            difficulty: data.admin_suggested_version.difficulty ?? job.difficulty,
+            description:
+              data.admin_suggested_version.description ??
+              data.current_description ??
+              data.description ??
+              job.description,
+          };
+        }
+        return {
+          pay: job.pay,
+          difficulty: job.difficulty,
+          description: currentDescription(job),
+        };
+      }
+
+      function makeUnpostedDescription(desc) {
+        var data = parseDescriptionJson(desc);
+        if (!data) return desc || "";
+        return JSON.stringify({ ...data, is_posted: false });
+      }
+
+      function isPublishedJob(job) {
+        if (!job) return false;
+        var status = normalizeJobStatus(job.status);
+        var data = parseDescriptionJson(job.description);
+        return status === "active" || ((status === "approved") && !!(data && data.is_posted));
+      }
+
+      async function invalidateApplicationsForEditedJob(jobIdToInvalidate) {
+        var fetchRes = await sb
+          .schema("jobs")
+          .from("job_application")
+          .select("application_id")
+          .eq("job_id", jobIdToInvalidate)
+          .in("status", ACTIVE_APPLICATION_STATUSES);
+
+        if (fetchRes.error) throw fetchRes.error;
+        if (!fetchRes.data || !fetchRes.data.length) return 0;
+
+        var lastError = null;
+        for (var i = 0; i < APPLICATION_INVALIDATION_STATUSES.length; i++) {
+          var status = APPLICATION_INVALIDATION_STATUSES[i];
+          var updateRes = await sb
+            .schema("jobs")
+            .from("job_application")
+            .update({
+              status: status,
+              updated_at: new Date().toISOString()
+            })
+            .eq("job_id", jobIdToInvalidate)
+            .in("status", ACTIVE_APPLICATION_STATUSES);
+
+          if (!updateRes.error) return fetchRes.data.length;
+          lastError = updateRes.error;
+          if (!/enum|invalid input value/i.test(updateRes.error.message || "")) break;
+        }
+        throw lastError;
+      }
+
+      function nice(status, description) {
+        return statusLabel(status);
+      }
+
+      function getPillHTML(status, description) {
+        var s = normalizeJobStatus(status);
+        var text = statusLabel(s);
+        var style = "";
+        if (["pending_review", "suggestion_sent", "customer_accepted", "appeal_submitted", "cancellation_pending"].includes(s)) {
+          style = "background:#fff8e6; color:#9a6700; border-color:#f6d88a;";
+        } else if (s === "approved" || s === "active") {
+          style = "background:#e8fff1; color:#0c7a3d; border-color:#9ee2bd;";
+        } else if (s === "rejected" || s === "cancelled") {
+          style = "background:#ffe8e8; color:#b91c1c; border-color:#f6b1b1;";
+        } else if (s === "done" || s === "completed") {
+          style = "background:#eafff6; color:#0f766e; border-color:#99f6e4;";
+        }
+        return '<span class="pill" style="' + style + '">' + esc(text) + '</span>';
+      }
+
+      // ========= Signed URL helpers =========
+      function parsePublicBucketAndPath(publicUrl) {
+        try {
+          var marker = "/storage/v1/object/public/";
+          var i = publicUrl.indexOf(marker);
+          if (i === -1) return null;
+          var rest = publicUrl.substring(i + marker.length);
+          var slash = rest.indexOf("/");
+          if (slash === -1) return null;
+          var bucket = rest.substring(0, slash);
+          var path = rest.substring(slash + 1);
+          try {
+            path = decodeURIComponent(path);
+          } catch (e) {}
+          path = path.replace(/^\/+/, "");
+          return { bucket: bucket, path: path };
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function parseStorageRef(ref) {
+        if (!ref) return null;
+        var s = String(ref).trim();
+        if (/^https?:\/\//i.test(s)) {
+          var parsed = parsePublicBucketAndPath(s);
+          return parsed || null;
+        }
+        var bi = s.indexOf("::");
+        if (bi > 0) {
+          var p1 = s.slice(bi + 2);
+          try {
+            p1 = decodeURIComponent(p1);
+          } catch (e) {}
+          p1 = p1.replace(/^\/+/, "");
+          return { bucket: s.slice(0, bi), path: p1 };
+        }
+        var p2 = s;
+        try {
+          p2 = decodeURIComponent(p2);
+        } catch (e) {}
+        p2 = p2.replace(/^\/+/, "");
+        return { bucket: DEFAULT_JOB_PICS_BUCKET, path: p2 };
+      }
+
+      async function createSignedUrl(bucket, path, expires) {
+        if (typeof expires !== "number") expires = 3600;
+        var out = await sb.storage.from(bucket).createSignedUrl(path, expires);
+        if (out.error) throw out.error;
+        return out.data.signedUrl;
+      }
+
+      async function resolveJobPictureSignedUrl(job_picture_url) {
+        if (!job_picture_url) return null;
+        if (
+          /^https?:\/\//i.test(job_picture_url) &&
+          job_picture_url.indexOf("/storage/v1/object/") === -1
+        ) {
+          return job_picture_url;
+        }
+        var ref = parseStorageRef(job_picture_url);
+        if (!ref) return null;
+        try {
+          return await createSignedUrl(ref.bucket, ref.path, 3600);
+        } catch (e) {
+          if (/^https?:\/\//i.test(job_picture_url)) return job_picture_url;
+          return null;
+        }
+      }
+
+      // ========= Status updates =========
+      async function updateJobStatus(jobId, desiredStatus, job) {
+        var payload = desiredStatus
+          ? { job_status: desiredStatus, updated_at: new Date().toISOString() }
+          : { job_status: null, updated_at: new Date().toISOString() };
+        if (job && job.nextDescription) {
+          payload.job_description = job.nextDescription;
+        }
+
+        var query = sb
+          .schema("jobs")
+          .from("job")
+          .update(payload)
+          .eq("job_id", jobId);
+        if (job && job.updatedAt) {
+          query = query.eq("updated_at", job.updatedAt);
+        }
+        var r1 = await query.select("job_id, updated_at");
+        if (!r1.error && r1.data && r1.data.length)
+          return {
+            ok: true,
+            stored: desiredStatus || null,
+            description: payload.job_description,
+            updatedAt: r1.data[0].updated_at,
+          };
+        if (!r1.error && (!r1.data || !r1.data.length)) {
+          return { ok: false, error: { message: "This job was updated by another user. Please refresh." } };
+        }
+        return { ok: false, error: r1.error };
+      }
+
+      // ========= Load + Render =========
+      async function loadJobs() {
+        // SHOW skeletons, HIDE real content
+        document.body.classList.add("is-loading");
+        if (jobsRoot) jobsRoot.classList.add("loading");
+
+        jobList.innerHTML = "";
+        emptyJobs.style.display = "none";
+        jobDetailsPane.innerHTML = '<div class="empty-state">Loading…</div>';
+
+        var res = await sb
+          .schema("jobs")
+          .from("job")
+          .select(
+            "job_id, posted_by, job_title, job_description, job_difficulty, job_category, job_location, job_date, job_time, job_pay, job_picture_url, job_status, created_at, updated_at"
+          )
+          .order("created_at", { ascending: false });
+
+        if (res.error) {
+          document.body.classList.remove("is-loading");
+          if (jobsRoot) jobsRoot.classList.remove("loading");
+          jobDetailsPane.innerHTML =
+            '<div class="empty-state">Failed to load jobs.</div>';
+          emptyJobs.style.display = "block";
+          showAlert("Couldn’t load jobs", humanizeError(res.error), "error");
+          return;
+        }
+
+        var jobs = res.data || [];
+        var signedUrls = await Promise.all(
+          jobs.map(function (j) {
+            return resolveJobPictureSignedUrl(j.job_picture_url);
+          })
+        );
+
+        ALL_JOBS = jobs.map(function (j, idx) {
+          return {
+            id: j.job_id,
+            photo: signedUrls[idx] || "../images/profile-4.jpg",
+            title: j.job_title,
+            category: j.job_category,
+            difficulty: j.job_difficulty,
+            pay: j.job_pay,
+            datetime: fmtDate(j.job_date) + " " + fmtTime(j.job_time),
+            location: j.job_location,
+            status: j.job_status || "",
+            createdAt: j.created_at,
+            updatedAt: j.updated_at,
+            posted_by: j.posted_by,
+            description: j.job_description || "",
+          };
+        });
+
+        renderJobList("");
+
+        if (ALL_JOBS.length) {
+          var first = ALL_JOBS[0];
+          activeJobId = first.id;
+          renderJobDetails(first); // desktop pane
+          setTimeout(function () {
+            var el = document.querySelector(
+              '#jobList .item[data-id="' + first.id + '"]'
+            );
+            if (el) el.classList.add("active", "read");
+          }, 0);
+          showToast("Jobs loaded successfully.", "success", 1600);
+        } else {
+          jobDetailsPane.innerHTML =
+            '<div class="empty-state">No jobs found.</div>';
+          showToast("No jobs to review at the moment.", "info", 1800);
+        }
+
+        // HIDE skeletons, SHOW real content
+        document.body.classList.remove("is-loading");
+        if (jobsRoot) jobsRoot.classList.remove("loading");
+      }
+
+      function renderJobList(filter) {
+        if (typeof filter !== "string") filter = "";
+        jobList.innerHTML = "";
+        var q = filter.trim().toLowerCase();
+        var selectedStatus = (
+          jobStatusFilter && jobStatusFilter.value ? jobStatusFilter.value : ""
+        ).toLowerCase();
+
+        var filtered = (ALL_JOBS || []).filter(function (j) {
+          var hay = (
+            (j.title || "") +
+            "|" +
+            (j.category || "") +
+            "|" +
+            (j.location || "")
+          ).toLowerCase();
+          var hit = !q || hay.indexOf(q) !== -1;
+          var statusForFilter = normalizeJobStatus(j.status);
+          var statusOk = !selectedStatus || statusForFilter === selectedStatus;
+          return hit && statusOk;
+        });
+
+        emptyJobs.style.display = filtered.length ? "none" : "block";
+
+        filtered.forEach(function (j) {
+          var item = document.createElement("div");
+          item.className = "item";
+          item.setAttribute("data-id", j.id);
+          if (j.id === activeJobId) item.classList.add("active");
+
+          var s = normalizeJobStatus(j.status);
+          if (s === "viewed") item.classList.add("read");
+          else if (s === "pending_review") item.classList.add("pending");
+
+          item.innerHTML =
+            '<img class="thumb" src="' +
+            j.photo +
+            '" alt="' +
+            esc(j.title) +
+            '" onerror="this.onerror=null;this.src=\'../images/profile-4.jpg\';">' +
+            "<div>" +
+            '<div style="font-weight:700">' +
+            esc(j.title) +
+            "</div>" +
+            '<div style="font-size:.85rem;color:var(--muted)">' +
+            esc(j.category || "Uncategorized") +
+            " · " +
+            esc(j.location || "—") +
+            "</div>" +
+            "</div>" +
+            getPillHTML(j.status, j.description);
+
+          item.addEventListener("click", function () {
+            activeJobId = j.id;
+            var rows = document.querySelectorAll("#jobList .item");
+            for (var i = 0; i < rows.length; i++)
+              rows[i].classList.remove("active");
+            item.classList.add("active");
+
+            item.classList.remove("pending");
+            item.classList.add("read");
+            renderJobDetails(j);
+            if (window.matchMedia("(max-width: 1024px)").matches) {
+              openJobModal(j);
+            }
+          });
+
+          jobList.appendChild(item);
+        });
+
+        if (!filtered.length) {
+          jobDetailsPane.innerHTML =
+            '<div class="empty-state">Nothing matches your filters.</div>';
+          showToast("No results for the current filters.", "info", 1600);
+        }
+      }
+
+      // === Asynchronous Customer Details Loader ===
+      async function loadCustomerContact(postedBy, container) {
+        if (!postedBy) {
+          container.innerHTML = '<span class="label">Customer Contact</span>—';
+          return;
+        }
+        container.innerHTML = '<span class="label">Customer Contact</span>Loading...';
+        try {
+          let { data, error } = await sb
+            .from("customer")
+            .select("id, name, email, phone")
+            .eq("id", postedBy)
+            .maybeSingle();
+          if (!data && !error) {
+            var byEmail = await sb
+              .from("customer")
+              .select("id, name, email, phone")
+              .eq("email", postedBy)
+              .maybeSingle();
+            data = byEmail.data;
+            error = byEmail.error;
+          }
+          if (error) throw error;
+          if (data) {
+            var contactLine = data.phone || data.email || "No contact info";
+            var contactIcon = data.phone ? "phone" : "mail";
+            container.innerHTML = 
+              '<span class="label">Customer Contact Info</span>' +
+              '<strong>' + esc(data.name || "Anonymous") + '</strong><br/>' +
+              '<span style="color:var(--brand); font-weight:700; font-size:1.1rem; display:inline-flex; align-items:center; gap:4px; margin-top:4px;">' +
+              '<span class="material-icons-sharp" style="font-size:16px;">' + contactIcon + '</span>' +
+              esc(contactLine) + '</span>';
+          } else {
+            container.innerHTML = '<span class="label">Customer Contact Info</span>Profile details not available';
+          }
+        } catch (e) {
+          console.warn("Failed to load customer contact:", e);
+          container.innerHTML = '<span class="label">Customer Contact Info</span>Could not load profile details';
+        }
+      }
+
+      // === Core renderer (reused for desktop pane & modal) ===
+      function buildJobDetailsHTML(job) {
+        var displayValues = displayReviewValues(job);
+        var displayPay = displayValues.pay;
+        var displayDifficulty = displayValues.difficulty;
+        var displayDesc = displayValues.description;
+
+        return (
+          '<div class="head" style="display:block; padding:0;">' +
+          '<img src="' +
+          job.photo +
+          '" alt="' +
+          esc(job.title) +
+          '" ' +
+          'style="width:100%; height:240px; object-fit:cover; border-radius:12px 12px 0 0; margin-bottom:12px;" ' +
+          "onerror=\"this.onerror=null;this.src='../images/profile-4.jpg';\">" +
+          '<div style="padding:0 16px 12px;">' +
+          '<div class="name">' +
+          esc(job.title) +
+          "</div>" +
+          '<div class="meta">' +
+          '<span class="kv"><strong>Category:</strong> ' +
+          esc(job.category || "Uncategorized") +
+          "</span>" +
+          '<span class="kv"><strong>Pay (Budget):</strong> ₱' +
+          peso(displayPay) +
+          "</span>" +
+          "</div>" +
+          "</div>" +
+          "</div>" +
+          '<div class="grid-2">' +
+          '<div class="card">' +
+          "<h4>Schedule</h4>" +
+          '<div class="info-list">' +
+          '<div><span class="label">Date / Time</span>' +
+          esc(job.datetime || "—") +
+          "</div>" +
+          '<div><span class="label">Status</span><span id="jobStatusPillWrapper">' +
+          getPillHTML(job.status, job.description) +
+          "</span></div>" +
+          "</div>" +
+          "</div>" +
+          '<div class="card">' +
+          "<h4>Location</h4>" +
+          '<div class="info-list">' +
+          '<div style="grid-column: 1 / -1;"><span class="label">Address</span>' +
+          esc(job.location || "Not specified") +
+          "</div>" +
+          "</div>" +
+          "</div>" +
+          // Customer contact card
+          '<div class="card">' +
+          "<h4>Customer Contact</h4>" +
+          '<div class="info-list">' +
+          '<div id="customerContactContainer" style="grid-column: 1 / -1; line-height: 1.45;">' +
+          '<span class="label">Customer Contact Info</span>Loading...' +
+          "</div>" +
+          "</div>" +
+          "</div>" +
+          // Description card
+          '<div class="card">' +
+          "<h4>Details / Instructions</h4>" +
+          '<div style="font-size:0.95rem; line-height:1.45; color:var(--ink); white-space:pre-wrap; margin-top:4px; max-height:180px; overflow-y:auto;">' +
+          esc(displayDesc || "No description provided.") +
+          "</div>" +
+          "</div>" +
+          "</div>" +
+          '<div class="actions-row" id="actionsRow"></div>'
+        );
+      }
+
+      function renderJobDetails(job) {
+        jobDetailsPane.innerHTML = buildJobDetailsHTML(job);
+        wireActions(job, jobDetailsPane);
+
+        // Fetch customer contact asynchronously
+        var container = jobDetailsPane.querySelector("#customerContactContainer");
+        if (container) {
+          loadCustomerContact(job.posted_by, container);
+        }
+      }
+
+      // Wire action buttons inside a given container (desktop pane or modal body)
+      function wireActions(job, containerEl) {
+        var actionsRow = containerEl.querySelector("#actionsRow");
+        if (!actionsRow) return;
+        actionsRow.innerHTML = "";
+
+        var s = normalizeJobStatus(job.status);
+        function button(label, icon, cls, handler) {
+          var btn = document.createElement("button");
+          btn.className = cls;
+          btn.innerHTML =
+            '<span class="material-icons-sharp">' + icon + '</span><span class="btn-text">' + label + '</span>';
+          btn.addEventListener("click", async function () {
+            btn.disabled = true;
+            try {
+              await handler(btn);
+            } finally {
+              btn.disabled = false;
+            }
+          });
+          return btn;
+        }
+
+        if (s === "pending_review") {
+          actionsRow.appendChild(
+            button("Review / Edit Suggestion", "rate_review", "btn warn", function () {
+              return openNegotiateDialog(job);
+            })
+          );
+          actionsRow.appendChild(
+            button("Reject", "block", "btn reject", function () {
+              return changeStatus(job, "rejected");
+            })
+          );
+          return;
+        }
+
+        if (s === "customer_accepted" || s === "appeal_submitted") {
+          actionsRow.appendChild(
+            button("Approve", "thumb_up", "btn primary", function () {
+              return changeStatus(job, "approved");
+            })
+          );
+          actionsRow.appendChild(
+            button("Edit Again", "edit", "btn warn", function () {
+              return openNegotiateDialog(job);
+            })
+          );
+          return;
+        }
+
+        if (s === "cancellation_pending") {
+          actionsRow.appendChild(
+            button("Approve Cancellation", "check_circle", "btn reject", function () {
+              return changeStatus(job, "cancelled");
+            })
+          );
+          actionsRow.appendChild(
+            button("Reject Cancellation", "undo", "btn primary", function () {
+              return changeStatus(job, "active");
+            })
+          );
+        }
+      }
+
+      async function openNegotiateDialog(job) {
+        // Pre-select options
+        var reviewData = getReviewData(job);
+        var displayValues = displayReviewValues(job);
+        var curPay = displayValues.pay;
+        var curDifficulty = displayValues.difficulty ?? (job.difficulty ?? 0);
+        var curDesc = displayValues.description;
+
+        var levels = Array.from({length: 11}, (_, i) => i);
+        var optionsHtml = levels.map(function(l) { 
+          return `<option value="${l}" ${Number(curDifficulty) === l ? 'selected' : ''}>Level ${l}</option>`;
+        }).join('');
+
+        var { value: formValues } = await Swal.fire({
+          title: 'Edit & Save Suggestion',
+          html:
+            '<div style="text-align:left; font-size:0.95rem; margin-top:8px;">' +
+            '<label style="font-weight:700; display:block; margin-bottom:4px;">Pay / Budget (₱)</label>' +
+            `<input id="swalPay" class="swal2-input" type="number" step="0.01" value="${curPay}" style="margin:0 0 16px 0; width:100%; height:42px; border-radius:8px;">` +
+            '<label style="font-weight:700; display:block; margin-bottom:4px;">Required Qualification Filter</label>' +
+            `<select id="swalDifficulty" class="swal2-input" style="margin:0 0 16px 0; width:100%; height:42px; border-radius:8px;">${optionsHtml}</select>` +
+            '<label style="font-weight:700; display:block; margin-bottom:4px;">Instructions / Description</label>' +
+            `<textarea id="swalDescription" class="swal2-textarea" style="margin:0; width:100%; height:120px; border-radius:8px; font-family:inherit; padding:8px; border:1px solid #ccc; box-sizing:border-box;">${esc(curDesc)}</textarea>` +
+            '</div>',
+          focusConfirm: false,
+          showCancelButton: true,
+          confirmButtonText: 'Send Suggestion',
+          confirmButtonColor: '#20a44c',
+          preConfirm: () => {
+            var payVal = parseFloat(document.getElementById('swalPay').value);
+            var difficultyVal = parseInt(document.getElementById('swalDifficulty').value, 10);
+            var descriptionVal = document.getElementById('swalDescription').value;
+            if (isNaN(payVal) || payVal <= 0) {
+              Swal.showValidationMessage('Please enter a valid pay amount');
+              return false;
+            }
+            return { pay: payVal, difficulty: difficultyVal, description: descriptionVal };
+          }
+        });
+
+        if (formValues) {
+          showToast("Saving negotiation changes...", "info", 1200);
+          var proposalJson = makeSuggestionDescription(
+            job,
+            formValues.pay,
+            formValues.difficulty,
+            formValues.description
+          );
+
+          var res = await updateJobStatus(job.id, "suggestion_sent", {
+            updatedAt: job.updatedAt,
+            nextDescription: proposalJson,
+          });
+
+          if (!res.ok) {
+            showAlert("Update failed", humanizeError(res.error), "error");
+            return;
+          }
+
+          // Update local state
+          job.description = proposalJson;
+          job.status = "suggestion_sent";
+          if (res.updatedAt) job.updatedAt = res.updatedAt;
+
+          // Re-render
+          renderJobList(jobSearchInput ? jobSearchInput.value : "");
+          renderJobDetails(job);
+          if (jobModal && jobModal.classList.contains("open")) {
+            openJobModal(job);
+          }
+          showToast(
+            "Suggestion sent to customer.",
+            "success",
+            2200
+          );
+        }
+      }
+
+      // ========= Modal helpers (mobile) =========
+      function openJobModal(job) {
+        jobModalTitle.textContent = "Job Details";
+        jobModalBody.innerHTML = buildJobDetailsHTML(job);
+        wireActions(job, jobModalBody);
+        jobModal.classList.add("open");
+
+        // Fetch customer contact asynchronously for modal
+        var container = jobModalBody.querySelector("#customerContactContainer");
+        if (container) {
+          loadCustomerContact(job.posted_by, container);
+        }
+
+        // prevent page scroll behind modal
+        document.documentElement.style.overflow = "hidden";
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeJobModal() {
+        jobModal.classList.remove("open");
+        jobModalBody.innerHTML = "";
+        document.documentElement.style.overflow = "";
+        document.body.style.overflow = "";
+      }
+
+      closeJobModalBtn.addEventListener("click", closeJobModal);
+      jobModal.addEventListener("click", function (e) {
+        if (e.target === jobModal) closeJobModal();
+      });
+
+      // ========= Status machinery =========
+      async function changeStatus(job, target) {
+        var prev = job.status;
+        var prevDescription = job.description;
+        var effectiveTarget = target;
+        var actionMap = {
+          approved: "Admin approved request",
+          rejected: "Admin rejected request",
+          cancelled: "Admin approved cancellation",
+          active: "Admin rejected cancellation",
+        };
+        var nextDescription = addHistoryToDescription(
+          job,
+          actionMap[effectiveTarget] || ("Admin changed status to " + statusLabel(effectiveTarget)),
+          effectiveTarget,
+          effectiveTarget === "active" ? { is_posted: true } : {}
+        );
+
+        job.status = effectiveTarget; // optimistic
+        job.description = nextDescription;
+        updateActiveRowBadge(job);
+
+        // Update both desktop & modal views if present
+        if (
+          jobDetailsPane &&
+          !window.matchMedia("(max-width: 1024px)").matches
+        ) {
+          renderJobDetails(job);
+        }
+        if (jobModal.classList.contains("open")) {
+          jobModalBody.innerHTML = buildJobDetailsHTML(job);
+          wireActions(job, jobModalBody);
+        }
+
+        var res = await updateJobStatus(job.id, effectiveTarget, {
+          updatedAt: job.updatedAt,
+          nextDescription: nextDescription,
+        });
+        if (!res.ok) {
+          job.status = prev; // rollback
+          job.description = prevDescription;
+          updateActiveRowBadge(job);
+          if (
+            jobDetailsPane &&
+            !window.matchMedia("(max-width: 1024px)").matches
+          ) {
+            renderJobDetails(job);
+          }
+          if (jobModal.classList.contains("open")) {
+            jobModalBody.innerHTML = buildJobDetailsHTML(job);
+            wireActions(job, jobModalBody);
+          }
+          showAlert(
+            "Couldn’t update status",
+            humanizeError(res.error),
+            "error"
+          );
+          return;
+        }
+
+        if (res.description !== null && typeof res.description !== "undefined") {
+          job.description = res.description;
+        }
+        if (res.updatedAt) job.updatedAt = res.updatedAt;
+        if (
+          jobDetailsPane &&
+          !window.matchMedia("(max-width: 1024px)").matches
+        ) {
+          renderJobDetails(job);
+        }
+        if (jobModal.classList.contains("open")) {
+          jobModalBody.innerHTML = buildJobDetailsHTML(job);
+          wireActions(job, jobModalBody);
+        }
+
+        if (effectiveTarget === "cancelled") {
+          try {
+            var invalidatedCount = await invalidateApplicationsForEditedJob(job.id);
+            if (invalidatedCount > 0) {
+              showToast(
+                invalidatedCount + " active application(s) were invalidated.",
+                "success",
+                2200
+              );
+            }
+          } catch (appError) {
+            console.error(appError);
+            showToast(
+              appError.message || "Applications could not be invalidated.",
+              "error",
+              2600
+            );
+          }
+        }
+
+        renderJobList(jobSearchInput ? jobSearchInput.value : "");
+        showToast(
+          "Status updated to " + nice(job.status, job.description) + ".",
+          "success",
+          1700
+        );
+      }
+
+      function updateActiveRowBadge(job) {
+        var row = document.querySelector(
+          '#jobList .item[data-id="' + job.id + '"]'
+        );
+        if (row) {
+          var pill = row.querySelector(".pill");
+          if (pill) {
+            var newPill = document.createElement("div");
+            newPill.innerHTML = getPillHTML(job.status, job.description);
+            pill.replaceWith(newPill.firstChild);
+          }
+          row.classList.remove("pending");
+          row.classList.remove("read");
+          var s = normalizeJobStatus(job.status);
+          if (s === "pending_review") row.classList.add("pending");
+        }
+        // Update pill in whichever container is visible
+        var desktopPillWrapper = jobDetailsPane.querySelector("#jobStatusPillWrapper");
+        if (desktopPillWrapper) {
+          desktopPillWrapper.innerHTML = getPillHTML(job.status, job.description);
+        }
+        var modalPillWrapper = jobModalBody.querySelector("#jobStatusPillWrapper");
+        if (modalPillWrapper) {
+          modalPillWrapper.innerHTML = getPillHTML(job.status, job.description);
+        }
+      }
+
+      async function ensureViewed(job) {
+        return;
+        var s = (job.status || "").toLowerCase();
+        if (!s || s === "pending") {
+          var prev = job.status || "";
+          job.status = "viewed";
+          updateActiveRowBadge(job);
+          var res = await updateJobStatus(job.id, "viewed", job);
+          if (!res.ok) {
+            job.status = prev;
+            updateActiveRowBadge(job);
+            showToast(
+              "We couldn’t mark this as viewed. " + humanizeError(res.error),
+              "warning",
+              2600
+            );
+          }
+        }
+      }
+
+      // ========= Events =========
+      if (jobSearchInput) {
+        jobSearchInput.addEventListener("input", function (e) {
+          renderJobList(e.target.value);
+        });
+      }
+      if (jobStatusFilter) {
+        jobStatusFilter.addEventListener("change", function () {
+          renderJobList(jobSearchInput ? jobSearchInput.value : "");
+        });
+      }
+      // Close modal on escape
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && jobModal.classList.contains("open"))
+          closeJobModal();
+      });
+
+      // Close modal if viewport grows beyond mobile (rotate)
+      window.addEventListener("resize", function () {
+        if (
+          !window.matchMedia("(max-width: 1024px)").matches &&
+          jobModal.classList.contains("open")
+        ) {
+          closeJobModal();
+        }
+      });
+
+      document.addEventListener("DOMContentLoaded", function () {
+        // start with skeleton visible
+        if (jobsRoot) jobsRoot.classList.add("loading");
+        loadJobs();
+      });
+    </script>
+  </body>
+</html>
