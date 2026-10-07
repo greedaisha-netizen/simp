@@ -10763,6 +10763,7 @@ function startLesson(courseId, levelId, lessonId) {
         localStorage.removeItem(currentLessonReturnUrlKey);
     }
     const lessonSessionUrl = new URL('class.html', window.location.href);
+    lessonSessionUrl.searchParams.set('welcome', '1');
     if (returnUrl) {
         lessonSessionUrl.searchParams.set('returnTo', returnUrl);
     }

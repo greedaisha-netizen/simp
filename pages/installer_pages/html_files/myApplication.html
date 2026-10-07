@@ -146,7 +146,7 @@
       .cards {
         margin-top: 1.4rem;
         display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
+        grid-template-columns: repeat(auto-fit, minmax(320px, min(420px, 100%)));
         gap: 1.4rem;
       }
 
@@ -159,17 +159,140 @@
         flex-direction: column;
         position: relative;
         border: 1px solid #e5e7eb;
+        max-width: 420px;
+      }
+
+      .thumb {
+        position: relative;
+        height: 132px;
+        overflow: hidden;
+        color: #fff;
+        background: linear-gradient(135deg, var(--job-a, #20647c), var(--job-b, #20a44c));
+      }
+
+      .thumb::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 0 auto;
+        width: 44%;
+        clip-path: polygon(36% 0, 100% 0, 100% 100%, 0 100%);
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .thumb::after {
+        content: "";
+        position: absolute;
+        right: -34px;
+        bottom: -48px;
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .thumb.has-image {
+        background: #111827;
+      }
+
+      .thumb.has-image::before,
+      .thumb.has-image::after {
+        display: none;
       }
 
       .thumb img {
         width: 100%;
-        height: 200px;
+        height: 100%;
         object-fit: cover;
+        display: none;
+      }
+
+      .thumb.has-image img {
+        display: block;
+      }
+
+      .thumb-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.08));
+      }
+
+      .view-job-image-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 700;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 8px;
+        margin-bottom: 2px;
+        width: fit-content;
+      }
+      .view-job-image-btn:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+        transform: translateY(-1px);
+      }
+
+
+      .thumb-content {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+
+      .thumb-icon {
+        position: absolute;
+        top: 18px;
+        right: 22px;
+        width: 56px;
+        height: 56px;
+        border-radius: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.18);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        font-size: 2rem;
+      }
+
+      .thumb-label {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .thumb-label span {
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.76);
+      }
+
+      .thumb-label strong {
+        color: #fff;
+        font-size: 1rem;
+        line-height: 1.2;
       }
 
       .applicationsDiv .content {
-        padding: 1rem 1.2rem;
+        padding: 1rem;
         flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
       }
 
       .applicationsDiv .title {
@@ -212,28 +335,43 @@
 
       .info-grid {
         display: grid;
-        gap: 0.6rem;
-        margin: 0.6rem 0 0.8rem;
+        gap: 0.45rem;
+        margin: 0;
       }
 
       .info-grid .label {
-        font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        color: #0f172a;
+        font-weight: 600;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.55rem;
+        color: #475569;
+        font-size: 0.88rem;
+        line-height: 1.35;
       }
 
       .info-grid .label .material-icons,
       .info-grid .label .material-icons-sharp {
-        font-size: 18px;
+        flex: 0 0 auto;
+        width: 22px;
+        height: 22px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1f5f9;
+        font-size: 1rem;
         color: #20647c;
       }
 
       .desc {
         font-size: 0.86rem;
-        margin: 0.4rem 0 1rem;
-        text-align: justify;
+        margin: 0;
+        color: #475569;
+        line-height: 1.45;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
       }
 
       .apply {
@@ -505,6 +643,7 @@
         width: 25%;
         background: linear-gradient(90deg, var(--accent), var(--brand));
         transition: width 0.35s ease, background 0.25s ease;
+        display: none;
       }
 
       main .applicationsDiv:has(.status-viewed)::before {
@@ -539,7 +678,7 @@
         transform: scale(1.04);
       }
 
-      main .thumb::after {
+      main .thumb.has-image .thumb-overlay::after {
         content: "";
         position: absolute;
         top: -50%;
@@ -556,7 +695,7 @@
         pointer-events: none;
       }
 
-      main .applicationsDiv:hover .thumb::after {
+      main .applicationsDiv:hover .thumb.has-image .thumb-overlay::after {
         animation: shine 0.9s ease;
       }
 
@@ -1148,6 +1287,36 @@
       const fmtDate = (d) =>
         d ? new Date(d + "T00:00:00").toLocaleDateString() : "";
       const fmtTime = (t) => (t ? String(t).slice(0, 5) : "");
+      const cityOnly = (locationValue) =>
+        locationValue ? String(locationValue).split(",")[0].trim() : "";
+      function categoryVisual(categoryValue) {
+        const category = String(categoryValue || "").toLowerCase();
+        if (category.includes("elect")) {
+          return { label: "Electrical", icon: "bolt", a: "#fbbf24", b: "#d97706" };
+        }
+        if (category.includes("clean")) {
+          return { label: "Cleaning", icon: "cleaning_services", a: "#34d399", b: "#059669" };
+        }
+        if (category.includes("plumb")) {
+          return { label: "Plumbing", icon: "plumbing", a: "#60a5fa", b: "#2563eb" };
+        }
+        if (category.includes("cctv")) {
+          return { label: "CCTV", icon: "videocam", a: "#f472b6", b: "#db2777" };
+        }
+        if (category.includes("network") || category.includes("it support")) {
+          return { label: "IT Support / Networking", icon: "computer", a: "#38bdf8", b: "#0284c7" };
+        }
+        if (category.includes("delivery")) {
+          return { label: "Delivery", icon: "local_shipping", a: "#a78bfa", b: "#7c3aed" };
+        }
+        if (category.includes("general") || category.includes("help")) {
+          return { label: "General Help", icon: "handyman", a: "#fb923c", b: "#ea580c" };
+        }
+        if (category.includes("safety")) {
+          return { label: "Safety", icon: "health_and_safety", a: "#f87171", b: "#dc2626" };
+        }
+        return { label: categoryValue || "Job Service", icon: "work", a: "#94a3b8", b: "#64748b" };
+      }
 
       setCancelDebug(`${CANCEL_FLOW_VERSION} loaded`);
 
@@ -1400,6 +1569,11 @@
           const st = getEffectiveApplicationStatus(app);
           const statusInfo = STATUS_MAP[st] || STATUS_MAP["pending"];
           const imgUrl = signedUrls[idx] || "../images/profile-4.jpg";
+          const visual = categoryVisual(job.job_category);
+          const city = cityOnly(job.job_location);
+          const hasUploadedImage = false;
+          const hasRealImage = job.job_picture_url && imgUrl && !String(imgUrl).includes("../images/profile-4.jpg");
+          const imageBtn = hasRealImage ? `<button class="view-job-image-btn" data-img-src="${esc(imgUrl)}" title="View Attached Photo">Images 1</button>` : "";
           const displayDescription =
             getDisplayJobDescription(job.job_description) ||
             "No description provided.";
@@ -1447,8 +1621,15 @@
               : "";
 
           card.innerHTML = `
-            <div class="thumb">
-              <img src="${imgUrl}" alt="Job image" onerror="this.onerror=null;this.src='../images/profile-4.jpg';" />
+            <div class="thumb" style="--job-a:${esc(visual.a)};--job-b:${esc(visual.b)};">
+              <div class="thumb-overlay"></div>
+              <div class="thumb-content">
+                <span class="thumb-icon material-icons-sharp" aria-hidden="true">${esc(visual.icon)}</span>
+                <div class="thumb-label">
+                  <span>${esc(visual.label)}</span>
+                  <strong>${esc(city || "Service Job")}</strong>
+                </div>
+              </div>
             </div>
             <div class="content">
               <div class="contentFirstRow">
@@ -1462,7 +1643,7 @@
                 <div class="meta-row">
                   <span class="pill">
                     <span class="material-icons" aria-hidden="true">category</span>
-                    ${esc(job.job_category || "Uncategorized")}
+                    ${esc(visual.label)}
                   </span>
                   <span class="pill">
                     <span class="material-icons" aria-hidden="true">speed</span>
@@ -1498,7 +1679,7 @@
                   </div>
                 </div>
               </div>
-
+              ${imageBtn}
               <div class="desc">${esc(
                 displayDescription
               )}</div>
@@ -1984,6 +2165,52 @@
         // Start with skeleton on initial load
         setLoading(true);
         loadApplications();
+      });
+
+      function openImageLightbox(src) {
+        let lightbox = document.getElementById("job-image-lightbox");
+        if (!lightbox) {
+          lightbox = document.createElement("div");
+          lightbox.id = "job-image-lightbox";
+          lightbox.style.cssText = `
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+          `;
+          lightbox.innerHTML = `
+            <img id="lightbox-img" src="" style="max-width: 90%; max-height: 90%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); cursor: default;" />
+            <button style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: none; border-radius: 50%; width: 40px; height: 40px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px;" class="material-icons-sharp">close</button>
+          `;
+          document.body.appendChild(lightbox);
+          lightbox.addEventListener("click", (e) => {
+            if (e.target.id === "job-image-lightbox" || e.target.tagName === "BUTTON") {
+              lightbox.style.opacity = "0";
+              setTimeout(() => lightbox.style.display = "none", 250);
+            }
+          });
+        }
+        document.getElementById("lightbox-img").src = src;
+        lightbox.style.display = "flex";
+        lightbox.offsetHeight;
+        lightbox.style.opacity = "1";
+      }
+
+      document.addEventListener("click", (e) => {
+        const btn = e.target.closest(".view-job-image-btn");
+        if (!btn) return;
+        e.stopPropagation();
+        e.preventDefault();
+        const src = btn.getAttribute("data-img-src");
+        if (src) {
+          openImageLightbox(src);
+        }
       });
     </script>
   </body>

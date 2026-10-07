@@ -140,7 +140,7 @@
       .cards {
         margin-top: 1.4rem;
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: repeat(auto-fit, minmax(320px, min(420px, 100%)));
         gap: 1rem;
       }
 
@@ -164,18 +164,142 @@
         display: flex;
         flex-direction: column;
         border: 1px solid #e5e7eb;
+        max-width: 420px;
+      }
+
+      .thumb {
+        position: relative;
+        height: 132px;
+        overflow: hidden;
+        color: #fff;
+        background:
+          linear-gradient(135deg, var(--job-a, #20647c), var(--job-b, #20a44c));
+      }
+
+      .thumb::before {
+        content: "";
+        position: absolute;
+        inset: 0 0 0 auto;
+        width: 44%;
+        border: none;
+        border-radius: 0;
+        clip-path: polygon(36% 0, 100% 0, 100% 100%, 0 100%);
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .thumb::after {
+        content: "";
+        position: absolute;
+        right: -34px;
+        bottom: -48px;
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .thumb.has-image {
+        background: #111827;
+      }
+
+      .thumb.has-image::before,
+      .thumb.has-image::after {
+        display: none;
       }
 
       .thumb img {
         width: 100%;
-        height: 200px;
+        height: 100%;
         object-fit: cover;
+        display: none;
+      }
+
+      .thumb.has-image img {
+        display: block;
+      }
+
+      .thumb .thumb-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.42), rgba(0, 0, 0, 0.08));
+        z-index: 1;
+      }
+
+      .view-job-image-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1f5f9;
+        border: 1px solid #cbd5e1;
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-family: inherit;
+        font-size: 11px;
+        font-weight: 700;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 8px;
+        margin-bottom: 2px;
+        width: fit-content;
+      }
+      .view-job-image-btn:hover {
+        background: #e2e8f0;
+        color: #0f172a;
+        transform: translateY(-1px);
+      }
+
+      .thumb-content {
+        position: absolute;
+        inset: 0;
+        z-index: 2;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+      }
+
+      .thumb-icon {
+        position: absolute;
+        top: 18px;
+        right: 22px;
+        width: 56px;
+        height: 56px;
+        border-radius: 18px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.18);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+        font-size: 2rem;
+      }
+
+      .thumb-label {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .thumb-label span {
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.76);
+      }
+
+      .thumb-label strong {
+        color: #fff;
+        font-size: 1rem;
+        line-height: 1.2;
       }
 
       .job-card .content {
-        padding: 1rem 1.2rem;
+        padding: 1rem;
         flex: 1;
-        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
       }
 
       .job-card .title {
@@ -191,9 +315,12 @@
       }
 
       .pill {
-        font-size: 0.72rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-size: 0.7rem;
         line-height: 1;
-        padding: 0.42rem 0.8rem;
+        padding: 0.38rem 0.7rem;
         border-radius: 999px;
         background: #eef2f7;
         color: #6b7280;
@@ -202,18 +329,43 @@
 
       .info-grid {
         display: grid;
-        gap: 0.6rem;
-        margin: 0.6rem 0 0.8rem;
+        gap: 0.45rem;
+        margin: 0;
       }
 
       .info-grid .label {
-        font-weight: 700;
+        min-width: 0;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.55rem;
+        color: #475569;
+        font-size: 0.88rem;
+        line-height: 1.35;
+        font-weight: 600;
+      }
+
+      .info-grid .label i {
+        flex: 0 0 auto;
+        width: 22px;
+        height: 22px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1f5f9;
+        color: #20647c;
+        font-size: 1rem;
       }
 
       .desc {
         font-size: 0.86rem;
-        margin: 0.4rem 0 1rem;
-        text-align: justify;
+        margin: 0;
+        color: #475569;
+        line-height: 1.45;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
       }
 
       .apply {
@@ -253,168 +405,351 @@
         margin-left: 0.3rem;
       }
 
-      /* ===== Modal (kept) ===== */
+      /* ===== Job Application Modal ===== */
       .modal-backdrop {
         position: fixed;
         inset: 0;
-        background: rgba(17, 24, 39, 0.45);
+        background: rgba(17, 24, 39, 0.55);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
         display: none;
         align-items: center;
         justify-content: center;
         z-index: 10000;
       }
-
-      .modal-backdrop.show {
-        display: flex;
-      }
+      .modal-backdrop.show { display: flex; }
 
       .job-modal {
-        width: min(680px, 92vw);
-        max-height: 86vh;
-        overflow: auto;
-        background: #fff;
+        width: min(640px, 94vw);
+        max-height: 88vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        background: #f8fafb;
         border-radius: 20px;
-        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 32px 80px rgba(0,0,0,0.28);
         display: flex;
         flex-direction: column;
-        padding: 18px;
-        gap: 14px;
       }
 
-      .job-modal .banner {
-        background: #f0fdf4;
-        color: #065f46;
-        border: 1px solid #dcfce7;
-        padding: 8px 10px;
-        border-radius: 12px;
+      /* --- Hero Header --- */
+      .jm-hero {
+        position: relative;
+        background: linear-gradient(135deg, #0f2b1d 0%, #1a6e3a 60%, #22c55e 100%);
+        padding: 20px 22px 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        flex-shrink: 0;
+      }
+      .jm-hero::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        pointer-events: none;
+      }
+      .jm-hero-close {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.3);
+        background: rgba(0,0,0,0.25);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        cursor: pointer;
+        z-index: 2;
+        transition: background 0.2s;
+      }
+      .jm-hero-close:hover { background: rgba(0,0,0,0.45); }
+      .jm-hero-title {
+        color: #fff;
+        font-size: 1.2rem;
+        font-weight: 800;
+        line-height: 1.3;
+        margin: 0;
+        position: relative;
+        z-index: 1;
+        padding-right: 40px;
+      }
+      .jm-hero-meta {
         display: flex;
         align-items: center;
         gap: 8px;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 1;
       }
-
-      .m-header {
+      .jm-hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 10px;
+        border-radius: 999px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        background: rgba(255,255,255,0.18);
+        color: rgba(255,255,255,0.92);
+        border: 1px solid rgba(255,255,255,0.2);
+      }
+      .jm-hero-badge .material-icons-sharp { font-size: 13px; }
+      .jm-hero-location {
+        color: rgba(255,255,255,0.78);
+        font-size: 0.82rem;
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 4px;
+      }
+      .jm-hero-location .material-icons-sharp { font-size: 15px; }
+
+      /* --- Modal Body --- */
+      .jm-body {
+        padding: 16px 20px 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
       }
 
-      .m-header img#mImg {
-        width: 64px;
-        height: 64px;
-        object-fit: cover;
-        border-radius: 12px;
-        background: #f3f4f6;
-        border: 1px solid #e5e7eb;
+      /* --- Info Grid (2x2 cards) --- */
+      .jm-info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .jm-info-card {
+        background: #fff;
+        border: 1px solid #e8ecf0;
+        border-radius: 14px;
+        padding: 12px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        transition: box-shadow 0.2s;
+      }
+      .jm-info-card:hover {
+        box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+      }
+      .jm-info-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #94a3b8;
+      }
+      .jm-info-label .material-icons-sharp {
+        font-size: 15px;
+        color: #64748b;
+      }
+      .jm-info-value {
+        font-size: 1.05rem;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.3;
+      }
+      .jm-info-value.pay { color: #16a34a; font-size: 1.15rem; }
+
+      /* --- Section Cards --- */
+      .jm-section {
+        background: #fff;
+        border: 1px solid #e8ecf0;
+        border-radius: 14px;
+        padding: 14px 16px;
+      }
+      .jm-section-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #475569;
+        margin: 0 0 10px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #f1f5f9;
+      }
+      .jm-section-title .material-icons-sharp {
+        font-size: 17px;
+        color: #64748b;
       }
 
-      .m-headings h3 {
+      /* --- Description --- */
+      .jm-desc {
+        font-size: 0.92rem;
+        line-height: 1.65;
+        color: #334155;
+        white-space: pre-wrap;
+        word-break: break-word;
         margin: 0;
       }
 
-      .job-modal .tiny {
-        color: #6b7280;
-        font-size: 0.9rem;
+      /* --- Qualifications Section --- */
+      .jm-quals-mode {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 4px 12px;
+        border-radius: 999px;
+        font-size: 0.74rem;
+        font-weight: 700;
+        margin-bottom: 10px;
       }
+      .jm-quals-mode.strict {
+        background: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+      }
+      .jm-quals-mode.flexible {
+        background: #fffbeb;
+        color: #92400e;
+        border: 1px solid #fde68a;
+      }
+      .jm-quals-mode.beginner {
+        background: #eff6ff;
+        color: #1e40af;
+        border: 1px solid #bfdbfe;
+      }
+      .jm-quals-mode .material-icons-sharp { font-size: 14px; }
 
-      .m-chips {
+      .jm-req-grid {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
       }
-
-      .job-modal .pill {
-        background: #f3f4f6;
-        color: #374151;
-        border: 1px solid #e5e7eb;
-        border-radius: 999px;
-        padding: 0.35rem 0.7rem;
-        font-size: 0.78rem;
+      .jm-req-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border-radius: 10px;
+        font-size: 0.82rem;
+        font-weight: 700;
+        line-height: 1.3;
+        transition: transform 0.15s;
       }
-
-      .m-meta {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
+      .jm-req-badge:hover { transform: translateY(-1px); }
+      .jm-req-badge .material-icons-sharp { font-size: 16px; flex-shrink: 0; }
+      .jm-req-badge.met {
+        background: #f0fdf4;
+        color: #166534;
+        border: 1px solid #bbf7d0;
       }
-
-      @media (max-width: 520px) {
-        .m-meta {
-          grid-template-columns: 1fr;
-        }
+      .jm-req-badge.unmet {
+        background: #fef2f2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
       }
-
-      .m-meta > div {
-        display: flex;
-        justify-content: space-between;
-        gap: 12px;
-        padding: 10px 12px;
-        background: #fafafa;
-        border: 1px solid #eee;
-        border-radius: 12px;
-      }
-
-      .m-meta .label {
+      .jm-req-summary {
+        margin-top: 10px;
+        padding-top: 8px;
+        border-top: 1px dashed #e2e8f0;
+        font-size: 0.82rem;
+        color: #64748b;
         font-weight: 600;
-        color: #111827;
+      }
+      .jm-req-summary strong { color: #0f172a; }
+
+      /* --- Eligibility Banner --- */
+      .jm-eligibility {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .jm-eligibility .material-icons-sharp { font-size: 22px; }
+      .jm-eligibility.eligible {
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        color: #166534;
+        border: 1px solid #bbf7d0;
+      }
+      .jm-eligibility.ineligible {
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        color: #991b1b;
+        border: 1px solid #fecaca;
+      }
+      .jm-eligibility.loading {
+        background: #eff6ff;
+        color: #1e40af;
+        border: 1px solid #bfdbfe;
       }
 
-      .job-modal .desc {
-        margin-top: 4px;
-        line-height: 1.55;
-        font-size: 0.95rem;
-        color: #1f2937;
-      }
-
-      .job-modal .resume {
+      /* --- Resume Row --- */
+      .jm-resume {
         display: flex;
         align-items: center;
         gap: 8px;
-        font-size: 0.92rem;
+        font-size: 0.88rem;
+        color: #475569;
       }
-
-      .job-modal .resume a {
+      .jm-resume a {
         color: #15803d;
         text-decoration: none;
+        font-weight: 600;
       }
+      .jm-resume a:hover { text-decoration: underline; }
+      .jm-resume .material-icons-sharp { font-size: 18px; color: #64748b; }
 
-      .job-modal .cta-row {
+      /* --- CTA Row --- */
+      .jm-cta {
         display: flex;
         gap: 10px;
-        margin-top: 4px;
+        padding: 0 20px 20px;
       }
-
-      .job-modal .btn {
+      .jm-cta .btn {
         border: none;
-        border-radius: 12px;
-        padding: 0.85rem 1rem;
-        font-weight: 700;
+        border-radius: 14px;
+        padding: 0.85rem 1.2rem;
+        font-weight: 800;
         cursor: pointer;
+        font-size: 0.92rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        transition: all 0.2s;
       }
-
-      .job-modal .btn-apply {
-        background: #22c55e;
+      .jm-cta .btn-apply {
+        flex: 1;
+        background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
         color: #fff;
+        box-shadow: 0 6px 20px rgba(34,197,94,0.3);
       }
-
-      .job-modal .btn-apply:disabled {
-        opacity: 0.5;
+      .jm-cta .btn-apply:hover:not(:disabled) {
+        box-shadow: 0 8px 28px rgba(34,197,94,0.4);
+        transform: translateY(-1px);
+      }
+      .jm-cta .btn-apply:disabled {
+        opacity: 0.55;
         cursor: default;
+        box-shadow: none;
+      }
+      .jm-cta .btn-cancel {
+        background: #f1f5f9;
+        color: #475569;
+        border: 1px solid #e2e8f0;
+      }
+      .jm-cta .btn-cancel:hover {
+        background: #e2e8f0;
       }
 
-      .job-modal .btn-cancel {
-        background: #e5e7eb;
-        color: #111827;
-      }
-
-      @media (max-width: 400px) {
-        .job-modal {
-          padding: 14px;
-        }
-
-        .m-header img#mImg {
-          width: 56px;
-          height: 56px;
-        }
+      /* --- Mobile responsive --- */
+      @media (max-width: 520px) {
+        .jm-info-grid { grid-template-columns: 1fr; }
+        .jm-hero { padding: 16px; }
+        .jm-body { padding: 14px 14px 16px; }
+        .jm-cta { padding: 0 14px 16px; }
+        .jm-hero-title { font-size: 1.05rem; }
       }
 
       .toast {
@@ -763,10 +1098,18 @@
         }
 
         .job-card .thumb {
-          display: none;
+          height: 118px;
         }
 
-        /* hide big image */
+        .thumb-icon {
+          top: 14px;
+          right: 16px;
+          width: 48px;
+          height: 48px;
+          border-radius: 16px;
+          font-size: 1.7rem;
+        }
+
         .job-card .content {
           padding: 12px;
         }
@@ -940,7 +1283,7 @@
             </button>
             <div class="dropdown-content" id="categoryMenu"></div>
           </div>
-          <div class="dropdown" data-filter="level">
+          <div class="dropdown" data-filter="level" style="display: none;">
             <button class="dropbtn">
               Level<span class="current" id="levelLabel"></span>
             </button>
@@ -996,7 +1339,7 @@
               <div style="font-weight: 700; margin: 8px 0 6px">Category</div>
               <div id="mCategoryMenu"></div>
             </div>
-            <div>
+            <div style="display: none;">
               <div style="font-weight: 700; margin: 8px 0 6px">Level</div>
               <div id="mLevelMenu"></div>
             </div>
@@ -1053,59 +1396,87 @@
       <div></div>
     </div>
 
-    <!-- Job Application Modal (kept) -->
+    <!-- Job Application Modal -->
     <div id="applyModal" class="modal-backdrop" aria-hidden="true">
-      <div
-        class="job-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="jobModalTitle"
-      >
-        <div class="banner" id="fitBanner" style="display: none">
-          <span class="material-icons-sharp" style="font-size: 18px"
-            >verified</span
-          >
-          <span>You are a strong candidate for this job</span>
-        </div>
-        <div class="m-header">
-          <img id="mImg" src="" alt="Job photo" />
-          <div class="m-headings">
-            <h3 id="jobModalTitle">Job Title</h3>
-            <div class="tiny" id="mPostedBy">Anonymous</div>
+      <div class="job-modal" role="dialog" aria-modal="true" aria-labelledby="jobModalTitle">
+
+        <!-- Hero Header -->
+        <div class="jm-hero">
+          <button id="modalCancelBtn" class="jm-hero-close" title="Close" aria-label="Close">
+            <span class="material-icons-sharp" style="font-size:20px">close</span>
+          </button>
+          <h3 id="jobModalTitle" class="jm-hero-title">Job Title</h3>
+          <div class="jm-hero-meta">
+            <span class="jm-hero-badge" id="mCategory"><span class="material-icons-sharp">category</span> Category</span>
+            <span class="jm-hero-location" id="mLocHero"><span class="material-icons-sharp">place</span> Location</span>
           </div>
         </div>
-        <div class="m-chips">
-          <span class="pill" id="mCategory">Category</span>
-          <span class="pill" id="mDifficulty">Difficulty</span>
+
+        <!-- Body -->
+        <div class="jm-body">
+
+          <!-- Eligibility Banner -->
+          <div class="jm-eligibility loading" id="fitBanner">
+            <span class="material-icons-sharp">hourglass_empty</span>
+            <span>Checking your qualifications...</span>
+          </div>
+
+          <!-- Info Grid -->
+          <div class="jm-info-grid">
+            <div class="jm-info-card">
+              <div class="jm-info-label"><span class="material-icons-sharp">payments</span> Budget</div>
+              <div class="jm-info-value pay" id="mPay">₱–</div>
+            </div>
+            <div class="jm-info-card">
+              <div class="jm-info-label"><span class="material-icons-sharp">calendar_today</span> Date</div>
+              <div class="jm-info-value" id="mDate">–</div>
+            </div>
+            <div class="jm-info-card">
+              <div class="jm-info-label"><span class="material-icons-sharp">groups</span> Manpower</div>
+              <div class="jm-info-value" id="mManpower">1 installer(s)</div>
+            </div>
+            <div class="jm-info-card">
+              <div class="jm-info-label"><span class="material-icons-sharp">schedule</span> Time</div>
+              <div class="jm-info-value" id="mTime">–</div>
+            </div>
+          </div>
+
+          <!-- Location -->
+          <div class="jm-section">
+            <div class="jm-section-title"><span class="material-icons-sharp">location_on</span> Full Address</div>
+            <div id="mLoc" style="font-size:0.9rem; color:#334155; line-height:1.5;">–</div>
+          </div>
+
+          <!-- Description -->
+          <div class="jm-section">
+            <div class="jm-section-title"><span class="material-icons-sharp">description</span> Job Description</div>
+            <p class="jm-desc" id="mDesc">No description provided.</p>
+          </div>
+
+          <!-- Qualifications & Requirements -->
+          <div class="jm-section" id="mQualsSection">
+            <div class="jm-section-title"><span class="material-icons-sharp">workspace_premium</span> Qualification Requirements</div>
+            <div id="mQualsContent">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Resume -->
+          <div class="jm-resume" id="mResumeRow">
+            <span class="material-icons-sharp">attach_file</span>
+            <a id="mResumeLink" href="javascript:void(0)" title="Resume" target="_blank" rel="noopener">Loading…</a>
+            <span style="margin-left:auto; color:#94a3b8; font-size:0.82rem;">(optional)</span>
+          </div>
+
         </div>
-        <div class="m-meta">
-          <div><span class="label">Pay</span><span id="mPay">₱–</span></div>
-          <div><span class="label">Date/Time</span><span id="mDT">–</span></div>
-          <div><span class="label">Location</span><span id="mLoc">–</span></div>
-        </div>
-        <div class="desc" id="mDesc"></div>
-        <div class="resume" id="mResumeRow">
-          <span class="material-icons-sharp" style="font-size: 18px"
-            >attach_file</span
-          >
-          <a
-            id="mResumeLink"
-            href="javascript:void(0)"
-            title="Resume"
-            target="_blank"
-            rel="noopener"
-            >Loading…</a
-          >
-          <span class="tiny" style="margin-left: auto; color: #6b7280"
-            >(optional)</span
-          >
-        </div>
-        <div class="cta-row">
+
+        <!-- CTA Row -->
+        <div class="jm-cta">
           <button id="modalApplyBtn" class="btn btn-apply">
-            Apply for this Job!
+            <span class="material-icons-sharp" style="font-size:18px">send</span> Apply for this Job!
           </button>
-          <button id="modalCancelBtn" class="btn btn-cancel">Cancel</button>
         </div>
+
       </div>
     </div>
 
@@ -1334,6 +1705,40 @@
         return job.job_description ?? "";
       }
 
+      function cityOnly(locationValue) {
+        if (!locationValue) return "";
+        return String(locationValue).split(",")[0].trim();
+      }
+
+      function categoryVisual(categoryValue) {
+        const category = String(categoryValue || "").toLowerCase();
+        if (category.includes("elect")) {
+          return { label: "Electrical", icon: "bolt", a: "#fbbf24", b: "#d97706" };
+        }
+        if (category.includes("clean")) {
+          return { label: "Cleaning", icon: "cleaning_services", a: "#34d399", b: "#059669" };
+        }
+        if (category.includes("plumb")) {
+          return { label: "Plumbing", icon: "plumbing", a: "#60a5fa", b: "#2563eb" };
+        }
+        if (category.includes("cctv")) {
+          return { label: "CCTV", icon: "videocam", a: "#f472b6", b: "#db2777" };
+        }
+        if (category.includes("network") || category.includes("it support")) {
+          return { label: "IT Support / Networking", icon: "computer", a: "#38bdf8", b: "#0284c7" };
+        }
+        if (category.includes("delivery")) {
+          return { label: "Delivery", icon: "local_shipping", a: "#a78bfa", b: "#7c3aed" };
+        }
+        if (category.includes("general") || category.includes("help")) {
+          return { label: "General Help", icon: "handyman", a: "#fb923c", b: "#ea580c" };
+        }
+        if (category.includes("safety")) {
+          return { label: "Safety", icon: "health_and_safety", a: "#f87171", b: "#dc2626" };
+        }
+        return { label: categoryValue || "Job Service", icon: "work", a: "#94a3b8", b: "#64748b" };
+      }
+
       function renderJobs(list) {
         const container = $(".cards");
         container.innerHTML = "";
@@ -1350,33 +1755,42 @@
           const effDifficulty = getJobEffectiveDifficulty(job);
           const effPay = getJobEffectivePay(job);
           const effDesc = getJobEffectiveDescription(job);
+          const visual = categoryVisual(job.job_category);
+          const city = cityOnly(job.job_location);
+          const hasRealImage = job.job_picture_url && imgUrl && !String(imgUrl).includes("../images/profile-4.jpg");
+          const imageBtn = hasRealImage ? `<button class="view-job-image-btn" data-img-src="${esc(imgUrl)}" title="View Attached Photo">Images 1</button>` : "";
 
-          card.innerHTML = `
-            <div class="thumb">
-              <img src="${imgUrl}" alt="Job image"
-                   onerror="this.onerror=null;console.warn('Image not found:', this.src); this.src='../images/profile-4.jpg';" />
+           card.innerHTML = `
+             <div class="thumb" style="--job-a:${esc(visual.a)};--job-b:${esc(visual.b)};">
+              <div class="thumb-overlay"></div>
+              <div class="thumb-content">
+                <span class="thumb-icon material-icons-sharp" aria-hidden="true">${esc(visual.icon)}</span>
+                <div class="thumb-label">
+                  <span>${esc(visual.label)}</span>
+                  <strong>${esc(city || "Service Job")}</strong>
+                </div>
+              </div>
             </div>
             <div class="content">
               <div class="contentFirstRow">
                 <div class="title">${esc(job.job_title)}</div>
                 <div class="meta-row">
-                  <span class="pill">${esc(
-                    job.job_category || "Uncategorized"
-                  )}</span>
-                  <span class="pill">L${esc(effDifficulty)}</span>
+                  <span class="pill"><span class="material-icons-sharp" aria-hidden="true">category</span>${esc(visual.label)}</span>
+                  <span class="pill"><span class="material-icons-sharp" aria-hidden="true">signal_cellular_alt</span>L${esc(effDifficulty)}</span>
                 </div>
               </div>
               <div class="info-grid">
-                <div><div class="label">Pay: ₱${fmtPeso(
+                <div><div class="label"><i class="material-icons-sharp" aria-hidden="true">payments</i><span>Pay: ₱${fmtPeso(
                   effPay
-                )}</div></div>
-                <div><div class="label">Date/Time: ${fmtDate(
+                )}</span></div></div>
+                <div><div class="label"><i class="material-icons-sharp" aria-hidden="true">event</i><span>Date/Time: ${fmtDate(
                   job.job_date
-                )} ${fmtTime(job.job_time)}</div></div>
-                <div><div class="label">Location: ${esc(
+                )} ${fmtTime(job.job_time)}</span></div></div>
+                <div><div class="label"><i class="material-icons-sharp" aria-hidden="true">place</i><span>Location: ${esc(
                   job.job_location || "Not specified"
-                )}</div></div>
+                )}</span></div></div>
               </div>
+              ${imageBtn}
               <div class="desc">${esc(
                 effDesc || "No description provided"
               )}</div>
@@ -1508,7 +1922,7 @@
           .schema("jobs")
           .from("job")
           .select(
-            "job_id, posted_by, job_title, job_description, job_difficulty, job_category, job_location, job_date, job_time, job_pay, job_picture_url, created_at, job_status, installer_id_assigned"
+            "job_id, posted_by, job_title, job_description, job_difficulty, job_category, job_location, job_date, job_time, job_pay, job_picture_url, created_at, job_status, installer_id_assigned, required_course_tags, required_experience, application_mode, min_requirements_met"
           )
           .eq("job_status", "active")
           .order("created_at", { ascending: false });
@@ -1702,19 +2116,197 @@
         }
         return inst?.id ?? null;
       }
-      async function getInstallerLevel(installerId) {
-        if (!installerId) return null;
-        const { data, error } = await sb
-          .from("installer")
-          .select("levelstatus")
-          .eq("id", installerId)
-          .limit(1)
-          .maybeSingle();
-        if (error) {
-          console.warn("installer levelstatus lookup error", error);
+
+      let ALL_COURSES_CACHE = null;
+
+      async function ensureCourseCatalog() {
+        if (ALL_COURSES_CACHE) return ALL_COURSES_CACHE;
+
+        const { data: courses, error: errC } = await sb.schema("course").from("courses").select("*");
+        if (errC) throw errC;
+
+        const { data: sections, error: errS } = await sb.schema("course").from("sections").select("*").order("position", { ascending: true });
+        if (errS) throw errS;
+
+        const { data: contents, error: errL } = await sb.schema("course").from("section_contents").select("*").order("position", { ascending: true });
+        if (errL) throw errL;
+
+        const contentsBySection = new Map();
+        for (const row of contents || []) {
+          const arr = contentsBySection.get(row.section_id) || [];
+          arr.push(row);
+          contentsBySection.set(row.section_id, arr);
+        }
+
+        function parseStructuredSectionLessons(secContent) {
+          if (!secContent || !secContent.content_value) return null;
+          try {
+            const parsed = JSON.parse(secContent.content_value);
+            if (parsed && parsed.lessons && Array.isArray(parsed.lessons)) {
+              return parsed.lessons.map((l, idx) => ({
+                id: l.id || `lesson_${idx}`,
+                title: l.title || `Lesson ${idx + 1}`
+              }));
+            }
+          } catch (e) {}
           return null;
         }
-        return data?.levelstatus ?? null;
+
+        function normalizeLessonPayload(cnt, idx) {
+          return {
+            id: cnt.id || `lesson_${idx}`,
+            title: cnt.title || `Lesson ${idx + 1}`
+          };
+        }
+
+        const sectionsByCourse = new Map();
+        for (const row of sections || []) {
+          const arr = sectionsByCourse.get(row.course_id) || [];
+          const lessons = [];
+          const sectionContents = contentsBySection.get(row.id) || [];
+          if (sectionContents.length) {
+            const bundled = parseStructuredSectionLessons(sectionContents[0]);
+            if (bundled) {
+              lessons.push(...bundled);
+            } else {
+              sectionContents.forEach((cnt, idx) => {
+                lessons.push(normalizeLessonPayload(cnt, idx));
+              });
+            }
+          }
+          arr.push({
+            id: row.id,
+            title: row.title || `Level`,
+            lessons: lessons.filter(Boolean)
+          });
+          sectionsByCourse.set(row.course_id, arr);
+        }
+
+        ALL_COURSES_CACHE = (courses || []).map(c => {
+          return {
+            id: c.id,
+            title: c.title,
+            description: c.description || "",
+            levels: sectionsByCourse.get(c.id) || []
+          };
+        });
+
+        return ALL_COURSES_CACHE;
+      }
+
+      async function getInstallerQualifications(installerId) {
+        try {
+          const catalog = await ensureCourseCatalog();
+
+          const { data: instData, error: instErr } = await sb
+            .from("installer")
+            .select("experience")
+            .eq("id", installerId)
+            .maybeSingle();
+
+          const experience = instData?.experience || {};
+
+          const { data: stateRows, error: stateErr } = await sb
+            .from("simp_course_state")
+            .select("state_key, state_value")
+            .eq("owner_key", `user:${installerId}`)
+            .eq("state_key", "myStudyRoomLibrary")
+            .maybeSingle();
+
+          let library = [];
+          if (stateRows && stateRows.state_value) {
+            try {
+              library = JSON.parse(stateRows.state_value);
+            } catch (e) {
+              console.error("Failed to parse library state", e);
+            }
+          }
+
+          const completedTags = new Set();
+          
+          for (const course of catalog) {
+            const courseLevels = course.levels || [];
+            if (courseLevels.length === 0) continue;
+
+            let completedLevelsCount = 0;
+            const levelTags = [];
+
+            for (let i = 0; i < courseLevels.length; i++) {
+              const level = courseLevels[i];
+              const totalLessons = level.lessons.length;
+              if (totalLessons === 0) continue;
+
+              let completedLessonsCount = 0;
+              for (const lesson of level.lessons) {
+                const isCompleted = library.some(x => 
+                  String(x.courseId) === String(course.id) && 
+                  String(x.levelId) === String(level.id) && 
+                  String(x.lessonId) === String(lesson.id) && 
+                  x.isCompleted
+                );
+                if (isCompleted) {
+                  completedLessonsCount++;
+                }
+              }
+
+              const studyCompleted = completedLessonsCount === totalLessons;
+              if (studyCompleted) {
+                completedLevelsCount++;
+                const tag = `${course.title} ${level.title} Completed`.replace(/\s+/g, ' ').trim();
+                levelTags.push(tag);
+              }
+            }
+
+            levelTags.forEach(tag => completedTags.add(tag));
+
+            const allLevelsCompleted = completedLevelsCount === courseLevels.length;
+            if (allLevelsCompleted) {
+              const courseTag1 = `${course.title} Course Completed`.replace(/\s+/g, ' ').trim();
+              const courseTag2 = `${course.title} Completed`.replace(/\s+/g, ' ').trim();
+              completedTags.add(courseTag1);
+              completedTags.add(courseTag2);
+              for (let i = 0; i < courseLevels.length; i++) {
+                const level = courseLevels[i];
+                const tag = `${course.title} ${level.title} Completed`.replace(/\s+/g, ' ').trim();
+                completedTags.add(tag);
+              }
+            }
+          }
+
+          const tagsArray = Array.from(completedTags);
+          try {
+            await sb
+              .from("installer")
+              .update({ completed_tags: tagsArray })
+              .eq("id", installerId);
+          } catch (updateErr) {
+            console.warn("Failed to sync completed_tags to database:", updateErr);
+          }
+
+          return {
+            tags: tagsArray,
+            experience: experience
+          };
+        } catch (e) {
+          console.error("getInstallerQualifications failed:", e);
+          return { tags: [], experience: {} };
+        }
+      }
+
+      function isRequirementTagSatisfied(reqTag, installerTags) {
+        if (!reqTag) return false;
+        const tags = Array.isArray(installerTags) ? installerTags : [];
+        if (tags.includes(reqTag)) return true;
+
+        for (const tag of tags) {
+          if (tag.endsWith(" Course Completed") || tag.endsWith(" Completed")) {
+            const courseTitle = tag.replace(/ Course Completed$/, '').replace(/ Completed$/, '').trim();
+            if (courseTitle && reqTag.startsWith(courseTitle)) {
+              return true;
+            }
+          }
+        }
+        return false;
       }
       function buildStorageKeyForResume(resumeFieldValue, installerId) {
         if (!resumeFieldValue) return "";
@@ -1794,49 +2386,137 @@
           resumeLinkEl.style.pointerEvents = "none";
         }
       }
+
       async function setApplyEligibilityInModal(job) {
         const applyBtn = document.getElementById("modalApplyBtn");
         const fitBanner = document.getElementById("fitBanner");
-        const requiredLevel = Number(getJobEffectiveDifficulty(job) ?? 0);
+        const qualsContent = document.getElementById("mQualsContent");
 
         applyBtn.disabled = true;
-        applyBtn.textContent = "Checking eligibility...";
-        fitBanner.style.display = "block";
-        fitBanner.textContent = "Checking your installer level...";
+        applyBtn.innerHTML = `<span class="material-icons-sharp" style="font-size:18px">hourglass_empty</span> Checking eligibility...`;
+        fitBanner.className = "jm-eligibility loading";
+        fitBanner.innerHTML = `<span class="material-icons-sharp">hourglass_empty</span><span>Checking your qualifications...</span>`;
+        qualsContent.innerHTML = `<div style="color:#94a3b8; font-size:0.85rem;">Loading requirements...</div>`;
 
         try {
           const base = await getInstallerResume();
           const installerId = base.installerId || (await resolveInstallerId());
           if (!installerId) {
-            fitBanner.textContent =
-              "We could not identify your installer profile. Please sign in again.";
-            applyBtn.textContent = "Apply unavailable";
+            fitBanner.className = "jm-eligibility ineligible";
+            fitBanner.innerHTML = `<span class="material-icons-sharp">error</span><span>Could not identify your installer profile. Please sign in again.</span>`;
+            applyBtn.innerHTML = `<span class="material-icons-sharp" style="font-size:18px">block</span> Apply unavailable`;
+            qualsContent.innerHTML = '';
             return;
           }
 
-          const levelstatus = await getInstallerLevel(installerId);
-          const userLevel = Number(levelstatus ?? 0);
-          const hasRequirement = Number.isFinite(requiredLevel);
-          const hasLevel = Number.isFinite(userLevel);
+          const installerQuals = await getInstallerQualifications(installerId);
+          const checklist = [];
 
-          if (hasRequirement && hasLevel && userLevel < requiredLevel) {
-            fitBanner.textContent = `Level ${requiredLevel} required. Your current installer level is ${userLevel}.`;
-            applyBtn.textContent = `Requires Level ${requiredLevel}`;
-            return;
+          const reqTags = job.required_course_tags || [];
+          reqTags.forEach(tag => {
+            const isMet = isRequirementTagSatisfied(tag, installerQuals.tags || []);
+            checklist.push({ type: "tag", text: tag, isMet });
+          });
+
+          const predefined = ["cleaning", "electrical", "plumbing", "delivery", "it support", "general help", "general services", "cctv"];
+          const reqExp = job.required_experience || [];
+          reqExp.forEach(req => {
+            let currentCount = 0;
+            const targetCat = String(req.category || "").toLowerCase();
+            const isCustom = !predefined.includes(targetCat);
+            const expMap = installerQuals.experience || {};
+
+            if (isCustom) {
+              currentCount = Object.values(expMap).reduce((sum, val) => sum + Number(val || 0), 0);
+            } else {
+              for (const [catKey, countVal] of Object.entries(expMap)) {
+                if (String(catKey).toLowerCase() === targetCat) {
+                  currentCount += Number(countVal || 0);
+                }
+              }
+            }
+
+            const requiredCount = Number(req.count ?? 0);
+            const isMet = currentCount >= requiredCount;
+            checklist.push({
+              type: "experience",
+              text: isCustom ? `All-Around Experience: ${requiredCount}+ project badge(s)` : `${req.category}: ${requiredCount}+ project badge(s)`,
+              detail: `You have ${currentCount}`,
+              isMet
+            });
+          });
+
+          const metCount = checklist.filter(item => item.isMet).length;
+          const totalCount = checklist.length;
+
+          let eligible = false;
+          const mode = (job.application_mode || "strict").toLowerCase();
+          if (mode === "beginner-friendly") {
+            eligible = true;
+          } else if (mode === "strict") {
+            eligible = metCount === totalCount;
+          } else if (mode === "flexible") {
+            const minMet = Number(job.min_requirements_met || 0);
+            eligible = metCount >= minMet;
           }
 
-          fitBanner.textContent = `Eligible to apply. Your level: ${
-            hasLevel ? userLevel : 0
-          }. Required level: ${hasRequirement ? requiredLevel : 0}.`;
-          applyBtn.disabled = false;
-          applyBtn.textContent = "Apply for this Job!";
+          // --- Eligibility Banner ---
+          if (eligible) {
+            fitBanner.className = "jm-eligibility eligible";
+            if (mode === "beginner-friendly") {
+              fitBanner.innerHTML = `<span class="material-icons-sharp">child_care</span><span>Beginner-Friendly — No qualifications needed!</span>`;
+            } else {
+              fitBanner.innerHTML = `<span class="material-icons-sharp">verified</span><span>You're eligible to apply!</span>`;
+            }
+          } else {
+            fitBanner.className = "jm-eligibility ineligible";
+            fitBanner.innerHTML = `<span class="material-icons-sharp">warning</span><span>You do not meet the qualifications for this job.</span>`;
+          }
+
+          // --- Qualifications Content (badge-style) ---
+          let qualsHtml = '';
+
+          // Application mode badge
+          if (mode === "strict") {
+            qualsHtml += `<div class="jm-quals-mode strict"><span class="material-icons-sharp">gpp_maybe</span> Strict — All requirements must be met</div>`;
+          } else if (mode === "flexible") {
+            const minMet = Number(job.min_requirements_met || 0);
+            qualsHtml += `<div class="jm-quals-mode flexible"><span class="material-icons-sharp">tune</span> Flexible — At least ${minMet} of ${totalCount} required</div>`;
+          } else {
+            qualsHtml += `<div class="jm-quals-mode beginner"><span class="material-icons-sharp">emoji_people</span> Beginner-Friendly — Open to all</div>`;
+          }
+
+          if (checklist.length > 0) {
+            qualsHtml += `<div class="jm-req-grid">`;
+            checklist.forEach(item => {
+              const icon = item.isMet ? 'check_circle' : 'cancel';
+              const cls = item.isMet ? 'met' : 'unmet';
+              const detail = item.detail ? ` <span style="font-weight:500; opacity:0.7; font-size:0.78rem;">(${esc(item.detail)})</span>` : '';
+              qualsHtml += `<div class="jm-req-badge ${cls}"><span class="material-icons-sharp">${icon}</span>${esc(item.text)}${detail}</div>`;
+            });
+            qualsHtml += `</div>`;
+            qualsHtml += `<div class="jm-req-summary"><strong>${metCount}</strong> of <strong>${totalCount}</strong> requirement${totalCount === 1 ? '' : 's'} met</div>`;
+          } else if (mode !== "beginner-friendly") {
+            qualsHtml += `<div style="color:#94a3b8; font-size:0.85rem; font-style:italic;">No specific requirements defined for this job.</div>`;
+          }
+
+          qualsContent.innerHTML = qualsHtml;
+
+          applyBtn.disabled = !eligible;
+          if (eligible) {
+            applyBtn.innerHTML = `<span class="material-icons-sharp" style="font-size:18px">send</span> Apply for this Job!`;
+          } else {
+            applyBtn.innerHTML = `<span class="material-icons-sharp" style="font-size:18px">block</span> Qualifications not met`;
+          }
         } catch (error) {
           console.warn("Eligibility check failed", error);
-          fitBanner.textContent =
-            "We could not verify your level right now. Please try again.";
-          applyBtn.textContent = "Apply unavailable";
+          fitBanner.className = "jm-eligibility ineligible";
+          fitBanner.innerHTML = `<span class="material-icons-sharp">error</span><span>Could not verify your qualifications. Please try again.</span>`;
+          applyBtn.innerHTML = `<span class="material-icons-sharp" style="font-size:18px">block</span> Apply unavailable`;
+          qualsContent.innerHTML = '';
         }
       }
+
       function closeApplyModal() {
         modal.classList.remove("show");
         modal.setAttribute("aria-hidden", "true");
@@ -1844,33 +2524,47 @@
       }
       async function openApplyModal(job) {
         CURRENT_JOB_ID = job.job_id;
-        const imgUrl =
-          job._img ||
-          (await resolveJobPictureSignedUrl(job.job_picture_url)) ||
-          "../images/profile-4.jpg";
-        
-        const effDifficulty = getJobEffectiveDifficulty(job);
+
         const effPay = getJobEffectivePay(job);
         const effDesc = getJobEffectiveDescription(job);
 
-        document.getElementById("mImg").src = imgUrl;
-        document.getElementById("mCategory").textContent =
-          job.job_category || "Uncategorized";
-        document.getElementById("mDifficulty").textContent = `Difficulty: ${
-          effDifficulty
-        }`;
-        document.getElementById("mPay").textContent =
-          "₱" + fmtPeso(effPay);
-        document.getElementById("mDT").textContent = `${fmtDate(
-          job.job_date
-        )} ${fmtTime(job.job_time)}`;
-        document.getElementById("mLoc").textContent =
-          job.job_location || "Not specified";
-        document.getElementById("jobModalTitle").textContent =
-          job.job_title || "Job";
-        document.getElementById("mDesc").textContent =
-          effDesc || "No description provided";
-        document.getElementById("fitBanner").style.display = "none";
+        // Parse manpower from job or description JSON
+        let manpower = job.job_manpower;
+        if (!manpower) {
+          try {
+            const parsed = JSON.parse(job.job_description || '{}');
+            manpower = parsed.manpower || parsed.customer_version?.manpower || 1;
+          } catch { manpower = 1; }
+        }
+
+        // Hero
+        document.getElementById("jobModalTitle").textContent = job.job_title || "Job";
+        document.getElementById("mCategory").innerHTML = `<span class="material-icons-sharp">category</span> ${esc(job.job_category || "Uncategorized")}`;
+        const locHero = document.getElementById("mLocHero");
+        if (locHero) {
+          const shortLoc = (job.job_location || "Not specified").split(',').slice(0, 2).join(',');
+          locHero.innerHTML = `<span class="material-icons-sharp">place</span> ${esc(shortLoc)}`;
+        }
+
+        // Info grid
+        document.getElementById("mPay").textContent = "₱" + fmtPeso(effPay);
+        document.getElementById("mDate").textContent = fmtDate(job.job_date);
+        const mTime = document.getElementById("mTime");
+        if (mTime) mTime.textContent = fmtTime(job.job_time) || "Flexible";
+        const mManpower = document.getElementById("mManpower");
+        if (mManpower) mManpower.textContent = `${manpower} installer(s)`;
+
+        // Location full
+        document.getElementById("mLoc").textContent = job.job_location || "Not specified";
+
+        // Description
+        document.getElementById("mDesc").textContent = effDesc || "No description provided";
+
+        // Reset eligibility
+        const fitBanner = document.getElementById("fitBanner");
+        fitBanner.className = "jm-eligibility loading";
+        fitBanner.innerHTML = `<span class="material-icons-sharp">hourglass_empty</span><span>Checking qualifications...</span>`;
+
         await setResumeLinkInModal();
         await setApplyEligibilityInModal(job);
         modal.classList.add("show");
@@ -1901,7 +2595,7 @@
           if (!CURRENT_JOB_ID) return;
           const modalBtnApply = document.getElementById("modalApplyBtn");
           modalBtnApply.disabled = true;
-          modalBtnApply.textContent = "Checking eligibility…";
+          modalBtnApply.innerHTML = `<span class="material-icons-sharp" style="font-size:18px">hourglass_empty</span> Checking eligibility…`;
           try {
             const base = await getInstallerResume();
             const installerId =
@@ -1911,28 +2605,72 @@
                 "We could not identify your installer profile. Please sign in again."
               );
               modalBtnApply.disabled = false;
-              modalBtnApply.textContent = "Apply for this Job!";
+              modalBtnApply.innerHTML = `<span class="material-icons-sharp" style="font-size:18px">send</span> Apply for this Job!`;
               return;
             }
-            const levelstatus = await getInstallerLevel(installerId);
+            const installerQuals = await getInstallerQualifications(installerId);
             const job = (ALL_JOBS || []).find(
               (j) => String(j.job_id) === String(CURRENT_JOB_ID)
             );
-            const requiredLevel = Number(getJobEffectiveDifficulty(job));
-            const userLevel = Number(levelstatus ?? 0);
-            if (
-              Number.isFinite(requiredLevel) &&
-              Number.isFinite(userLevel) &&
-              userLevel < requiredLevel
-            ) {
-              showToast(
-                `Application blocked: your current level (${userLevel}) does not meet the required job level (${requiredLevel}).`
-              );
+            if (!job) {
+              showToast("Job details not found.");
               modalBtnApply.disabled = false;
-              modalBtnApply.textContent = "Apply for this Job!";
+              modalBtnApply.innerHTML = `<span class="material-icons-sharp" style="font-size:18px">send</span> Apply for this Job!`;
               return;
             }
-            modalBtnApply.textContent = "Submitting…";
+
+            const checklist = [];
+            const reqTags = job.required_course_tags || [];
+            reqTags.forEach(tag => {
+              const isMet = isRequirementTagSatisfied(tag, installerQuals.tags || []);
+              checklist.push({ isMet });
+            });
+
+            const predefined = ["cleaning", "electrical", "plumbing", "delivery", "it support", "general help", "general services", "cctv"];
+            const reqExp = job.required_experience || [];
+            reqExp.forEach(req => {
+              let currentCount = 0;
+              const targetCat = String(req.category || "").toLowerCase();
+              const isCustom = !predefined.includes(targetCat);
+              const expMap = installerQuals.experience || {};
+
+              if (isCustom) {
+                currentCount = Object.values(expMap).reduce((sum, val) => sum + Number(val || 0), 0);
+              } else {
+                for (const [catKey, countVal] of Object.entries(expMap)) {
+                  if (String(catKey).toLowerCase() === targetCat) {
+                    currentCount += Number(countVal || 0);
+                  }
+                }
+              }
+
+              const requiredCount = Number(req.count ?? 0);
+              const isMet = currentCount >= requiredCount;
+              checklist.push({ isMet });
+            });
+
+            const metCount = checklist.filter(item => item.isMet).length;
+            const totalCount = checklist.length;
+
+            let eligible = false;
+            const mode = (job.application_mode || "strict").toLowerCase();
+            if (mode === "beginner-friendly") {
+              eligible = true;
+            } else if (mode === "strict") {
+              eligible = metCount === totalCount;
+            } else if (mode === "flexible") {
+              const minMet = Number(job.min_requirements_met || 0);
+              eligible = metCount >= minMet;
+            }
+
+            if (!eligible) {
+              showToast("Application blocked: you do not meet the qualification requirements for this job.");
+              modalBtnApply.disabled = false;
+              modalBtnApply.innerHTML = `<span class="material-icons-sharp" style="font-size:18px">send</span> Apply for this Job!`;
+              return;
+            }
+
+            modalBtnApply.innerHTML = `<span class="material-icons-sharp" style="font-size:18px">send</span> Submitting…`;
             const { data: applyResult, error: applyError } = await sb.rpc(
               "apply_or_reapply_to_job",
               {
@@ -1988,7 +2726,7 @@
             showToast("Unexpected error while applying. Please try again.");
           } finally {
             modalBtnApply.disabled = false;
-            modalBtnApply.textContent = "Apply for this Job!";
+            modalBtnApply.innerHTML = `<span class="material-icons-sharp" style="font-size:18px">send</span> Apply for this Job!`;
           }
         });
 
@@ -2359,9 +3097,54 @@
         const isBtn =
           e.target === mfpOpenBtn ||
           (mfpOpenBtn && mfpOpenBtn.contains(e.target));
-        const clickedBackdrop = e.target === mfpBackdrop;
-        if (!inPanel && !isBtn && !clickedBackdrop) {
+        if (!inPanel && !isBtn) {
           closeMfp();
+        }
+      });
+
+      function openImageLightbox(src) {
+        let lightbox = document.getElementById("job-image-lightbox");
+        if (!lightbox) {
+          lightbox = document.createElement("div");
+          lightbox.id = "job-image-lightbox";
+          lightbox.style.cssText = `
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+          `;
+          lightbox.innerHTML = `
+            <img id="lightbox-img" src="" style="max-width: 90%; max-height: 90%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); cursor: default;" />
+            <button style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: none; border-radius: 50%; width: 40px; height: 40px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px;" class="material-icons-sharp">close</button>
+          `;
+          document.body.appendChild(lightbox);
+          lightbox.addEventListener("click", (e) => {
+            if (e.target.id === "job-image-lightbox" || e.target.tagName === "BUTTON") {
+              lightbox.style.opacity = "0";
+              setTimeout(() => lightbox.style.display = "none", 250);
+            }
+          });
+        }
+        document.getElementById("lightbox-img").src = src;
+        lightbox.style.display = "flex";
+        lightbox.offsetHeight;
+        lightbox.style.opacity = "1";
+      }
+
+      document.addEventListener("click", (e) => {
+        const btn = e.target.closest(".view-job-image-btn");
+        if (!btn) return;
+        e.stopPropagation();
+        e.preventDefault();
+        const src = btn.getAttribute("data-img-src");
+        if (src) {
+          openImageLightbox(src);
         }
       });
     </script>

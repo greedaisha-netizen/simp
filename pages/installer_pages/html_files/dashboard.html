@@ -216,12 +216,29 @@
       box-shadow: 0 0.6rem 1.1rem var(--color-light);
     }
 
-    .new-users .user-list a.user img {
+    .new-users .user-list a.user img.job-card-thumb-img {
       width: 100%;
       height: 100px;
       margin-bottom: 0.5rem;
       border-radius: 10px;
       object-fit: cover;
+    }
+
+    .new-users .user-list a.user .job-card-thumb-cat {
+      width: 100%;
+      height: 100px;
+      margin-bottom: 0.5rem;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+    }
+
+    .new-users .user-list a.user .job-card-thumb-cat .material-icons-sharp {
+      font-size: 2.2rem;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
     }
 
     .new-users .user-list a.user h2 {
@@ -1291,6 +1308,35 @@
       LATEST_IDS = (jobs || []).map((j) => String(j.job_id));
     }
 
+    function categoryVisual(categoryValue) {
+      const category = (categoryValue || "").toLowerCase();
+      if (category.includes("elect")) {
+        return { label: "Electrical", icon: "bolt", a: "#fbbf24", b: "#d97706" };
+      }
+      if (category.includes("clean")) {
+        return { label: "Cleaning", icon: "cleaning_services", a: "#34d399", b: "#059669" };
+      }
+      if (category.includes("plumb")) {
+        return { label: "Plumbing", icon: "plumbing", a: "#60a5fa", b: "#2563eb" };
+      }
+      if (category.includes("cctv")) {
+        return { label: "CCTV", icon: "videocam", a: "#f472b6", b: "#db2777" };
+      }
+      if (category.includes("network") || category.includes("it support")) {
+        return { label: "IT Support / Networking", icon: "computer", a: "#38bdf8", b: "#0284c7" };
+      }
+      if (category.includes("delivery")) {
+        return { label: "Delivery", icon: "local_shipping", a: "#a78bfa", b: "#7c3aed" };
+      }
+      if (category.includes("general") || category.includes("help")) {
+        return { label: "General Help", icon: "handyman", a: "#fb923c", b: "#ea580c" };
+      }
+      if (category.includes("safety")) {
+        return { label: "Safety", icon: "health_and_safety", a: "#f87171", b: "#dc2626" };
+      }
+      return { label: categoryValue || "Job Service", icon: "work", a: "#94a3b8", b: "#64748b" };
+    }
+
     async function loadLatestJobs() {
       const wrap = document.getElementById("latestJobsWrap");
       wrap.innerHTML = "<p>Loading…</p>";
@@ -1299,7 +1345,7 @@
         .schema("jobs")
         .from("job")
         .select(
-          "job_id, job_title, job_picture_url, posted_by, created_at, job_status, installer_id_assigned, job_description"
+          "job_id, job_title, job_category, job_picture_url, posted_by, created_at, job_status, installer_id_assigned, job_description"
         )
         .eq("job_status", "active")
         .is("installer_id_assigned", null)
@@ -1324,21 +1370,18 @@
         return;
       }
 
-      // Resolve signed URLs in parallel
-      const signedImgs = await Promise.all(
-        filteredJobs.map((j) => resolveJobPictureSignedUrl(j.job_picture_url))
-      );
-
       wrap.innerHTML = "";
-      filteredJobs.forEach((j, idx) => {
-        const imgUrl = signedImgs[idx] || "images/profile-4.jpg";
+      filteredJobs.forEach((j) => {
+        const visual = categoryVisual(j.job_category);
         const a = document.createElement("a");
         a.href = `job.html?job=${encodeURIComponent(j.job_id)}`;
         a.className = "user";
+        
+        const thumbHtml = `<div class="job-card-thumb-cat" style="background: linear-gradient(135deg, ${visual.a}, ${visual.b});"><span class="material-icons-sharp">${visual.icon}</span></div>`;
+
         a.innerHTML = `
-            <img src="${imgUrl}" alt="Job image" onerror="this.onerror=null;this.src='images/profile-4.jpg';" />
-            <h2 title="${(j.job_title || "").replace(/"/g, "&quot;")}">${j.job_title || "Untitled Job"
-          }</h2>
+            ${thumbHtml}
+            <h2 title="${esc(j.job_title || "Untitled Job")}">${esc(j.job_title || "Untitled Job")}</h2>
             <p>${timeAgo(j.created_at)}</p>
           `;
         wrap.appendChild(a);

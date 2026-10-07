@@ -42,7 +42,7 @@ body {
     background: transparent;
 }
 
-.lesson-welcome-overlay {
+.simp-welcome-container {
     position: fixed;
     inset: 0;
     z-index: 1200;
@@ -52,18 +52,18 @@ body {
     padding: 24px;
 }
 
-.lesson-welcome-overlay[hidden] {
+.simp-welcome-container[hidden] {
     display: none;
 }
 
-.lesson-welcome-backdrop {
+.simp-welcome-bg-shade {
     position: absolute;
     inset: 0;
     background: rgba(239, 248, 241, 0.82);
     backdrop-filter: blur(6px);
 }
 
-.lesson-welcome-card {
+.simp-welcome-content-card {
     position: relative;
     width: min(760px, calc(100vw - 48px));
     min-height: 620px;
@@ -77,7 +77,7 @@ body {
     padding: 28px;
 }
 
-.lesson-complete-overlay {
+.simp-complete-container {
     position: fixed;
     inset: 0;
     z-index: 1210;
@@ -87,11 +87,11 @@ body {
     padding: 24px;
 }
 
-.lesson-complete-overlay[hidden] {
+.simp-complete-container[hidden] {
     display: none;
 }
 
-.lesson-complete-card {
+.simp-complete-content-card {
     position: relative;
     width: min(680px, calc(100vw - 48px));
     min-height: 520px;
@@ -105,7 +105,7 @@ body {
     padding: 28px;
 }
 
-.lesson-complete-copy {
+.simp-complete-content-body {
     position: relative;
     z-index: 2;
     width: min(520px, 100%);
@@ -113,7 +113,7 @@ body {
     padding: 12px 8px 0;
 }
 
-.lesson-welcome-copy {
+.simp-welcome-content-body {
     position: relative;
     z-index: 2;
     width: min(560px, 100%);
@@ -121,7 +121,7 @@ body {
     padding: 12px 8px 0;
 }
 
-.lesson-welcome-eyebrow {
+.simp-welcome-content-header {
     margin: 0 0 8px;
     color: var(--lesson-theme-strong);
     font-size: 12px;
@@ -131,7 +131,7 @@ body {
     text-align: center;
 }
 
-.lesson-welcome-copy h2 {
+.simp-welcome-content-body h2 {
     margin: 0;
     color: var(--lesson-theme-ink);
     font-size: 30px;
@@ -139,7 +139,7 @@ body {
     text-align: center;
 }
 
-.lesson-welcome-subtitle {
+.simp-welcome-content-sub {
     margin: 10px 0 0;
     color: #4b5563;
     font-size: 15px;
@@ -147,7 +147,7 @@ body {
     text-align: center;
 }
 
-.lesson-welcome-stage-space {
+.simp-welcome-content-stage {
     height: 260px;
     margin: 8px auto 22px;
     position: relative;
@@ -155,7 +155,7 @@ body {
     z-index: 1;
 }
 
-.lesson-welcome-modes {
+.simp-welcome-content-modes {
     display: grid;
     gap: 10px;
 }
@@ -190,13 +190,13 @@ body {
     border-color: rgba(47, 152, 85, 0.32);
 }
 
-.lesson-welcome-actions {
+.simp-welcome-content-footer {
     display: flex;
     justify-content: center;
     margin-top: 18px;
 }
 
-.lesson-welcome-start {
+.simp-welcome-content-start {
     border: none;
     border-radius: 8px;
     background: var(--lesson-theme);
@@ -805,7 +805,7 @@ body.lesson-no-visual.lesson-mode-manual .text-content {
     transition: opacity 0.2s ease, right 0.3s ease, transform 0.2s ease, width 0.2s ease;
 }
 
-body.lesson-welcome-active .live-tutor {
+body.simp-welcome-active .live-tutor {
     bottom: auto;
     height: 100%;
     left: 50%;
@@ -817,15 +817,15 @@ body.lesson-welcome-active .live-tutor {
     z-index: 1250;
 }
 
-body.lesson-welcome-active .live-tutor-stage {
+body.simp-welcome-active .live-tutor-stage {
     height: 100%;
 }
 
-body.lesson-welcome-active .live-tutor-table {
+body.simp-welcome-active .live-tutor-table {
     width: 100%;
 }
 
-body.lesson-welcome-active .live-tutor-status {
+body.simp-welcome-active .live-tutor-status {
     bottom: 118px;
 }
 
@@ -1101,7 +1101,7 @@ body.lesson-sidebar-open .live-tutor {
     animation-duration: 1.25s;
 }
 
-body.lesson-welcome-active .live-tutor-loading-notice {
+body.simp-welcome-active .live-tutor-loading-notice {
     top: 26%;
     bottom: auto;
     transform: translate(-50%, -50%);
@@ -1524,11 +1524,11 @@ body.lesson-sidebar-open .container:-ms-fullscreen .live-tutor {
         right: calc(var(--lesson-sidebar-expanded-width) + 232px);
     }
 
-    .lesson-welcome-card {
+    .simp-welcome-content-card {
         min-height: 600px;
     }
 
-    .lesson-welcome-stage-space {
+    .simp-welcome-content-stage {
         height: 248px;
         width: min(270px, 100%);
     }
@@ -1609,40 +1609,40 @@ body.lesson-sidebar-open .container:-ms-fullscreen .live-tutor {
         right: 92px;
     }
 
-    .lesson-welcome-card {
+    .simp-welcome-content-card {
         min-height: 570px;
         padding: 18px;
     }
 
-    .lesson-welcome-copy {
+    .simp-welcome-content-body {
         padding: 16px;
     }
 
-    .lesson-welcome-copy h2 {
+    .simp-welcome-content-body h2 {
         font-size: 24px;
     }
 
-    .lesson-welcome-stage-space {
+    .simp-welcome-content-stage {
         height: 222px;
         margin-bottom: 18px;
         width: min(230px, 100%);
     }
 
-    body.lesson-welcome-active .live-tutor {
+    body.simp-welcome-active .live-tutor {
         top: 0;
         width: min(230px, 100%);
         transform: translateX(-50%);
     }
 
-    body.lesson-welcome-active .live-tutor-stage {
+    body.simp-welcome-active .live-tutor-stage {
         height: 100%;
     }
 
-    body.lesson-welcome-active .live-tutor-status {
+    body.simp-welcome-active .live-tutor-status {
         bottom: 100px;
     }
 
-    body.lesson-welcome-active .live-tutor-loading-notice {
+    body.simp-welcome-active .live-tutor-loading-notice {
         top: 22%;
         width: min(210px, calc(100% - 20px));
     }
@@ -1653,15 +1653,15 @@ body.lesson-sidebar-open .container:-ms-fullscreen .live-tutor {
 <script type="module" src="../shared/course-engagement-supabase.js"></script>
 </head>
 <body>
-    <div class="lesson-welcome-overlay" id="lessonWelcomeOverlay" hidden>
-        <div class="lesson-welcome-backdrop"></div>
-        <div class="lesson-welcome-card">
-            <div class="lesson-welcome-copy">
-                <p class="lesson-welcome-eyebrow">Lesson Session</p>
-                <h2 id="lessonWelcomeTitle">Welcome</h2>
-                <p class="lesson-welcome-subtitle" id="lessonWelcomeSubtitle" hidden></p>
-                <div class="lesson-welcome-stage-space" id="lessonWelcomeTutorSlot"></div>
-                <div class="lesson-welcome-modes">
+    <div class="simp-welcome-container" id="simp-w-intro-box" hidden>
+        <div class="simp-welcome-bg-shade"></div>
+        <div class="simp-welcome-content-card">
+            <div class="simp-welcome-content-body">
+                <p class="simp-welcome-content-header">Lesson Session</p>
+                <h2 id="simp-w-intro-title">Welcome</h2>
+                <p class="simp-welcome-content-sub" id="simp-w-intro-subtitle" hidden></p>
+                <div class="simp-welcome-content-stage" id="simp-w-intro-tutor-slot"></div>
+                <div class="simp-welcome-content-modes">
                     <button type="button" class="lesson-mode-btn active" data-mode-option="auto">
                         <strong>Auto</strong>
                         <span>Steqyy teaches, handles the visuals, and moves to the next slide automatically.</span>
@@ -1675,21 +1675,21 @@ body.lesson-sidebar-open .container:-ms-fullscreen .live-tutor {
                         <span>You self-study each slide, control the visuals, and move forward yourself.</span>
                     </button>
                 </div>
-                <div class="lesson-welcome-actions">
-                    <button type="button" class="lesson-welcome-start" id="lessonWelcomeStartBtn">Start Session</button>
+                <div class="simp-welcome-content-footer">
+                    <button type="button" class="simp-welcome-content-start" id="simp-w-intro-start-btn">Start Session</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="lesson-complete-overlay" id="lessonCompleteOverlay" hidden>
-        <div class="lesson-welcome-backdrop"></div>
-        <div class="lesson-complete-card">
-            <div class="lesson-complete-copy">
-                <p class="lesson-welcome-eyebrow">Lesson Complete</p>
-                <h2 id="lessonCompleteTitle" hidden></h2>
-                <p class="lesson-welcome-subtitle" id="lessonCompleteSubtitle" hidden></p>
-                <div class="lesson-welcome-stage-space" id="lessonCompleteTutorSlot"></div>
+    <div class="simp-complete-container" id="simp-c-done-box" hidden>
+        <div class="simp-welcome-bg-shade"></div>
+        <div class="simp-complete-content-card">
+            <div class="simp-complete-content-body">
+                <p class="simp-welcome-content-header">Lesson Complete</p>
+                <h2 id="simp-c-done-title" hidden></h2>
+                <p class="simp-welcome-content-sub" id="simp-c-done-subtitle" hidden></p>
+                <div class="simp-welcome-content-stage" id="simp-c-done-tutor-slot"></div>
                 <div class="lesson-completion-actions">
                     <button type="button" class="lesson-completion-btn" id="lessonReadMoreBtn">Read More</button>
                     <button type="button" class="lesson-completion-btn" id="lessonAnswerAssessmentBtn">Answer Assessment</button>
@@ -2027,6 +2027,11 @@ let liveTutorFallbackSpeechUntil = 0;
 let liveTutorHomeParent = null;
 let liveTutorHomeNextSibling = null;
 let isLiveTutorLoading = true;
+let liveTutorLoadFailed = false;
+let resolveLiveTutorReadyPromise = null;
+const liveTutorReadyPromise = new Promise((resolve) => {
+    resolveLiveTutorReadyPromise = resolve;
+});
 const LIVE_TUTOR_WAVE_SEGMENT_MS = 2000;
 const LIVE_TUTOR_WAVE_EXIT_MS = 420;
 const LIVE_TUTOR_LOOK_TIMEOUT_MS = 900;
@@ -2125,7 +2130,7 @@ function initializePreviewMode() {
         previewPayload = null;
     }
 
-    if (previewPayload && Array.isArray(previewPayload.slides) && previewPayload.slides.length > 0) {
+    if (previewPayload && Array.isArray(previewPayload.slides)) {
         isAdminPreviewMode = true;
         currentLearningMode = 'mixed';
         isLessonWelcomePending = true;
@@ -2158,9 +2163,18 @@ function initializePreviewMode() {
         currentLessonPayload = null;
     }
 
-    if (currentLessonPayload && Array.isArray(currentLessonPayload.slides) && currentLessonPayload.slides.length > 0) {
+    const lessonUrlParams = new URLSearchParams(window.location.search);
+    const forceWelcome = lessonUrlParams.get('welcome') === '1' || lessonUrlParams.get('welcomePending') === 'true';
+    if (lessonUrlParams.has('welcome')) {
+        lessonUrlParams.delete('welcome');
+        const nextSearch = lessonUrlParams.toString();
+        const nextUrl = window.location.pathname + (nextSearch ? '?' + nextSearch : '') + window.location.hash;
+        window.history.replaceState(null, '', nextUrl);
+    }
+
+    if (currentLessonPayload && Array.isArray(currentLessonPayload.slides)) {
         currentLearningMode = normalizeLearningMode(currentLessonPayload.learningMode || 'auto');
-        isLessonWelcomePending = Boolean(currentLessonPayload.welcomePending);
+        isLessonWelcomePending = forceWelcome || Boolean(currentLessonPayload.welcomePending);
         isLessonPaused = false;
         autoPlayEnabled = !isLessonWelcomePending && currentLearningMode !== 'manual';
         initializeStudentProgressMode();
@@ -2178,8 +2192,9 @@ function initializePreviewMode() {
 function initializeStudentProgressMode() {
     currentProgressEntry = getOrCreateLessonProgressEntry(currentLessonPayload);
     recordLearningActivity('study_session_started', currentLessonPayload);
+    const isCompleted = currentProgressEntry?.completedAt || (Number(currentProgressEntry?.progressPercent) >= 100);
     previewSlideIndex = Math.min(
-        Math.max(Number(currentLessonPayload?.currentSlideIndex ?? currentProgressEntry?.currentSlideIndex) || 0, 0),
+        Math.max(Number(currentLessonPayload?.currentSlideIndex ?? (isCompleted ? 0 : currentProgressEntry?.currentSlideIndex)) || 0, 0),
         Math.max((currentLessonPayload.slides || []).length - 1, 0)
     );
 
@@ -2367,23 +2382,39 @@ function renderLessonSlide() {
     }
 
     const slides = currentLessonPayload.slides || [];
-    previewSlideIndex = Math.min(Math.max(previewSlideIndex, 0), slides.length - 1);
+    const totalSlides = slides.length;
+    previewSlideIndex = totalSlides > 0 ? Math.min(Math.max(previewSlideIndex, 0), totalSlides - 1) : 0;
     const slide = slides[previewSlideIndex];
     const hasVisualContent = slideHasReviewableVisual(slide);
     document.body.classList.toggle('lesson-no-visual', !hasVisualContent);
 
-    document.getElementById('lessonTitle').textContent = `Slide ${previewSlideIndex + 1}: ${currentLessonPayload.lessonTitle || 'Lesson Preview'}`;
+    const displayIndex = totalSlides > 0 ? previewSlideIndex + 1 : 0;
+    document.getElementById('lessonTitle').textContent = totalSlides > 0 
+        ? `Slide ${displayIndex}: ${currentLessonPayload.lessonTitle || 'Lesson Preview'}`
+        : `${currentLessonPayload.lessonTitle || 'Lesson Preview'}`;
     document.getElementById('lessonSubtitle').textContent = buildCurrentLessonSubtitle();
 
+    const isLastSlide = totalSlides === 0 || previewSlideIndex >= totalSlides - 1;
+    const prevBtn = document.getElementById('previewPrevBtn');
+    const nextBtn = document.getElementById('previewNextBtn');
+
+    if (prevBtn) {
+        prevBtn.disabled = previewSlideIndex <= 0;
+    }
+    if (nextBtn) {
+        nextBtn.disabled = false;
+        const nextLabel = nextBtn.querySelector('.btn-label');
+        if (nextLabel) {
+            nextLabel.textContent = isLastSlide ? 'Finish' : 'Next';
+        }
+    }
+
     const toolbarMeta = document.getElementById('previewToolbarMeta');
-    if (isAdminPreviewMode) {
-        toolbarMeta.textContent = `Slide ${previewSlideIndex + 1} of ${slides.length}`;
-        document.getElementById('previewPrevBtn').disabled = previewSlideIndex <= 0;
-        document.getElementById('previewNextBtn').disabled = previewSlideIndex >= slides.length - 1;
-    } else {
-        toolbarMeta.textContent = `Slide ${previewSlideIndex + 1} of ${slides.length}`;
-        document.getElementById('previewPrevBtn').disabled = previewSlideIndex <= 0;
-        document.getElementById('previewNextBtn').disabled = previewSlideIndex >= slides.length - 1;
+    if (toolbarMeta) {
+        toolbarMeta.textContent = totalSlides > 0 ? `Slide ${displayIndex} of ${totalSlides}` : 'No slides';
+    }
+
+    if (!isAdminPreviewMode) {
         syncLessonProgress();
     }
 
@@ -3045,6 +3076,9 @@ function resolveSteqyySpeechConfig(language = inferSpeechLanguageCode()) {
 }
 
 async function speakSteqyyLine(text, runId) {
+    if (currentLearningMode === 'manual') {
+        return Promise.resolve();
+    }
     const cleanText = String(text || '').replace(/\s+/g, ' ').trim();
     if (!cleanText) {
         return Promise.resolve();
@@ -3531,6 +3565,12 @@ function changePreviewSlide(step, options = {}) {
         return;
     }
 
+    const totalSlides = Array.isArray(currentLessonPayload.slides) ? currentLessonPayload.slides.length : 0;
+    if (step > 0 && (previewSlideIndex >= totalSlides - 1 || totalSlides === 0)) {
+        showLessonCompletionOverlay();
+        return;
+    }
+
     if (!options.force && step > 0 && currentLearningMode === 'manual') {
         const uncheckedVisuals = getUncheckedSlideVisualLabels();
         if (uncheckedVisuals.length) {
@@ -3554,7 +3594,7 @@ function bindLessonControls() {
             applyLearningMode(button.dataset.modeSwitch || 'auto');
         });
     });
-    document.getElementById('lessonWelcomeStartBtn')?.addEventListener('click', startLessonExperience);
+    document.getElementById('simp-w-intro-start-btn')?.addEventListener('click', startLessonExperience);
     document.getElementById('lessonReadMoreBtn')?.addEventListener('click', handleLessonReadMoreRequest);
     document.getElementById('lessonAnswerAssessmentBtn')?.addEventListener('click', handleLessonAssessmentRequest);
     document.getElementById('lessonNextLessonBtn')?.addEventListener('click', handleLessonNextLessonRequest);
@@ -3587,9 +3627,9 @@ function showLessonWelcomeOverlay() {
         return;
     }
 
-    const overlay = document.getElementById('lessonWelcomeOverlay');
-    const title = document.getElementById('lessonWelcomeTitle');
-    const subtitle = document.getElementById('lessonWelcomeSubtitle');
+    const overlay = document.getElementById('simp-w-intro-box');
+    const title = document.getElementById('simp-w-intro-title');
+    const subtitle = document.getElementById('simp-w-intro-subtitle');
     if (!overlay || !title || !subtitle) {
         return;
     }
@@ -3600,11 +3640,15 @@ function showLessonWelcomeOverlay() {
     isLiveTutorHidden = false;
     applyLiveTutorDisplayState();
     overlay.hidden = false;
-    document.body.classList.add('lesson-welcome-active');
+    document.body.classList.add('simp-welcome-active');
     dockLiveTutorInWelcomeSlot();
     selectLearningMode(currentLearningMode || 'auto');
-    window.setTimeout(() => {
+    window.setTimeout(async () => {
         if (!isLessonWelcomePending) {
+            return;
+        }
+        const isReady = await waitForLiveTutorModelReady();
+        if (!isReady || !isLessonWelcomePending) {
             return;
         }
         speakSteqyySystemMessage(buildLessonWelcomeMessage());
@@ -3612,29 +3656,29 @@ function showLessonWelcomeOverlay() {
 }
 
 function hideLessonWelcomeOverlay() {
-    const overlay = document.getElementById('lessonWelcomeOverlay');
+    const overlay = document.getElementById('simp-w-intro-box');
     if (overlay) {
         overlay.hidden = true;
     }
     setLiveTutorLockedSize(null);
     restoreLiveTutorHome();
-    document.body.classList.remove('lesson-welcome-active');
+    document.body.classList.remove('simp-welcome-active');
     window.setTimeout(fitLiveTutorModel, 80);
 }
 
 function hideLessonCompleteOverlay() {
-    const overlay = document.getElementById('lessonCompleteOverlay');
+    const overlay = document.getElementById('simp-c-done-box');
     if (overlay) {
         overlay.hidden = true;
     }
     setLiveTutorLockedSize(null);
     restoreLiveTutorHome();
-    document.body.classList.remove('lesson-welcome-active');
+    document.body.classList.remove('simp-welcome-active');
     window.setTimeout(fitLiveTutorModel, 80);
 }
 
 function dockLiveTutorInWelcomeSlot() {
-    dockLiveTutorInSlot('lessonWelcomeTutorSlot');
+    dockLiveTutorInSlot('simp-w-intro-tutor-slot');
 }
 
 function dockLiveTutorInSlot(slotId) {
@@ -3670,10 +3714,10 @@ function selectLearningMode(mode) {
 }
 
 function configureLessonOverlayForWelcome() {
-    const title = document.getElementById('lessonWelcomeTitle');
-    const subtitle = document.getElementById('lessonWelcomeSubtitle');
-    const modes = document.querySelector('.lesson-welcome-modes');
-    const welcomeActions = document.querySelector('.lesson-welcome-actions');
+    const title = document.getElementById('simp-w-intro-title');
+    const subtitle = document.getElementById('simp-w-intro-subtitle');
+    const modes = document.querySelector('.simp-welcome-content-modes');
+    const welcomeActions = document.querySelector('.simp-welcome-content-footer');
     if (!title || !subtitle) {
         return;
     }
@@ -3704,9 +3748,9 @@ function showLessonCompletionOverlay() {
         return;
     }
 
-    const overlay = document.getElementById('lessonCompleteOverlay');
-    const title = document.getElementById('lessonCompleteTitle');
-    const subtitle = document.getElementById('lessonCompleteSubtitle');
+    const overlay = document.getElementById('simp-c-done-box');
+    const title = document.getElementById('simp-c-done-title');
+    const subtitle = document.getElementById('simp-c-done-subtitle');
     const nextLessonButton = document.getElementById('lessonNextLessonBtn');
     if (!overlay || !title || !subtitle) {
         return;
@@ -3727,9 +3771,9 @@ function showLessonCompletionOverlay() {
         nextLessonButton.textContent = nextLesson ? 'Next Lesson' : 'No Next Lesson';
     }
     overlay.hidden = false;
-    document.body.classList.add('lesson-welcome-active');
+    document.body.classList.add('simp-welcome-active');
     setLiveTutorLockedSize(LIVE_TUTOR_OVERLAY_SIZE_INDEX);
-    dockLiveTutorInSlot('lessonCompleteTutorSlot');
+    dockLiveTutorInSlot('simp-c-done-tutor-slot');
     window.setTimeout(() => {
         if (lessonCompletionShown && !isLessonWelcomePending) {
             speakSteqyySystemMessage(buildLessonCompletionMessage());
@@ -3882,11 +3926,34 @@ function normalizeLearningMode(mode) {
     return ['auto', 'mixed', 'manual'].includes(mode) ? mode : 'auto';
 }
 
+function markLiveTutorReady(isReady) {
+    liveTutorLoadFailed = !isReady;
+    if (typeof resolveLiveTutorReadyPromise === 'function') {
+        resolveLiveTutorReadyPromise(Boolean(isReady));
+        resolveLiveTutorReadyPromise = null;
+    }
+}
+
+async function waitForLiveTutorModelReady(timeoutMs = 12000) {
+    if (liveTutorModel) {
+        return true;
+    }
+    if (liveTutorLoadFailed) {
+        return false;
+    }
+
+    const timeout = new Promise((resolve) => {
+        window.setTimeout(() => resolve(false), timeoutMs);
+    });
+    return Promise.race([liveTutorReadyPromise, timeout]);
+}
+
 async function initializeLiveTutor() {
     const stage = document.getElementById('liveTutorStage');
     const canvas = document.getElementById('liveTutorCanvas');
     const status = document.getElementById('liveTutorStatus');
     if (!stage || !canvas || !status) {
+        markLiveTutorReady(false);
         return;
     }
 
@@ -3899,12 +3966,14 @@ async function initializeLiveTutor() {
         console.error('Live2D viewer load failed:', error);
         setLiveTutorLoadingState(false);
         showLiveTutorStatus(error?.message || 'Live2D viewer failed to load.', true);
+        markLiveTutorReady(false);
         return;
     }
 
     if (!window.PIXI || !window.PIXI.live2d?.Live2DModel) {
         setLiveTutorLoadingState(false);
         showLiveTutorStatus('Live2D viewer failed to load. Pixi Live2D Display did not register.', true);
+        markLiveTutorReady(false);
         return;
     }
 
@@ -3929,6 +3998,7 @@ async function initializeLiveTutor() {
         window.addEventListener('resize', fitLiveTutorModel);
         liveTutorApp.ticker.add(updateLiveTutorIdle);
         setLiveTutorLoadingState(false);
+        markLiveTutorReady(true);
     } catch (error) {
         console.error('Steqyy Live2D load failed:', error);
         const message = window.location.protocol === 'file:'
@@ -3936,6 +4006,7 @@ async function initializeLiveTutor() {
             : getLiveTutorErrorMessage(error);
         setLiveTutorLoadingState(false);
         showLiveTutorStatus(message, true);
+        markLiveTutorReady(false);
     }
 }
 

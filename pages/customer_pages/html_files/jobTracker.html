@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/png" href="../../../img/simpHappyMascotLogo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons+Sharp"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/pages/customer_pages/css_files/sideBar.css" />
+    <title>Job Tracker</title>
+    <style>
+      main {
+        margin-top: 1.4rem;
+        padding: 1rem;
+        padding-bottom: 2rem;
+      }
+
+      .tracker-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.2rem;
+      }
+
+      .tracker-header h1 {
+        margin: 0;
+        font-size: clamp(1.7rem, 2vw, 2.25rem);
+        color: #111827;
+      }
+
+      .tracker-header p {
+        margin: 0.35rem 0 0;
+        color: #64748b;
+        max-width: 680px;
+        line-height: 1.5;
+      }
+
+      .tracker-actions {
+        display: flex;
+        gap: 0.7rem;
+        flex-wrap: wrap;
+      }
+
+      .tracker-actions input,
+      .tracker-actions select {
+        border: 1px solid #dbe3ef;
+        border-radius: 999px;
+        padding: 0.75rem 1rem;
+        background: #fff;
+        min-width: 180px;
+        color: #1f2937;
+        outline: none;
+      }
+
+      .tracker-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 1rem;
+      }
+
+      .tracker-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+      }
+
+      .tracker-card-head {
+        padding: 1rem;
+        color: #fff;
+        background: linear-gradient(135deg, var(--job-a, #20647c), var(--job-b, #20a44c));
+        position: relative;
+        min-height: 118px;
+      }
+
+      .tracker-card-head::after {
+        content: "";
+        position: absolute;
+        inset: 0 0 0 auto;
+        width: 42%;
+        clip-path: polygon(38% 0, 100% 0, 100% 100%, 0 100%);
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .tracker-head-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        height: 100%;
+        flex-direction: column;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+
+      .tracker-kicker {
+        font-size: 0.76rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.78);
+      }
+
+      .tracker-card h2 {
+        margin: 0.25rem 0 0;
+        color: #fff;
+        font-size: 1.15rem;
+        line-height: 1.25;
+      }
+
+      .status-pill {
+        width: max-content;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.42rem 0.75rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.18);
+        color: #fff;
+        font-size: 0.76rem;
+        font-weight: 800;
+      }
+
+      .tracker-body {
+        padding: 1rem;
+        display: grid;
+        gap: 1rem;
+      }
+
+      .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.55rem;
+      }
+
+      .detail-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.6rem;
+        color: #475569;
+        font-size: 0.9rem;
+        line-height: 1.35;
+      }
+
+      .detail-row.full {
+        grid-column: 1 / -1;
+      }
+
+      .detail-row .material-icons-sharp {
+        width: 24px;
+        height: 24px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: #f1f5f9;
+        color: #20647c;
+        font-size: 1rem;
+        flex: 0 0 auto;
+      }
+
+      .installer-panel {
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        padding: 0.9rem;
+        background: #f8fafc;
+      }
+
+      .info-section {
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        background: #fff;
+        padding: 0.85rem;
+      }
+
+      .info-title {
+        margin: 0 0 0.7rem;
+        color: #111827;
+        font-size: 0.86rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .info-list {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.55rem;
+      }
+
+      .info-item {
+        min-width: 0;
+        border-radius: 10px;
+        background: #f8fafc;
+        padding: 0.65rem;
+      }
+
+      .info-item.wide {
+        grid-column: 1 / -1;
+      }
+
+      .info-label {
+        display: block;
+        margin-bottom: 0.2rem;
+        color: #64748b;
+        font-size: 0.72rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .info-value {
+        color: #1f2937;
+        font-size: 0.86rem;
+        font-weight: 700;
+        overflow-wrap: anywhere;
+      }
+
+      .installer-top {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+      }
+
+      .installer-avatar {
+        width: 54px;
+        height: 54px;
+        border-radius: 16px;
+        object-fit: cover;
+        background: #dbeafe;
+        color: #1d4ed8;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+      }
+
+      .installer-name {
+        margin: 0;
+        color: #111827;
+        font-size: 1rem;
+        font-weight: 800;
+      }
+
+      .installer-meta {
+        margin: 0.2rem 0 0;
+        color: #64748b;
+        font-size: 0.84rem;
+      }
+
+      .review-summary {
+        margin-top: 0.8rem;
+        display: flex;
+        align-items: center;
+        gap: 0.45rem;
+        color: #334155;
+        font-size: 0.86rem;
+      }
+
+      .review-summary.existing {
+        align-items: flex-start;
+        border-top: 1px solid #e5e7eb;
+        padding-top: 0.75rem;
+        line-height: 1.35;
+      }
+
+      .stars {
+        color: #f59e0b;
+        letter-spacing: 0.05em;
+      }
+
+      .card-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+      }
+
+      .btn {
+        border: 0;
+        border-radius: 999px;
+        padding: 0.7rem 1rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .btn-primary {
+        background: #20a44c;
+        color: #fff;
+      }
+
+      .btn-secondary {
+        background: #eef2f7;
+        color: #334155;
+      }
+
+      .btn:disabled {
+        cursor: not-allowed;
+        opacity: 0.62;
+      }
+
+      .status-control {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        padding: 0.25rem;
+        border-radius: 999px;
+        background: #eef2f7;
+        border: 1px solid #dbe4f0;
+      }
+
+      .status-choice {
+        border: 0;
+        border-radius: 999px;
+        padding: 0.55rem 0.82rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        background: transparent;
+        color: #64748b;
+        font-weight: 800;
+        cursor: pointer;
+      }
+
+      .status-choice .material-icons-sharp {
+        font-size: 1rem;
+      }
+
+      .status-choice.active {
+        background: #fff;
+        color: #166534;
+        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+      }
+
+      .status-choice:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+      }
+
+      .empty-state {
+        grid-column: 1 / -1;
+        padding: 2rem;
+        border: 1px dashed #cbd5e1;
+        border-radius: 16px;
+        background: #fff;
+        color: #64748b;
+        text-align: center;
+      }
+
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background: rgba(15, 23, 42, 0.52);
+      }
+
+      .modal-backdrop.show {
+        display: flex;
+      }
+
+      .review-modal {
+        width: min(520px, 100%);
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 24px 70px rgba(15, 23, 42, 0.24);
+        padding: 1.25rem;
+      }
+
+      .review-modal h2 {
+        margin: 0;
+        color: #111827;
+      }
+
+      .rating-picker {
+        display: flex;
+        gap: 0.35rem;
+        margin: 1rem 0;
+      }
+
+      .star-btn {
+        border: 0;
+        background: #f1f5f9;
+        color: #94a3b8;
+        border-radius: 10px;
+        width: 42px;
+        height: 42px;
+        cursor: pointer;
+        font-size: 1.4rem;
+      }
+
+      .star-btn.active {
+        background: #fef3c7;
+        color: #f59e0b;
+      }
+
+      .tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin-bottom: 1rem;
+      }
+
+      .tag-chip {
+        border: 1px solid #dbe3ef;
+        border-radius: 999px;
+        background: #fff;
+        color: #475569;
+        padding: 0.48rem 0.7rem;
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      .tag-chip.active {
+        border-color: #20a44c;
+        background: #ecfdf3;
+        color: #166534;
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 110px;
+        resize: vertical;
+        border: 1px solid #dbe3ef;
+        border-radius: 12px;
+        padding: 0.8rem;
+        font-family: inherit;
+      }
+
+      .modal-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.65rem;
+        margin-top: 1rem;
+      }
+
+      @media (max-width: 760px) {
+        .tracker-header {
+          flex-direction: column;
+        }
+
+        .tracker-actions input,
+        .tracker-actions select {
+          width: 100%;
+        }
+
+        .tracker-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .detail-grid,
+        .info-list {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <aside>
+        <div class="toggle">
+          <div class="logo">
+            <img src="../../../img/simpHappyMascotLogo.png" alt="logo" />
+            <h2>SIMP<span class="danger">Project</span></h2>
+          </div>
+          <div class="close" id="close-btn">
+            <span class="material-icons-sharp">close</span>
+          </div>
+        </div>
+
+        <div class="sidebar">
+          <a href="myJobPosts.html">
+            <span class="material-icons-sharp">cases</span>
+            <h3>My Job Posts</h3>
+          </a>
+          <a href="jobTracker.html" class="active">
+            <span class="material-icons-sharp">track_changes</span>
+            <h3>Job Tracker</h3>
+          </a>
+          <a href="createPost.html" id="nav-create">
+            <span class="material-icons-sharp">add</span>
+            <h3>Create a post</h3>
+          </a>
+          <a href="settings.html">
+            <span class="material-icons-sharp">settings</span>
+            <h3>Settings</h3>
+          </a>
+          <a href="#" id="logout-btn">
+            <span class="material-icons-sharp">logout</span>
+            <h3>Logout</h3>
+          </a>
+        </div>
+      </aside>
+
+      <main>
+        <div class="tracker-header">
+          <div>
+            <h1>Job Tracker</h1>
+            <p>
+              Track posted jobs, assigned installers, application status, and customer reviews in one place.
+            </p>
+          </div>
+          <div class="tracker-actions">
+            <input id="searchInput" type="search" placeholder="Search jobs or installers" />
+            <select id="statusFilter" title="Filter status">
+              <option value="">All jobs</option>
+              <option value="active">On-going</option>
+              <option value="completed">Complete</option>
+              <option value="unfinished">Unfinished</option>
+            </select>
+          </div>
+        </div>
+
+        <section class="tracker-grid" id="trackerGrid">
+          <div class="empty-state">Loading tracked jobs...</div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="reviewModal" aria-hidden="true">
+      <div class="review-modal" role="dialog" aria-modal="true" aria-labelledby="reviewTitle">
+        <h2 id="reviewTitle">Review Installer</h2>
+        <p id="reviewSubtitle" class="installer-meta"></p>
+        <div class="rating-picker" id="ratingPicker" aria-label="Rating"></div>
+        <div class="tag-list" id="tagList"></div>
+        <textarea id="reviewComment" placeholder="Write a short review of your experience with this installer..."></textarea>
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="reviewCancelBtn" type="button">Cancel</button>
+          <button class="btn btn-primary" id="reviewSubmitBtn" type="button">Submit Review</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+    <script type="module">
+      import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../../../supabase.js";
+
+      const { createClient } = supabase;
+      const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      const grid = document.getElementById("trackerGrid");
+      const searchInput = document.getElementById("searchInput");
+      const statusFilter = document.getElementById("statusFilter");
+      const reviewModal = document.getElementById("reviewModal");
+      const ratingPicker = document.getElementById("ratingPicker");
+      const tagList = document.getElementById("tagList");
+      const reviewComment = document.getElementById("reviewComment");
+      const reviewSubmitBtn = document.getElementById("reviewSubmitBtn");
+      const reviewCancelBtn = document.getElementById("reviewCancelBtn");
+      const reviewSubtitle = document.getElementById("reviewSubtitle");
+
+      const REVIEW_TAGS = [
+        "Professional",
+        "On time",
+        "Quality work",
+        "Good communication",
+        "Needs improvement",
+      ];
+      const CHOSEN_APP_STATUSES = new Set([
+        "approved",
+        "accepted",
+        "customer_accepted",
+        "done",
+        "completed",
+      ]);
+      const TRACKER_STATUSES = [
+        { value: "active", label: "On-going", icon: "radio_button_checked" },
+        { value: "completed", label: "Complete", icon: "task_alt" },
+        { value: "unfinished", label: "Unfinished", icon: "pending_actions" },
+      ];
+
+      let userId = null;
+      let trackerRows = [];
+      let activeReviewTarget = null;
+      let activeRating = 5;
+      let activeTags = new Set();
+
+      function fromInSchema(client, schema, table) {
+        if (client.schema && typeof client.schema === "function") {
+          return client.schema(schema).from(table);
+        }
+        return client.from(`${schema}.${table}`);
+      }
+
+      function esc(value) {
+        return String(value ?? "").replace(/[&<>"']/g, (s) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        }[s]));
+      }
+
+      function peso(value) {
+        const amount = Number(value || 0);
+        return `₱${amount.toLocaleString("en-PH", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`;
+      }
+
+      function fmtDate(value) {
+        if (!value) return "Date not set";
+        const date = new Date(`${value}T00:00:00`);
+        if (Number.isNaN(date.getTime())) return String(value);
+        return date.toLocaleDateString("en-PH", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      }
+
+      function fmtTime(value) {
+        return value ? String(value).slice(0, 5) : "Time not set";
+      }
+
+      function normalizeStatus(value) {
+        return String(value || "").toLowerCase().trim();
+      }
+
+      function trackerStatus(value) {
+        const status = normalizeStatus(value);
+        if (status === "done") return "completed";
+        if (TRACKER_STATUSES.some((item) => item.value === status)) return status;
+        return "active";
+      }
+
+      function trackerStatusLabel(value) {
+        return TRACKER_STATUSES.find((item) => item.value === value)?.label || "On-going";
+      }
+
+      function cityOnly(value) {
+        return value ? String(value).split(",")[0].trim() : "";
+      }
+
+      function parseDescriptionPayload(desc) {
+        if (!desc || typeof desc !== "string") return null;
+        const raw = desc.trim();
+        if (!raw.startsWith("{")) return null;
+        try {
+          return JSON.parse(raw);
+        } catch (_) {
+          return null;
+        }
+      }
+
+      function getJobDescription(job) {
+        const raw = job?.job_description || "";
+        const data = parseDescriptionPayload(raw);
+        if (!data) return raw;
+        return (
+          data.current_description ||
+          data.description ||
+          data.customer_version?.description ||
+          data.admin_suggested_version?.description ||
+          data.original_customer_version?.description ||
+          data.original_description ||
+          ""
+        );
+      }
+
+      function categoryVisual(categoryValue) {
+        const category = String(categoryValue || "").toLowerCase();
+        if (category.includes("elect")) return { label: "Electrical", icon: "bolt", a: "#1d4ed8", b: "#0f766e" };
+        if (category.includes("safety")) return { label: "Safety", icon: "health_and_safety", a: "#dc2626", b: "#f97316" };
+        if (category.includes("network")) return { label: "Networking", icon: "language", a: "#047857", b: "#0891b2" };
+        if (category.includes("cctv")) return { label: "CCTV", icon: "photo_camera", a: "#5b21b6", b: "#2563eb" };
+        if (category.includes("plumb")) return { label: "Plumbing", icon: "handyman", a: "#0369a1", b: "#14b8a6" };
+        if (category.includes("general")) return { label: "General Services", icon: "construction", a: "#475569", b: "#16a34a" };
+        return { label: categoryValue || "Job Service", icon: "work", a: "#1f2937", b: "#20647c" };
+      }
+
+      function initials(name) {
+        return String(name || "Installer")
+          .split(/\s+/)
+          .map((part) => part[0])
+          .filter(Boolean)
+          .slice(0, 2)
+          .join("")
+          .toUpperCase();
+      }
+
+      function valueOrDash(value) {
+        const text = String(value ?? "").trim();
+        return text || "N/A";
+      }
+
+      function difficultyLabel(value) {
+        const text = String(value ?? "").trim();
+        const map = {
+          "": "N/A",
+          "0": "Level 1",
+          "1": "Level 2",
+          "2": "Level 3",
+          "3": "Level 4",
+          "4": "Level 5",
+        };
+        return map[text] || text;
+      }
+
+      function infoItem(label, value, wide = false) {
+        return `
+          <div class="info-item${wide ? " wide" : ""}">
+            <span class="info-label">${esc(label)}</span>
+            <span class="info-value">${esc(valueOrDash(value))}</span>
+          </div>
+        `;
+      }
+
+      function stars(rating) {
+        const value = Math.max(0, Math.min(5, Number(rating || 0)));
+        return "★".repeat(value) + "☆".repeat(5 - value);
+      }
+
+      async function resolveInstallerPicture(path) {
+        if (!path) return null;
+        if (/^https?:\/\//i.test(path) && !path.includes("/storage/v1/object/")) return path;
+        const clean = String(path).replace(/^\/+/, "");
+        const { data } = await sb.storage.from("installer_profile").createSignedUrl(clean, 3600);
+        return data?.signedUrl || null;
+      }
+
+      function getChosenApplication(job, applications) {
+        const assigned = job.installer_id_assigned;
+        if (assigned) {
+          const assignedApp = applications.find((app) => app.installer_id === assigned);
+          if (assignedApp) return assignedApp;
+        }
+        return applications.find((app) => CHOSEN_APP_STATUSES.has(normalizeStatus(app.status))) || null;
+      }
+
+      function canReview(row) {
+        if (!row.installer) return false;
+        const appStatus = normalizeStatus(row.application?.status);
+        const assignedInstaller = row.job.installer_id_assigned;
+        return (
+          String(assignedInstaller || "") === String(row.installer.id || "") ||
+          CHOSEN_APP_STATUSES.has(appStatus)
+        );
+      }
+
+      function rowMatchesFilter(row) {
+        const term = searchInput.value.trim().toLowerCase();
+        const filter = statusFilter.value;
+        const status = trackerStatus(row.job.job_status);
+        const text = [
+          row.job.job_title,
+          row.job.job_category,
+          row.job.job_location,
+          row.installer?.name,
+          row.installer?.email,
+          getJobDescription(row.job),
+        ].join(" ").toLowerCase();
+
+        if (term && !text.includes(term)) return false;
+        if (!filter) return true;
+        return status === filter;
+      }
+
+      function renderRows() {
+        const rows = trackerRows.filter(rowMatchesFilter);
+        if (!rows.length) {
+          grid.innerHTML = `<div class="empty-state">No tracked jobs match the current filters.</div>`;
+          return;
+        }
+
+        grid.innerHTML = rows.map(renderTrackerCard).join("");
+        grid.querySelectorAll("[data-review-job]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const row = trackerRows.find((item) => item.job.job_id === button.dataset.reviewJob);
+            if (row) openReviewModal(row);
+          });
+        });
+        grid.querySelectorAll("[data-status-job][data-status-value]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const row = trackerRows.find((item) => item.job.job_id === button.dataset.statusJob);
+            if (row) setJobTrackerStatus(row, button.dataset.statusValue, button);
+          });
+        });
+      }
+
+      function renderTrackerCard(row) {
+        const { job, installer, application, review, avatarUrl } = row;
+        const visual = categoryVisual(job.job_category);
+        const description = getJobDescription(job) || "No description provided.";
+        const status = trackerStatus(job.job_status);
+        const installerName = installer?.name || "No chosen installer yet";
+        const applicationStatus = application?.status || "No chosen application";
+        const reviewText = review?.comment || "Review submitted";
+        const reviewAvailable = canReview(row);
+        const reviewButton = review
+          ? reviewAvailable
+            ? `<button class="btn btn-primary" data-review-job="${esc(job.job_id)}"><span class="material-icons-sharp">edit</span>Edit Review</button>`
+            : `<button class="btn btn-secondary" disabled><span class="material-icons-sharp">rate_review</span>Review Submitted</button>`
+          : reviewAvailable
+            ? `<button class="btn btn-primary" data-review-job="${esc(job.job_id)}"><span class="material-icons-sharp">star</span>Review Installer</button>`
+            : `<button class="btn btn-secondary" disabled><span class="material-icons-sharp">lock</span>Review opens after matching approval</button>`;
+        const contactLine = installer
+          ? [installer.email, installer.phone].filter(Boolean).join(" | ")
+          : "Chosen applicant profile will appear after matching payment approval.";
+        const statusButtons = `
+          <div class="status-control" aria-label="Set job tracker status">
+            ${TRACKER_STATUSES.map((item) => `
+              <button
+                type="button"
+                class="status-choice${status === item.value ? " active" : ""}"
+                data-status-job="${esc(job.job_id)}"
+                data-status-value="${esc(item.value)}"
+                ${status === item.value ? "disabled" : ""}
+              >
+                <span class="material-icons-sharp">${esc(item.icon)}</span>${esc(item.label)}
+              </button>
+            `).join("")}
+          </div>
+        `;
+
+        return `
+          <article class="tracker-card">
+            <div class="tracker-card-head" style="--job-a:${esc(visual.a)};--job-b:${esc(visual.b)}">
+              <div class="tracker-head-content">
+                <div>
+                  <span class="tracker-kicker">${esc(visual.label)}</span>
+                  <h2>${esc(job.job_title || "Untitled Job")}</h2>
+                </div>
+                <span class="status-pill"><span class="material-icons-sharp">track_changes</span>${esc(trackerStatusLabel(status))}</span>
+              </div>
+            </div>
+            <div class="tracker-body">
+              <section class="info-section">
+                <p class="info-title">Job Details</p>
+                <div class="detail-grid">
+                <div class="detail-row"><span class="material-icons-sharp">payments</span><span>${esc(peso(job.job_pay))}</span></div>
+                <div class="detail-row"><span class="material-icons-sharp">event</span><span>${esc(fmtDate(job.job_date))} ${esc(fmtTime(job.job_time))}</span></div>
+                <div class="detail-row"><span class="material-icons-sharp">construction</span><span>${esc(difficultyLabel(job.job_difficulty))}</span></div>
+                <div class="detail-row"><span class="material-icons-sharp">groups</span><span>${esc(row.applications.length)} applicant(s)</span></div>
+                <div class="detail-row full"><span class="material-icons-sharp">place</span><span>${esc(job.job_location || "Location not set")}</span></div>
+                <div class="detail-row full"><span class="material-icons-sharp">notes</span><span>${esc(description)}</span></div>
+                </div>
+              </section>
+
+              <section class="installer-panel">
+                <p class="info-title">Chosen Applicant</p>
+                <div class="installer-top">
+                  ${
+                    avatarUrl
+                      ? `<img class="installer-avatar" src="${esc(avatarUrl)}" alt="${esc(installerName)}" />`
+                      : `<div class="installer-avatar">${esc(initials(installerName))}</div>`
+                  }
+                  <div>
+                    <p class="installer-name">${esc(installerName)}</p>
+                    <p class="installer-meta">${esc(installer?.profession || "Installer")}</p>
+                    <p class="installer-meta">Application: ${esc(applicationStatus)}</p>
+                  </div>
+                </div>
+                <div class="info-list" style="margin-top:.85rem;">
+                  ${infoItem("Contact", contactLine, true)}
+                  ${infoItem("Qualification", installer?.highestQualification)}
+                  ${infoItem("Employment", installer?.employmentStatus)}
+                  ${infoItem("Level", installer?.levelstatus != null ? `Level ${installer.levelstatus}` : "")}
+                  ${infoItem("Applied", application?.applied_at ? new Date(application.applied_at).toLocaleString("en-PH") : "")}
+                </div>
+                <div class="review-summary${review ? " existing" : ""}">
+                  <span class="stars">${review ? stars(review.rating) : "☆☆☆☆☆"}</span>
+                  <span>${review ? esc(reviewText) : canReview(row) ? "Review is open for this approved match" : "No customer review yet"}</span>
+                </div>
+              </section>
+
+              <div class="card-actions">
+                ${statusButtons}
+                ${reviewButton}
+              </div>
+            </div>
+          </article>
+        `;
+      }
+
+      function renderRatingPicker() {
+        ratingPicker.innerHTML = "";
+        for (let value = 1; value <= 5; value += 1) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = `star-btn${value <= activeRating ? " active" : ""}`;
+          button.textContent = "★";
+          button.addEventListener("click", () => {
+            activeRating = value;
+            renderRatingPicker();
+          });
+          ratingPicker.appendChild(button);
+        }
+      }
+
+      function renderTags() {
+        tagList.innerHTML = REVIEW_TAGS.map((tag) => (
+          `<button type="button" class="tag-chip${activeTags.has(tag) ? " active" : ""}" data-tag="${esc(tag)}">${esc(tag)}</button>`
+        )).join("");
+        tagList.querySelectorAll("[data-tag]").forEach((button) => {
+          button.addEventListener("click", () => {
+            const tag = button.dataset.tag;
+            if (activeTags.has(tag)) activeTags.delete(tag);
+            else activeTags.add(tag);
+            renderTags();
+          });
+        });
+      }
+
+      function openReviewModal(row) {
+        activeReviewTarget = row;
+        activeRating = Number(row.review?.rating || 5);
+        activeTags = new Set(Array.isArray(row.review?.tags) ? row.review.tags : []);
+        reviewComment.value = row.review?.comment || "";
+        reviewSubmitBtn.textContent = row.review ? "Update Review" : "Submit Review";
+        reviewSubtitle.textContent = `${row.installer?.name || "Installer"} · ${row.job.job_title || "Job"}`;
+        renderRatingPicker();
+        renderTags();
+        reviewModal.classList.add("show");
+        reviewModal.setAttribute("aria-hidden", "false");
+      }
+
+      function closeReviewModal() {
+        activeReviewTarget = null;
+        reviewModal.classList.remove("show");
+        reviewModal.setAttribute("aria-hidden", "true");
+      }
+
+      async function setJobTrackerStatus(row, nextStatus, button) {
+        const status = trackerStatus(nextStatus);
+        if (!TRACKER_STATUSES.some((item) => item.value === status)) return;
+        const originalText = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = `<span class="material-icons-sharp">hourglass_top</span>Saving...`;
+
+        const { error } = await sb.rpc("customer_set_job_tracker_status", {
+          target_job_id: String(row.job.job_id),
+          target_status: status,
+        });
+
+        if (error) {
+          button.disabled = false;
+          button.innerHTML = originalText;
+          alert(`Could not update job status: ${error.message}`);
+          return;
+        }
+
+        row.job.job_status = status;
+        row.job.updated_at = new Date().toISOString();
+        if (row.application) row.application.status = status === "completed" ? "done" : "approved";
+        renderRows();
+      }
+
+      async function submitReview() {
+        if (!activeReviewTarget || !canReview(activeReviewTarget)) return;
+        const submitLabel = activeReviewTarget.review ? "Update Review" : "Submit Review";
+        reviewSubmitBtn.disabled = true;
+        reviewSubmitBtn.textContent = "Submitting...";
+
+        const payload = {
+          job_id: activeReviewTarget.job.job_id,
+          application_id: activeReviewTarget.application?.application_id || null,
+          customer_id: userId,
+          installer_id: activeReviewTarget.installer.id,
+          rating: activeRating,
+          comment: reviewComment.value.trim() || null,
+          tags: [...activeTags],
+        };
+
+        const query = activeReviewTarget.review?.review_id
+          ? fromInSchema(sb, "jobs", "installer_reviews")
+              .update({
+                rating: payload.rating,
+                comment: payload.comment,
+                tags: payload.tags,
+              })
+              .eq("review_id", activeReviewTarget.review.review_id)
+              .select("*")
+              .single()
+          : fromInSchema(sb, "jobs", "installer_reviews")
+              .insert(payload)
+              .select("*")
+              .single();
+
+        const { data, error } = await query;
+
+        reviewSubmitBtn.disabled = false;
+        reviewSubmitBtn.textContent = submitLabel;
+
+        if (error) {
+          alert(`Could not submit review: ${error.message}`);
+          return;
+        }
+
+        activeReviewTarget.review = data;
+        closeReviewModal();
+        renderRows();
+      }
+
+      async function loadTracker() {
+        const { data: authData, error: authError } = await sb.auth.getUser();
+        userId = authData?.user?.id || null;
+        if (authError || !userId) {
+          grid.innerHTML = `<div class="empty-state">Please sign in to track your jobs.</div>`;
+          return;
+        }
+
+        const { data: jobs, error: jobsError } = await fromInSchema(sb, "jobs", "job")
+          .select("job_id, posted_by, job_title, job_description, job_difficulty, job_category, job_location, job_date, job_time, job_pay, job_picture_url, created_at, updated_at, job_status, installer_id_assigned")
+          .eq("posted_by", userId)
+          .order("created_at", { ascending: false });
+
+        if (jobsError) {
+          grid.innerHTML = `<div class="empty-state">Could not load jobs: ${esc(jobsError.message)}</div>`;
+          return;
+        }
+
+        const filteredJobs = (jobs || []).filter(job => {
+          const status = String(job.job_status || "").toLowerCase();
+          return job.installer_id_assigned != null || ["completed", "done", "unfinished"].includes(status);
+        });
+
+        const jobIds = filteredJobs.map((job) => job.job_id);
+        if (!jobIds.length) {
+          trackerRows = [];
+          renderRows();
+          return;
+        }
+
+        const [{ data: apps = [] }, { data: reviews = [] }] = await Promise.all([
+          fromInSchema(sb, "jobs", "job_application")
+            .select("application_id, job_id, installer_id, status, applied_at")
+            .in("job_id", jobIds),
+          fromInSchema(sb, "jobs", "installer_reviews")
+            .select("review_id, job_id, application_id, installer_id, rating, comment, tags, created_at")
+            .in("job_id", jobIds),
+        ]);
+
+        const installerIds = [
+          ...(jobs || []).map((job) => job.installer_id_assigned).filter(Boolean),
+          ...(apps || []).map((app) => app.installer_id).filter(Boolean),
+        ];
+        const uniqueInstallerIds = [...new Set(installerIds)];
+        let installers = [];
+        if (uniqueInstallerIds.length) {
+          const { data } = await sb
+            .from("installer")
+            .select('id, name, email, phone, profession, "highestQualification", "employmentStatus", profile_pic_url, levelstatus')
+            .in("id", uniqueInstallerIds);
+          installers = data || [];
+        }
+
+        const installerById = new Map(installers.map((installer) => [installer.id, installer]));
+        const reviewsByJobInstaller = new Map(
+          reviews.map((review) => [`${review.job_id}:${review.installer_id}`, review])
+        );
+
+        trackerRows = await Promise.all(filteredJobs.map(async (job) => {
+          const jobApps = apps.filter((app) => app.job_id === job.job_id);
+          const application = getChosenApplication(job, jobApps);
+          const installerId = job.installer_id_assigned || application?.installer_id || null;
+          const installer = installerId ? installerById.get(installerId) : null;
+          const review = installerId ? reviewsByJobInstaller.get(`${job.job_id}:${installerId}`) : null;
+          const avatarUrl = installer?.profile_pic_url
+            ? await resolveInstallerPicture(installer.profile_pic_url)
+            : null;
+          return { job, applications: jobApps, application, installer, review, avatarUrl };
+        }));
+
+        renderRows();
+      }
+
+      searchInput.addEventListener("input", renderRows);
+      statusFilter.addEventListener("change", renderRows);
+      reviewCancelBtn.addEventListener("click", closeReviewModal);
+      reviewSubmitBtn.addEventListener("click", submitReview);
+      reviewModal.addEventListener("click", (event) => {
+        if (event.target === reviewModal) closeReviewModal();
+      });
+      document.getElementById("logout-btn")?.addEventListener("click", async (event) => {
+        event.preventDefault();
+        await sb.auth.signOut();
+        window.location.href = "../../../login.html";
+      });
+
+      loadTracker();
+    </script>
+    <script type="module" src="../../general_files/index.js"></script>
+  </body>
+</html>

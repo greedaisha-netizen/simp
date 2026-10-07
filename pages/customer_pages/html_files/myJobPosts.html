@@ -319,44 +319,31 @@
         border-radius: 16px;
         overflow: hidden;
         box-shadow: 0 20px 48px rgba(0, 0, 0, 0.18);
-        /* SHORTER so the screen doesn't resize much */
-        max-height: 84vh;
+        height: 80vh;
+        max-height: 80vh;
         display: flex;
         flex-direction: column;
       }
       .modal-hero {
         position: relative;
-        height: 180px;
-        background: #f3f4f6;
-        overflow: hidden; /* reduced from 220px */
+        background: #1e293b; /* Premium slate color */
+        padding: 52px 16px 14px 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        flex-shrink: 0;
+        max-height: 140px;
       }
       .modal-hero .hero-img {
-        position: absolute;
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        filter: saturate(1.05);
+        display: none; /* hidden to avoid empty space */
       }
       .modal-hero::after {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          180deg,
-          rgba(0, 0, 0, 0.35) 0%,
-          rgba(0, 0, 0, 0.15) 40%,
-          rgba(0, 0, 0, 0) 100%
-        );
-        pointer-events: none;
+        display: none; /* remove overlay gradient */
       }
 
       /* NEW: hero content overlay for job title & location */
       .modal-hero-content {
-        position: absolute;
-        left: 16px;
-        right: 80px;
-        bottom: 16px;
+        position: relative;
         z-index: 1;
         color: #ffffff;
         display: flex;
@@ -365,26 +352,31 @@
       }
       .modal-hero-content h2 {
         margin: 0;
-        font-size: 1.2rem;
+        font-size: 1.25rem;
         font-weight: 800;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
       }
       .modal-hero-location {
         margin: 0;
         font-size: 0.85rem;
-        opacity: 0.9;
+        opacity: 0.85;
       }
 
       .modal-header {
         position: absolute;
-        top: 12px;
-        left: 12px;
-        right: 12px;
+        top: 16px;
+        left: 16px;
+        right: 16px;
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
         color: #fff;
         z-index: 2; /* ensure badge/close is above hero content */
+        gap: 8px;
+      }
+      /* Spacer that pushes center content to true center */
+      .modal-header-spacer {
+        width: 36px;
+        flex-shrink: 0;
       }
       .modal-header .badge {
         background: rgba(255, 255, 255, 0.18);
@@ -403,14 +395,19 @@
         color: #fff;
         width: 36px;
         height: 36px;
+        min-width: 36px;
         border-radius: 9999px;
         display: grid;
         place-items: center;
         cursor: pointer;
+        flex-shrink: 0;
       }
       .modal-body {
         padding: 16px;
-        overflow: auto;
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex: 1;
+        min-height: 0;
       }
       .modal-title {
         margin: -32px 0 8px 0;
@@ -421,14 +418,64 @@
         padding: 0 16px;
       }
       .modal-section {
-        display: grid;
-        grid-template-columns: 1.3fr 0.7fr;
+        display: flex;
+        flex-direction: column;
         gap: 16px;
       }
-      @media (max-width: 900px) {
-        .modal-section {
-          grid-template-columns: 1fr;
-        }
+      .header-btns {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+        flex-wrap: wrap;
+        justify-content: center;
+        flex: 1;
+        min-width: 0;
+      }
+      .header-btns .btn {
+        padding: 5px 10px;
+        font-size: 0.75rem;
+        border-radius: 9999px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-weight: 700;
+        transition: all 0.2s ease;
+        box-shadow: none;
+        border: 1px solid transparent;
+        white-space: nowrap;
+      }
+      /* Soft glassmorphic green for Accept */
+      .header-btns .btn-primary {
+        background: rgba(34, 197, 94, 0.12) !important;
+        color: #4ade80 !important;
+        border-color: rgba(34, 197, 94, 0.25) !important;
+      }
+      .header-btns .btn-primary:hover {
+        background: rgba(34, 197, 94, 0.25) !important;
+        border-color: #22c55e !important;
+        box-shadow: 0 0 8px rgba(34, 197, 94, 0.2);
+      }
+      /* Soft glassmorphic orange for Request Changes */
+      .header-btns .btn-warning {
+        background: rgba(245, 158, 11, 0.12) !important;
+        color: #fbbf24 !important;
+        border-color: rgba(245, 158, 11, 0.25) !important;
+      }
+      .header-btns .btn-warning:hover {
+        background: rgba(245, 158, 11, 0.25) !important;
+        border-color: #f59e0b !important;
+        box-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
+      }
+      /* Soft glassmorphic red for Reject */
+      .header-btns .btn-danger {
+        background: rgba(239, 68, 68, 0.12) !important;
+        color: #f87171 !important;
+        border-color: rgba(239, 68, 68, 0.25) !important;
+      }
+      .header-btns .btn-danger:hover {
+        background: rgba(239, 68, 68, 0.25) !important;
+        border-color: #ef4444 !important;
+        box-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
       }
       .modal-card {
         border: 1px solid var(--line);
@@ -838,6 +885,10 @@
             <span class="material-icons-sharp">cases</span>
             <h3>My Job Posts</h3>
           </a>
+          <a href="jobTracker.html">
+            <span class="material-icons-sharp">track_changes</span>
+            <h3>Job Tracker</h3>
+          </a>
           <a href="createPost.html" id="nav-create">
             <span class="material-icons-sharp">add</span>
             <h3>Create a post</h3>
@@ -865,14 +916,10 @@
               <option value="">All Status</option>
               <option value="pending_review">Pending Review</option>
               <option value="suggestion_sent">Suggestion Sent</option>
-              <option value="customer_accepted">Customer Accepted</option>
-              <option value="appeal_submitted">Appeal Submitted</option>
-              <option value="approved">Approved</option>
               <option value="active">Active</option>
-              <option value="cancellation_pending">Cancellation Pending</option>
-              <option value="cancelled">Cancelled</option>
+              <option value="approved">Approved</option>
               <option value="rejected">Rejected</option>
-              <option value="done">Done</option>
+              <option value="cancelled">Cancelled</option>
             </select>
             <select id="sortSelect" title="Sort">
               <option value="created_desc">Newest first</option>
@@ -1101,16 +1148,16 @@
         class="modal"
         role="dialog"
         aria-modal="true"
-        aria-labelledby="jobModalTitle"
+        aria-labelledby="jobModalTitleHero"
       >
         <div class="modal-hero">
           <img id="jobHero" class="hero-img" alt="Job photo" />
           <div class="modal-header">
-            <span id="jobStatusBadge" class="badge"
-              ><span class="material-icons-sharp" style="font-size: 1rem"
-                >info</span
-              ><span id="jobStatusText">Status</span></span
-            >
+            <!-- Left spacer (balances the right-side close btn) -->
+            <div class="modal-header-spacer"></div>
+            <!-- Center: action buttons -->
+            <div id="modalHeaderBtns" class="header-btns"></div>
+            <!-- Right: close button (always visible) -->
             <button id="jobCloseBtn" class="close-btn" title="Close">
               <span class="material-icons-sharp">close</span>
             </button>
@@ -1126,14 +1173,13 @@
           </div>
         </div>
         <div class="modal-body">
-          <h2 id="jobModalTitle" class="modal-title">Job Title</h2>
-          <div class="modal-section">
-            <!-- Left: job info -->
+          <h2 id="jobModalTitle" class="modal-title" style="display: none;">Job Title</h2>
+            <!-- Full-width Job Info -->
             <div class="modal-card">
               <div class="row">
                 <span class="label">Category</span><span id="mCategory">—</span>
               </div>
-              <div class="row">
+              <div class="row" style="display: none;">
                 <span class="label">Difficulty</span><span id="mDiff">—</span>
               </div>
               <div class="row">
@@ -1143,29 +1189,48 @@
                 <span class="label">Date & Time</span><span id="mWhen">—</span>
               </div>
               <div class="row">
-                <span class="label">Duration</span><span id="mDuration">—</span>
+                <span class="label">Manpower</span><span id="mDuration">—</span>
               </div>
               <div class="row">
                 <span class="label">Location</span><span id="mLocation">—</span>
+              </div>
+              <div class="row" id="instRow">
+                <span class="label">Installer</span><span id="mInstaller">Unassigned</span>
               </div>
               <div class="divider"></div>
               <div class="row" style="align-items: flex-start">
                 <span class="label">Description</span><span id="mDesc">—</span>
               </div>
-            </div>
-
-            <!-- Right: installer & actions -->
-            <div class="modal-card">
-              <div class="row" id="instRow">
-                <span class="label">Installer</span>
-                <span id="mInstaller">Unassigned</span>
+              <div class="divider" id="mAdminReqsDivider"></div>
+              <div id="mAdminReqsSection" style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                <h4 style="margin: 0 0 4px; font-weight: 700; color: var(--ink);">Qualifications & Requirements</h4>
+                <div id="mAdminReqsNotice" style="display: none; background: #fff9e6; border: 1px solid #ffeeba; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; font-size: 0.82rem; color: #b45309; align-items: center; gap: 6px; font-weight: 600;">
+                  <span class="material-icons-sharp" style="font-size: 16px; color:#d97706;">warning</span> Recommended by Admin
+                </div>
+                <div class="row" id="mAppModeRow">
+                  <span class="label">Application Mode</span><span id="mAppMode">—</span>
+                </div>
+                <div class="row" id="mMinReqsRow" style="display: none;">
+                  <span class="label">Min Requirements Met</span><span id="mMinReqs">—</span>
+                </div>
+                <div class="row" id="mCourseTagsRow" style="align-items: flex-start; flex-direction: column; gap: 4px;">
+                  <span class="label">Course Qualification Tags</span><span id="mCourseTags">—</span>
+                </div>
+                <div class="row" id="mExpReqsRow" style="align-items: flex-start; flex-direction: column; gap: 4px;">
+                  <span class="label">Project Experience Requirements</span><span id="mExpReqs">—</span>
+                </div>
+              </div>
+              <div class="divider" id="mVisualsDivider" style="display: none;"></div>
+              <div class="row" id="jobVisualsRow" style="align-items: flex-start; display: none; flex-direction: column; gap: 8px; width: 100%;">
+                <span class="label">Project Visuals</span>
+                <img id="mVisualsImg" src="" style="max-width: 100%; max-height: 250px; object-fit: contain; border-radius: 8px; border: 1px solid #cbd5e1; cursor: pointer;" title="Click to zoom" />
               </div>
 
-              <!-- Re-edit Date (for overdue) -->
+              <!-- Re-edit Date (for overdue, placed clean at the bottom of info card) -->
               <div
                 id="reschedWrap"
                 class="modal-card"
-                style="border-style: dashed; margin-top: 10px; display: none"
+                style="border-style: dashed; margin-top: 16px; display: none"
               >
                 <div class="row" id="reschedTitleRow" style="font-weight: 700">
                   <span class="material-icons-sharp">schedule</span>Reschedule
@@ -1184,13 +1249,8 @@
                   </button>
                 </div>
               </div>
-
-              <div class="modal-actions" id="modalBtns">
-                <!-- buttons injected -->
-              </div>
             </div>
-          </div>
-          
+
           <!-- Applicants Section for approved jobs -->
           <div id="modalApplicantsSection" class="modal-card" style="margin-top: 16px; display: none;">
             <h3 style="margin-top: 0; font-weight: 700; color: var(--ink); border-bottom: 1px solid var(--line); padding-bottom: 8px; display: flex; align-items: center; gap: 8px;">
@@ -1419,13 +1479,13 @@
         const labels = {
           pending_review: "Pending Review",
           suggestion_sent: "Suggestion Sent",
-          customer_accepted: "Customer Accepted",
-          appeal_submitted: "Appeal Submitted",
+          customer_accepted: "Approved By Customer",
+          appeal_submitted: "Revision Requested",
           approved: "Approved",
           active: "Active",
           cancellation_pending: "Cancellation Pending",
           cancelled: "Cancelled",
-          rejected: "Rejected",
+          rejected: "Suggestion Rejected",
           archived: "Archived",
           done: "Done",
           completed: "Completed",
@@ -1490,9 +1550,7 @@
         };
       }
 
-      function isNegotiationPending(job) {
-        return normalizeJobStatus(job?.job_status) === "suggestion_sent";
-      }
+
 
       function escapeHtml(str) {
         return String(str ?? "")
@@ -1534,10 +1592,10 @@
       }
       function difficultyToText(level) {
         const n = Number(level);
-        if (n === 0) return "Easy";
-        if (n === 1) return "Intermediate";
-        if (n === 2) return "Hard";
-        return `Level ${isFinite(n) ? n : 0}`;
+        if (n === 0) return "Level 1";
+        if (n === 1) return "Level 2";
+        if (n === 2) return "Level 3";
+        return `Level ${isFinite(n) ? n + 1 : 1}`;
       }
       function statusClass(status) {
         const s = normalizeJobStatus(status);
@@ -1738,8 +1796,6 @@
       // Modals
       const jobModal = document.getElementById("jobModal");
       const jobHero = document.getElementById("jobHero");
-      const jobStatusBadge = document.getElementById("jobStatusBadge");
-      const jobStatusText = document.getElementById("jobStatusText");
       const jobCloseBtn = document.getElementById("jobCloseBtn");
       const jobTitleEl = document.getElementById("jobModalTitle");
 
@@ -1756,7 +1812,7 @@
       const mLocation = document.getElementById("mLocation");
       const mDesc = document.getElementById("mDesc");
       const mInstaller = document.getElementById("mInstaller");
-      const modalBtns = document.getElementById("modalBtns");
+      const modalBtns = document.getElementById("modalHeaderBtns");
       const reschedWrap = document.getElementById("reschedWrap");
       const reschedDate = document.getElementById("reschedDate");
       const reschedTime = document.getElementById("reschedTime");
@@ -1787,199 +1843,6 @@
       const ACTIVE_APPLICATION_STATUSES = ["pending", "viewed", "approved"];
       const APPLICATION_INVALIDATION_STATUSES = ["invalidated", "terminated"];
 
-      // ---------- Rendering ----------
-      function cardHtml(job) {
-        const title = escapeHtml(job.job_title);
-        const category = escapeHtml(job.job_category || "Uncategorized");
-        const status = normalizeJobStatus(job.job_status);
-        
-        const displayValues = displayReviewValues(job);
-        const displayPay = displayValues.pay;
-        const displayDifficulty = displayValues.difficulty;
-        
-        const diffText = difficultyToText(displayDifficulty);
-        const pay = formatPeso(displayPay);
-        const date = fmtDate(job.job_date);
-        const time = fmtTime(job.job_time);
-        
-        let statusCls = statusClass(status);
-        const statusNorm = status === "completed" ? "done" : status;
-
-        // Installer block
-        let installerName = "Unassigned";
-        let installerId = null;
-        let hasInstaller = false;
-        if (
-          job.installer_id_assigned &&
-          INSTALLER_BY_ID.has(job.installer_id_assigned)
-        ) {
-          const inst = INSTALLER_BY_ID.get(job.installer_id_assigned);
-          installerName = inst?.name || "Assigned";
-          installerId = inst?.id || job.installer_id_assigned;
-          hasInstaller = true;
-        }
-        const avatarText = initials(installerName);
-
-        // Status label: if approved + assigned, show assignment
-        let statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
-        const posted = isJobPosted(job);
-        if (status.toLowerCase() === "approved") {
-          if (posted) {
-            statusLabel = "Active / Posted";
-          } else {
-            statusLabel = "Approved (Ready to Post)";
-          }
-        }
-
-        if (
-          (status.toLowerCase() === "approved" ||
-            status.toLowerCase() === "active") &&
-          hasInstaller
-        ) {
-          statusLabel = `Approved • Assigned to ${escapeHtml(installerName)}`;
-        }
-
-        // status icon
-        let statusIcon =
-          status.toLowerCase() === "approved" ||
-          status.toLowerCase() === "active"
-            ? "verified"
-            : status.toLowerCase() === "pending"
-            ? "hourglass_empty"
-            : status.toLowerCase() === "overdue"
-            ? "warning"
-            : status.toLowerCase() === "done" ||
-              status.toLowerCase() === "completed"
-            ? "check_circle"
-            : status.toLowerCase() === "rejected"
-            ? "block"
-            : status.toLowerCase() === "viewed"
-            ? "visibility"
-            : "info";
-
-        if (neg) {
-          if (isNegotiationPending(job)) {
-            statusLabel = "Pending";
-            statusCls = "status-pending"; // yellow theme
-            statusIcon = "swap_horiz";
-          } else if (status.toLowerCase() === "pending" && neg.customer_decision === "agreed") {
-            statusLabel = "Agreed";
-            statusCls = "status-approved"; // green theme
-            statusIcon = "done";
-          } else if (status.toLowerCase() === "rejected" && neg.customer_decision === "rejected") {
-            statusLabel = "Rejected Proposal";
-            statusCls = "status-rejected"; // red theme
-            statusIcon = "block";
-          }
-        }
-
-        const durHrs = job._duration_hours;
-        const durChip =
-          durHrs != null && !Number.isNaN(durHrs)
-            ? `
-        <span class="chip" title="Estimated duration">
-          <span class="material-icons-sharp" style="font-size:1rem;">schedule</span>${durHrs}h
-        </span>`
-            : "";
-
-        const alertBanner = isNegotiationPending(job)
-          ? `<div style="background:#fffcf0; border:1px solid #f6d88a; color:#b45309; border-radius:10px; padding:10px; font-size:0.88rem; margin:10px 0; display:flex; align-items:center; gap:8px;">
-               <span class="material-icons-sharp" style="color:#d97706; font-size:1.15rem;">info</span>
-               <div style="flex:1;">
-                 <strong>Admin Proposed Changes</strong><br/>
-                 Review side-by-side edits to your job post.
-               </div>
-               <button class="btn btn-warning btn-review-neg-banner" style="padding:0.4rem 0.6rem; font-size:0.8rem; height:auto; background:#f59e0b; color:#fff;" data-job-id="${job.job_id}">Review</button>
-             </div>`
-          : "";
-
-        const canShowApplicants =
-          (status.toLowerCase() === "approved" || status.toLowerCase() === "active") &&
-          posted &&
-          !isNegotiationPending(job);
-        const apps = canShowApplicants ? APPS_BY_JOB_ID.get(job.job_id) || [] : [];
-        const appCount = apps.length;
-        const appText = appCount > 0 ? `${appCount} applicant(s)` : "No applicants yet";
-
-        let subMutedHtml = `<div class="muted">${hasInstaller ? "Assigned" : "Unassigned"}</div>`;
-        if (!hasInstaller) {
-          subMutedHtml = `
-            <div class="muted" style="display:flex; align-items:center; gap:4px; font-weight:600; color: ${appCount > 0 ? '#10b981' : 'var(--muted)'}; margin-top:2px;">
-              ${appCount > 0 ? '<span class="material-icons-sharp" style="font-size:14px; vertical-align:middle;">groups</span>' : ''}
-              ${appText}
-            </div>
-          `;
-        }
-
-        return `
-        <div class="job-card"
-             data-job-id="${job.job_id}"
-             data-title="${title.toLowerCase()}"
-             data-status="${status.toLowerCase()}"
-             data-status-norm="${statusNorm}"
-             ${installerId ? `data-installer-id="${installerId}"` : ``}
-         >
-          <div class="job-head">
-            <h3 class="job-title" title="${title}">${title}</h3>
-            <span class="status-badge ${statusCls}">
-              <span class="material-icons-sharp" style="font-size:1rem;">${statusIcon}</span>
-              ${statusLabel}
-            </span>
-          </div>
-
-          ${alertBanner}
-
-          <div class="chips">
-            <span class="chip" title="Category">
-              <span class="material-icons-sharp" style="font-size:1rem;">category</span>${category}
-            </span>
-            <span class="chip" title="Difficulty"><span class="material-icons-sharp" style="font-size:1rem;">military_tech</span>${diffText}</span>
-            ${durChip}
-          </div>
-
-          <div class="meta">
-            <div class="meta-item" title="Pay"><span class="material-icons-sharp">payments</span>${pay}</div>
-            <div class="meta-item" title="When"><span class="material-icons-sharp">event</span>${date} • ${time}</div>
-          </div>
-
-          <div class="installer" title="${
-            hasInstaller ? "Assigned installer" : "No installer assigned"
-          }">
-            <div class="avatar">
-              <img alt="Installer photo" />
-              <span class="avatar-initials">${avatarText}</span>
-            </div>
-            <div>
-              <div class="name">${escapeHtml(installerName)}</div>
-              ${subMutedHtml}
-            </div>
-          </div>
-
-          <div class="actions">
-            ${isNegotiationPending(job)
-              ? `<a class="btn btn-warning btn-review-neg-action" href="#" style="background:#f59e0b; color:#fff;">
-                   <span class="material-icons-sharp">gavel</span> Review Proposal
-                 </a>`
-              : (status.toLowerCase() === "approved" && !posted
-                ? `<button class="btn btn-primary btn-post" style="background:#20a44c; color:#fff; border:none; border-radius:10px; padding:0.5rem 0.75rem; font-weight:600; cursor:pointer;">
-                     <span class="material-icons-sharp">publish</span> Post Job
-                   </button>
-                   <a class="btn btn-ghost btn-details" href="#">
-                     <span class="material-icons-sharp">visibility</span> Details
-                   </a>`
-                : `<a class="btn btn-ghost btn-details" href="#">
-                     <span class="material-icons-sharp">visibility</span> Details
-                   </a>`)
-            }
-            <a class="btn btn-primary btn-edit" href="createPost.html?job_id=${encodeURIComponent(
-              job.job_id
-            )}">
-              <span class="material-icons-sharp">edit</span> Edit
-            </a>
-          </div>
-        </div>
-      `;
-      }
 
       function lifecycleCardHtml(job) {
         const title = escapeHtml(job.job_title);
@@ -2010,21 +1873,12 @@
         };
         const statusIcon = statusIconMap[status] || "info";
         const canEdit = status === "pending_review";
-        const canReviewSuggestion = status === "suggestion_sent";
         const canPost = status === "approved" && !posted;
         const canReapply = status === "cancelled";
 
-        const alertBanner = canReviewSuggestion
-          ? `<div style="background:#fffcf0; border:1px solid #f6d88a; color:#b45309; border-radius:10px; padding:10px; font-size:0.88rem; margin:10px 0; display:flex; align-items:center; gap:8px;">
-               <span class="material-icons-sharp" style="color:#d97706; font-size:1.15rem;">info</span>
-               <div style="flex:1;"><strong>Admin Suggestion Ready</strong><br/>Compare both versions before you accept or revise.</div>
-               <button class="btn btn-warning btn-review-neg-banner" style="padding:0.4rem 0.6rem; font-size:0.8rem; height:auto; background:#f59e0b; color:#fff;" data-job-id="${job.job_id}">Review</button>
-             </div>`
-          : "";
 
-        const primaryAction = canReviewSuggestion
-          ? `<a class="btn btn-warning btn-review-neg-action" href="#" style="background:#f59e0b; color:#fff;"><span class="material-icons-sharp">rate_review</span> Review Suggestion</a>`
-          : canPost
+
+        const primaryAction = canPost
           ? `<button class="btn btn-primary btn-post" style="background:#20a44c; color:#fff; border:none; border-radius:10px; padding:0.5rem 0.75rem; font-weight:600; cursor:pointer;"><span class="material-icons-sharp">publish</span> Post Job</button>`
           : canReapply
           ? `<button class="btn btn-primary btn-reapply" style="background:#20a44c; color:#fff; border:none; border-radius:10px; padding:0.5rem 0.75rem; font-weight:600; cursor:pointer;"><span class="material-icons-sharp">restart_alt</span> Reapply</button>`
@@ -2047,11 +1901,10 @@
               ${status === "approved" ? "Approved (Ready to Post)" : statusLabel(status)}
             </span>
           </div>
-          ${alertBanner}
           <div class="chips">
             <span class="chip" title="Category"><span class="material-icons-sharp" style="font-size:1rem;">category</span>${category}</span>
-            <span class="chip" title="Difficulty"><span class="material-icons-sharp" style="font-size:1rem;">military_tech</span>${diffText}</span>
-            ${job._duration_hours != null ? `<span class="chip" title="Estimated duration"><span class="material-icons-sharp" style="font-size:1rem;">schedule</span>${job._duration_hours}h</span>` : ""}
+            <!-- Difficulty chip removed -->
+            <span class="chip" title="Number of manpower"><span class="material-icons-sharp" style="font-size:1rem;">groups</span>Manpower: ${job.job_manpower || parseDescriptionJson(job.job_description)?.manpower || parseDescriptionJson(job.job_description)?.customer_version?.manpower || 1}</span>
           </div>
           <div class="meta">
             <div class="meta-item" title="Pay"><span class="material-icons-sharp">payments</span>${pay}</div>
@@ -2141,7 +1994,7 @@
 
         const { data: jobs, error } = await fromInSchema(client, "jobs", "job")
           .select(
-            "job_id, job_title, job_category, job_difficulty, job_pay, job_date, job_time, job_status, created_at, updated_at, installer_id_assigned, job_duration, job_picture_url, job_location, job_description, scheduled_ts"
+            "job_id, job_title, job_category, job_difficulty, job_pay, job_date, job_time, job_status, created_at, updated_at, installer_id_assigned, job_duration, job_picture_url, job_location, job_description, scheduled_ts, job_manpower, required_course_tags, required_experience, application_mode, min_requirements_met"
           )
           .eq("posted_by", userId)
           .order("created_at", { ascending: false })
@@ -2157,7 +2010,10 @@
           return;
         }
 
-        JOBS = (jobs || []).map((j) => ({
+        JOBS = (jobs || []).filter(job => {
+          const status = String(job.job_status || "").toLowerCase();
+          return job.installer_id_assigned == null && !["completed", "done", "unfinished"].includes(status);
+        }).map((j) => ({
           ...j,
           _duration_hours: intervalToHours(j.job_duration),
         }));
@@ -2229,7 +2085,15 @@
       function expandStatusFilter(value) {
         const v = String(value || "").toLowerCase();
         if (!v) return null;
-        if (v === "done") return ["done", "completed"];
+        if (v === "pending_review") {
+          return ["pending_review", "customer_accepted", "appeal_submitted"];
+        }
+        if (v === "active") {
+          return ["active"];
+        }
+        if (v === "approved") {
+          return ["approved"];
+        }
         return [v];
       }
 
@@ -2257,7 +2121,7 @@
 
         let q = fromInSchema(client, "jobs", "job")
           .select(
-            "job_id, job_title, job_category, job_difficulty, job_pay, job_date, job_time, job_status, created_at, updated_at, installer_id_assigned, job_duration, job_picture_url, job_location, job_description, scheduled_ts"
+            "job_id, job_title, job_category, job_difficulty, job_pay, job_date, job_time, job_status, created_at, updated_at, installer_id_assigned, job_duration, job_picture_url, job_location, job_description, scheduled_ts, job_manpower, required_course_tags, required_experience, application_mode, min_requirements_met"
           )
           .eq("posted_by", userId);
 
@@ -2297,7 +2161,10 @@
           return;
         }
 
-        JOBS = (jobs || []).map((j) => ({
+        JOBS = (jobs || []).filter(job => {
+          const status = String(job.job_status || "").toLowerCase();
+          return job.installer_id_assigned == null && !["completed", "done", "unfinished"].includes(status);
+        }).map((j) => ({
           ...j,
           _duration_hours: intervalToHours(j.job_duration),
         }));
@@ -2393,12 +2260,6 @@
         installerModal.setAttribute("aria-hidden", "true");
       }
 
-      function setBadge(status) {
-        const cls = statusClass(status);
-        jobStatusBadge.className = `badge ${cls}`;
-        jobStatusText.textContent = statusLabel(status);
-      }
-
       function formatHistoryDate(value) {
         if (!value) return "-";
         const dt = new Date(value);
@@ -2471,17 +2332,25 @@
               <div style="background:#f8fafc; border:1px solid #e5e7eb; border-radius:10px; padding:10px;">
                 <strong>Customer Version</strong>
                 <div style="display:grid; gap:8px; margin-top:8px;">
-                  ${fieldCompareHtml("Budget", original.pay, original.pay)}
-                  ${fieldCompareHtml("Level", difficultyToText(original.difficulty), difficultyToText(original.difficulty))}
-                  ${fieldCompareHtml("Description", original.description, original.description)}
+                  ${fieldCompareHtml("Job Title", original.title || job.job_title, original.title || job.job_title)}
+                  ${fieldCompareHtml("Category", original.category || job.job_category, original.category || job.job_category)}
+                  ${fieldCompareHtml("Date", fmtDate(original.date || job.job_date), fmtDate(original.date || job.job_date))}
+                  ${fieldCompareHtml("Location / Address", original.location || job.job_location, original.location || job.job_location)}
+                  ${fieldCompareHtml("Manpower", (original.manpower || job.job_manpower || 1) + " installer(s)", (original.manpower || job.job_manpower || 1) + " installer(s)")}
+                  ${fieldCompareHtml("Budget", formatPeso(original.pay || job.job_pay), formatPeso(original.pay || job.job_pay))}
+                  ${fieldCompareHtml("Description", original.description || data.description || job.job_description, original.description || data.description || job.job_description)}
                 </div>
               </div>
               <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:10px;">
                 <strong>Admin Version</strong>
                 <div style="display:grid; gap:8px; margin-top:8px;">
-                  ${fieldCompareHtml("Budget", original.pay, suggested.pay)}
-                  ${fieldCompareHtml("Level", difficultyToText(original.difficulty), difficultyToText(suggested.difficulty))}
-                  ${fieldCompareHtml("Description", original.description, suggested.description)}
+                  ${fieldCompareHtml("Job Title", original.title || job.job_title, suggested.title || original.title || job.job_title)}
+                  ${fieldCompareHtml("Category", original.category || job.job_category, suggested.category || original.category || job.job_category)}
+                  ${fieldCompareHtml("Date", fmtDate(original.date || job.job_date), fmtDate(suggested.date || original.date || job.job_date))}
+                  ${fieldCompareHtml("Location / Address", original.location || job.job_location, suggested.location || original.location || job.job_location)}
+                  ${fieldCompareHtml("Manpower", (original.manpower || job.job_manpower || 1) + " installer(s)", (suggested.manpower || original.manpower || job.job_manpower || 1) + " installer(s)")}
+                  ${fieldCompareHtml("Budget", formatPeso(original.pay || job.job_pay), formatPeso(suggested.pay ?? original.pay ?? job.job_pay))}
+                  ${fieldCompareHtml("Description", original.description || data.description || job.job_description, suggested.description || original.description || data.description || job.job_description)}
                 </div>
               </div>
             </div>` : ""}
@@ -2500,25 +2369,46 @@
       }
 
       async function setJobHeroImage(job) {
+        // Hero image header should not use the custom customer image as thumbnail banner
+        jobHero.style.display = "none";
+        jobHero.removeAttribute("src");
+
+        const mVisualsImg = document.getElementById("mVisualsImg");
+        const jobVisualsRow = document.getElementById("jobVisualsRow");
+        const mVisualsDivider = document.getElementById("mVisualsDivider");
+
         const ref = job.job_picture_url && String(job.job_picture_url).trim();
         if (!ref) {
-          jobHero.style.display = "none";
-          jobHero.removeAttribute("src");
+          if (mVisualsImg) mVisualsImg.removeAttribute("src");
+          if (jobVisualsRow) jobVisualsRow.style.display = "none";
+          if (mVisualsDivider) mVisualsDivider.style.display = "none";
           return;
         }
+
         const signed = await resolveJobPictureSignedUrl(ref);
-        if (signed) {
-          jobHero.src = signed;
-          jobHero.style.display = "block";
-        } else {
-          if (/^https?:\/\//i.test(ref)) {
-            jobHero.src = ref;
-            jobHero.style.display = "block";
-          } else {
-            jobHero.style.display = "none";
-            jobHero.removeAttribute("src");
+        const imgUrl = signed || (/^https?:\/\//i.test(ref) ? ref : null);
+
+        if (imgUrl) {
+          if (mVisualsImg) {
+            mVisualsImg.src = imgUrl;
+            mVisualsImg.onclick = () => openImageLightbox(imgUrl);
           }
+          if (jobVisualsRow) jobVisualsRow.style.display = "flex";
+          if (mVisualsDivider) mVisualsDivider.style.display = "block";
+        } else {
+          if (mVisualsImg) mVisualsImg.removeAttribute("src");
+          if (jobVisualsRow) jobVisualsRow.style.display = "none";
+          if (mVisualsDivider) mVisualsDivider.style.display = "none";
         }
+      }
+
+      function showFieldComparison(original, suggested, formatter) {
+        const a = formatter ? formatter(original) : String(original ?? "");
+        const b = formatter ? formatter(suggested) : String(suggested ?? "");
+        if (a === b) {
+          return escapeHtml(b);
+        }
+        return `<span style="color:#d97706; font-weight:700;" title="Original: ${escapeHtml(a)}">${escapeHtml(b)}</span>`;
       }
 
       async function fillJobModal(job) {
@@ -2531,17 +2421,6 @@
         const displayDesc = displayValues.description;
 
         jobTitleEl.textContent = job.job_title || "—";
-        
-        // Custom badge for lifecycle status
-        if (
-          job.installer_id_assigned &&
-          status === "active"
-        ) {
-          jobStatusBadge.className = "badge status-approved";
-          jobStatusText.textContent = "Settled";
-        } else {
-          setBadge(status);
-        }
 
         await setJobHeroImage(job);
 
@@ -2553,16 +2432,100 @@
           jobLocationHeroEl.textContent = job.job_location || "";
         }
 
-        mCategory.textContent = job.job_category || "—";
-        mDiff.textContent = difficultyToText(displayDifficulty);
-        mPay.textContent = formatPeso(displayPay);
-        mWhen.textContent = `${fmtDate(job.job_date)} • ${fmtTime(
-          job.job_time
-        )}`;
-        mDuration.textContent =
-          job._duration_hours != null ? `${job._duration_hours} hour(s)` : "—";
-        mLocation.textContent = job.job_location || "—";
-        mDesc.textContent = displayDesc || "—";
+        const isNeg = status === "suggestion_sent";
+        const mAdminReqsNotice = document.getElementById("mAdminReqsNotice");
+        if (mAdminReqsNotice) {
+          mAdminReqsNotice.style.display = isNeg ? "flex" : "none";
+        }
+
+        if (isNeg) {
+          const data = getReviewData(job) || {};
+          const original = data.original_customer_version || data.customer_version || {};
+          const suggested = data.admin_suggested_version || {};
+
+          mCategory.innerHTML = showFieldComparison(original.category || job.job_category, suggested.category || original.category || job.job_category);
+          mPay.innerHTML = showFieldComparison(original.pay ?? job.job_pay, suggested.pay ?? original.pay ?? job.job_pay, formatPeso);
+          
+          const origDate = original.date || job.job_date;
+          const sugDate = suggested.date || origDate;
+          const origTime = job.job_time;
+          const sugTime = job.job_time;
+          const origDatetime = `${fmtDate(origDate)} • ${fmtTime(origTime)}`;
+          const sugDatetime = `${fmtDate(sugDate)} • ${fmtTime(sugTime)}`;
+          mWhen.innerHTML = showFieldComparison(origDatetime, sugDatetime);
+
+          const origManpower = `${original.manpower || job.job_manpower || 1} installer(s)`;
+          const sugManpower = `${suggested.manpower || original.manpower || job.job_manpower || 1} installer(s)`;
+          mDuration.innerHTML = showFieldComparison(origManpower, sugManpower);
+
+          mLocation.innerHTML = showFieldComparison(original.location || job.job_location, suggested.location || original.location || job.job_location);
+          
+          const origDesc = original.description || currentDescription(job);
+          const sugDesc = suggested.description || original.description || currentDescription(job);
+          mDesc.innerHTML = showFieldComparison(origDesc, sugDesc);
+        } else {
+          mCategory.textContent = job.job_category || "—";
+          mPay.textContent = formatPeso(displayPay);
+          mWhen.textContent = `${fmtDate(job.job_date)} • ${fmtTime(job.job_time)}`;
+          const jobDescData = parseDescriptionJson(job.job_description);
+          const modalManpower = job.job_manpower || jobDescData?.manpower || jobDescData?.customer_version?.manpower || 1;
+          mDuration.textContent = `${modalManpower} installer(s)`;
+          mLocation.textContent = job.job_location || "—";
+          mDesc.textContent = displayDesc || "—";
+        }
+
+        // Populate Admin Recommended Requirements
+        const mAppMode = document.getElementById("mAppMode");
+        const mMinReqs = document.getElementById("mMinReqs");
+        const mMinReqsRow = document.getElementById("mMinReqsRow");
+        const mCourseTags = document.getElementById("mCourseTags");
+        const mExpReqs = document.getElementById("mExpReqs");
+
+        const hasAppMode = job.application_mode !== null && job.application_mode !== undefined && job.application_mode !== "";
+        const appMode = job.application_mode || "";
+        const tags = job.required_course_tags || [];
+        const hasCourseTags = tags.length > 0;
+        const exp = job.required_experience || [];
+        const hasExperience = exp.length > 0;
+
+        // Application Mode
+        if (!hasAppMode) {
+          mAppMode.innerHTML = '<span style="color:#94a3b8; font-style:italic;">None defined</span>';
+        } else {
+          const niceMode = appMode === "strict" ? "Strict (Meet all)" : (appMode === "flexible" ? "Flexible (Meet minimum)" : "Beginner-Friendly");
+          mAppMode.innerHTML = `<strong style="color:var(--ink);">${niceMode}</strong>`;
+        }
+
+        // Min Reqs
+        if (appMode === "flexible") {
+          mMinReqsRow.style.display = "flex";
+          mMinReqs.innerHTML = `<strong style="color:var(--ink);">${job.min_requirements_met || 0} requirement(s)</strong>`;
+        } else {
+          mMinReqsRow.style.display = "none";
+          mMinReqs.innerHTML = "—";
+        }
+
+        // Course Qualification Tags
+        if (appMode === "beginner-friendly") {
+          mCourseTags.innerHTML = '<span style="color:var(--muted); font-style:italic;">None (Beginner-Friendly)</span>';
+        } else if (!hasCourseTags) {
+          mCourseTags.innerHTML = '<span style="color:#94a3b8; font-style:italic;">None defined</span>';
+        } else {
+          mCourseTags.innerHTML = '<div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:4px;">' +
+            tags.map(t => `<span class="qual-tag" style="display:inline-flex; align-items:center; background:#e2f5e9; color:#1b8e41; padding:4px 8px; border-radius:6px; font-size:13px; font-weight:600; border:1px solid #c2eccd;">${escapeHtml(t)}</span>`).join('') +
+            '</div>';
+        }
+
+        // Project Experience Requirements
+        if (appMode === "beginner-friendly") {
+          mExpReqs.innerHTML = '<span style="color:var(--muted); font-style:italic;">None (Beginner-Friendly)</span>';
+        } else if (!hasExperience) {
+          mExpReqs.innerHTML = '<span style="color:#94a3b8; font-style:italic;">None defined</span>';
+        } else {
+          mExpReqs.innerHTML = '<div style="display:flex; flex-direction:column; gap:4px; margin-top:4px;">' +
+            exp.map(e => `<div style="font-size:0.95rem; font-weight:600; color:var(--ink);">${e.count}+ completed project(s) in <span style="color:var(--success); font-weight:700;">${escapeHtml(e.category)}</span></div>`).join('') +
+            '</div>';
+        }
 
         renderReviewPanel(job);
 
@@ -2599,17 +2562,33 @@
                 const isThisRequested =
                   matchingRequest &&
                   String(matchingRequest.applicationId) === String(app.application_id);
+                const requestStatus = String(matchingRequest?.status || "").toLowerCase();
                 const hasAnyRequest =
                   matchingRequest &&
-                  ["pending", "approved"].includes(String(matchingRequest.status || "").toLowerCase());
+                  ["pending", "approved"].includes(requestStatus);
                 const chooseLabel = isThisRequested
-                  ? String(matchingRequest.status || "pending").toLowerCase() === "approved"
+                  ? requestStatus === "approved"
                     ? "Selected"
+                    : requestStatus === "rejected"
+                    ? "Retry Payment"
                     : "Payment Pending"
                   : hasAnyRequest
                   ? "Selection Pending"
                   : "Choose Applicant";
                 const chooseDisabled = hasAnyRequest;
+                const requestNotice = isThisRequested && requestStatus === "rejected"
+                  ? `<div style="margin-top:6px;color:#b91c1c;font-size:0.78rem;font-weight:700;max-width:460px;">
+                      Matching payment rejected: ${escapeHtml(matchingRequest.adminMessage || "Please review your proof of payment and submit again.")}
+                    </div>`
+                  : isThisRequested && requestStatus === "approved"
+                  ? `<div style="margin-top:6px;color:#15803d;font-size:0.78rem;font-weight:700;max-width:460px;">
+                      Matching payment approved. This applicant is assigned to your job.
+                    </div>`
+                  : isThisRequested && requestStatus === "pending"
+                  ? `<div style="margin-top:6px;color:#b45309;font-size:0.78rem;font-weight:700;max-width:460px;">
+                      Waiting for admin payment verification.
+                    </div>`
+                  : "";
                 
                 const initialStr = initials(installer.name);
                 const recommendedBadge = app.admin_recommended
@@ -2634,6 +2613,7 @@
                       <strong style="color:var(--ink);">${escapeHtml(installer.name)}</strong><br/>
                       <small class="muted" style="font-size:0.8rem;">${escapeHtml(installer.profession || 'Installer')}</small>
                       <div>${recommendedBadge}</div>
+                      ${requestNotice}
                     </div>
                   </div>
                   <div>
@@ -2801,13 +2781,12 @@
             addButton("Accept Suggestion", "done", "btn btn-primary", async () => {
               await acceptSuggestion(job);
             }),
-            addLink(
-              "Edit & Resubmit",
-              "edit",
-              "btn btn-warning",
-              `createPost.html?job_id=${encodeURIComponent(job.job_id)}`,
-              cacheJobBeforeNav(job)
-            )
+            addButton("Request Changes", "rate_review", "btn btn-warning", async () => {
+              await requestRevision(job);
+            }),
+            addButton("Reject Suggestion", "close", "btn btn-danger", async () => {
+              await rejectSuggestionFlow(job);
+            })
           );
           return;
         }
@@ -2869,8 +2848,13 @@
           description: suggested.description || data.description || "",
           customer_version: {
             ...(data.customer_version || {}),
+            title: suggested.title ?? job.job_title,
+            category: suggested.category ?? job.job_category,
             pay: suggested.pay ?? job.job_pay,
             difficulty: suggested.difficulty ?? job.job_difficulty,
+            location: suggested.location ?? job.job_location,
+            date: suggested.date ?? job.job_date,
+            manpower: suggested.manpower ?? job.job_manpower,
             description: suggested.description || "",
           },
           version: Number(data.version || 0) + 1,
@@ -2890,13 +2874,113 @@
         const ok = await updateJob(
           job.job_id,
           {
+            job_title: suggested.title ?? job.job_title,
+            job_category: suggested.category ?? job.job_category,
             job_pay: suggested.pay ?? job.job_pay,
             job_difficulty: suggested.difficulty ?? job.job_difficulty,
+            job_location: suggested.location ?? job.job_location,
+            job_date: suggested.date ?? job.job_date,
+            job_manpower: suggested.manpower ?? job.job_manpower,
             job_description: acceptedDescription,
             job_status: "customer_accepted",
           },
           "Suggestion accepted and sent to admin."
         );
+        if (ok) {
+          hideJobModal();
+          await loadMyJobsWithFilters();
+        }
+      }
+
+      async function requestRevision(job) {
+        const { value: comment } = await Swal.fire({
+          title: "Request changes or revisions",
+          input: "textarea",
+          inputLabel: "Feedback for Admin",
+          inputPlaceholder: "Type your requested adjustments here...",
+          inputValidator: (value) => {
+            if (!value || !value.trim()) {
+              return "Please provide feedback describing what you want changed.";
+            }
+            return null;
+          },
+          showCancelButton: true,
+          confirmButtonText: "Submit Request",
+          confirmButtonColor: "#f59e0b",
+        });
+
+        if (!comment) return;
+
+        const data = getReviewData(job);
+        const nextDescription = JSON.stringify({
+          ...data,
+          is_review_workflow: true,
+          version: Number(data.version || 0) + 1,
+          updated_at: new Date().toISOString(),
+          history: [
+            ...(Array.isArray(data.history) ? data.history : []),
+            {
+              at: new Date().toISOString(),
+              by: "customer",
+              role: "customer",
+              action: `Revision requested: ${comment}`,
+              status: "appeal_submitted",
+            },
+          ],
+        });
+
+        const ok = await updateJob(
+          job.job_id,
+          {
+            job_status: "appeal_submitted",
+            job_description: nextDescription,
+          },
+          "Revision request sent to admin."
+        );
+
+        if (ok) {
+          hideJobModal();
+          await loadMyJobsWithFilters();
+        }
+      }
+
+      async function rejectSuggestionFlow(job) {
+        const okConfirm = await confirmDialog({
+          title: "Reject suggestion?",
+          text: "This will reject the admin's changes and mark the suggestion as rejected.",
+          confirmText: "Reject",
+          icon: "warning",
+          confirmButtonColor: "var(--danger)"
+        });
+        if (!okConfirm) return;
+
+        const data = getReviewData(job);
+        const nextDescription = JSON.stringify({
+          ...data,
+          is_review_workflow: true,
+          version: Number(data.version || 0) + 1,
+          updated_at: new Date().toISOString(),
+          history: [
+            ...(Array.isArray(data.history) ? data.history : []),
+            {
+              at: new Date().toISOString(),
+              by: "customer",
+              role: "customer",
+              action: "Customer rejected suggestion",
+              status: "rejected",
+            },
+          ],
+        });
+
+        const ok = await updateJob(
+          job.job_id,
+          {
+            job_status: "rejected",
+            job_description: nextDescription,
+          },
+          "Suggestion rejected."
+        );
+
         if (ok) {
           hideJobModal();
           await loadMyJobsWithFilters();
@@ -3417,10 +3501,12 @@
         try {
           const customerId = await getCurrentCustomerId(client);
           const requests = await getCustomerMatchingPaymentRequests(client, customerId);
-          return requests.find((req) =>
-            String(req.jobId) === String(jobId) &&
+          const jobRequests = requests
+            .filter((req) => String(req.jobId) === String(jobId))
+            .sort((a, b) => Number(b.updatedAt || b.submittedAt || 0) - Number(a.updatedAt || a.submittedAt || 0));
+          return jobRequests.find((req) =>
             ["pending", "approved"].includes(String(req.status || "").toLowerCase())
-          ) || null;
+          ) || jobRequests[0] || null;
         } catch (error) {
           console.warn("Matching payment request lookup failed:", error);
           return null;
@@ -3455,7 +3541,7 @@
         }
 
         const existing = await getMatchingPaymentRequestForJob(client, job.job_id);
-        if (existing) {
+        if (existing && ["pending", "approved"].includes(String(existing.status || "").toLowerCase())) {
           notifyInfo("A matching payment request is already pending for this job.");
           return;
         }
@@ -4005,91 +4091,7 @@
         });
       }
 
-      async function openReviewNegotiation(job) {
-        const data = getReviewData(job);
-        const original = data.original_customer_version || data.customer_version || {};
-        const suggested = data.admin_suggested_version;
-        if (!suggested || normalizeJobStatus(job.job_status) !== "suggestion_sent") {
-          notifyWarn("There is no pending admin suggestion for this job.");
-          return;
-        }
 
-        const originalLevel = original.difficulty;
-        const proposedLevel = suggested.difficulty;
-        const originalPay = original.pay;
-        const proposedPay = suggested.pay;
-        const originalDesc = original.description;
-        const proposedDesc = suggested.description;
-
-        Swal.fire({
-          title: 'Review Admin Suggestion',
-          width: '800px',
-          html: `
-            <div style="text-align:left; font-family: inherit; margin-top:8px;">
-              <p style="margin-top:0; color:#555; font-size:0.95rem;">Compare your original request with the admin suggested version. You can accept it or edit and resubmit.</p>
-              
-              <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px;">
-                <!-- Original Column -->
-                <div style="background:#f9fafb; border:1px solid #e5e7eb; border-radius:10px; padding:12px;">
-                  <h4 style="margin:0 0 10px 0; color:#4b5563; border-bottom:1px solid #e5e7eb; padding-bottom:6px; display:flex; align-items:center; gap:6px;">
-                    <span class="material-icons-sharp" style="font-size:1.1rem;">history</span> Your Original Post
-                  </h4>
-                  <div style="margin-bottom:8px;">
-                    <span style="font-size:0.75rem; color:#9ca3af; text-transform:uppercase; font-weight:700;">Budget</span><br/>
-                    <strong style="font-size:1.1rem; color:#1f2937;">${formatPeso(originalPay)}</strong>
-                  </div>
-                  <div style="margin-bottom:8px;">
-                    <span style="font-size:0.75rem; color:#9ca3af; text-transform:uppercase; font-weight:700;">Installer Level Filter</span><br/>
-                    <strong style="color:#1f2937;">${difficultyToText(originalLevel)}</strong>
-                  </div>
-                  <div>
-                    <span style="font-size:0.75rem; color:#9ca3af; text-transform:uppercase; font-weight:700;">Instructions / Description</span><br/>
-                    <div style="font-size:0.9rem; color:#4b5563; max-height:120px; overflow-y:auto; white-space:pre-wrap; background:#fff; border:1px solid #e5e7eb; border-radius:6px; padding:6px; margin-top:4px;">${escapeHtml(originalDesc || "—")}</div>
-                  </div>
-                </div>
-
-                <!-- Proposed Column -->
-                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:12px;">
-                  <h4 style="margin:0 0 10px 0; color:#166534; border-bottom:1px solid #bbf7d0; padding-bottom:6px; display:flex; align-items:center; gap:6px;">
-                    <span class="material-icons-sharp" style="font-size:1.1rem;">auto_awesome</span> Admin's Proposal
-                  </h4>
-                  <div style="margin-bottom:8px;">
-                    <span style="font-size:0.75rem; color:#15803d; text-transform:uppercase; font-weight:700;">Proposed Budget</span><br/>
-                    <strong style="font-size:1.1rem; color:#14532d;">${formatPeso(proposedPay)}</strong>
-                    ${proposedPay !== originalPay ? `<span style="font-size:0.8rem; color:#16a34a; font-weight:700; margin-left:6px;">(Updated)</span>` : ''}
-                  </div>
-                  <div style="margin-bottom:8px;">
-                    <span style="font-size:0.75rem; color:#15803d; text-transform:uppercase; font-weight:700;">Proposed Level Filter</span><br/>
-                    <strong style="color:#14532d;">${difficultyToText(proposedLevel)}</strong>
-                    ${proposedLevel !== originalLevel ? `<span style="font-size:0.8rem; color:#16a34a; font-weight:700; margin-left:6px;">(Updated)</span>` : ''}
-                  </div>
-                  <div>
-                    <span style="font-size:0.75rem; color:#15803d; text-transform:uppercase; font-weight:700;">Proposed Instructions</span><br/>
-                    <div style="font-size:0.9rem; color:#14532d; max-height:120px; overflow-y:auto; white-space:pre-wrap; background:#fff; border:1px solid #bbf7d0; border-radius:6px; padding:6px; margin-top:4px;">${escapeHtml(proposedDesc || "—")}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          `,
-          showCancelButton: true,
-          showDenyButton: true,
-          confirmButtonText: 'Accept Suggestion',
-          denyButtonText: 'Edit & Resubmit',
-          cancelButtonText: 'Decide Later',
-          confirmButtonColor: '#20a44c',
-          denyButtonColor: '#f59e0b',
-        }).then(async (result) => {
-          if (result.isConfirmed) {
-            showSkeleton(true);
-            await acceptSuggestion(job);
-          } else if (result.isDenied) {
-            try {
-              sessionStorage.setItem("edit_job_cache", JSON.stringify(job));
-            } catch {}
-            window.location.href = `createPost.html?job_id=${encodeURIComponent(job.job_id)}`;
-          }
-        });
-      }
 
       // ---------- Events ----------
       searchInput.addEventListener("input", () => {
@@ -4116,14 +4118,7 @@
         const job = JOBS.find((j) => j.job_id === jobId);
         if (!job) return;
 
-        // Review buttons/banner
-        const reviewBannerBtn = e.target.closest(".btn-review-neg-banner");
-        const reviewActionBtn = e.target.closest(".btn-review-neg-action");
-        if (reviewBannerBtn || reviewActionBtn) {
-          e.preventDefault();
-          openReviewNegotiation(job);
-          return;
-        }
+        // Legacy review buttons removed — Details modal now handles suggestion review
 
         const postBtn = e.target.closest(".btn-post");
         if (postBtn) {
@@ -4195,6 +4190,41 @@
       loadMyJobs().then(() => {
         loadMyJobsWithFilters();
       });
+
+      function openImageLightbox(src) {
+        let lightbox = document.getElementById("job-image-lightbox");
+        if (!lightbox) {
+          lightbox = document.createElement("div");
+          lightbox.id = "job-image-lightbox";
+          lightbox.style.cssText = `
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 99999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: zoom-out;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+          `;
+          lightbox.innerHTML = `
+            <img id="lightbox-img" src="" style="max-width: 90%; max-height: 90%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); cursor: default;" />
+            <button style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.2); border: none; border-radius: 50%; width: 40px; height: 40px; color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px;" class="material-icons-sharp">close</button>
+          `;
+          document.body.appendChild(lightbox);
+          lightbox.addEventListener("click", (e) => {
+            if (e.target.id === "job-image-lightbox" || e.target.tagName === "BUTTON") {
+              lightbox.style.opacity = "0";
+              setTimeout(() => lightbox.style.display = "none", 250);
+            }
+          });
+        }
+        document.getElementById("lightbox-img").src = src;
+        lightbox.style.display = "flex";
+        lightbox.offsetHeight;
+        lightbox.style.opacity = "1";
+      }
     </script>
   </body>
 </html>

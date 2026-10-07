@@ -11,6 +11,7 @@ declare
     'appeal_submitted',
     'approved',
     'active',
+    'unfinished',
     'cancellation_pending',
     'cancelled',
     'rejected',
@@ -73,7 +74,7 @@ as $$
 declare
   old_status text := '';
   new_status text := lower(coalesce(new.job_status::text, ''));
-  is_owner boolean := new.posted_by = auth.uid();
+  is_owner boolean := new.posted_by::text = auth.uid()::text;
   is_admin boolean := public.is_approved_admin(auth.uid());
 begin
   if tg_op = 'INSERT' then
@@ -123,6 +124,7 @@ begin
     'appeal_submitted',
     'approved',
     'active',
+    'unfinished',
     'cancellation_pending',
     'cancelled',
     'rejected',
@@ -155,6 +157,12 @@ begin
   end if;
 
   if old_status in ('customer_accepted', 'appeal_submitted') and new_status in ('approved', 'suggestion_sent') and is_admin then
+    return new;
+  end if;
+
+  if old_status in ('approved', 'active', 'done', 'completed', 'unfinished')
+    and new_status in ('active', 'done', 'completed', 'unfinished')
+    and is_owner then
     return new;
   end if;
 

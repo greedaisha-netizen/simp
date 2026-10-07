@@ -3316,6 +3316,21 @@
           const MATCHING_PAYMENT_SETTINGS_KEY = 'credentials';
           const tbodyMP = document.getElementById('matchingPaymentsTbody');
 
+          const matchingPeso = (n) =>
+            "PHP " +
+            (Number(n) || 0).toLocaleString("en-PH", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            });
+
+          const matchingDate = (timestamp) => {
+            if (!timestamp) return "";
+            const date = typeof timestamp === "number"
+              ? new Date(timestamp)
+              : new Date(String(timestamp));
+            return Number.isNaN(date.getTime()) ? "" : date.toLocaleString("en-PH");
+          };
+
           function escapeHtml(value) {
             return String(value ?? '')
               .replace(/&/g, '&amp;')
@@ -3359,7 +3374,7 @@
               const settings = await getMatchingPaymentSettings();
               const amount = Number(settings.matchingAmount || settings.amount || 0);
               label.textContent = amount > 0
-                ? `Matching fee: ${peso(amount)}`
+                ? `Matching fee: ${matchingPeso(amount)}`
                 : 'Matching fee: Not set';
             } catch {
               label.textContent = 'Matching fee: Not set';
@@ -3473,7 +3488,7 @@
           async function loadMatchingPaymentRows() {
             const { data: states, error } = await sbClient
               .from('simp_course_state')
-              .select('owner_key, state_value')
+              .select('owner_key, state_value, updated_at')
               .eq('state_key', MATCHING_PAYMENT_STATE_KEY);
             if (error) throw error;
 
@@ -3485,7 +3500,10 @@
               } catch {}
               if (!Array.isArray(requests)) continue;
               const customerId = String(state.owner_key || '').replace(/^user:/, '');
-              requests.forEach((request) => rows.push({ ...request, customerId, ownerKey: state.owner_key }));
+              requests.forEach((request) => {
+                if (!request || typeof request !== 'object') return;
+                rows.push({ ...request, customerId, ownerKey: state.owner_key, stateUpdatedAt: state.updated_at });
+              });
             }
             return rows;
           }
@@ -3508,60 +3526,141 @@
             requests[index] = updater({ ...requests[index] });
             const { error: updateError } = await sbClient
               .from('simp_course_state')
-              .upsert({
-                owner_key: ownerKey,
-                state_key: MATCHING_PAYMENT_STATE_KEY,
+              .update({
                 state_value: JSON.stringify(requests),
                 updated_at: new Date().toISOString()
-              }, { onConflict: 'owner_key,state_key' });
+              })
+              .eq('owner_key', ownerKey)
+              .eq('state_key', MATCHING_PAYMENT_STATE_KEY);
             if (updateError) throw updateError;
             return requests[index];
           }
 
+          async function finalizeApprovedMatchingRequest(request) {
+            const now = new Date().toISOString();
+            const rpcPayload = {
+              target_job_id: String(request.jobId || ''),
+              target_application_id: String(request.applicationId || ''),
+              target_installer_id: String(request.installerId || '')
+            };
+
+            try {
+              const { error } = await sbClient.rpc('approve_matching_payment_assignment', rpcPayload);
+              if (!error) return;
+              if (!/function .*approve_matching_payment_assignment/i.test(error.message || '')) throw error;
+            } catch (error) {
+              if (!/function .*approve_matching_payment_assignment/i.test(error.message || '')) throw error;
+            }
+
+             // Get the manpower:
+            const { data: job, error: getJobErr } = await sbClient
+              .schema('jobs')
+              .from('job')
+              .select('job_description, job_manpower')
+              .eq('job_id', request.jobId)
+              .single();
+            if (getJobErr) throw getJobErr;
+            let jobData = null;
+            try {
+              jobData = JSON.parse(job?.job_description);
+            } catch (_) {}
+            const manpower = job?.job_manpower || jobData?.manpower || jobData?.customer_version?.manpower || 1;
+
+            // Fetch approved applications for this job:
+            const { data: apps, error: getAppsErr } = await sbClient
+              .schema('jobs')
+              .from('job_application')
+              .select('application_id, status')
+              .eq('job_id', request.jobId);
+            if (getAppsErr) throw getAppsErr;
+
+            const approvedApps = apps.filter(a => String(a.status).toLowerCase() === 'approved');
+            const approvedCount = approvedApps.length + 1; // plus this one we are about to approve
+
+            const isFullyStaffed = approvedCount >= manpower;
+
+            // Update this application to approved
+            const { error: appErr } = await sbClient
+              .schema('jobs')
+              .from('job_application')
+              .update({ status: 'approved', updated_at: now })
+              .eq('application_id', request.applicationId);
+            if (appErr) throw appErr;
+
+            // If fully staffed, assign installer_id_assigned and reject remaining
+            if (isFullyStaffed) {
+              const { error: jobErr } = await sbClient
+                .schema('jobs')
+                .from('job')
+                .update({ installer_id_assigned: request.installerId, updated_at: now })
+                .eq('job_id', request.jobId);
+              if (jobErr) throw jobErr;
+
+              const { error: rejectErr } = await sbClient
+                .schema('jobs')
+                .from('job_application')
+                .update({ status: 'rejected', updated_at: now })
+                .eq('job_id', request.jobId)
+                .neq('application_id', request.applicationId)
+                .in('status', ['pending', 'viewed']);
+              if (rejectErr) throw rejectErr;
+            }
+          }
+
           window.handleMatchingRequest = async (ownerKey, requestId, action) => {
             const isApprove = action === 'approve';
-            const ok = await window.__Swal.confirm(
-              isApprove ? 'Approve matching payment?' : 'Reject matching payment?',
-              isApprove
-                ? 'This will assign the chosen applicant and reject other applicants for the job.'
-                : 'This will reject the matching payment request.',
-              isApprove ? 'Approve' : 'Reject'
-            );
-            if (!ok) return;
+            let adminMessage = '';
+            if (isApprove) {
+              const ok = await window.__Swal.confirm(
+                'Approve matching payment?',
+                'This will assign the chosen applicant and reject other applicants for the job.',
+                'Approve'
+              );
+              if (!ok) return;
+              adminMessage = 'Payment verified. The selected applicant has been assigned to your job.';
+            } else {
+              const result = await Swal.fire({
+                icon: 'warning',
+                title: 'Reject matching payment?',
+                html: `
+                  <div style="text-align:left;">
+                    <p style="margin-top:0;color:#475569;">The customer will see this reason and can submit another payment request.</p>
+                    <label style="font-weight:800;color:#1c2430;">Reason</label>
+                    <textarea id="matchingRejectReason" class="swal2-textarea" style="margin:.5rem 0 0;width:100%;min-height:100px;" placeholder="Example: Proof screenshot is unreadable or reference number does not match."></textarea>
+                  </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Reject',
+                confirmButtonColor: '#ef4444',
+                preConfirm: () => {
+                  const reason = document.getElementById('matchingRejectReason')?.value?.trim() || '';
+                  if (reason.length < 8) {
+                    Swal.showValidationMessage('Please enter a clear rejection reason.');
+                    return false;
+                  }
+                  return reason;
+                }
+              });
+              if (!result.isConfirmed) return;
+              adminMessage = result.value;
+            }
 
             try {
               let approvedRequest = null;
+              const { data: authData } = await sbClient.auth.getUser();
+              const adminId = authData?.user?.id || null;
               await updateMatchingPaymentRequest(ownerKey, requestId, (request) => {
                 request.status = isApprove ? 'approved' : 'rejected';
                 request.updatedAt = Date.now();
+                request.reviewedAt = Date.now();
+                request.reviewedBy = adminId;
+                request.adminMessage = adminMessage;
                 approvedRequest = request;
                 return request;
               });
 
               if (isApprove && approvedRequest) {
-                const now = new Date().toISOString();
-                const { error: appErr } = await sbClient
-                  .schema('jobs')
-                  .from('job_application')
-                  .update({ status: 'approved', updated_at: now })
-                  .eq('application_id', approvedRequest.applicationId);
-                if (appErr) throw appErr;
-
-                const { error: jobErr } = await sbClient
-                  .schema('jobs')
-                  .from('job')
-                  .update({ installer_id_assigned: approvedRequest.installerId, updated_at: now })
-                  .eq('job_id', approvedRequest.jobId);
-                if (jobErr) throw jobErr;
-
-                const { error: rejectErr } = await sbClient
-                  .schema('jobs')
-                  .from('job_application')
-                  .update({ status: 'rejected', updated_at: now })
-                  .eq('job_id', approvedRequest.jobId)
-                  .neq('application_id', approvedRequest.applicationId)
-                  .in('status', ['pending', 'viewed']);
-                if (rejectErr) throw rejectErr;
+                await finalizeApprovedMatchingRequest(approvedRequest);
               }
 
               window.__Swal.toast('success', isApprove ? 'Matching payment approved' : 'Matching payment rejected');
@@ -3601,6 +3700,7 @@
                 const status = String(req.status || 'pending').toLowerCase();
                 const statusCls = status === 'approved' ? 'paid' : (status === 'pending' ? 'pending' : 'not-paid');
                 const statusLabel = status.charAt(0).toUpperCase() + status.slice(1);
+                const submittedAt = req.submittedAt || req.updatedAt || req.stateUpdatedAt;
                 return `
                   <tr>
                     <td>
@@ -3611,7 +3711,7 @@
                       <strong>${escapeHtml(req.jobTitle || 'Job')}</strong><br>
                       <small style="color:#64748b;">Applicant: ${escapeHtml(req.installerName || req.installerId || '')}</small>
                     </td>
-                    <td>${peso(req.amount || 0)}</td>
+                    <td>${matchingPeso(req.amount || 0)}</td>
                     <td>${escapeHtml(req.paymentMethod || '')}</td>
                     <td><code>${escapeHtml(req.referenceNumber || '')}</code></td>
                     <td>
@@ -3621,8 +3721,11 @@
                         </button>
                       ` : '<span style="color:#94a3b8; font-style:italic;">No proof</span>'}
                     </td>
-                    <td>${fmtDate(req.submittedAt)}</td>
-                    <td><span class="status ${statusCls}">${statusLabel}</span></td>
+                    <td>${matchingDate(submittedAt)}</td>
+                    <td>
+                      <span class="status ${statusCls}">${statusLabel}</span>
+                      ${req.adminMessage ? `<br><small style="color:#64748b;white-space:normal;display:block;max-width:220px;">${escapeHtml(req.adminMessage)}</small>` : ''}
+                    </td>
                     <td>
                       ${status === 'pending' ? `
                         <div style="display:flex; gap:8px;">

@@ -33,6 +33,44 @@
         --line: #e2e8f0;
         --ring: rgba(32, 164, 76, 0.25);
       }
+      .dropdown-suggestions div {
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: background-color 0.15s;
+        font-size: 14px;
+        color: #374151;
+      }
+      .dropdown-suggestions div:hover {
+        background-color: #f3f4f6;
+      }
+      .qual-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #e2f5e9;
+        color: #1b8e41;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid #c2eccd;
+      }
+      .qual-tag .remove-btn {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        width: 14px;
+        height: 14px;
+        font-weight: bold;
+        color: #1b8e41;
+        transition: background-color 0.15s;
+      }
+      .qual-tag .remove-btn:hover {
+        background-color: #c2eccd;
+      }
+ 
       /* ====== SKELETON (added) ====== */
       .skeleton {
         display: none;
@@ -552,6 +590,10 @@
             ><span class="material-icons-sharp">cases</span>
             <h3>My Job Posts</h3>
           </a>
+          <a href="jobTracker.html"
+            ><span class="material-icons-sharp">track_changes</span>
+            <h3>Job Tracker</h3>
+          </a>
           <a href="createPost.html" class="active" id="nav-create"
             ><span class="material-icons-sharp">add</span>
             <h3>Create a post</h3>
@@ -670,9 +712,14 @@
                     <option>Delivery</option>
                     <option>IT Support</option>
                     <option>General Help</option>
+                    <option>CCTV</option>
+                    <option value="__other__">Other (specify)</option>
                   </select>
                 </div>
-                <div class="hint">Choose the closest fit.</div>
+                <div class="ctrl" id="customCategoryField" style="display:none; margin-top:8px;">
+                  <input type="text" id="custom_category" placeholder="e.g., Landscaping, Painting, etc." />
+                </div>
+                <div class="hint">Choose the closest fit or specify your own.</div>
               </div>
 
               <!-- Date -->
@@ -706,23 +753,32 @@
                 <div class="field-error" aria-live="polite"></div>
               </div>
 
-              <!-- Duration (Hours) -->
+              <!-- Hidden Duration/Time for Compatibility -->
+              <input type="hidden" id="job_duration" value="1" />
+              <input type="hidden" id="job_time" value="00:00" />
+
+              <!-- Number of manpower -->
               <div class="field">
-                <label for="job_duration"
-                  >Estimated Duration<span class="req-star" aria-hidden="true"
+                <label for="job_manpower"
+                  >Number of manpower<span class="req-star" aria-hidden="true"
                     >*</span
                   ></label
                 >
                 <div class="ctrl">
+                  <span
+                    class="affix left material-icons-sharp"
+                    aria-hidden="true"
+                    >groups</span
+                  >
                   <input
                     type="number"
-                    id="job_duration"
+                    id="job_manpower"
                     min="1"
                     step="1"
-                    placeholder="e.g., 3"
+                    placeholder="e.g., 1"
+                    value="1"
                     required
                   />
-                  <span class="affix right">hours</span>
                 </div>
                 <div class="field-error" aria-live="polite"></div>
               </div>
@@ -746,24 +802,6 @@
                     placeholder="e.g., 09171234567"
                     required
                   />
-                </div>
-                <div class="field-error" aria-live="polite"></div>
-              </div>
-
-              <!-- Start Time -->
-              <div class="field">
-                <label for="job_time"
-                  >Start Time<span class="req-star" aria-hidden="true"
-                    >*</span
-                  ></label
-                >
-                <div class="ctrl">
-                  <span
-                    class="affix left material-icons-sharp"
-                    aria-hidden="true"
-                    >schedule</span
-                  >
-                  <input type="time" id="job_time" required />
                 </div>
                 <div class="field-error" aria-live="polite"></div>
               </div>
@@ -946,6 +984,7 @@
 
       /* ---------- Friendly error mapping (non-technical) ---------- */
       function prettyError(err) {
+        console.error("Original error:", err);
         const message = err?.message || String(err || "");
         const raw = message.toLowerCase();
 
@@ -986,8 +1025,8 @@
         if (!message) {
           return "Something went wrong. Please try again.";
         }
-        // Default: show a softened version of the original, without tech jargon
-        return "Something went wrong. Please try again.";
+        // If there's an explicit database check exception, return it
+        return message;
       }
 
       /* ---------- Unified notice wrapper (modals for primary feedback) ---------- */
@@ -1148,18 +1187,55 @@
       const inputTime = document.getElementById("job_time");
       const inputDuration = document.getElementById("job_duration");
       const inputDesc = document.getElementById("job_description");
+      const inputManpower = document.getElementById("job_manpower");
 
       const formTitle = document.getElementById("form-title");
       const formSub = document.getElementById("form-sub");
       const submitBtn = document.getElementById("submitBtn");
+
+      // Custom category "Other" support
+      const customCategoryField = document.getElementById("customCategoryField");
+      const inputCustomCategory = document.getElementById("custom_category");
+
+      inputCategory.addEventListener("change", () => {
+        if (inputCategory.value === "__other__") {
+          customCategoryField.style.display = "block";
+          inputCustomCategory.focus();
+        } else {
+          customCategoryField.style.display = "none";
+          inputCustomCategory.value = "";
+        }
+      });
+
+      function getEffectiveCategory() {
+        if (inputCategory.value === "__other__") {
+          return inputCustomCategory.value.trim() || null;
+        }
+        return inputCategory.value || null;
+      }
+
+      // Set category dropdown, handling custom values not in the predefined list
+      function setCategoryValue(cat) {
+        const val = cat || "";
+        const knownOptions = Array.from(inputCategory.options).map(o => o.value);
+        if (val && !knownOptions.includes(val)) {
+          // Custom category: select "Other" and fill the text field
+          inputCategory.value = "__other__";
+          inputCustomCategory.value = val;
+          customCategoryField.style.display = "block";
+        } else {
+          inputCategory.value = val;
+          inputCustomCategory.value = "";
+          customCategoryField.style.display = "none";
+        }
+      }
 
       /* ====== REQUIRED FIELD HIGHLIGHTING (added) ====== */
       const REQUIRED_FIELDS = [
         { input: inputTitle, name: "Job Title" },
         { input: inputPay, name: "Budget" },
         { input: inputDate, name: "Date" },
-        { input: inputTime, name: "Start Time" },
-        { input: inputDuration, name: "Estimated Duration" },
+        { input: inputManpower, name: "Number of manpower" },
         { input: inputPhone, name: "Phone Number" },
         { input: inputLocation, name: "Location" },
       ];
@@ -1224,13 +1300,9 @@
           setInvalid(inputDate, "Please choose a date.");
           missing.push("Date");
         }
-        if (!inputTime.value) {
-          setInvalid(inputTime, "Please choose a start time.");
-          missing.push("Start Time");
-        }
-        if (!validHours(inputDuration.value)) {
-          setInvalid(inputDuration, "Please enter hours (minimum 1).");
-          missing.push("Estimated Duration");
+        if (!validHours(inputManpower.value)) {
+          setInvalid(inputManpower, "Please enter manpower (minimum 1).");
+          missing.push("Number of manpower");
         }
         if (!inputPhone.value.trim()) {
           setInvalid(inputPhone, "Please enter a phone number.");
@@ -1250,10 +1322,10 @@
           input.addEventListener(evt, () => {
             // Only clear if the field becomes valid
             if (input === inputPay && validMoney(input.value)) clearInvalid(input);
-            else if (input === inputDuration && validHours(input.value)) clearInvalid(input);
+            else if (input === inputManpower && validHours(input.value)) clearInvalid(input);
             else if (
               input !== inputPay &&
-              input !== inputDuration &&
+              input !== inputManpower &&
               String(input.value || "").trim()
             )
               clearInvalid(input);
@@ -1414,7 +1486,7 @@
             .schema("jobs")
             .from("job")
             .select(
-              "job_id, job_code, job_title, job_description, job_difficulty, job_category, job_location, job_date, job_time, job_pay, job_picture_url, job_duration, posted_by, job_status, updated_at"
+              "job_id, job_code, job_title, job_description, job_difficulty, job_category, job_location, job_date, job_time, job_pay, job_picture_url, job_duration, posted_by, job_status, updated_at, job_manpower, required_course_tags, required_experience, application_mode, min_requirements_met"
             )
             .eq("job_id", jobId)
             .maybeSingle();
@@ -1450,7 +1522,7 @@
           }
 
           inputTitle.value = ORIGINAL_JOB.job_title || "";
-          inputCategory.value = ORIGINAL_JOB.job_category || "";
+          setCategoryValue(ORIGINAL_JOB.job_category || "");
 
           inputPay.value = ORIGINAL_JOB.job_pay ?? "";
           inputDate.value = ORIGINAL_JOB.job_date ?? "";
@@ -1460,6 +1532,7 @@
           inputDuration.value = hrs ?? 1;
 
           let descText = ORIGINAL_JOB.job_description || "";
+          let originalManpower = ORIGINAL_JOB.job_manpower || 1;
           if (descText.trim().startsWith("{")) {
             try {
               const data = JSON.parse(descText);
@@ -1468,7 +1541,7 @@
                   inputPay.value = data.admin_suggested_version.pay;
                 }
                 if (data.admin_suggested_version.category != null) {
-                  inputCategory.value = data.admin_suggested_version.category || "";
+                  setCategoryValue(data.admin_suggested_version.category || "");
                 }
                 if (data.admin_suggested_version.title != null) {
                   inputTitle.value = data.admin_suggested_version.title || "";
@@ -1482,9 +1555,11 @@
                 data.description ||
                 data.customer_version?.description ||
                 "";
+              originalManpower = ORIGINAL_JOB.job_manpower || data.manpower || data.customer_version?.manpower || 1;
             } catch (e) {}
           }
           inputDesc.value = descText;
+          inputManpower.value = originalManpower;
           inputLocation.value = ORIGINAL_JOB.job_location || "";
 
           if (ORIGINAL_JOB.job_picture_url) {
@@ -1533,6 +1608,7 @@
           time: payload.job_time,
           duration: payload.job_duration,
           pay: payload.job_pay,
+          manpower: payload.job_manpower || 1,
           description: description || "",
         };
       }
@@ -1555,6 +1631,7 @@
                   job_time: previousJob.job_time,
                   job_duration: previousJob.job_duration,
                   job_pay: previousJob.job_pay,
+                  job_manpower: previous.manpower || previous.customer_version?.manpower || 1,
                 },
                 previous.description || previous.current_description || previousJob.job_description || ""
               )
@@ -1573,6 +1650,7 @@
           version: Number(previous.version || 0) + 1,
           updated_by: editorId,
           updated_at: now,
+          manpower: payload.job_manpower || 1,
           history: [
             ...(Array.isArray(previous.history) ? previous.history : []),
             { at: now, by: editorId, role: "customer", action, status: nextStatus },
@@ -1617,16 +1695,15 @@
         throw lastError;
       }
 
-      // ========= Reset behavior =========
       btnReset.addEventListener("click", () => {
         dzThumb.style.display = "none";
         dzImg.src = "";
         inputDate.setAttribute("min", TODAY_STR);
         setFromCoords(DEFAULT_CENTER[0], DEFAULT_CENTER[1], DEFAULT_ZOOM);
-        clearAllInvalid(); // (added)
+        clearAllInvalid();
+        
         toast.fire({ icon: "info", title: "Form cleared" });
       });
-
       // ========= Submit (create or update) =========
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
@@ -1701,17 +1778,19 @@
             : EDIT_MODE
             ? (ORIGINAL_JOB?.job_difficulty ?? 0)
             : 0;
+
         const payload = {
           job_title: inputTitle.value.trim(),
           job_description: rawDescription,
           job_difficulty: effectiveDifficulty,
-          job_category: inputCategory.value || null,
+          job_category: getEffectiveCategory(),
           job_location: inputLocation.value.trim(),
           job_date: inputDate.value,
-          job_time: inputTime.value,
-          job_duration: job_duration_interval,
+          job_time: inputTime.value || "00:00:00",
+          job_duration: job_duration_interval || "01:00:00",
           job_pay: parseFloat(inputPay.value),
           job_picture_url: pictureRef,
+          job_manpower: parseInt(inputManpower.value, 10) || 1,
         };
 
         /* ====== REQUIRED FIELDS: show exactly which inputs are required (added) ====== */
@@ -1728,8 +1807,15 @@
           if (firstInvalid) {
             firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
           }
+        }
+
+        if (inputCategory.value === "__other__" && !inputCustomCategory.value.trim()) {
+          setInvalid(inputCustomCategory, "Please specify a custom category.");
+          showNotice("Please specify a custom category.", "warning");
+          inputCustomCategory.focus();
           return;
         }
+
 
         if (
           !payload.job_title ||
@@ -1779,27 +1865,7 @@
             return;
           }
           await showNotice("Your job has been requested and is now awaiting verification.", "success");
-          form.reset();
-          dzThumb.style.display = "none";
-          dzImg.src = "";
-          inputDate.setAttribute("min", TODAY_STR);
-          setFromCoords(DEFAULT_CENTER[0], DEFAULT_CENTER[1], DEFAULT_ZOOM);
-          clearAllInvalid(); // (added)
-          
-          // Re-populate phone number after form reset
-          if (inputPhone) {
-            inputPhone.value = payload.job_pay ? inputPhone.value : "";
-            try {
-              const { data: profile } = await supabase
-                .from("customer")
-                .select("phone")
-                .eq("id", user.id)
-                .maybeSingle();
-              if (profile && profile.phone) {
-                inputPhone.value = profile.phone;
-              }
-            } catch {}
-          }
+          window.location.href = "myJobPosts.html";
         } else {
           const currentStatus = normalizeJobStatus(ORIGINAL_JOB?.job_status);
           const nextStatus =

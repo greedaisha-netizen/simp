@@ -759,6 +759,20 @@
         background: linear-gradient(135deg, #a855f7, #6b21a8);
         box-shadow: 0 8px 16px rgba(107, 33, 168, 0.15);
       }
+      .badge-icon-wrap.review {
+        background: linear-gradient(135deg, #20a44c, #20647c);
+        box-shadow: 0 8px 16px rgba(32, 100, 124, 0.15);
+      }
+      .review-stars {
+        color: #f59e0b;
+        letter-spacing: 0.04em;
+        font-weight: 800;
+      }
+      .review-meta {
+        color: #64748b;
+        font-size: 0.8rem;
+        margin-top: 0.25rem;
+      }
       .badge-icon-wrap.unearned {
         background: linear-gradient(135deg, #cbd5e1, #94a3b8);
         box-shadow: none;
@@ -1094,6 +1108,7 @@
 
           <section class="card">
             <h2>Project Accomplished</h2>
+            <div id="installerProjectReviews">
             <div class="badge-grid" style="margin-top:0;">
               <div class="badge-card unearned">
                 <div class="badge-icon-wrap unearned">🏆</div>
@@ -1102,6 +1117,7 @@
                   <p>No verified project accomplishments or client's reviews completed yet.</p>
                 </div>
               </div>
+            </div>
             </div>
           </section>
 
@@ -2577,6 +2593,264 @@
         }
       }
 
+      function reviewStars(rating) {
+        const value = Math.max(0, Math.min(5, Number(rating || 0)));
+        return "★".repeat(value) + "☆".repeat(5 - value);
+      }
+
+      function formatReviewDate(value) {
+        if (!value) return "";
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "";
+        return date.toLocaleDateString("en-PH", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      }
+
+      async function loadInstallerProjectReviews(installerId) {
+        const container = document.getElementById("installerProjectReviews");
+        if (!container) return;
+
+        function esc(value) {
+          return String(value ?? "").replace(/[&<>"']/g, (s) => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+          }[s]));
+        }
+
+        function projectLevelLabel(value) {
+          const text = String(value ?? "").trim();
+          const map = {
+            "": "N/A",
+            "0": "Level 1",
+            "1": "Level 2",
+            "2": "Level 3",
+            "3": "Level 4",
+            "4": "Level 5",
+          };
+          return map[text] || text;
+        }
+
+        function openProjectAccomplishment(job) {
+          const hasReview = !!job.review_id;
+          const reviewHtml = hasReview
+            ? `
+              <div style="margin-top:14px; padding:12px; border:1px solid #e2e8f0; border-radius:10px; background:#f8fafc;">
+                <div style="font-weight:800; color:#0f172a; margin-bottom:6px;">Customer Review</div>
+                <div style="color:#f59e0b; font-size:1.1rem; margin-bottom:6px;">${reviewStars(job.rating)}</div>
+                <p style="margin:0; color:#334155;">${esc(job.comment || "Customer submitted a rating without a comment.")}</p>
+              </div>
+            `
+            : `
+              <div style="margin-top:14px; padding:12px; border:1px dashed #cbd5e1; border-radius:10px; background:#f8fafc;">
+                <div style="font-weight:800; color:#0f172a; margin-bottom:4px;">Review: empty</div>
+                <p style="margin:0; color:#64748b;">The customer marked this job complete without submitting a review.</p>
+              </div>
+            `;
+
+          Swal.fire({
+            title: esc(job.job_title || "Completed Job"),
+            html: `
+              <div style="text-align:left; font-family:'Poppins', sans-serif;">
+                <div style="display:grid; gap:10px;">
+                  <div>
+                    <div style="font-size:.72rem; text-transform:uppercase; color:#64748b; font-weight:800;">Job Title</div>
+                    <div style="font-weight:800; color:#0f172a;">${esc(job.job_title || "Completed Job")}</div>
+                  </div>
+                  <div>
+                    <div style="font-size:.72rem; text-transform:uppercase; color:#64748b; font-weight:800;">Level</div>
+                    <div style="font-weight:800; color:#0f172a;">${esc(projectLevelLabel(job.job_difficulty))}</div>
+                  </div>
+                  <div>
+                    <div style="font-size:.72rem; text-transform:uppercase; color:#64748b; font-weight:800;">Category</div>
+                    <div style="font-weight:800; color:#0f172a;">${esc(job.job_category || "Project")}</div>
+                  </div>
+                </div>
+                ${reviewHtml}
+              </div>
+            `,
+            confirmButtonColor: "#1b9c85",
+            confirmButtonText: "Close"
+          });
+        }
+
+        try {
+        let accomplishments = [];
+        let rpcErrLog = null;
+        let viewErrLog = null;
+        let manualErrLog = null;
+        let manualAppsCount = 0;
+        let manualJobsCount = 0;
+        
+        try {
+          const { data: rpcRows, error: rpcError } = await sb.rpc(
+              "get_installer_accomplishments",
+              { target_installer_id: String(installerId) }
+            );
+            if (rpcError) throw rpcError;
+            accomplishments = rpcRows || [];
+          } catch (rpcErr) {
+            rpcErrLog = rpcErr.message || String(rpcErr);
+            console.warn("RPC failed, trying view:", rpcErr);
+            try {
+              const { data: viewRows, error: viewError } = await sb
+                .schema("jobs")
+                .from("installer_accomplishment_details")
+                .select("job_id, job_title, job_category, job_difficulty, job_date, job_location, job_status, completed_at, review_id, rating, comment, tags, review_created_at")
+                .eq("installer_id", installerId)
+                .order("completed_at", { ascending: false });
+              if (viewError) throw viewError;
+              accomplishments = viewRows || [];
+            } catch (viewErr) {
+              viewErrLog = viewErr.message || String(viewErr);
+              console.warn("View failed, trying manual fallback:", viewErr);
+            }
+          }
+
+          if (!accomplishments || !accomplishments.length) {
+            const { data: installerApps, error: doneAppsError } = await sb
+              .schema("jobs")
+              .from("job_application")
+              .select("application_id, status, applied_at, job_id, installer_id")
+              .eq("installer_id", installerId)
+              .neq("status", "cancelled");
+
+            if (doneAppsError) {
+              manualErrLog = doneAppsError.message || String(doneAppsError);
+            }
+
+            if (!doneAppsError && installerApps && installerApps.length) {
+              manualAppsCount = installerApps.length;
+              const jobIds = [...new Set(installerApps.map((app) => app.job_id).filter(Boolean))];
+              let jobsById = {};
+              let reviewsByJobId = {};
+
+              if (jobIds.length) {
+                const { data: jobs, error: jobsErr } = await sb
+                  .schema("jobs")
+                  .from("job")
+                  .select("job_id, job_title, job_category, job_difficulty, job_date, job_location, job_status, updated_at")
+                  .in("job_id", jobIds);
+
+                if (jobsErr) {
+                  manualErrLog = (manualErrLog ? manualErrLog + "; " : "") + (jobsErr.message || String(jobsErr));
+                }
+
+                if (!jobsErr && jobs) {
+                  manualJobsCount = jobs.length;
+                  jobsById = Object.fromEntries(jobs.map((job) => [job.job_id, job]));
+                }
+
+                const { data: reviews, error: reviewsErr } = await sb
+                  .schema("jobs")
+                  .from("installer_reviews")
+                  .select("review_id, job_id, rating, comment, tags, created_at")
+                  .eq("installer_id", installerId)
+                  .in("job_id", jobIds);
+
+                if (!reviewsErr && reviews) {
+                  reviewsByJobId = Object.fromEntries(reviews.map((review) => [review.job_id, review]));
+                }
+              }
+
+              accomplishments = installerApps
+                .filter((app) => {
+                  const job = jobsById[app.job_id] || {};
+                  const jobStatus = String(job.job_status || "").toLowerCase();
+                  return ["done", "completed"].includes(jobStatus);
+                })
+                .map((app) => {
+                  const job = jobsById[app.job_id] || {};
+                  const review = reviewsByJobId[app.job_id] || {};
+                  return {
+                    job_id: app.job_id,
+                    installer_id: app.installer_id,
+                    job_title: job.job_title || "Completed Job",
+                    job_category: job.job_category || "Project",
+                    job_difficulty: job.job_difficulty || "",
+                    job_date: job.job_date || app.applied_at,
+                    job_location: job.job_location || "",
+                    job_status: job.job_status || app.status,
+                    completed_at: job.updated_at || app.applied_at,
+                    review_id: review.review_id || null,
+                    rating: review.rating || null,
+                    comment: review.comment || null,
+                    tags: review.tags || [],
+                    review_created_at: review.created_at || null,
+                  };
+                });
+            }
+          }
+
+          if (!accomplishments || !accomplishments.length) {
+            container.innerHTML = `
+              <div class="badge-grid" style="margin-top:0;">
+                <div class="badge-card unearned" style="flex-direction:column; align-items:flex-start; gap:12px;">
+                  <div style="display:flex; gap:12px; align-items:center;">
+                    <div class="badge-icon-wrap unearned">🏆</div>
+                    <div class="badge-info">
+                      <h5>Project Accomplishments</h5>
+                      <p>No verified project accomplishments or client's reviews completed yet.</p>
+                    </div>
+                  </div>
+                  <div style="width:100%; font-size:0.75rem; color:#ef4444; border-top:1px dashed #cbd5e1; padding-top:10px; font-family:monospace; line-height:1.4;">
+                    <strong>[Debug Console Log]</strong><br>
+                    Installer ID: ${esc(installerId)}<br>
+                    RPC Error: ${esc(rpcErrLog || "None (or returned 0 rows)")}<br>
+                    View Error: ${esc(viewErrLog || "None (or returned 0 rows)")}<br>
+                    Manual Fallback Apps: ${manualAppsCount}<br>
+                    Manual Fallback Jobs: ${manualJobsCount}<br>
+                    Manual Error: ${esc(manualErrLog || "None")}<br>
+                  </div>
+                </div>
+              </div>
+            `;
+            return;
+          }
+
+
+          const reviewed = accomplishments.filter((row) => row.review_id && Number(row.rating || 0) > 0);
+          const average = reviewed.length
+            ? reviewed.reduce((sum, row) => sum + Number(row.rating || 0), 0) / reviewed.length
+            : 0;
+          container.innerHTML = `
+            <div class="badge-grid" style="margin-top:0;">
+              <div class="badge-card">
+                <div class="badge-icon-wrap review">★</div>
+                <div class="badge-info">
+                  <h5>${reviewed.length ? `${average.toFixed(1)} Average Rating` : "Project Accomplishments"}</h5>
+                  <p>${accomplishments.length} completed job${accomplishments.length === 1 ? "" : "s"} / ${reviewed.length} customer review${reviewed.length === 1 ? "" : "s"}.</p>
+                </div>
+              </div>
+              ${accomplishments.map((job) => { const review = { ...job, created_at: job.completed_at || job.job_date }; return `
+                <div class="badge-card" data-project-job="${esc(job.job_id)}" title="View project accomplishment">
+                  <div class="badge-icon-wrap review">🏆</div>
+                  <div class="badge-info">
+                    <h5>${esc(job.job_title || "Completed Job")}</h5>
+                    <p>${job.review_id ? `<span class="review-stars">${reviewStars(job.rating)}</span>` : "<strong>Review: empty</strong>"}</p>
+                    <p>${job.review_id ? esc(job.comment || "Customer submitted a rating without a comment.") : "Customer marked this job as accomplished."}</p>
+                    <div class="review-meta">${esc(projectLevelLabel(job.job_difficulty))} · ${esc(review.job_category || "Project")} · ${esc(formatReviewDate(review.created_at))}</div>
+                  </div>
+                </div>
+              `; }).join("")}
+            </div>
+          `;
+          container.querySelectorAll("[data-project-job]").forEach((card) => {
+            card.addEventListener("click", () => {
+              const job = accomplishments.find((item) => String(item.job_id) === String(card.dataset.projectJob));
+              if (job) openProjectAccomplishment(job);
+            });
+          });
+        } catch (error) {
+          console.warn("Installer project reviews unavailable:", error);
+        }
+      }
+
       async function loadInstaller() {
         const {
           data: { user },
@@ -2622,6 +2896,7 @@
           .forEach((el) => wireField(el, el.getAttribute("data-key")));
 
         await loadInstallerAccomplishments(USER.id);
+        await loadInstallerProjectReviews(CURRENT?.id || USER.id);
       }
 
       // === documents_review purge (kept) ===

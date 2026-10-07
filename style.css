@@ -396,22 +396,29 @@ THIRD PAGE (Recent Jobs) HORIZONTAL SCROLLER)
 .job-card {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
-  justify-content: center;
+  align-items: stretch;
+  justify-content: flex-start;
   position: relative;
   flex: 0 0 310px;
-  height: 250px;
+  height: 410px;
   overflow: hidden;
-  color: #fff;
+  color: #0f172a;
   border-radius: 16px;
-  padding: 16px;
+  padding: 0;
   box-shadow: 0 6px 18px rgba(17, 24, 39, 0.15);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  background: #1c2430;
+  background: #fff;
 }
 .job-card:hover {
   transform: translateY(-4px) scale(1.02);
   box-shadow: 0 12px 28px rgba(17, 24, 39, 0.25);
+}
+.job-thumb {
+  position: relative;
+  flex: 0 0 155px;
+  overflow: hidden;
+  color: #fff;
+  background: #1c2430;
 }
 /* Background image with overlay */
 .job-cover {
@@ -422,61 +429,186 @@ THIRD PAGE (Recent Jobs) HORIZONTAL SCROLLER)
   filter: brightness(75%);
   z-index: 1;
 }
+.job-cover.category-template {
+  filter: none;
+  background:
+    radial-gradient(circle at 82% 16%, rgba(255, 255, 255, 0.28), transparent 22%),
+    linear-gradient(135deg, var(--job-a, #20647c), var(--job-b, #20a44c));
+}
+.job-cover.category-template::before {
+  content: "";
+  position: absolute;
+  inset: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 14px;
+}
+.job-cover.category-template::after {
+  content: "";
+  position: absolute;
+  right: -38px;
+  bottom: -42px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+}
+.job-template-mark {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.job-template-icon {
+  width: 82px;
+  height: 82px;
+  border-radius: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  color: #fff;
+  font-size: 2.8rem;
+}
+.job-template-label {
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 0.76rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
 .job-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.15));
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.08));
   z-index: 2;
 }
-.job-body {
+.job-thumb-content {
   position: relative;
   z-index: 3;
-  width: 100%;
+  height: 100%;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  justify-content: space-between;
+}
+.job-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  background: #fff;
+}
+.job-category-badge {
+  width: max-content;
+  max-width: 100%;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  font-size: 0.74rem;
+  font-weight: 800;
+  backdrop-filter: blur(8px);
+}
+.job-category-badge i {
+  font-size: 0.95rem;
+}
+.job-thumb-title {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.job-thumb-title span {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.76);
+}
+.job-thumb-title strong {
+  font-size: 1.05rem;
+  line-height: 1.2;
+  color: #fff;
 }
 .job-body h3 {
   margin: 0;
-  font-size: clamp(1rem, 0.9vw + 0.9rem, 1.15rem);
+  font-size: 1.08rem;
   font-weight: 700;
   line-height: 1.3;
+  color: #0f172a;
 }
 .job-body p {
   margin: 0;
-  font-size: clamp(0.9rem, 0.4vw + 0.8rem, 0.95rem);
+  font-size: 0.92rem;
   line-height: 1.4;
-  color: #e2e8f0;
-  flex-grow: 1;
+  color: #475569;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.job-meta {
+.job-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 7px;
+  margin-top: 2px;
+}
+.job-detail-grid span {
+  min-width: 0;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
+  color: #475569;
+  font-size: 0.84rem;
+  line-height: 1.25;
+}
+.job-detail-grid i {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border-radius: 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  color: #20647c;
+  font-size: 0.95rem;
+}
+.job-meta {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid #e5e7eb;
 }
 .job-city {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 0.9rem;
-  color: #cbd5e1;
+  font-size: 0.84rem;
+  color: #64748b;
 }
 .job-city i {
   font-size: 1.1rem;
 }
 .price {
-  background: rgba(255, 255, 255, 0.15);
+  background: #e8f5ee;
+  color: #166534;
   padding: 6px 12px;
   border-radius: 999px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  backdrop-filter: blur(6px);
+  font-weight: 800;
+  font-size: 0.86rem;
 }
 /* posted time pill */
 .posted-time {
@@ -484,10 +616,10 @@ THIRD PAGE (Recent Jobs) HORIZONTAL SCROLLER)
   align-items: center;
   gap: 6px;
   font-size: 0.85rem;
-  background: rgba(0, 0, 0, 0.35);
+  background: #f1f5f9;
   padding: 6px 10px;
   border-radius: 999px;
-  color: #e2e8f0;
+  color: #475569;
   white-space: nowrap;
 }
 .posted-time i {

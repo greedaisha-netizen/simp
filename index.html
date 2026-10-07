@@ -122,6 +122,21 @@
         transform-origin: center;
       }
 
+      .job-modal-hero-img.category-template {
+        filter: none;
+        transform: none;
+        background:
+          radial-gradient(circle at 80% 18%, rgba(255, 255, 255, 0.3), transparent 24%),
+          linear-gradient(135deg, var(--job-a, #20647c), var(--job-b, #20a44c));
+      }
+
+      .job-modal-hero-img.category-template .job-template-icon {
+        width: 96px;
+        height: 96px;
+        border-radius: 26px;
+        font-size: 3.2rem;
+      }
+
       .job-modal-hero-overlay {
         position: absolute;
         inset: 0;
@@ -632,6 +647,201 @@
         const s = String(locationValue);
         return s.split(",")[0].trim();
       }
+      function formatJobDate(value) {
+        if (!value) return "Flexible date";
+        const date = new Date(`${value}T00:00:00`);
+        if (Number.isNaN(date.getTime())) return String(value);
+        return date.toLocaleDateString("en-PH", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      }
+      function formatJobTime(value) {
+        if (!value) return "Flexible time";
+        const text = String(value).trim();
+        const match = text.match(/^(\d{1,2}):(\d{2})/);
+        if (!match) return text;
+        const date = new Date();
+        date.setHours(Number(match[1]), Number(match[2]), 0, 0);
+        return date.toLocaleTimeString("en-PH", {
+          hour: "numeric",
+          minute: "2-digit",
+        });
+      }
+      function getJobDifficulty(job) {
+        const data = parseDescriptionPayload(job?.job_description);
+        const value =
+          job?.job_difficulty ??
+          data?.current_difficulty ??
+          data?.proposed_difficulty ??
+          data?.customer_version?.difficulty ??
+          data?.admin_suggested_version?.difficulty ??
+          data?.original_customer_version?.difficulty;
+        const level = Number(value);
+        return Number.isFinite(level) ? level : null;
+      }
+      function categoryVisual(categoryValue) {
+        const category = String(categoryValue || "").toLowerCase();
+        if (category.includes("elect")) {
+          return {
+            label: "Electrical",
+            icon: "ri-flashlight-line",
+            a: "#1d4ed8",
+            b: "#0f766e",
+          };
+        }
+        if (category.includes("safety")) {
+          return {
+            label: "Safety",
+            icon: "ri-shield-check-line",
+            a: "#dc2626",
+            b: "#f97316",
+          };
+        }
+        if (category.includes("network")) {
+          return {
+            label: "Networking",
+            icon: "ri-global-line",
+            a: "#047857",
+            b: "#0891b2",
+          };
+        }
+        if (category.includes("cctv")) {
+          return {
+            label: "CCTV",
+            icon: "ri-camera-lens-line",
+            a: "#5b21b6",
+            b: "#2563eb",
+          };
+        }
+        if (category.includes("plumb")) {
+          return {
+            label: "Plumbing",
+            icon: "ri-tools-line",
+            a: "#0369a1",
+            b: "#14b8a6",
+          };
+        }
+        if (category.includes("general")) {
+          return {
+            label: "General Services",
+            icon: "ri-hammer-line",
+            a: "#475569",
+            b: "#16a34a",
+          };
+        }
+        return {
+          label: categoryValue || "Job Service",
+          icon: "ri-briefcase-4-line",
+          a: "#1f2937",
+          b: "#20647c",
+        };
+      }
+      function applyCategoryTemplate(el, job) {
+        if (!el) return;
+        const visual = categoryVisual(job?.job_category);
+        el.classList.add("category-template");
+        el.style.backgroundImage = "";
+        el.style.setProperty("--job-a", visual.a);
+        el.style.setProperty("--job-b", visual.b);
+        el.innerHTML = `
+          <span class="job-template-label">${escapeHtml(visual.label)}</span>
+          <span class="job-template-mark">
+            <i class="job-template-icon ${visual.icon}" aria-hidden="true"></i>
+          </span>
+        `;
+      }
+      function clearCategoryTemplate(el) {
+        if (!el) return;
+        el.classList.remove("category-template");
+        el.innerHTML = "";
+      }
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+      function firstText(...values) {
+        for (const value of values) {
+          if (value === null || value === undefined) continue;
+          const text = String(value).trim();
+          if (text) return text;
+        }
+        return "";
+      }
+      function parseDescriptionPayload(desc) {
+        if (!desc || typeof desc !== "string") return null;
+        const raw = desc.trim();
+        if (!raw.startsWith("{")) return null;
+        try {
+          return JSON.parse(raw);
+        } catch (e) {
+          try {
+            return JSON.parse(raw.replace(/'/g, '"'));
+          } catch (fallbackError) {}
+        }
+        return null;
+      }
+      function extractMetadataDescription(desc) {
+        if (!desc || typeof desc !== "string") return "";
+        const match = desc.match(
+          /['"]?(?:current_description|description)['"]?\s*:\s*(['"])([\s\S]*?)\1/i
+        );
+        return match ? match[2].trim() : "";
+      }
+      function getJobDescription(job) {
+        const raw = job?.job_description ?? "";
+        const data = parseDescriptionPayload(raw);
+        if (!data) {
+          const text = extractMetadataDescription(raw);
+          return text || raw;
+        }
+        if (data.is_negotiation) {
+          return firstText(
+            data.proposed_description,
+            data.current_description,
+            data.description,
+            data.original_description
+          );
+        }
+        return firstText(
+          data.current_description,
+          data.description,
+          data.customer_version?.description,
+          data.admin_suggested_version?.description,
+          data.original_customer_version?.description,
+          data.original_description
+        );
+      }
+      function getJobPay(job) {
+        const data = parseDescriptionPayload(job?.job_description);
+        const value =
+          job?.job_pay ??
+          data?.current_pay ??
+          data?.proposed_pay ??
+          data?.customer_version?.pay ??
+          data?.admin_suggested_version?.pay ??
+          data?.original_customer_version?.pay;
+        const amount = Number(value);
+        return Number.isFinite(amount) ? amount : null;
+      }
+      function hasAssignedInstaller(job) {
+        const value = job?.installer_id_assigned;
+        return value !== null && value !== undefined && String(value).trim() !== "";
+      }
+      function isPubliclyPostedJob(job) {
+        if (!job || hasAssignedInstaller(job)) return false;
+        const status = String(job.job_status || "").toLowerCase().trim();
+        const data = parseDescriptionPayload(job.job_description);
+        if (status === "active") return true;
+        if (status === "approved") return !!data?.is_posted;
+        if (!status) return !!data?.is_posted;
+        return false;
+      }
 
       /* relative time helper */
       function timeAgo(iso) {
@@ -687,9 +897,17 @@
 
       async function jobCard(job, index) {
         const title = job.job_title || "Untitled Job";
-        const desc = job.job_description || "";
+        const desc = getJobDescription(job);
         const city = cityOnly(job.job_location);
-        const pay = job.job_pay != null ? peso(job.job_pay) : "—";
+        const visual = categoryVisual(job.job_category);
+        const payValue = getJobPay(job);
+        const pay = payValue != null ? peso(payValue) : "—";
+        const difficulty = getJobDifficulty(job);
+        const difficultyText =
+          difficulty != null ? `Level ${difficulty}` : "Level not set";
+        const scheduleText = `${formatJobDate(job.job_date)} · ${formatJobTime(
+          job.job_time
+        )}`;
         const posted = timeAgo(job.created_at);
 
         const card = document.createElement("div");
@@ -700,30 +918,58 @@
         card.setAttribute("aria-label", `View details for job: ${title}`);
 
         card.innerHTML = `
-				<div class="job-cover"></div>
-				<div class="job-overlay"></div>
-				<div class="job-body">
-					<h3>${title}</h3>
-					<p>${truncate(desc)}</p>
+        <div class="job-thumb">
+          <div class="job-cover"></div>
+          <div class="job-overlay"></div>
+          <div class="job-thumb-content">
+            <span class="job-category-badge">
+              <i class="${visual.icon}" aria-hidden="true"></i>${escapeHtml(visual.label)}
+            </span>
+            <div class="job-thumb-title">
+              <span>${escapeHtml(visual.label)}</span>
+              <strong>${escapeHtml(city || "Service Job")}</strong>
+            </div>
+          </div>
+        </div>
+        <div class="job-body">
+					<h3>${escapeHtml(title)}</h3>
+					<p>${escapeHtml(truncate(desc))}</p>
+          <div class="job-detail-grid">
+            <span title="Category">
+              <i class="${visual.icon}" aria-hidden="true"></i>${escapeHtml(visual.label)}
+            </span>
+            <span title="Difficulty">
+              <i class="ri-bar-chart-grouped-line" aria-hidden="true"></i>${escapeHtml(difficultyText)}
+            </span>
+            <span title="Schedule">
+              <i class="ri-calendar-event-line" aria-hidden="true"></i>${escapeHtml(scheduleText)}
+            </span>
+            <span title="${escapeHtml(job.job_location || "")}">
+              <i class="ri-map-pin-line" aria-hidden="true"></i>${escapeHtml(city || "Location not set")}
+            </span>
+          </div>
 					<div class="job-meta">
-						<span class="job-city" title="${
-              job.job_location || ""
-            }"><i class="ri-map-pin-line"></i>${city || "—"}</span>
 						<span class="posted-time" title="${
-              job.created_at
-                ? new Date(job.created_at).toLocaleString("en-PH")
-                : ""
+              escapeHtml(
+                job.created_at
+                  ? new Date(job.created_at).toLocaleString("en-PH")
+                  : ""
+              )
             }">
-							<i class="ri-time-line"></i>${posted || ""}
+							<i class="ri-time-line"></i>${escapeHtml(posted || "")}
 						</span>
-						<span class="price">${pay}</span>
+						<span class="price">${escapeHtml(pay)}</span>
 					</div>
 				</div>
 			`;
 
         const cover = card.querySelector(".job-cover");
+        applyCategoryTemplate(cover, job);
         resolveImageUrl(job.job_picture_url).then((url) => {
-          if (url) cover.style.backgroundImage = `url("${url}")`;
+          if (url) {
+            clearCategoryTemplate(cover);
+            cover.style.backgroundImage = `url("${url}")`;
+          }
         });
 
         return card;
@@ -742,8 +988,8 @@
         const title = job.job_title || "Job Details";
         const fullLocation = job.job_location || "";
         const city = cityOnly(fullLocation) || "Location not specified";
-        const payText =
-          job.job_pay != null ? peso(job.job_pay) : "Not specified";
+        const payValue = getJobPay(job);
+        const payText = payValue != null ? peso(payValue) : "Not specified";
         const posted = job.created_at ? timeAgo(job.created_at) : "";
         const postedExact = job.created_at
           ? new Date(job.created_at).toLocaleString("en-PH")
@@ -751,31 +997,31 @@
 
         if (titleEl) titleEl.textContent = title;
         if (cityEl) {
-          cityEl.innerHTML = `<i class="ri-map-pin-line"></i>${city}`;
+          cityEl.innerHTML = `<i class="ri-map-pin-line"></i>${escapeHtml(city)}`;
           cityEl.title = fullLocation;
         }
         if (metaEl) {
           metaEl.innerHTML = `
             <span${
-              postedExact ? ` title="${postedExact}"` : ""
-            }><i class="ri-time-line"></i>${posted || "Recently posted"}</span>
-            <span><i class="ri-money-dollar-circle-line"></i>${payText}</span>
+              postedExact ? ` title="${escapeHtml(postedExact)}"` : ""
+            }><i class="ri-time-line"></i>${escapeHtml(posted || "Recently posted")}</span>
+            <span><i class="ri-money-dollar-circle-line"></i>${escapeHtml(payText)}</span>
           `;
         }
         if (descEl) {
           descEl.textContent =
-            job.job_description || "No description provided for this job.";
+            getJobDescription(job) || "No description provided for this job.";
         }
 
         // HERO image: use job picture if available
         if (heroImgEl) {
+          clearCategoryTemplate(heroImgEl);
           heroImgEl.style.backgroundImage = "";
+          applyCategoryTemplate(heroImgEl, job);
           resolveImageUrl(job.job_picture_url).then((url) => {
             if (url) {
+              clearCategoryTemplate(heroImgEl);
               heroImgEl.style.backgroundImage = `url("${url}")`;
-            } else {
-              heroImgEl.style.backgroundImage =
-                "linear-gradient(135deg, #20a44c, #20647c)";
             }
           });
         }
@@ -835,22 +1081,53 @@
         });
       }
 
+      const JOB_SELECT =
+        "job_id,posted_by,job_title,job_description,job_difficulty,job_category,job_location,job_date,job_time,job_pay,job_picture_url,created_at,job_status,installer_id_assigned";
+
+      async function fetchActiveJobsFromJobsSchema() {
+        const url = `${SUPABASE_URL}/rest/v1/job?select=${JOB_SELECT}&or=(job_status.eq.active,job_status.eq.approved)&order=created_at.desc&limit=30`;
+        const res = await fetch(url, {
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+            "Accept-Profile": "jobs",
+          },
+        });
+        if (!res.ok) throw new Error(await res.text());
+        return res.json();
+      }
+
+      async function fetchActiveJobsFromPublicView() {
+        const url = `${SUPABASE_URL}/rest/v1/public_recent_jobs?select=*&order=created_at.desc&limit=30`;
+        const res = await fetch(url, {
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          },
+        });
+        if (!res.ok) throw new Error(await res.text());
+        return res.json();
+      }
+
       async function loadRecentJobs() {
         try {
-          /* keeps your existing API usage; already limited to 6 newest */
-          const url = `${SUPABASE_URL}/rest/v1/public_recent_jobs?select=*&order=created_at.desc&limit=6`;
-          const res = await fetch(url, {
-            headers: {
-              apikey: SUPABASE_ANON_KEY,
-              Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
-            },
-          });
-          if (!res.ok) throw new Error(await res.text());
-          let rows = await res.json();
+          let rows = [];
+          try {
+            rows = await fetchActiveJobsFromJobsSchema();
+            if (!Array.isArray(rows) || rows.length === 0) {
+              rows = await fetchActiveJobsFromPublicView();
+            }
+          } catch (primaryError) {
+            console.warn(
+              "Could not load jobs.job directly; trying public_recent_jobs view.",
+              primaryError
+            );
+            rows = await fetchActiveJobsFromPublicView();
+          }
 
-          // Extra safety: in case the view ignores limit, enforce top 6 here.
           rows = Array.isArray(rows)
             ? rows
+                .filter(isPubliclyPostedJob)
                 .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
                 .slice(0, 6)
             : [];

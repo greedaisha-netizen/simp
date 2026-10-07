@@ -135,9 +135,14 @@
       .thumb {
         width: 48px;
         height: 48px;
-        border-radius: 8px;
-        object-fit: cover;
-        border: 1px solid var(--line);
+        min-width: 48px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        color: #fff;
+        border: none;
       }
 
       .pill {
@@ -675,15 +680,10 @@
                   <option value="">All statuses</option>
                   <option value="pending_review">Pending Review</option>
                   <option value="suggestion_sent">Suggestion Sent</option>
-                  <option value="customer_accepted">Customer Accepted</option>
-                  <option value="appeal_submitted">Appeal Submitted</option>
-                  <option value="approved">Approved</option>
                   <option value="active">Active</option>
-                  <option value="cancellation_pending">Cancellation Pending</option>
                   <option value="cancelled">Cancelled</option>
                   <option value="rejected">Rejected</option>
-                  <option value="done">Done</option>
-                  <option value="overdue">Overdue</option>
+                  <option value="completed">Completed</option>
                 </select>
               </div>
 
@@ -837,7 +837,7 @@
 
     <script type="module">
       // ========= CONFIG =========
-      var DEFAULT_JOB_PICS_BUCKET = "jobs";
+
 
       // ========= Supabase client =========
       var createClient = supabase.createClient;
@@ -864,6 +864,39 @@
       // ========= State =========
       var ALL_JOBS = [];
       var activeJobId = null;
+      var AVAILABLE_COURSE_TAGS = [];
+
+      async function loadCourseTags() {
+        try {
+          const { data: courses, error: errC } = await sb.schema("course").from("courses").select("id, title");
+          if (errC) throw errC;
+          const { data: sections, error: errS } = await sb.schema("course").from("sections").select("course_id, title");
+          if (errS) throw errS;
+
+          const coursesById = new Map();
+          courses.forEach(c => coursesById.set(c.id, c.title));
+
+          const tags = [];
+          courses.forEach(c => {
+            if (c.title) {
+              tags.push(`${c.title} Course Completed`.replace(/\s+/g, ' ').trim());
+              tags.push(`${c.title} Completed`.replace(/\s+/g, ' ').trim());
+            }
+          });
+          sections.forEach(s => {
+            const courseTitle = coursesById.get(s.course_id);
+            if (courseTitle) {
+              const tag = `${courseTitle} ${s.title || 'Level'} Completed`.replace(/\s+/g, ' ').trim();
+              tags.push(tag);
+            }
+          });
+
+          AVAILABLE_COURSE_TAGS = Array.from(new Set(tags));
+        } catch (e) {
+          console.error("Failed to load course catalog for tags:", e);
+        }
+      }
+      loadCourseTags();
 
       // ========= SweetAlert helpers (ADDED) =========
       function humanizeError(raw) {
@@ -919,6 +952,20 @@
               "--brand"
             ) || "#20a44c",
         });
+      }
+
+      function getCategoryStyle(category) {
+        var cat = (category || "").toLowerCase();
+        var styles = {
+          "cleaning":      { icon: "cleaning_services", bg: "linear-gradient(135deg, #34d399, #059669)" },
+          "electrical":    { icon: "bolt",               bg: "linear-gradient(135deg, #fbbf24, #d97706)" },
+          "plumbing":      { icon: "plumbing",           bg: "linear-gradient(135deg, #60a5fa, #2563eb)" },
+          "delivery":      { icon: "local_shipping",     bg: "linear-gradient(135deg, #a78bfa, #7c3aed)" },
+          "it support":    { icon: "computer",           bg: "linear-gradient(135deg, #38bdf8, #0284c7)" },
+          "general help":  { icon: "handyman",           bg: "linear-gradient(135deg, #fb923c, #ea580c)" },
+          "cctv":          { icon: "videocam",           bg: "linear-gradient(135deg, #f472b6, #db2777)" },
+        };
+        return styles[cat] || { icon: "work", bg: "linear-gradient(135deg, #94a3b8, #64748b)" };
       }
 
       function esc(s) {
@@ -1015,13 +1062,23 @@
             description: neg.proposed_description || neg.original_description || "",
             current_description: neg.proposed_description || "",
             original_customer_version: {
-              pay: neg.original_pay,
+              title: job.title,
+              category: job.category,
               difficulty: neg.original_difficulty,
+              location: job.location,
+              date: job.job_date,
+              manpower: job.job_manpower || 1,
+              pay: neg.original_pay,
               description: neg.original_description || "",
             },
             admin_suggested_version: {
-              pay: neg.proposed_pay,
+              title: job.title,
+              category: job.category,
               difficulty: neg.proposed_difficulty,
+              location: job.location,
+              date: job.job_date,
+              manpower: job.job_manpower || 1,
+              pay: neg.proposed_pay,
               description: neg.proposed_description || "",
             },
             history: [],
@@ -1030,12 +1087,14 @@
         return data;
       }
 
-      function buildSnapshot(job, pay, difficulty, description) {
+      function buildSnapshot(job, title, category, pay, difficulty, date, location, manpower, description) {
         return {
-          title: job.title,
-          category: job.category,
+          title: title,
+          category: category,
           difficulty: difficulty,
-          location: job.location,
+          location: location,
+          date: date,
+          manpower: manpower,
           pay: pay,
           description: description || "",
         };
@@ -1058,13 +1117,23 @@
         });
       }
 
-      function makeSuggestionDescription(job, pay, difficulty, description) {
+      function makeSuggestionDescription(job, title, category, pay, difficulty, date, location, manpower, description) {
         var data = getReviewData(job);
         var original =
           data.original_customer_version ||
           data.customer_version ||
-          buildSnapshot(job, job.pay, job.difficulty, data.description || job.description);
-        var suggested = buildSnapshot(job, pay, difficulty, description);
+          buildSnapshot(
+            job,
+            job.title,
+            job.category,
+            job.pay,
+            job.difficulty,
+            job.job_date,
+            job.location,
+            job.job_manpower || 1,
+            data.description || job.description
+          );
+        var suggested = buildSnapshot(job, title, category, pay, difficulty, date, location, manpower, description);
         return addHistoryToDescription(job, "Admin revised job details", "suggestion_sent", {
           is_posted: false,
           description: description || "",
@@ -1089,8 +1158,13 @@
         var data = getReviewData(job);
         if (status === "suggestion_sent" && data && data.admin_suggested_version) {
           return {
+            title: data.admin_suggested_version.title ?? job.title,
+            category: data.admin_suggested_version.category ?? job.category,
             pay: data.admin_suggested_version.pay ?? job.pay,
             difficulty: data.admin_suggested_version.difficulty ?? job.difficulty,
+            location: data.admin_suggested_version.location ?? job.location,
+            date: data.admin_suggested_version.date ?? job.job_date,
+            manpower: data.admin_suggested_version.manpower ?? job.job_manpower ?? 1,
             description:
               data.admin_suggested_version.description ??
               data.current_description ??
@@ -1099,8 +1173,13 @@
           };
         }
         return {
+          title: job.title,
+          category: job.category,
           pay: job.pay,
           difficulty: job.difficulty,
+          location: job.location,
+          date: job.job_date,
+          manpower: job.job_manpower ?? 1,
           description: currentDescription(job),
         };
       }
@@ -1170,74 +1249,7 @@
       }
 
       // ========= Signed URL helpers =========
-      function parsePublicBucketAndPath(publicUrl) {
-        try {
-          var marker = "/storage/v1/object/public/";
-          var i = publicUrl.indexOf(marker);
-          if (i === -1) return null;
-          var rest = publicUrl.substring(i + marker.length);
-          var slash = rest.indexOf("/");
-          if (slash === -1) return null;
-          var bucket = rest.substring(0, slash);
-          var path = rest.substring(slash + 1);
-          try {
-            path = decodeURIComponent(path);
-          } catch (e) {}
-          path = path.replace(/^\/+/, "");
-          return { bucket: bucket, path: path };
-        } catch (e) {
-          return null;
-        }
-      }
 
-      function parseStorageRef(ref) {
-        if (!ref) return null;
-        var s = String(ref).trim();
-        if (/^https?:\/\//i.test(s)) {
-          var parsed = parsePublicBucketAndPath(s);
-          return parsed || null;
-        }
-        var bi = s.indexOf("::");
-        if (bi > 0) {
-          var p1 = s.slice(bi + 2);
-          try {
-            p1 = decodeURIComponent(p1);
-          } catch (e) {}
-          p1 = p1.replace(/^\/+/, "");
-          return { bucket: s.slice(0, bi), path: p1 };
-        }
-        var p2 = s;
-        try {
-          p2 = decodeURIComponent(p2);
-        } catch (e) {}
-        p2 = p2.replace(/^\/+/, "");
-        return { bucket: DEFAULT_JOB_PICS_BUCKET, path: p2 };
-      }
-
-      async function createSignedUrl(bucket, path, expires) {
-        if (typeof expires !== "number") expires = 3600;
-        var out = await sb.storage.from(bucket).createSignedUrl(path, expires);
-        if (out.error) throw out.error;
-        return out.data.signedUrl;
-      }
-
-      async function resolveJobPictureSignedUrl(job_picture_url) {
-        if (!job_picture_url) return null;
-        if (
-          /^https?:\/\//i.test(job_picture_url) &&
-          job_picture_url.indexOf("/storage/v1/object/") === -1
-        ) {
-          return job_picture_url;
-        }
-        var ref = parseStorageRef(job_picture_url);
-        if (!ref) return null;
-        try {
-          return await createSignedUrl(ref.bucket, ref.path, 3600);
-        } catch (e) {
-          if (/^https?:\/\//i.test(job_picture_url)) return job_picture_url;
-          return null;
-        }
-      }
 
       // ========= Status updates =========
       async function updateJobStatus(jobId, desiredStatus, job) {
@@ -1246,6 +1258,12 @@
           : { job_status: null, updated_at: new Date().toISOString() };
         if (job && job.nextDescription) {
           payload.job_description = job.nextDescription;
+        }
+        if (job && job.application_mode) {
+          payload.application_mode = job.application_mode;
+          payload.required_course_tags = job.required_course_tags;
+          payload.required_experience = job.required_experience;
+          payload.min_requirements_met = job.min_requirements_met;
         }
 
         var query = sb
@@ -1284,7 +1302,7 @@
           .schema("jobs")
           .from("job")
           .select(
-            "job_id, posted_by, job_title, job_description, job_difficulty, job_category, job_location, job_date, job_time, job_pay, job_picture_url, job_status, created_at, updated_at"
+            "job_id, posted_by, job_title, job_description, job_difficulty, job_category, job_location, job_date, job_time, job_pay, job_picture_url, job_status, created_at, updated_at, job_manpower, required_course_tags, required_experience, application_mode, min_requirements_met"
           )
           .order("created_at", { ascending: false });
 
@@ -1299,27 +1317,28 @@
         }
 
         var jobs = res.data || [];
-        var signedUrls = await Promise.all(
-          jobs.map(function (j) {
-            return resolveJobPictureSignedUrl(j.job_picture_url);
-          })
-        );
 
-        ALL_JOBS = jobs.map(function (j, idx) {
+        ALL_JOBS = jobs.map(function (j) {
           return {
             id: j.job_id,
-            photo: signedUrls[idx] || "../images/profile-4.jpg",
             title: j.job_title,
             category: j.job_category,
             difficulty: j.job_difficulty,
             pay: j.job_pay,
             datetime: fmtDate(j.job_date) + " " + fmtTime(j.job_time),
+            job_date: j.job_date,
+            job_time: j.job_time,
             location: j.job_location,
+            job_manpower: j.job_manpower || 1,
             status: j.job_status || "",
             createdAt: j.created_at,
             updatedAt: j.updated_at,
             posted_by: j.posted_by,
             description: j.job_description || "",
+            application_mode: j.application_mode || null,
+            required_course_tags: j.required_course_tags || [],
+            required_experience: j.required_experience || [],
+            min_requirements_met: j.min_requirements_met || 0,
           };
         });
 
@@ -1347,6 +1366,22 @@
         if (jobsRoot) jobsRoot.classList.remove("loading");
       }
 
+      function matchJobStatus(selectedStatus, jobStatus) {
+        if (!selectedStatus) return true;
+        var sel = selectedStatus.toLowerCase();
+        var js = normalizeJobStatus(jobStatus).toLowerCase();
+        if (sel === "pending_review") {
+          return js === "pending_review" || js === "customer_accepted" || js === "appeal_submitted";
+        }
+        if (sel === "active") {
+          return js === "active" || js === "approved" || js === "cancellation_pending";
+        }
+        if (sel === "completed") {
+          return js === "completed" || js === "done";
+        }
+        return js === sel;
+      }
+
       function renderJobList(filter) {
         if (typeof filter !== "string") filter = "";
         jobList.innerHTML = "";
@@ -1364,8 +1399,7 @@
             (j.location || "")
           ).toLowerCase();
           var hit = !q || hay.indexOf(q) !== -1;
-          var statusForFilter = normalizeJobStatus(j.status);
-          var statusOk = !selectedStatus || statusForFilter === selectedStatus;
+          var statusOk = matchJobStatus(selectedStatus, j.status);
           return hit && statusOk;
         });
 
@@ -1381,12 +1415,11 @@
           if (s === "viewed") item.classList.add("read");
           else if (s === "pending_review") item.classList.add("pending");
 
+          var catStyle = getCategoryStyle(j.category);
           item.innerHTML =
-            '<img class="thumb" src="' +
-            j.photo +
-            '" alt="' +
-            esc(j.title) +
-            '" onerror="this.onerror=null;this.src=\'../images/profile-4.jpg\';">' +
+            '<div class="thumb" style="background:' + catStyle.bg + ';">' +
+            '<span class="material-icons-sharp">' + catStyle.icon + '</span>' +
+            '</div>' +
             "<div>" +
             '<div style="font-weight:700">' +
             esc(j.title) +
@@ -1468,69 +1501,321 @@
       // === Core renderer (reused for desktop pane & modal) ===
       function buildJobDetailsHTML(job) {
         var displayValues = displayReviewValues(job);
+        var displayTitle = displayValues.title || job.title;
+        var displayCategory = displayValues.category || job.category;
         var displayPay = displayValues.pay;
         var displayDifficulty = displayValues.difficulty;
+        var displayLocation = displayValues.location || job.location;
+        var displayDate = displayValues.date || job.job_date;
+        var displayTime = job.job_time;
+        var displayManpower = displayValues.manpower || job.job_manpower || 1;
         var displayDesc = displayValues.description;
 
+        var displayDatetime = displayDate ? (fmtDate(displayDate) + " " + fmtTime(displayTime)) : (job.datetime || "—");
+
+        // Admin fields matching and definition check
+        var hasAppMode = job.application_mode !== null && job.application_mode !== undefined && job.application_mode !== "";
+        var appMode = job.application_mode || "";
+        
+        var tags = job.required_course_tags || [];
+        var hasCourseTags = tags.length > 0;
+        
+        var exp = job.required_experience || [];
+        var hasExperience = exp.length > 0;
+
+        var appModeHtml = "";
+        if (!hasAppMode) {
+          appModeHtml = '<div style="border: 1px solid #fee2e2; background: #fffafb; padding: 10px; border-radius: 8px; color: var(--danger); font-weight: 600; margin-top: 4px; display: inline-block;">🔴 Not Yet Defined</div>';
+        } else {
+          var niceMode = appMode === "strict" ? "Strict (Meet all)" : (appMode === "flexible" ? "Flexible (Meet minimum)" : "Beginner-Friendly");
+          appModeHtml = `<strong style="font-size: 0.95rem; display: inline-block; margin-top: 4px;">${niceMode}</strong>`;
+        }
+
+        var tagsHtml = "";
+        if (!hasAppMode) {
+          tagsHtml = '<div style="border: 1px solid #fee2e2; background: #fffafb; padding: 10px; border-radius: 8px; color: var(--danger); font-weight: 600; margin-top: 4px; display: inline-block;">🔴 Not Yet Defined</div>';
+        } else if (appMode === "beginner-friendly") {
+          tagsHtml = '<span style="color: var(--muted); font-style: italic; display: inline-block; margin-top: 4px;">None (Beginner-Friendly)</span>';
+        } else if (!hasCourseTags) {
+          tagsHtml = '<div style="border: 1px solid #fee2e2; background: #fffafb; padding: 10px; border-radius: 8px; color: var(--danger); font-weight: 600; margin-top: 4px; display: inline-block;">🔴 Not Yet Defined</div>';
+        } else {
+          tagsHtml = '<div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px;">' +
+            tags.map(function(t) {
+              return `<span class="qual-tag" style="display:inline-flex; align-items:center; background:#e2f5e9; color:#1b8e41; padding:4px 8px; border-radius:6px; font-size:13px; font-weight:600; border:1px solid #c2eccd;">${esc(t)}</span>`;
+            }).join('') +
+            '</div>';
+        }
+
+        var expHtml = "";
+        if (!hasAppMode) {
+          expHtml = '<div style="border: 1px solid #fee2e2; background: #fffafb; padding: 10px; border-radius: 8px; color: var(--danger); font-weight: 600; margin-top: 4px; display: inline-block;">🔴 Not Yet Defined</div>';
+        } else if (appMode === "beginner-friendly") {
+          expHtml = '<span style="color: var(--muted); font-style: italic; display: inline-block; margin-top: 4px;">None (Beginner-Friendly)</span>';
+        } else if (!hasExperience) {
+          expHtml = '<div style="border: 1px solid #fee2e2; background: #fffafb; padding: 10px; border-radius: 8px; color: var(--danger); font-weight: 600; margin-top: 4px; display: inline-block;">🔴 Not Yet Defined</div>';
+        } else {
+          expHtml = '<div style="display: flex; flex-direction: column; gap: 6px; margin-top: 6px;">' +
+            exp.map(function(e) {
+              return `<div style="font-size: 0.95rem; font-weight: 600; color: var(--ink);">${e.count}+ project(s) in <span style="color: var(--brand);">${esc(e.category)}</span></div>`;
+            }).join('') +
+            '</div>';
+        }
+
+        var headerHtml = "";
+        if (job.isEditing) {
+          var categories = ["Cleaning", "Electrical", "Plumbing", "Delivery", "IT Support", "General Help", "CCTV"];
+          var isCustomCategory = displayCategory && categories.indexOf(displayCategory) === -1;
+          var categoryHtml = categories.map(function(c) {
+            return `<option value="${c}" ${!isCustomCategory && displayCategory === c ? 'selected' : ''}>${c}</option>`;
+          }).join('');
+          categoryHtml += `<option value="__other__" ${isCustomCategory ? 'selected' : ''}>Other (specify)</option>`;
+
+          var catBanner = getCategoryStyle(displayCategory);
+          headerHtml = `
+            <div class="head" style="display:block; padding:0;">
+              <div id="catBannerEl" style="width:100%; height:120px; background:${catBanner.bg}; border-radius:12px 12px 0 0; display:flex; align-items:center; justify-content:center; margin-bottom:12px; transition: background 0.3s ease;">
+                <span class="material-icons-sharp" style="font-size:3rem; color:#fff; opacity:0.9;">${catBanner.icon}</span>
+              </div>
+              <div style="padding:0 16px 12px; display: flex; flex-direction: column; gap: 8px;">
+                <div>
+                  <label style="font-weight:700; font-size:0.85rem; color:var(--muted); display:block; margin-bottom:4px;">Job Title</label>
+                  <input id="editTitle" type="text" value="${esc(displayTitle || '')}" style="font-family: inherit; font-size: 1.1rem; font-weight: 700; width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 6px 12px; box-sizing: border-box; outline: none; background: #fff;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: end;">
+                  <div>
+                    <label style="font-weight:700; font-size:0.85rem; color:var(--muted); display:block; margin-bottom:4px;">Category</label>
+                    <select id="editCategory" style="font-family: inherit; font-size: 0.95rem; border: 1px solid var(--line); border-radius: 8px; padding: 8px; box-sizing: border-box; width: 100%; height: 40px; background: #fff; outline: none;">
+                      <option value="">Select a category</option>
+                      ${categoryHtml}
+                    </select>
+                    <div id="editCustomCategoryField" style="display:${isCustomCategory ? 'block' : 'none'}; margin-top:8px;">
+                      <input id="editCustomCategory" type="text" value="${isCustomCategory ? esc(displayCategory) : ''}" placeholder="e.g., Landscaping, Painting..." style="font-family: inherit; font-size: 0.95rem; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; box-sizing: border-box; width: 100%; height: 40px; background: #fff; outline: none;">
+                    </div>
+                  </div>
+                  <div>
+                    <label style="font-weight:700; font-size:0.85rem; color:var(--muted); display:block; margin-bottom:4px;">Pay / Budget (₱)</label>
+                    <input id="editPay" type="number" step="0.01" value="${displayPay}" style="font-family: inherit; font-size: 0.95rem; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; box-sizing: border-box; width: 100%; height: 40px; background: #fff; outline: none;">
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          var catBanner = getCategoryStyle(displayCategory);
+          headerHtml = `
+            <div class="head" style="display:block; padding:0;">
+              <div style="width:100%; height:120px; background:${catBanner.bg}; border-radius:12px 12px 0 0; display:flex; align-items:center; justify-content:center; margin-bottom:12px;">
+                <span class="material-icons-sharp" style="font-size:3rem; color:#fff; opacity:0.9;">${catBanner.icon}</span>
+              </div>
+              <div style="padding:0 16px 12px;">
+                <div class="name">${esc(displayTitle)}</div>
+                <div class="meta">
+                  <span class="kv"><strong>Category:</strong> ${esc(displayCategory || "Uncategorized")}</span>
+                  <span class="kv"><strong>Pay (Budget):</strong> ₱${peso(displayPay)}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        var scheduleCardHtml = "";
+        if (job.isEditing) {
+          scheduleCardHtml = `
+            <div class="card">
+              <h4>Schedule & Manpower</h4>
+              <div style="display: flex; flex-direction: column; gap: 8px;">
+                <div>
+                  <label style="font-weight:700; font-size:0.85rem; color:var(--muted); display:block; margin-bottom:4px;">Date</label>
+                  <input id="editDate" type="date" value="${displayDate || ''}" style="font-family: inherit; font-size: 0.95rem; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; box-sizing: border-box; width: 100%; height: 40px; background: #fff; outline: none;">
+                </div>
+                <div>
+                  <label style="font-weight:700; font-size:0.85rem; color:var(--muted); display:block; margin-bottom:4px;">Manpower</label>
+                  <input id="editManpower" type="number" min="1" step="1" value="${displayManpower}" style="font-family: inherit; font-size: 0.95rem; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; box-sizing: border-box; width: 100%; height: 40px; background: #fff; outline: none;">
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          scheduleCardHtml = `
+            <div class="card">
+              <h4>Schedule & Manpower</h4>
+              <div class="info-list">
+                <div><span class="label">Date / Time</span>${esc(displayDatetime)}</div>
+                <div><span class="label">Manpower</span>${displayManpower} installer(s)</div>
+                <div><span class="label">Status</span><span id="jobStatusPillWrapper">${getPillHTML(job.status, job.description)}</span></div>
+              </div>
+            </div>
+          `;
+        }
+
+        var locationCardHtml = "";
+        if (job.isEditing) {
+          locationCardHtml = `
+            <div class="card">
+              <h4>Location</h4>
+              <div>
+                <label style="font-weight:700; font-size:0.85rem; color:var(--muted); display:block; margin-bottom:4px;">Address</label>
+                <input id="editLocation" type="text" value="${esc(displayLocation || '')}" style="font-family: inherit; font-size: 0.95rem; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; box-sizing: border-box; width: 100%; height: 40px; background: #fff; outline: none;">
+              </div>
+            </div>
+          `;
+        } else {
+          locationCardHtml = `
+            <div class="card">
+              <h4>Location</h4>
+              <div class="info-list">
+                <div style="grid-column: 1 / -1;"><span class="label">Address</span>${esc(displayLocation || "Not specified")}</div>
+              </div>
+            </div>
+          `;
+        }
+
+        var contactCardHtml = `
+          <div class="card">
+            <h4>Customer Contact</h4>
+            <div class="info-list">
+              <div id="customerContactContainer" style="grid-column: 1 / -1; line-height: 1.45;">
+                <span class="label">Customer Contact Info</span>Loading...
+              </div>
+            </div>
+          </div>
+        `;
+
+        var detailsCardHtml = "";
+        if (job.isEditing) {
+          detailsCardHtml = `
+            <div class="card">
+              <h4>Details / Instructions</h4>
+              <div>
+                <label style="font-weight:700; font-size:0.85rem; color:var(--muted); display:block; margin-bottom:4px;">Description / Instructions</label>
+                <textarea id="editDescription" style="font-family: inherit; font-size: 0.95rem; border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; box-sizing: border-box; width: 100%; height: 120px; resize: vertical; background: #fff; outline: none;">${esc(displayDesc)}</textarea>
+              </div>
+            </div>
+          `;
+        } else {
+          detailsCardHtml = `
+            <div class="card">
+              <h4>Details / Instructions</h4>
+              <div style="font-size:0.95rem; line-height:1.45; color:var(--ink); white-space:pre-wrap; margin-top:4px; max-height:180px; overflow-y:auto;">
+                ${esc(displayDesc || "No description provided.")}
+              </div>
+            </div>
+          `;
+        }
+
+        var qualificationsCardHtml = "";
+        if (job.isEditing) {
+          qualificationsCardHtml = `
+            <div class="card" style="grid-column: 1 / -1;">
+              <h4>Qualifications & Requirements</h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-top: 8px;">
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                  <div>
+                    <label style="font-weight: 700; font-size: 0.85rem; color: var(--muted); display: block; margin-bottom: 4px;">Application Mode</label>
+                    <select id="editAppMode" style="width: 100%; height: 40px; border-radius: 8px; border: 1px solid var(--line); padding: 8px; box-sizing: border-box; font-family: inherit; font-size: 0.95rem; background: #fff; outline: none;">
+                      <option value="strict">Strict (Meet all)</option>
+                      <option value="flexible">Flexible (Meet minimum)</option>
+                      <option value="beginner-friendly">Beginner-Friendly (None)</option>
+                    </select>
+                  </div>
+                  <div id="editMinReqsField" style="display: none;">
+                    <label style="font-weight: 700; font-size: 0.85rem; color: var(--muted); display: block; margin-bottom: 4px;">Min Requirements Met</label>
+                    <input id="editMinReqs" type="number" min="1" style="width: 100%; height: 40px; border-radius: 8px; border: 1px solid var(--line); padding: 8px 12px; box-sizing: border-box; font-family: inherit; font-size: 0.95rem; background: #fff; outline: none;">
+                  </div>
+                </div>
+
+                <div id="editCourseTagsField" style="display: none;">
+                  <label style="font-weight: 700; font-size: 0.85rem; color: var(--muted); display: block; margin-bottom: 4px;">Course Qualification Tags</label>
+                  <div style="position: relative;">
+                    <div style="display: flex; flex-wrap: wrap; gap: 6px; padding: 6px; border: 1px solid var(--line); border-radius: 8px; background: white; min-height: 42px; align-items: center; box-sizing: border-box;">
+                      <div id="editSelectedTagsContainer" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
+                      <input type="text" id="editCourseTagSearch" placeholder="Type to search course tags..." style="border: none; outline: none; flex: 1; min-width: 150px; padding: 4px; font-family: inherit; font-size: 0.9rem;">
+                    </div>
+                    <div id="editCourseTagSuggestions" style="position: absolute; top: 100%; left: 0; right: 0; background: white; border: 1px solid var(--line); border-radius: 8px; max-height: 150px; overflow-y: auto; z-index: 10000; box-shadow: var(--shadow-lg); display: none;"></div>
+                  </div>
+                </div>
+
+                <div id="editExpRequirementsField" style="display: none;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <label style="font-weight: 700; font-size: 0.85rem; color: var(--muted);">Project Experience Requirements</label>
+                    <button type="button" id="editBtnAddExp" style="padding: 4px 8px; font-size: 12px; cursor: pointer; background: #f3f4f6; border: 1px solid var(--line); border-radius: 6px; height: auto; width: auto; font-weight: 600; outline: none;">Add Row</button>
+                  </div>
+                  <div id="editExpListContainer" style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;"></div>
+                </div>
+              </div>
+            </div>
+          `;
+        } else {
+          qualificationsCardHtml = `
+            <div class="card" style="grid-column: 1 / -1;">
+              <h4>Qualifications & Requirements</h4>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 8px;">
+                <div>
+                  <span class="label">Application Mode</span>
+                  ${appModeHtml}
+                </div>
+                ${appMode === 'flexible' ? `
+                <div>
+                  <span class="label">Min Requirements Met</span>
+                  <strong style="font-size: 0.95rem; display: inline-block; margin-top: 4px;">${job.min_requirements_met || 0} requirement(s)</strong>
+                </div>
+                ` : ''}
+                <div>
+                  <span class="label">Course Qualification Tags</span>
+                  ${tagsHtml}
+                </div>
+                <div>
+                  <span class="label">Project Experience Requirements</span>
+                  ${expHtml}
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        // Customer feedback banner for appeal_submitted status
+        var feedbackBannerHtml = "";
+        if (normalizeJobStatus(job.status) === "appeal_submitted" && !job.isEditing) {
+          var reviewData = getReviewData(job);
+          var historyArr = Array.isArray(reviewData.history) ? reviewData.history : [];
+          var appealEntry = null;
+          for (var hi = historyArr.length - 1; hi >= 0; hi--) {
+            if (historyArr[hi].status === "appeal_submitted" || (historyArr[hi].action && historyArr[hi].action.indexOf("Revision requested") === 0)) {
+              appealEntry = historyArr[hi];
+              break;
+            }
+          }
+          var feedbackText = "";
+          if (appealEntry && appealEntry.action) {
+            feedbackText = appealEntry.action.replace(/^Revision requested:\s*/i, "");
+          }
+          if (feedbackText) {
+            feedbackBannerHtml = `
+              <div class="card" style="grid-column: 1 / -1; background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1px solid #f59e0b; border-left: 4px solid #f59e0b;">
+                <h4 style="color: #92400e; display: flex; align-items: center; gap: 8px; margin: 0 0 8px;">
+                  <span class="material-icons-sharp" style="font-size: 1.2rem;">feedback</span>
+                  Customer Change Request
+                </h4>
+                <div style="font-size: 0.95rem; line-height: 1.55; color: #78350f; white-space: pre-wrap; word-break: break-word; background: rgba(255,255,255,0.6); border-radius: 8px; padding: 10px 12px; border: 1px solid #fde68a;">
+                  ${esc(feedbackText)}
+                </div>
+                <div style="margin-top: 8px; font-size: 0.8rem; color: #b45309;">
+                  Submitted ${appealEntry.at ? esc(new Date(appealEntry.at).toLocaleString()) : ""}
+                </div>
+              </div>
+            `;
+          }
+        }
+
         return (
-          '<div class="head" style="display:block; padding:0;">' +
-          '<img src="' +
-          job.photo +
-          '" alt="' +
-          esc(job.title) +
-          '" ' +
-          'style="width:100%; height:240px; object-fit:cover; border-radius:12px 12px 0 0; margin-bottom:12px;" ' +
-          "onerror=\"this.onerror=null;this.src='../images/profile-4.jpg';\">" +
-          '<div style="padding:0 16px 12px;">' +
-          '<div class="name">' +
-          esc(job.title) +
-          "</div>" +
-          '<div class="meta">' +
-          '<span class="kv"><strong>Category:</strong> ' +
-          esc(job.category || "Uncategorized") +
-          "</span>" +
-          '<span class="kv"><strong>Pay (Budget):</strong> ₱' +
-          peso(displayPay) +
-          "</span>" +
-          "</div>" +
-          "</div>" +
-          "</div>" +
+          headerHtml +
+          feedbackBannerHtml +
           '<div class="grid-2">' +
-          '<div class="card">' +
-          "<h4>Schedule</h4>" +
-          '<div class="info-list">' +
-          '<div><span class="label">Date / Time</span>' +
-          esc(job.datetime || "—") +
-          "</div>" +
-          '<div><span class="label">Status</span><span id="jobStatusPillWrapper">' +
-          getPillHTML(job.status, job.description) +
-          "</span></div>" +
-          "</div>" +
-          "</div>" +
-          '<div class="card">' +
-          "<h4>Location</h4>" +
-          '<div class="info-list">' +
-          '<div style="grid-column: 1 / -1;"><span class="label">Address</span>' +
-          esc(job.location || "Not specified") +
-          "</div>" +
-          "</div>" +
-          "</div>" +
-          // Customer contact card
-          '<div class="card">' +
-          "<h4>Customer Contact</h4>" +
-          '<div class="info-list">' +
-          '<div id="customerContactContainer" style="grid-column: 1 / -1; line-height: 1.45;">' +
-          '<span class="label">Customer Contact Info</span>Loading...' +
-          "</div>" +
-          "</div>" +
-          "</div>" +
-          // Description card
-          '<div class="card">' +
-          "<h4>Details / Instructions</h4>" +
-          '<div style="font-size:0.95rem; line-height:1.45; color:var(--ink); white-space:pre-wrap; margin-top:4px; max-height:180px; overflow-y:auto;">' +
-          esc(displayDesc || "No description provided.") +
-          "</div>" +
-          "</div>" +
+          scheduleCardHtml +
+          locationCardHtml +
+          contactCardHtml +
+          detailsCardHtml +
+          qualificationsCardHtml +
           "</div>" +
           '<div class="actions-row" id="actionsRow"></div>'
         );
@@ -1539,6 +1824,9 @@
       function renderJobDetails(job) {
         jobDetailsPane.innerHTML = buildJobDetailsHTML(job);
         wireActions(job, jobDetailsPane);
+        if (job.isEditing) {
+          wireInlineEditListeners(job, jobDetailsPane);
+        }
 
         // Fetch customer contact asynchronously
         var container = jobDetailsPane.querySelector("#customerContactContainer");
@@ -1570,10 +1858,42 @@
           return btn;
         }
 
+        // Inline Edit buttons (Save / Cancel)
+        if (job.isEditing) {
+          actionsRow.appendChild(
+            button("Send Suggestion", "send", "btn primary", function () {
+              return saveInlineSuggestion(job, containerEl);
+            })
+          );
+          actionsRow.appendChild(
+            button("Cancel", "close", "btn", function () {
+              job.isEditing = false;
+              if (containerEl === jobModalBody) {
+                containerEl.innerHTML = buildJobDetailsHTML(job);
+                wireActions(job, containerEl);
+                var contactContainer = containerEl.querySelector("#customerContactContainer");
+                if (contactContainer) {
+                  loadCustomerContact(job.posted_by, contactContainer);
+                }
+              } else {
+                renderJobDetails(job);
+              }
+            })
+          );
+          return;
+        }
+
         if (s === "pending_review") {
           actionsRow.appendChild(
             button("Review / Edit Suggestion", "rate_review", "btn warn", function () {
-              return openNegotiateDialog(job);
+              job.isEditing = true;
+              if (containerEl === jobModalBody) {
+                containerEl.innerHTML = buildJobDetailsHTML(job);
+                wireActions(job, containerEl);
+                wireInlineEditListeners(job, containerEl);
+              } else {
+                renderJobDetails(job);
+              }
             })
           );
           actionsRow.appendChild(
@@ -1592,7 +1912,14 @@
           );
           actionsRow.appendChild(
             button("Edit Again", "edit", "btn warn", function () {
-              return openNegotiateDialog(job);
+              job.isEditing = true;
+              if (containerEl === jobModalBody) {
+                containerEl.innerHTML = buildJobDetailsHTML(job);
+                wireActions(job, containerEl);
+                wireInlineEditListeners(job, containerEl);
+              } else {
+                renderJobDetails(job);
+              }
             })
           );
           return;
@@ -1612,81 +1939,308 @@
         }
       }
 
-      async function openNegotiateDialog(job) {
-        // Pre-select options
-        var reviewData = getReviewData(job);
-        var displayValues = displayReviewValues(job);
-        var curPay = displayValues.pay;
-        var curDifficulty = displayValues.difficulty ?? (job.difficulty ?? 0);
-        var curDesc = displayValues.description;
+      function wireInlineEditListeners(job, containerEl) {
+        // Live-update banner icon when category changes
+        var editCategoryEl = containerEl.querySelector('#editCategory');
+        var bannerEl = containerEl.querySelector('#catBannerEl');
+        var customCategoryField = containerEl.querySelector('#editCustomCategoryField');
+        var customCategoryInput = containerEl.querySelector('#editCustomCategory');
 
-        var levels = Array.from({length: 11}, (_, i) => i);
-        var optionsHtml = levels.map(function(l) { 
-          return `<option value="${l}" ${Number(curDifficulty) === l ? 'selected' : ''}>Level ${l}</option>`;
-        }).join('');
-
-        var { value: formValues } = await Swal.fire({
-          title: 'Edit & Save Suggestion',
-          html:
-            '<div style="text-align:left; font-size:0.95rem; margin-top:8px;">' +
-            '<label style="font-weight:700; display:block; margin-bottom:4px;">Pay / Budget (₱)</label>' +
-            `<input id="swalPay" class="swal2-input" type="number" step="0.01" value="${curPay}" style="margin:0 0 16px 0; width:100%; height:42px; border-radius:8px;">` +
-            '<label style="font-weight:700; display:block; margin-bottom:4px;">Required Qualification Filter</label>' +
-            `<select id="swalDifficulty" class="swal2-input" style="margin:0 0 16px 0; width:100%; height:42px; border-radius:8px;">${optionsHtml}</select>` +
-            '<label style="font-weight:700; display:block; margin-bottom:4px;">Instructions / Description</label>' +
-            `<textarea id="swalDescription" class="swal2-textarea" style="margin:0; width:100%; height:120px; border-radius:8px; font-family:inherit; padding:8px; border:1px solid #ccc; box-sizing:border-box;">${esc(curDesc)}</textarea>` +
-            '</div>',
-          focusConfirm: false,
-          showCancelButton: true,
-          confirmButtonText: 'Send Suggestion',
-          confirmButtonColor: '#20a44c',
-          preConfirm: () => {
-            var payVal = parseFloat(document.getElementById('swalPay').value);
-            var difficultyVal = parseInt(document.getElementById('swalDifficulty').value, 10);
-            var descriptionVal = document.getElementById('swalDescription').value;
-            if (isNaN(payVal) || payVal <= 0) {
-              Swal.showValidationMessage('Please enter a valid pay amount');
-              return false;
-            }
-            return { pay: payVal, difficulty: difficultyVal, description: descriptionVal };
+        function updateBannerForCategory() {
+          if (!bannerEl || !editCategoryEl) return;
+          var val = editCategoryEl.value;
+          if (val === "__other__") {
+            val = customCategoryInput ? customCategoryInput.value.trim() : "";
           }
-        });
+          var newStyle = getCategoryStyle(val);
+          bannerEl.style.background = newStyle.bg;
+          bannerEl.querySelector('.material-icons-sharp').textContent = newStyle.icon;
+        }
 
-        if (formValues) {
-          showToast("Saving negotiation changes...", "info", 1200);
+        if (editCategoryEl && bannerEl) {
+          editCategoryEl.addEventListener('change', function () {
+            if (editCategoryEl.value === "__other__") {
+              if (customCategoryField) customCategoryField.style.display = "block";
+              if (customCategoryInput) customCategoryInput.focus();
+            } else {
+              if (customCategoryField) customCategoryField.style.display = "none";
+              if (customCategoryInput) customCategoryInput.value = "";
+            }
+            updateBannerForCategory();
+          });
+
+          if (customCategoryInput) {
+            customCategoryInput.addEventListener('input', function () {
+              updateBannerForCategory();
+            });
+          }
+        }
+
+        var inputMode = containerEl.querySelector('#editAppMode');
+        if (!inputMode) return;
+
+        var fieldMinReqs = containerEl.querySelector('#editMinReqsField');
+        var inputMinReqs = containerEl.querySelector('#editMinReqs');
+        var fieldCourseTags = containerEl.querySelector('#editCourseTagsField');
+        var fieldExp = containerEl.querySelector('#editExpRequirementsField');
+        var inputSearch = containerEl.querySelector('#editCourseTagSearch');
+        var containerSelected = containerEl.querySelector('#editSelectedTagsContainer');
+        var containerSuggestions = containerEl.querySelector('#editCourseTagSuggestions');
+        var btnAddExp = containerEl.querySelector('#editBtnAddExp');
+        var containerExp = containerEl.querySelector('#editExpListContainer');
+
+        var selectedTags = [].concat(job.required_course_tags || []);
+
+        function renderSelected() {
+          containerSelected.innerHTML = "";
+          selectedTags.forEach(function(tag) {
+            var tagEl = document.createElement("span");
+            tagEl.className = "qual-tag";
+            tagEl.style.cssText = "display:inline-flex; align-items:center; gap:4px; background:#e2f5e9; color:#1b8e41; padding:4px 8px; border-radius:6px; font-size:13px; font-weight:600; border:1px solid #c2eccd; margin-right:4px; margin-bottom:4px;";
+            tagEl.innerHTML = '<span>' + esc(tag) + '</span><span class="remove-btn" style="cursor:pointer; font-weight:bold; margin-left:4px; color:#1b8e41;">&times;</span>';
+            tagEl.querySelector(".remove-btn").onclick = function() {
+              selectedTags = selectedTags.filter(t => t !== tag);
+              renderSelected();
+              validateMinReqs();
+            };
+            containerSelected.appendChild(tagEl);
+          });
+        }
+
+        inputSearch.oninput = function() {
+          var query = inputSearch.value.toLowerCase().trim();
+          if (!query) {
+            containerSuggestions.style.display = "none";
+            return;
+          }
+          var filtered = (AVAILABLE_COURSE_TAGS || []).filter(function(tag) {
+            return tag.toLowerCase().includes(query) && !selectedTags.includes(tag);
+          });
+          if (filtered.length === 0) {
+            containerSuggestions.style.display = "none";
+            return;
+          }
+          containerSuggestions.innerHTML = "";
+          filtered.forEach(function(tag) {
+            var div = document.createElement("div");
+            div.textContent = tag;
+            div.style.cssText = "padding:8px 12px; cursor:pointer; font-size:14px; color:#374151;";
+            div.onmouseover = function() { div.style.background = "#f3f4f6"; };
+            div.onmouseout = function() { div.style.background = ""; };
+            div.onclick = function() {
+              selectedTags.push(tag);
+              renderSelected();
+              inputSearch.value = "";
+              containerSuggestions.style.display = "none";
+              validateMinReqs();
+            };
+            containerSuggestions.appendChild(div);
+          });
+          containerSuggestions.style.display = "block";
+        };
+
+        function getExp() {
+          var rows = containerExp.querySelectorAll(".edit-exp-row");
+          var arr = [];
+          rows.forEach(function(row) {
+            var cat = row.querySelector(".edit-exp-cat").value;
+            var count = parseInt(row.querySelector(".edit-exp-count").value, 10);
+            if (cat && !isNaN(count) && count > 0) {
+              arr.push({ category: cat, count: count });
+            }
+          });
+          return arr;
+        }
+
+        function validateMinReqs() {
+          if (inputMode.value === "flexible") {
+            var total = selectedTags.length + getExp().length;
+            inputMinReqs.max = total;
+            if (parseInt(inputMinReqs.value, 10) > total) {
+              inputMinReqs.value = Math.max(1, total);
+            }
+          }
+        }
+
+        var cats = ["Cleaning", "Electrical", "Plumbing", "Delivery", "IT Support", "General Help", "CCTV"];
+        function addExpRow(category, count) {
+          var catVal = category || "";
+          var countVal = count || 1;
+          var row = document.createElement("div");
+          row.className = "edit-exp-row";
+          row.style.cssText = "display:flex; gap:8px; align-items:center; margin-bottom:4px;";
+
+          var options = cats.map(c => `<option value="${c}" ${c === catVal ? 'selected' : ''}>${c}</option>`).join('');
+          row.innerHTML = 
+            `<select class="edit-exp-cat" style="flex:2; padding:6px; border-radius:6px; border:1px solid #ccc; height:34px; box-sizing:border-box; font-family:inherit;"><option value="">Select</option>${options}</select>` +
+            `<input type="number" class="edit-exp-count" min="1" value="${countVal}" style="flex:1; padding:6px; border-radius:6px; border:1px solid #ccc; width:60px; height:34px; box-sizing:border-box; font-family:inherit;" />` +
+            `<button type="button" class="edit-exp-remove" style="padding:4px 8px; cursor:pointer; background:#fee2e2; border:1px solid #fca5a5; border-radius:6px; color:#dc2626; font-size:12px; height:34px; font-weight:600;">Delete</button>`;
+
+          row.querySelector(".edit-exp-remove").onclick = function() {
+            row.remove();
+            validateMinReqs();
+          };
+          row.querySelector(".edit-exp-cat").onchange = validateMinReqs;
+          row.querySelector(".edit-exp-count").oninput = validateMinReqs;
+
+          containerExp.appendChild(row);
+          validateMinReqs();
+        }
+
+        btnAddExp.onclick = function() {
+          addExpRow("", 1);
+        };
+
+        inputMode.onchange = function() {
+          var mode = inputMode.value;
+          if (mode === "beginner-friendly") {
+            fieldMinReqs.style.display = "none";
+            fieldCourseTags.style.display = "none";
+            fieldExp.style.display = "none";
+          } else if (mode === "strict") {
+            fieldMinReqs.style.display = "none";
+            fieldCourseTags.style.display = "block";
+            fieldExp.style.display = "block";
+          } else if (mode === "flexible") {
+            fieldMinReqs.style.display = "block";
+            fieldCourseTags.style.display = "block";
+            fieldExp.style.display = "block";
+            validateMinReqs();
+          }
+        };
+
+        renderSelected();
+        var initialExp = job.required_experience || [];
+        initialExp.forEach(function(e) {
+          addExpRow(e.category, e.count);
+        });
+        inputMinReqs.value = job.min_requirements_met || 1;
+        inputMode.dispatchEvent(new Event("change"));
+
+        containerEl.__getSelectedTags = function() { return selectedTags; };
+        containerEl.__getExp = function() { return getExp(); };
+      }
+
+      async function saveInlineSuggestion(job, containerEl) {
+        var saveBtns = containerEl.querySelectorAll('#editSaveBtn, #actionsRow button.primary');
+        var titleVal = containerEl.querySelector('#editTitle').value.trim();
+        var categoryVal = containerEl.querySelector('#editCategory').value;
+        if (categoryVal === "__other__") {
+          var customValEl = containerEl.querySelector('#editCustomCategory');
+          categoryVal = customValEl ? customValEl.value.trim() : "";
+          if (!categoryVal) {
+            showAlert('Validation Error', 'Please specify a custom category', 'error');
+            if (customValEl) customValEl.focus();
+            return;
+          }
+        }
+        var dateVal = containerEl.querySelector('#editDate').value;
+        var payVal = parseFloat(containerEl.querySelector('#editPay').value);
+        var locationVal = containerEl.querySelector('#editLocation').value.trim();
+        var manpowerVal = parseInt(containerEl.querySelector('#editManpower').value, 10);
+        var descriptionVal = containerEl.querySelector('#editDescription').value;
+
+        var inputMode = containerEl.querySelector('#editAppMode');
+        var inputMinReqs = containerEl.querySelector('#editMinReqs');
+
+        var selectedTags = containerEl.__getSelectedTags ? containerEl.__getSelectedTags() : [];
+        var expReqs = containerEl.__getExp ? containerEl.__getExp() : [];
+
+        var quals = {
+          application_mode: inputMode.value,
+          required_course_tags: selectedTags,
+          required_experience: expReqs,
+          min_requirements_met: inputMode.value === "flexible" ? parseInt(inputMinReqs.value, 10) : (inputMode.value === "strict" ? (selectedTags.length + expReqs.length) : 0)
+        };
+
+        if (!titleVal) {
+          showAlert('Validation Error', 'Please enter a job title', 'error');
+          return;
+        }
+        if (!dateVal) {
+          showAlert('Validation Error', 'Please choose a date', 'error');
+          return;
+        }
+        if (isNaN(payVal) || payVal <= 0) {
+          showAlert('Validation Error', 'Please enter a valid pay amount', 'error');
+          return;
+        }
+        if (!locationVal) {
+          showAlert('Validation Error', 'Please enter a location', 'error');
+          return;
+        }
+        if (isNaN(manpowerVal) || manpowerVal < 1) {
+          showAlert('Validation Error', 'Please enter manpower count (min 1)', 'error');
+          return;
+        }
+        
+        if (quals.application_mode === "flexible") {
+          var total = quals.required_course_tags.length + quals.required_experience.length;
+          if (total === 0) {
+            showAlert('Validation Error', 'Define at least one course tag or project experience for Flexible mode', 'error');
+            return;
+          }
+          if (quals.min_requirements_met > total) {
+            showAlert('Validation Error', 'Min requirements met cannot exceed the total number of requirements', 'error');
+            return;
+          }
+        }
+
+        saveBtns.forEach(btn => btn.disabled = true);
+        showToast("Saving negotiation changes...", "info", 1200);
+        try {
           var proposalJson = makeSuggestionDescription(
             job,
-            formValues.pay,
-            formValues.difficulty,
-            formValues.description
+            titleVal,
+            categoryVal,
+            payVal,
+            job.difficulty,
+            dateVal,
+            locationVal,
+            manpowerVal,
+            descriptionVal
           );
 
           var res = await updateJobStatus(job.id, "suggestion_sent", {
             updatedAt: job.updatedAt,
             nextDescription: proposalJson,
+            application_mode: quals.application_mode,
+            required_course_tags: quals.required_course_tags,
+            required_experience: quals.required_experience,
+            min_requirements_met: quals.min_requirements_met
           });
 
           if (!res.ok) {
             showAlert("Update failed", humanizeError(res.error), "error");
+            saveBtns.forEach(btn => btn.disabled = false);
             return;
           }
 
-          // Update local state
           job.description = proposalJson;
           job.status = "suggestion_sent";
+          job.application_mode = quals.application_mode;
+          job.required_course_tags = quals.required_course_tags;
+          job.required_experience = quals.required_experience;
+          job.min_requirements_met = quals.min_requirements_met;
           if (res.updatedAt) job.updatedAt = res.updatedAt;
 
-          // Re-render
+          job.isEditing = false;
           renderJobList(jobSearchInput ? jobSearchInput.value : "");
-          renderJobDetails(job);
-          if (jobModal && jobModal.classList.contains("open")) {
-            openJobModal(job);
+          if (containerEl === jobModalBody) {
+            containerEl.innerHTML = buildJobDetailsHTML(job);
+            wireActions(job, containerEl);
+            var contactContainer = containerEl.querySelector("#customerContactContainer");
+            if (contactContainer) {
+              loadCustomerContact(job.posted_by, contactContainer);
+            }
+          } else {
+            renderJobDetails(job);
           }
-          showToast(
-            "Suggestion sent to customer.",
-            "success",
-            2200
-          );
+          showToast("Suggestion sent to customer.", "success", 2200);
+        } catch (e) {
+          console.error(e);
+          showAlert("Error saving suggestion", e.message || "Failed to save suggestion", "error");
+          saveBtns.forEach(btn => btn.disabled = false);
         }
       }
 

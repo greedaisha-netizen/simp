@@ -153,3 +153,54 @@ using (
   and (storage.foldername(name))[2] = 'matching_receipts'
   and public.is_approved_admin(auth.uid())
 );
+
+create or replace function public.approve_matching_payment_assignment(
+  target_job_id text,
+  target_application_id text,
+  target_installer_id text
+)
+returns void
+language plpgsql
+security definer
+set search_path = jobs, public
+as $$
+declare
+  selected_installer_id uuid;
+begin
+  if not public.is_approved_admin(auth.uid()) then
+    raise exception 'Only approved admins can approve matching payments.';
+  end if;
+
+  select ja.installer_id
+    into selected_installer_id
+  from jobs.job_application ja
+  where ja.job_id::text = target_job_id
+    and ja.application_id::text = target_application_id
+    and ja.installer_id::text = target_installer_id
+  limit 1;
+
+  if selected_installer_id is null then
+    raise exception 'Selected job application was not found.';
+  end if;
+
+  update jobs.job_application ja
+     set status = 'approved',
+         updated_at = now()
+   where ja.application_id::text = target_application_id;
+
+  update jobs.job j
+     set installer_id_assigned = selected_installer_id,
+         updated_at = now()
+   where j.job_id::text = target_job_id;
+
+  update jobs.job_application ja
+     set status = 'rejected',
+         updated_at = now()
+   where ja.job_id::text = target_job_id
+     and ja.application_id::text <> target_application_id
+     and lower(coalesce(ja.status::text, '')) in ('pending', 'viewed');
+end;
+$$;
+
+grant execute on function public.approve_matching_payment_assignment(text, text, text)
+to authenticated;
